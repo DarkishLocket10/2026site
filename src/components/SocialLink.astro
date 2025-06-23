@@ -1,0 +1,21 @@
+---
+import { Icon } from 'astro-icon/components';
+
+/** Props:
+ *  href   – full URL
+ *  icon   – something like "simple-icons:linkedin"
+ *  label  – human-readable text for screen-readers
+ */
+const { href, icon, label = 'Social link' } = Astro.props;
+---
+
+<a
+  href={href}
+  aria-label={label}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="inline-flex items-center gap-1 rounded-full bg-[#0A66C2] px-3 py-2
+         text-white transition-colors hover:bg-[#004182] focus-visible:outline">
+  <Icon name={icon} class="h-5 w-5" />
+  <span class="sr-only">{label}</span>
+</a>

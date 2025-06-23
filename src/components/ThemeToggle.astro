@@ -1,0 +1,46 @@
+---
+/*  ThemeToggle.astro  */
+---
+<button
+  id="theme-btn"
+  aria-label="Toggle colour scheme"
+  class="p-2 rounded-full border select-none"
+>
+  <span id="theme-icon">☀️</span>
+</button>
+
+<script is:inline>
+  
+(() => {
+  const btn   = document.getElementById('theme-btn');
+  const icon  = document.getElementById('theme-icon');
+  const mq    = matchMedia('(prefers-color-scheme: dark)');
+
+  /* ---------- paint helper ---------- */
+  const paint = () => {
+    const stored = localStorage.getItem('theme');
+    const isDark = stored
+      ? stored === 'dark'
+      : mq.matches;
+    icon.textContent = isDark ? '🌙' : '☀️';
+  };
+
+  paint();                         //  initial
+
+  /* ---------- click → cycle ---------- */
+  btn.addEventListener('click', () => {
+    const stored = localStorage.getItem('theme') ?? 'system';
+    const next   = stored === 'light' ? 'dark'
+                : stored === 'dark'  ? 'system'
+                : 'light';
+    window.setTheme(next);         // delegates to the bootstrap helper
+  });
+
+  /* ---------- repaint on any change ---------- */
+  window.addEventListener('themechange', paint);  // fired by bootstrap
+  window.addEventListener('storage',     paint);  // other tabs
+  mq.addEventListener('change',          paint);  // OS / DevTools if in 'system'
+})();
+</script>
+
+

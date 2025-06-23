@@ -1,0 +1,83 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";   // ✅ correct case
+
+const nav = [
+  { href: "#",     label: "Home"     },
+  { href: "#professional-experience",  label: "Hire me"  },
+  { href: "#photography",  label: "Photography"  },
+];
+---
+<header
+  class="
+    sticky top-0 z-30
+    backdrop-blur-md
+    
+    text-[color:var(--text)]      
+    
+  "
+>
+  <nav class="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
+    <!-- Brand -->
+    <a href="/" class="text-lg font-bold tracking-tight">Yash Patel</a>
+
+    <!-- Desktop links -->
+    <ul class="hidden md:flex gap-8 text-sm font-medium">
+      {nav.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class="relative after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5
+                   after:origin-left after:scale-x-0 after:bg-current after:transition-transform
+                   hover:after:scale-x-100"
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Theme toggle -->
+    <ThemeToggle />
+
+    <!-- Mobile hamburger -->
+    <button
+      id="menu-btn"
+      class="md:hidden p-2 ml-2 -mr-2 rounded-full z-50 relative
+             text-[color:var(--text)]
+             hover:bg-black/5 dark:hover:bg-white/10"
+      aria-label="Open navigation"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18M3 12h18M3 18h18"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile slide-down -->
+  <div
+    id="mobile-menu"
+    class="md:hidden translate-y-[-100%] opacity-0 invisible
+           transition-all duration-300
+           bg-[color:var(--bg)]/90 dark:bg-[color:var(--bg)]/90 backdrop-blur-md"
+  >
+    <ul class="flex flex-col divide-y divide-black/5 dark:divide-white/5">
+      {nav.map(({ href, label }) => (
+        <li><a href={href} class="block px-6 py-.5">{label}</a></li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Drawer toggle -->
+  <script is:inline>
+    const btn   = document.getElementById('menu-btn');
+    const panel = document.getElementById('mobile-menu');
+
+    btn?.addEventListener('click', () => {
+      panel.classList.toggle('translate-y-0');
+      panel.classList.toggle('opacity-100');
+      panel.classList.toggle('visible');
+      btn.querySelector('svg')?.classList.toggle('rotate-90');
+    });
+  </script>
+</header>

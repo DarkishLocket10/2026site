@@ -1,0 +1,54 @@
+---
+/*  src/components/SocialBar.astro
+    Props:
+      iconSize  – Tailwind size (#) e.g. 5, 6, 7  (default 6 → w-6 h-6)
+*/
+
+const { iconSize = 6 } = Astro.props;
+
+/* Update or reorder as needed */
+const links = [
+  { href: "https://linkedin.com/in/yash-n-patel/", label: "LinkedIn",  icon: "lucide:linkedin" },
+  { href: "https://github.com/yourname",       label: "GitHub",    icon: "lucide:github"   },
+  { href: "https://twitter.com/yourname",      label: "Twitter",   icon: "lucide:twitter"  },
+  { href: "https://instagram.com/yourname",    label: "Instagram", icon: "lucide:instagram"},
+  { href: "https://youtube.com/@yourname",     label: "YouTube",   icon: "lucide:youtube"  },
+];
+
+/* Helper to build w-6 h-6 (or w-{iconSize} h-{iconSize}) */
+const sizeCls = `w-${iconSize} h-${iconSize}`;
+---
+
+<section class="mx-auto max-w-7xl px-6 py-12 flex items-center justify-between">
+  <!-- Icons -->
+  <ul class="flex gap-6">
+    {links.map(({ href, label, icon }) => (
+      <li>
+        <a
+          href={href} aria-label={label} target="_blank" rel="noopener noreferrer"
+          class="text-[color:var(--text)]/70 hover:text-[color:var(--text)]
+                 transition-colors duration-200"
+        >
+          <svg aria-hidden="true" class={`${sizeCls}`}><use xlink:href={`#${icon}`} /></svg>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <!-- Contact button -->
+  <a
+    href="/contact"
+    class="inline-flex items-center gap-2
+           font-semibold rounded-full px-6 py-2
+           bg-[color:var(--text)] text-[color:var(--bg)]
+           hover:bg-transparent hover:text-[color:var(--text)]
+           hover:ring-2 ring-[color:var(--text)]
+           transition-all duration-200"
+  >
+    <!-- mail icon -->
+    <svg aria-hidden="true" class={`w-${iconSize} h-${iconSize}`}>
+      <use xlink:href="#lucide:mail" />
+    </svg>
+    Contact
+  </a>
+</section>

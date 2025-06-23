@@ -1,0 +1,102 @@
+---
+/*
+  Props:
+    - title?: string
+    - items: Array<{
+        imageSrc: string;
+        link:     string;
+        altText:  string;
+      }>
+*/
+type WorkItem = {
+  imageSrc: string;
+  link:     string;
+  altText:  string;
+  label:    string;      // text to show under the logo
+};
+
+const {
+  title = 'Work',
+  items = [],
+}: {
+  title?: string;
+  items?: WorkItem[];
+} = Astro.props;
+
+
+
+
+---
+<section id="work" class="mx-auto max-w-7xl px-6 py-5">
+  <!-- Heading -->
+  <h2
+    class="
+      text-4xl font-bold text-current
+      opacity-0 translate-x-6 transform
+      transition-opacity transition-transform
+      duration-700 ease-out delay-200
+    "
+    data-fade
+  >
+    {title}
+  </h2>
+
+  <!-- Grid of cards -->
+  <div
+    class="
+    mt-12
+    grid
+    gap-6
+    grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]
+      opacity-0 translate-x-6 transform
+      transition-opacity transition-transform
+      duration-700 ease-out delay-300
+    "
+    data-fade
+  >
+ {items.map(({ imageSrc, link, altText, label }) => (
+  <a
+    href={link}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={label}
+    class="block"
+    data-tilt
+    style="perspective: 800px;"     
+  >
+    <div
+      class="
+        tilt-content                <!-- new! -->
+        flex flex-col h-full
+        overflow-hidden rounded-lg
+        bg-current/5
+        border border-gray-200 dark:border-gray-700
+        shadow-sm
+        transition-transform transition-shadow duration-400 ease-out
+        hover:scale-105
+      "
+      style="aspect-ratio:3/4;"
+    >
+      <div class="flex-shrink-0 p-4 flex items-start justify-center">
+        <img
+          src={imageSrc}
+          alt={altText}
+          loading ="lazy"
+          class="
+          p-3
+            max-w-full max-h-full
+            object-contain
+            transform scale-95
+            border-b-4 border-current/20 rounded-lg
+          "
+        />
+      </div>
+      <div class="mt-[3px] px-4 text-center">
+        <p class="text-sm font-medium text-current">{label}</p>
+      </div>
+    </div>
+  </a>
+))}
+
+  </div>
+</section>

@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* design-tokens */
+:root {
+  --bg:   #dddddd;
+  --text: #111827;
+}
+/* when <html class="dark"> … */
+.dark {
+  --bg:   #282c34;
+  --text: #f3f4f6;
+}
+
+/* now safely use your CSS vars everywhere */
+body {
+  background-color: var(--bg);
+  color:            var(--text);
+}
+

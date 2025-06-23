@@ -1,0 +1,57 @@
+---
+/*
+  Props:
+    - title?: string           // section heading (defaults to "Education")
+    - items: Array<{
+        years:   string;       // e.g. "2020–2025"
+        institution: string;   // e.g. "Queen's University"
+        details: string;       // e.g. "Bachelor of Computing (Honours)…"
+      }>
+*/
+type EducationItem = {
+  years: string;
+  institution: string;
+  details: string;
+};
+
+const { title = 'Education', items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
+---
+<section id="education" class="mx-auto max-w-7xl px-6 py-14
+  opacity-0 -translate-x-6
+  transition-all duration-700 ease-out
+  delay-400
+  motion-reduce:opacity-100 motion-reduce:translate-y-0
+  "
+    data-fade>
+  <h2 class="text-5xl font-extrabold ">
+    {title}
+  </h2>
+
+  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-12
+  opacity-0 -translate-x-6
+  transition-all duration-700 ease-out
+  delay-500
+  motion-reduce:opacity-100 motion-reduce:translate-y-0
+  "
+    data-fade>
+    {items.map(({ years, institution, details }) => (
+      <div class="relative pl-8">
+        {/* angled purple bar */}
+        <div
+          class="absolute inset-y-0 left-0 w-4 bg-[#9C84EE] transform -skew-x-12"
+        ></div>
+
+        {/* content sits above the bar */}
+        <div class="relative z-10">
+          <span class="text-sm ">{years}</span>
+          <h3 class="mt-2 text-2xl font-semibold ">
+            {institution}
+          </h3>
+          <p class="mt-1 ">
+            {details}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

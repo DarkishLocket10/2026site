@@ -1,0 +1,152 @@
+---
+/*
+  Pass whatever you like when you import the component, e.g.
+  <Hero
+    title="Hey, I'm Yash"
+    subtitle="Welcome to my website!"
+    description="This website serves as my portfolio..."
+    image="/images/hero.jpg"
+    alt="Photo of me in downtown traffic"
+  />
+*/
+import {Icon} from 'astro-icon/components';
+const { title, subtitle, description, image, alt } = Astro.props;
+---
+<section
+  id="hero"
+  class="mx-auto max-w-7xl px-6 py-6 
+         md:grid md:grid-cols-2 md:gap-12 
+         items-center"
+>
+  <!-- ✨ TEXT – left column -->
+<div class="space-y-6">
+  <h1
+    class="
+      text-5xl font-extrabold leading-tight 
+      opacity-0 -translate-x-6
+      transition-all duration-700 ease-out
+      delay-0
+      motion-reduce:opacity-100 motion-reduce:translate-x-0
+    "
+    data-fade
+  >
+    {title}
+  </h1>
+
+  <h2
+    class="
+      text-4xl font-semibold 
+      opacity-0 -translate-x-6
+      transition-all duration-700 ease-out
+      delay-100                       <!-- 0.1 s later -->
+      motion-reduce:opacity-100 motion-reduce:translate-x-0
+    "
+    data-fade
+  >
+    {subtitle}
+  </h2>
+
+<p
+  class="
+    text-lg  
+    opacity-0 -translate-x-6
+    transition-all duration-700 ease-out
+    delay-200                       <!-- 0.2 s later -->
+    motion-reduce:opacity-100 motion-reduce:translate-x-0
+  "
+  data-fade
+  set:html={description}
+/>
+
+
+  <!-- SOCIAL ICON LINKS -->
+  <div class="flex items-center gap-6 mt-8 
+              opacity-0 -translate-x-6
+              transition-all duration-700 ease-out
+              delay-0                       <!-- 0 s later -->
+              motion-reduce:opacity-100 motion-reduce:translate-x-0
+              "
+    data-fade
+  
+  >
+    {[
+      { name: 'simple-icons:linkedin', href: 'https://linkedin.com/in/yash-n-patel',    label: 'LinkedIn'  },
+      { name: 'simple-icons:github',   href: 'https://github.com/DarkishLocket10',      label: 'GitHub'    },
+      { name: 'simple-icons:x',  href: 'https://twitter.com/yashnilaypatel',     label: 'X'   },
+      { name: 'simple-icons:instagram',href: 'https://instagram.com/yash_patel14',   label: 'Instagram' },
+      { name: 'simple-icons:trakt', href: 'https://trakt.tv/users/darkishlocket10',    label: 'Trakt'  },
+      { name: 'simple-icons:youtube',  href: 'https://www.youtube.com/@yashpateliscool',    label: 'YouTube'   },
+      { name: 'simple-icons:goodreads',  href: 'https://www.goodreads.com/darkishlocket10',    label: 'YouTube'   },
+    ].map(({ name, href, label }) => (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        class="text-current hover:opacity-80 transition-opacity"
+      >
+        <Icon name={name} size={38} />
+      </a>
+    ))}
+
+<!-- contact button yashnilay@gmail.com, with the simple-icons mail icon -->
+<a
+  href="mailto:yashnilay@gmail.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Email me"
+  class="flex items-center gap-2 px-4 py-2 border  rounded-lg  hover:bg-[#9C84EE]/10 transition-colors"
+>
+  <Icon name="simple-icons:maildotru" size={24} />
+  <span class="font-medium">Contact</span>
+</a>
+
+  </div>
+
+</div>
+
+  <!-- 📸 IMAGE – right column -->
+<figure data-tilt
+  class="
+    mt-10 md:mt-0 relative
+    opacity-0 translate-x-6         
+    transition-all duration-700 ease-out
+    motion-reduce:opacity-100 motion-reduce:translate-y-0
+  "
+  data-fade                          
+  style="perspective: 1200px"
+>
+
+  <img
+    id="parallax-img"
+    src={image}
+    alt={alt}
+    loading="lazy"
+    class="w-full rounded-3xl object-cover
+           transition-transform duration-200 ease-out
+           will-change-transform"
+  />
+
+  <script is:inline>
+    const fig   = /** @type {HTMLElement} */ (document.currentScript.parentElement);
+    const img   = fig.querySelector('#parallax-img');
+    const range = 12;                  // max degrees of tilt
+
+    function handleMove(e) {
+      const rect = fig.getBoundingClientRect();
+      const x    = e.clientX - rect.left - rect.width  / 2; // center origin
+      const y    = e.clientY - rect.top  - rect.height / 2;
+      const rx   = (-y / (rect.height / 1.25)) * range;        // invert for natural tilt
+      const ry   = ( x / (rect.width  / 1.25)) * range;
+      img.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(1.05)`;
+    }
+
+    function reset() {
+      img.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+    }
+
+    fig.addEventListener('mousemove', handleMove);
+    fig.addEventListener('mouseleave', reset);
+  </script>
+</figure>
+</section>

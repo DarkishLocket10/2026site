@@ -1,0 +1,78 @@
+---
+import Layout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import Education from '../components/Education.astro';
+import ProfessionalExperience from "../components/ProfessionalExperience.astro";
+import Work from "../components/Work.astro";
+import Photography from "../components/Photography.astro";
+import Gallery from "../components/gallery.astro";
+
+const educationItems = [
+  {
+    years: '2020–2025',
+    institution: "Queen's University",
+    details: 'Bachelor of Computing (Honours), Specialization in Software Design',
+  },
+  {
+    years: '2016–2020',
+    institution: 'Korah Collegiate & Vocational School',
+    details: 'High School Diploma, Academic Stream',
+  },
+];
+
+const workItems = [
+  {
+    imageSrc:   'src/images/bruce.png',
+    link:        'https://www.brucepower.com',
+    altText:     'bruce power logo',
+    label:      'As a Development Student at Bruce Power, I led full-stack development using PHP, JavaScript, and SQL to automate and streamline supplier performance scorecard processes, achieving a 40% reduction in monthly reporting time and enhancing data accuracy. I managed supplier performance assessments with Tier 1 and Tier 2 suppliers, focusing on safety, quality, cost, capacity, and schedule metrics. Additionally, I implemented process automations and applied predictive modeling techniques using machine learning to forecast financial and operational outcomes, improving overall supply chain efficiency.',
+  },
+  {
+  imageSrc:   'src/images/bruce.png',
+    link:        '/',
+    altText:     '2',
+    label:      '2',
+  },
+  {
+  imageSrc:   'src/images/bruce.png',
+    link:        '/',
+    altText:     '3',
+    label:      '3',
+  },
+];
+---
+
+<Layout title="Portfolio – Yash" description="Welcome to my site">
+  <Hero
+    title="Hey, I'm Yash!"
+    subtitle="Welcome to my website."
+    description="I'm a computer scientist from Sault Ste. Marie, Ontario, with a Bachelor of Computing Honours from <a href='https://www.queensu.ca/' target=_blank class='underline hover:opacity-80'>Queen's University</a>. My experience covers software design, AI and machine learning, cyber security, and data analytics. I enjoy solving challenging puzzles, creating innovative software solutions, and exploring <a href='https://piwigo.darkishlocket10.me' target=_blank class='underline hover:opacity-80'>photography</a> in my spare time. Please feel free to explore my portfolio and <a href='mailto:yashnilay@gmail.com' target=_blank class='underline hover:opacity-80'>reach out</a> if you'd like to collaborate!"
+    image="/src/images/about.jpg"
+    alt="Photo of Yash Patel"
+  />
+
+  <Education items={educationItems} />
+
+
+  <ProfessionalExperience
+    title="Professional Experience"
+    subtitle="A brief overview of my work history"
+    description="With extensive experience in full-stack development, data analysis, and automation, I create and optimize digital solutions to streamline business operations and enhance user experiences."
+    image="/src/images/Professional.jpg"
+    alt="Yash taking a photo"
+  />
+
+<Work items={workItems} title="Projects & Experience" />
+
+
+  <Photography
+    title="Did I mention that I take photos?"
+    subtitle=""
+    description="Over five years (and counting) behind the lens!"
+    image="/src/images/pro2.jpg"
+    alt="Yash standing in the middle of a city street"
+  />
+
+  <Gallery />         
+  
+</Layout>
