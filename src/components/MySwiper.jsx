@@ -61,7 +61,17 @@ export default function MySwiper() {
             </SwiperSlide>
             <SwiperSlide>
                 <div style={slideStyle}>
-                    <img src="https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/11/20250611184555-6c2aa0d7-la.jpg" alt="Slide 6" style={imgStyle} />
+                    <img src="https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/27/20250627033333-24c50efd-xl.jpg" alt="Slide 6" style={imgStyle} />
+                </div>
+            </SwiperSlide>
+            <SwiperSlide>
+                <div style={slideStyle}>
+                    <img src="https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627034917-c78eec00-xl.jpg" alt="Slide 7" style={imgStyle} />
+                </div>
+            </SwiperSlide>
+            <SwiperSlide>
+                <div style={slideStyle}>
+                    <img src="https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/27/20250627035358-4d8c66cc-xl.jpg" alt="Slide " style={imgStyle} />
                 </div>
             </SwiperSlide>
         </Swiper>
