@@ -1,11 +1,292 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import "../styles/globalblog.css";
+
 const { frontmatter } = Astro.props;
+
+// Graceful fallbacks
+const {
+  title = 'Untitled Post',
+  description = '',
+  pubDate,
+  author = 'Anonymous',
+  image,
+  tags = []
+} = frontmatter;
+
+const isoDate = pubDate instanceof Date ? pubDate.toISOString() : new Date(pubDate).toISOString();
+const formattedDate = new Date(isoDate).toLocaleDateString('en-CA', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+// (Optional) simple reading time (approx 200 wpm)
+const html = await Astro.slots.render('default') || '';
+const plain = html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+const words = plain.split(' ').filter(Boolean).length;
+const readingMinutes = Math.max(1, Math.round(words / 200));
 ---
-<BaseLayout pageTitle={frontmatter.title}>
-  <p>{frontmatter.pubDate.toString().slice(0,10)}</p>
-  <p><em>{frontmatter.description}</em></p>
-  <p>Written by: {frontmatter.author}</p>
-  <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
-  <slot />
+<BaseLayout pageTitle={title} description={description}>
+  <article class="post">
+    <header class="post__header">
+      <h1 class="post__title">{title}</h1>
+      {description && <p class="post__description">{description}</p>}
+      <div class="post__meta">
+        <span>
+          <time datetime={isoDate}>{formattedDate}</time>
+        </span>
+        <span aria-hidden="true">•</span>
+        <span>By {author}</span>
+        <span aria-hidden="true">•</span>
+        <span>{readingMinutes} min read</span>
+      </div>
+      {tags && tags.length > 0 && (
+        <nav aria-label="Post tags" class="tags">
+          {tags.map((tag: string) => (
+            <a class="tag" href={`/tags/${tag}`}>#{tag}</a>
+          ))}
+        </nav>
+      )}
+      {image?.url && (
+        <figure class="hero">
+          <img
+            src={image.url}
+            alt={image.alt || title}
+            loading="eager"
+            decoding="async"
+            width={image.width || 1200}
+            height={image.height || 630}
+          />
+          {image.alt && <figcaption class="hero__caption">{image.alt}</figcaption>}
+        </figure>
+      )}
+    </header>
+
+    <div class="post__content prose">
+      <slot />
+    </div>
+
+    <footer class="post__footer">
+      <hr />
+      <div class="author-blurb">
+        <strong>{author}</strong>
+        <p class="author-blurb__text">
+          <!-- You can inject an author bio here or pull from a data file -->
+          Writing about the funny things I think about
+        </p>
+      </div>
+    </footer>
+  </article>
+
+
+
+
+  
 </BaseLayout>
+
+<style>
+  :root {
+    --font-sans: system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+    --font-serif: Georgia,'Palatino Linotype',Palatino,'Book Antiqua',serif;
+    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+    --radius-sm: .4rem;
+    --radius-md: .8rem;
+    --shadow-soft: 0 4px 14px rgba(0,0,0,.06);
+    --max-width: 80ch;
+    --line-height: 1.6;
+    --transition: 150ms cubic-bezier(.4,0,.2,1);
+  }
+
+
+  .post {
+    font-family: var(--font-serif);
+    color: var(--text);
+    background: var(--color-bg);
+    padding: 2.5rem 1.25rem 4rem;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    border-radius: .5rem;
+    box-shadow: 0 6px 24px -4px rgba(0,0,0,.08);
+    border: 1px solid var(--color-border);
+  }
+
+  .post__title {
+    font-family: var(--font-sans);
+    font-size: clamp(2.2rem, 5vw, 3.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin: 0 0 .5rem;
+    font-weight: 650;
+  }
+
+  .post__description {
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-family: var(--font-serif);
+    margin: 0 0 1.25rem;
+    color: var(--color-text-soft);
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem .75rem;
+    font-size: .875rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-family: var(--font-sans);
+    color: var(--color-text-soft);
+    margin-bottom: 1.25rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin: 0 0 1.75rem;
+  }
+
+  .tag {
+    font-family: var(--font-sans);
+    font-size: .75rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    background: var(--color-bg-alt);
+    color: var(--color-text-soft);
+    padding: .4rem .75rem;
+    border-radius: 999px;
+    text-decoration: none;
+    position: relative;
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+  }
+
+  .tag:hover,
+  .tag:focus {
+    background: var(--color-accent);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition), background var(--transition), text-decoration-color var(--transition);
+  }
+  a:hover,
+  a:focus {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  .hero {
+    margin: 2rem 0 2.5rem;
+    text-align: center;
+  }
+  .hero img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    display: block;
+    margin: 0 auto;
+  }
+  .hero__caption {
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-top: .75rem;
+    color: var(--color-text-soft);
+    font-family: var(--font-sans);
+  }
+
+  .post__content {
+    font-size: 1.05rem;
+    line-height: var(--line-height);
+    font-weight: 400;
+  }
+  .post__content p {
+    margin: 0 0 1.25rem;
+  }
+  .post__content h2, .post__content h3, .post__content h4 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 2.2rem 0 1rem;
+    letter-spacing: -.5px;
+  }
+  .post__content h2 { font-size: 1.9rem; }
+  .post__content h3 { font-size: 1.45rem; }
+  .post__content h4 { font-size: 1.2rem; }
+
+  .post__content code {
+    font-family: var(--font-mono);
+    font-size: .875rem;
+    background: var(--color-code-bg);
+    padding: .15rem .45rem;
+    border-radius: var(--radius-sm);
+  }
+  .post__content pre {
+    font-family: var(--font-mono);
+    background: var(--color-code-bg);
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: .9rem;
+    line-height: 1.4;
+    border-radius: var(--radius-md);
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .post__content blockquote {
+    margin: 2rem 0;
+    padding: 1rem 1.25rem;
+    background: var(--color-bg-alt);
+    border-left: 4px solid var(--color-accent);
+    font-style: italic;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+
+  .post__content hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 3rem auto;
+    width: 60%;
+  }
+
+  .post__content ul, .post__content ol {
+    margin: 1.4rem 0 1.4rem 1.2rem;
+    padding: 0;
+  }
+  .post__content li {
+    margin: .5rem 0;
+  }
+
+  .post__footer {
+    margin-top: 3rem;
+  }
+
+  .author-blurb {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    font-family: var(--font-sans);
+    font-size: .9rem;
+    color: var(--color-text-soft);
+  }
+  .author-blurb__text {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 860px) {
+    .post { padding: 3.5rem 2.5rem 5rem; }
+  }
+
+
+
+
+  
+</style>

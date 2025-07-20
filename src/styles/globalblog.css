@@ -1,25 +1,38 @@
 /* global.css */
 
 @import "tailwindcss";
+/* Typography hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  margin: 2.25rem 0 1rem;
+}
+
+h1 { font-size: clamp(2.2rem, 5vw, 3.25rem); margin-top: 0; }
+h2 { font-size: 1.9rem; }
+h3 { font-size: 1.55rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .06em; }
+h6 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; /* gray-500 */ }
+
+p {
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+p:last-child {
+  margin-bottom: 0;
+}
+
 
 /* design tokens */
 :root {
   --bg:   #dddddd;
   --text: #111827;
-  --color-text-soft: #535151;
-  --color-bg-alt: #b3d2da;
-  --color-code-bg: #f1f4f7;
-  --color-accent: #885a9c;
-  --color-accent-hover: #a44dd6;
 }
 .dark {
   --bg:   #282c34;
-  --text: #e6e6e6;
-  --color-text-soft: #afaeae;
-  --color-bg-alt: #3c5964;
-  --color-code-bg: #f1f4f7;
-  --color-accent: #ac5fcf;
-  --color-accent-hover: #a44dd6;
+  --text: #f3f4f6;
 }
 
 /* 1) Make html/body full height and zero margin */
