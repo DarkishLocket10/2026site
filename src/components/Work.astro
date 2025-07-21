@@ -62,13 +62,24 @@ const { title = 'Work', items = [] }: Props = Astro.props;
           "
           style="aspect-ratio:5/8;"
         >
+          
+        
+        
+        {altText && (
+        <div class="px-4 pt-2">
+          <p class="text-xs italic text-current/70 text-center truncate">
+            {altText}
+          </p>
+        </div>
+        )}
+
           <div class="flex-shrink-0 flex items-start justify-center p-4">
             <img
               src={imageSrc}
               alt={altText}
               loading="lazy"
               class="
-                p-3
+                p-1
                 max-w-full max-h-full
                 object-contain
                 transform scale-95
@@ -78,8 +89,8 @@ const { title = 'Work', items = [] }: Props = Astro.props;
             />
           </div>
 
-          <div class="mt-[3px] px-4 text-center flex-1 overflow-y-auto scrollbar">
-            <p class="text-sm font-medium text-current whitespace-pre-line">
+          <div class="mt-[3px] px-4 text-left flex-1 overflow-y-auto scrollbar">
+            <p class="text-sm font-medium text-current whitespace-pre-wrap">
               {label}
             </p>
           </div>
