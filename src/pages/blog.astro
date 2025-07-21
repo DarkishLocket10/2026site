@@ -1,12 +1,54 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
-import BlogPost from '../components/BlogPost.astro';
-const allPosts = Object.values(import.meta.glob('./posts/*.md', { eager: true }));
-const pageTitle = "My Astro Learning Blog";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogPostCard from '../layouts/BlogPostCard.astro';
+
+
+
+// Grab all markdown post modules 
+const modules = import.meta.glob('./posts/*.md', { eager: true });
+
+interface PostModule {
+  url: string;
+  frontmatter: {
+    title: string;
+    pubDate: string;
+    description?: string;
+    author?: string;
+    image?: { url?: string; alt?: string };
+    tags?: string[];
+  };
+}
+
+const allPosts: PostModule[] = Object.values(modules) as PostModule[];
+
+// Sort newest first using pubDate
+allPosts.sort(
+  (a, b) =>
+    new Date(b.frontmatter.pubDate).getTime() -
+    new Date(a.frontmatter.pubDate).getTime()
+);
+
+const pageTitle = "My Blog!";
 ---
+
 <BaseLayout pageTitle={pageTitle}>
-  <p>This is where I will post about my journey learning Astro.</p>
-  <ul>
-    {allPosts.map((post: any) => <BlogPost url={post.url} title={post.frontmatter.title} />)}
-  </ul>
+  <div class="mx-auto max-w-screen-xl px-6 py-4">
+    <h1 class="text-2xl font-semibold mb-6">Blog</h1>
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {allPosts.map(post => <BlogPostCard post={post} />)}
+    </div>
+  </div>
 </BaseLayout>
+
+
+<style>
+  .page-title { margin-top: 1rem; }
+  
+  .posts-grid {
+    --gap: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: var(--gap);
+    margin-block: 2rem 4rem;
+  }
+</style>

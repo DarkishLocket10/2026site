@@ -2,9 +2,10 @@
 import ThemeToggle from "./ThemeToggle.astro";   // ✅ correct case
 
 const nav = [
-  { href: "#",     label: "Home"     },
-  { href: "#professional-experience",  label: "Hire me"  },
-  { href: "#photography",  label: "Photography"  },
+  { href: "/#hero",     label: "Home"     },
+  { href: "/#professional-experience",  label: "Hire me"  },
+  { href: "/#photography",  label: "Photography"  },
+  { href: "/blog",  label: "Blog"  }
 ];
 ---
 <header
@@ -19,7 +20,14 @@ const nav = [
 >
   <nav class="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
     <!-- Brand -->
-    <a href="/" class="text-lg font-bold tracking-tight">Yash Patel</a>
+    <a
+      href="/"
+      class="text-lg font-bold tracking-tight relative after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5
+         after:origin-left after:scale-x-0 after:bg-current after:transition-transform
+         hover:after:scale-x-100"
+    >
+      Yash Patel
+    </a>
 
     <!-- Desktop links -->
     <ul class="hidden md:flex gap-8 text-sm font-medium">

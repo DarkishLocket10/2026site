@@ -11,7 +11,7 @@ import "swiper/css/navigation";
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth overflow-x-hidden">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -62,13 +62,15 @@ import "swiper/css/navigation";
 
   </head>
 
-  <body class="scroll-smooth">
+  <body class="scroll-smooth overflow-x-hidden">
     <Header />
 
     <!-- Page content injected here -->
     <slot />
 
-    <Footer />
+    <div class="footer">
+      <Footer />
+    </div>
 
     <script is:inline>
       const io = new IntersectionObserver((entries, obs) => {

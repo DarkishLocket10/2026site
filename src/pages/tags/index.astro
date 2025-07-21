@@ -1,32 +1,222 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const allPosts = Object.values(import.meta.glob('../posts/*.md', { eager: true }));
-const tags = [...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat())];
-const pageTitle = "Tag Index";
+// import { tagToSlug } from '../../utils/slug'; 
+
+const modules = import.meta.glob('../posts/*.md', { eager: true });
+const allPosts = Object.values(modules) as any[];
+
+interface TagInfo {
+  name: string;
+  count: number;
+}
+
+const tagCounts = new Map<string, number>();
+
+for (const post of allPosts) {
+  (post.frontmatter.tags || []).forEach((t: string) => {
+    tagCounts.set(t, (tagCounts.get(t) || 0) + 1);
+  });
+}
+
+// Convert to array & sort (most posts first, then alpha)
+const tags: TagInfo[] = [...tagCounts.entries()]
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+const pageTitle = "Browse by Tag";
 ---
+
 <BaseLayout pageTitle={pageTitle}>
-  <div class="tags">
-    {tags.map((tag) => (
-      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
-    ))}
+  <div class="tags-container">
+    <header class="tags-header" data-fade>
+      <h1 class="title">All Tags</h1>
+      <p class="subtitle">
+        {tags.length} tag{tags.length !== 1 && 's'} • {allPosts.length} post{allPosts.length !== 1 && 's'}
+      </p>
+    </header>
+
+    <ul class="tag-grid">
+      {tags.map(tag => {
+        // const slug = tagToSlug(tag.name); // use if slugging
+        const slug = tag.name; // direct (your current approach)
+        return (
+          <li class="tag-card" data-fade>
+            <a href={`/tags/${slug}`} class="tag-link">
+              <span class="tag-name">{tag.name}</span>
+              <span class="count" aria-label={`${tag.count} post${tag.count !== 1 ? 's' : ''}`}>
+                {tag.count}
+              </span>
+              <span class="chevron" aria-hidden="true">↗</span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
   </div>
 </BaseLayout>
+
 <style>
-  a {
-    color: #00539F;
-  }
+.tags-container {
+  width: min(1200px, 100% - 2.5rem);
+  margin-inline: auto;
+  padding-block: 1rem 3.5rem;
+}
 
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.tags-header {
+  text-align: center;
+  margin-block: 1.5rem 2.25rem;
+}
 
-  .tag {
-    margin: 0.25em;
-    border: dotted 1px #a1a1a1;
-    border-radius: .5em;
-    padding: .5em 1em;
-    font-size: 1.15em;
-    background-color: #F8FCFD;
+.title {
+  font-size: clamp(1.75rem, 1.1rem + 2vw, 2.4rem);
+  line-height: 1.1;
+  margin: 0 0 .5rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+.subtitle {
+  opacity: .7;
+  font-size: .95rem;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: .4px;
+}
+
+.tag-grid {
+  --gap: 1.15rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+}
+
+.tag-card {
+  position: relative;
+}
+
+.tag-link {
+  --bg: var(--tag-bg, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  text-decoration: none;
+  background: var(--bg);
+  padding: .95rem 1.1rem .9rem 1.1rem;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 14px -8px rgba(0,0,0,.12);
+  position: relative;
+  isolation: isolate;
+  transition: box-shadow .3s ease, transform .3s ease, background .35s ease;
+  overflow: hidden;
+}
+
+.tag-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(800px circle at var(--x, 50%) var(--y, 50%),
+      rgba(80,130,255,.15),
+      transparent 65%);
+  opacity: 0;
+  transition: opacity .4s ease;
+  pointer-events: none;
+}
+
+.tag-link:hover::before,
+.tag-link:focus-visible::before {
+  opacity: 1;
+}
+
+.tag-link:hover,
+.tag-link:focus-visible {
+  transform: translateY(-4px);
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.15),
+    0 18px 46px -18px rgba(0,0,0,.25);
+}
+
+.tag-name {
+  font-weight: 600;
+  font-size: .95rem;
+  letter-spacing: .4px;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.count {
+  font-size: .7rem;
+  font-weight: 700;
+  background: #eef3ff;
+  color: #1f47ae;
+  padding: .35rem .55rem;
+  border-radius: 999px;
+  letter-spacing: .5px;
+  line-height: 1;
+  min-width: 2ch;
+  text-align: center;
+}
+
+.chevron {
+  font-size: .9rem;
+  opacity: .5;
+  transition: transform .4s ease, opacity .3s ease;
+  margin-left: .25rem;
+}
+
+.tag-link:hover .chevron,
+.tag-link:focus-visible .chevron {
+  transform: translate(3px, -3px);
+  opacity: .9;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tag-link {
+    --tag-bg: #1f1f22;
+    box-shadow: 0 2px 3px rgba(0,0,0,.5), 0 4px 20px -12px rgba(0,0,0,.7);
   }
+  .count {
+    background: #2d3c53;
+    color: #cfd9ff;
+  }
+}
+
+@media (hover: hover) {
+  .tag-link {
+    cursor: pointer;
+  }
+}
+
+/* small subtle interactive x,y gradient */
+.tag-link {
+  position: relative;
+}
+.tag-link:hover,
+.tag-link:focus-visible {
+  --x: 50%;
+  --y: 50%;
+}
+.tag-link:focus-visible {
+  outline: 2px solid #4d7dff;
+  outline-offset: 3px;
+}
 </style>
+
+<script is:inline>
+/* Optional fancy hover light tracking */
+document.querySelectorAll('.tag-link').forEach(link => {
+  link.addEventListener('pointermove', e => {
+    const rect = link.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    link.style.setProperty('--x', x + '%');
+    link.style.setProperty('--y', y + '%');
+  });
+});
+</script>
