@@ -129,3 +129,62 @@ h1 {
     background-color: rgba(255,255,255,0.5);
   }
 }
+
+
+
+/* HAMBURGER */
+/* Button styling */
+#menu-btn {
+  color: var(--text, #333);
+  border: 1px solid rgba(20, 0, 0, 0.1);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#menu-btn:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+#menu-btn svg {
+  transition: transform 0.2s ease;
+}
+
+#menu-btn svg.rotate-90 {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel styling  */
+#mobile-menu {
+  background: var(--bg, #fafafa);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin:auto;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  max-width: 20rem;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 40;
+}
+
+/* visible state */
+#mobile-menu:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Link styling inside dropdown */
+#mobile-menu ul li a {
+  padding: 0.75rem 1rem;
+  display: block;
+  color: var(--text, #333);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+#mobile-menu ul li a:hover {
+  background: rgba(0,0,0,0.03);
+}
