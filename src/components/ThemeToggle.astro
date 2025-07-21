@@ -19,11 +19,15 @@
   /* ---------- paint helper ---------- */
   const paint = () => {
     const stored = localStorage.getItem('theme');
-    const isDark = stored
-      ? stored === 'dark'
-      : mq.matches;
-    icon.textContent = isDark ? '🌙' : '☀️';
+    if (stored === 'light') {
+      icon.textContent = '☀️';
+    } else if (stored === 'dark') {
+      icon.textContent = '🌙';
+    } else {
+      icon.textContent = '🌓';
+    }
   };
+
 
   paint();                         //  initial
 

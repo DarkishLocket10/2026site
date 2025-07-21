@@ -1,0 +1,67 @@
+/* global.css */
+
+@import "tailwindcss";
+/* Typography hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  margin: 2.25rem 0 1rem;
+}
+
+h1 { font-size: clamp(2.2rem, 5vw, 3.25rem); margin-top: 0; }
+h2 { font-size: 1.9rem; }
+h3 { font-size: 1.55rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .06em; }
+h6 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; /* gray-500 */ }
+
+p {
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* design tokens */
+:root {
+  --bg:   #dddddd;
+  --text: #111827;
+}
+.dark {
+  --bg:   #282c34;
+  --text: #f3f4f6;
+}
+
+/* 1) Make html/body full height and zero margin */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--bg);   /* unify backgrounds */
+  color:            var(--text);
+  font-family: sans-serif;
+}
+
+/* 2) Turn body into a flex column */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 3) Let your <main> grow to push footer down */
+main {
+  flex: 1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 1rem 0;
+  font-size: 2.5rem;
+}

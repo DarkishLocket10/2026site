@@ -6,10 +6,37 @@
 :root {
   --bg:   #dddddd;
   --text: #111827;
+  --color-text-soft: #535151;
+  --color-bg-alt: #b3d2da;
+  --color-code-bg: #f1f4f7;
+  --color-accent: #885a9c;
+  --color-accent-hover: #a44dd6;
+  --card-bg: #ffffff;
+  --excerpt-color: #444444;
+  --card-tag-bg: #c9d2e6;
+  --card-tag-text: #52545a;
+  --card-image-wrap-bg: #f3f4f6;
+  --card-tag-hover-bg: #b0bdd1;
 }
 .dark {
   --bg:   #282c34;
-  --text: #f3f4f6;
+  --text: #e6e6e6;
+  --color-text-soft: #afaeae;
+  --color-bg-alt: #3c5964;
+  --color-code-bg: #f1f4f7;
+  --color-accent: #ac5fcf;
+  --color-accent-hover: #a44dd6;
+  --card-bg: #1f1f22;
+  --excerpt-color: #d1d5db;
+  --card-tag-bg: #2d3236;
+  --card-tag-text: #cfd3d8;
+  --card-image-wrap-bg: #2a2e32;
+  --card-tag-hover-bg: #3c5964;
+}
+
+
+#hero {
+  scroll-margin-top: 10rem; /* for sticky header */
 }
 
 /* 1) Make html/body full height and zero margin */
@@ -41,4 +68,123 @@ main {
 h1 {
   margin: 1rem 0;
   font-size: 2.5rem;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+
+/* making my swiper look cool */
+
+/* swiper styles */
+
+/* make the arrows smaller and transparent */
+.swiper-button-next,
+.swiper-button-prev {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+}
+
+/* cuter scroll bars */
+/* Apply these styles to any element with .scrollbar */
+.scrollbar {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+
+/* WebKit browsers */
+.scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+  border: 1px solid transparent;      /* gives padding around thumb */
+  background-clip: content-box;
+}
+
+/* Optional: hover state */
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0,0,0,0.4);
+}
+
+/* Dark‑mode tweak */
+@media (prefers-color-scheme: dark) {
+  .scrollbar {
+    scrollbar-color: rgba(255,255,255,0.3) transparent;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.3);
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255,255,255,0.5);
+  }
+}
+
+
+
+/* HAMBURGER */
+/* Button styling */
+#menu-btn {
+  color: var(--text, #333);
+  border: 1px solid rgba(20, 0, 0, 0.1);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#menu-btn:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+#menu-btn svg {
+  transition: transform 0.2s ease;
+}
+
+#menu-btn svg.rotate-90 {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel styling  */
+#mobile-menu {
+  background: var(--bg, #fafafa);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin:auto;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  max-width: 20rem;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 40;
+}
+
+/* visible state */
+#mobile-menu:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Link styling inside dropdown */
+#mobile-menu ul li a {
+  padding: 0.75rem 1rem;
+  display: block;
+  color: var(--text, #333);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+#mobile-menu ul li a:hover {
+  background: rgba(0,0,0,0.03);
 }

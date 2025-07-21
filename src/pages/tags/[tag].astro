@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPostCard from '../../layouts/BlogPostCard.astro';
+// import { tagToSlug } from '../../utils/slug'; // if using slugs
+
+export async function getStaticPaths() {
+  const allPosts = Object.values(import.meta.glob('../posts/*.md', { eager: true })) as any[];
+  const uniqueTags = [...new Set(allPosts.flatMap(p => p.frontmatter.tags || []))];
+
+  return uniqueTags.map(tag => {
+    const postsForTag = allPosts.filter(p => (p.frontmatter.tags || []).includes(tag));
+    return {
+      params: { tag },                  // If using slug: params: { tag: tagToSlug(tag) }
+      props: { tag, posts: postsForTag } // Keep original tag name in props
+    };
+  });
+}
+
+const { tag, posts } = Astro.props as { tag: string; posts: any[] };
+const sorted = [...posts].sort(
+  (a, b) =>
+    new Date(b.frontmatter.pubDate).getTime() -
+    new Date(a.frontmatter.pubDate).getTime()
+);
+
+const pageTitle = `Tag: ${tag}`;
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <div class="tag-page-container">
+    <header class="tag-header" data-fade>
+      <h1 class="title">#{tag}</h1>
+      <p class="subtitle">
+        {sorted.length} post{sorted.length !== 1 && 's'} with this tag
+        &nbsp;·&nbsp;<a href="/tags" class="back">All tags</a>
+        &nbsp;·&nbsp;<a href="/blog" class="back">All blog posts</a>
+      </p>
+    </header>
+
+    {sorted.length === 0 && (
+      <p>No posts found for this tag.</p>
+    )}
+
+    {sorted.length > 0 && (
+      <div class="posts-grid">
+        {sorted.map(post => <BlogPostCard post={post} />)}
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+.tag-page-container {
+  width: min(1200px, 100% - 2.5rem);
+  margin-inline: auto;
+  padding-block: 1rem 3.5rem;
+}
+.tag-header {
+  text-align: center;
+  margin-block: 1.5rem 2rem;
+}
+.title {
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 2.75rem);
+  margin: 0 0 .65rem;
+  line-height: 1.05;
+  letter-spacing: .5px;
+}
+.subtitle {
+  opacity: .7;
+  margin: 0;
+  font-size: .95rem;
+  font-weight: 500;
+}
+.subtitle .back {
+  text-decoration: none;
+  color: var(--color-text-soft);
+  font-weight: 600;
+}
+.subtitle .back:hover,
+.subtitle .back:focus-visible {
+  text-decoration: underline;
+}
+.posts-grid {
+  --gap: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: var(--gap);
+  margin-block: 2rem 4rem;
+}
+
+
+</style>

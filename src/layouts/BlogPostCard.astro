@@ -1,0 +1,191 @@
+---
+import "../styles/global.css";
+
+
+
+interface Frontmatter {
+  title: string;
+  pubDate: string;
+  description?: string;
+  author?: string;
+  image?: { url?: string; alt?: string };
+  tags?: string[];
+}
+
+interface PostModule {
+  url: string;
+  frontmatter: Frontmatter;
+}
+
+const { post } = Astro.props as { post: PostModule };
+
+const {
+  title,
+  pubDate,
+  description,
+  author,
+  image,
+  tags = []
+} = post.frontmatter;
+
+const dateObj = new Date(pubDate); // Assumes valid date string
+const displayDate = dateObj.toLocaleDateString(undefined, {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+});
+---
+
+<article class="card">
+  <a href={post.url} class="card-link" aria-label={`Read: ${title}`}>
+    {image?.url && (
+      <div class="image-wrap">
+        <img
+          src={image.url}
+          alt={image.alt || title}
+          loading="lazy"
+          decoding="async"
+          class="card-image"
+        />
+      </div>
+    )}
+    <div class="card-body">
+      <h2 class="card-title">{title}</h2>
+      <p class="meta">
+        <time datetime={pubDate}>{displayDate}</time>
+        {author && <span class="author">· {author}</span>}
+      </p>
+      {description && <p class="excerpt">{description}</p>}
+      {tags.length > 0 && (
+        <ul class="tags">
+          {tags.map(tag => (
+            <li>
+                <a
+                href={`/tags/${encodeURIComponent(tag)}`}
+                class="tag-link"
+                aria-label={`View all posts tagged ${tag}`}
+                >
+                 {tag}   
+                </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </a>
+</article>
+
+<style>
+.card {
+  --radius: 16px;
+  position: relative;
+  background: var(--card-bg, #fff);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.05),
+    0 4px 14px -6px rgba(0,0,0,.12);
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+.card:hover,
+.card:focus-within {
+  transform: translateY(-4px);
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.12),
+    0 18px 50px -20px rgba(0,0,0,.25);
+}
+
+.image-wrap {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  overflow: hidden;
+  background: var(--card-image-wrap-bg);
+}
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .6s ease;
+}
+.card:hover .card-image {
+  transform: scale(1.05);
+}
+.card-body {
+  padding: 0.95rem 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  flex: 1;
+}
+.card-title {
+  font-size: 1.08rem;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 600;
+}
+.meta {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .75px;
+  font-weight: 600;
+  opacity: .7;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem;
+}
+.author {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  opacity: .85;
+}
+.excerpt {
+  font-size: .85rem;
+  line-height: 1.35;
+  margin: 0;
+  color: var(--excerpt-color);
+  flex-grow: 1;
+}
+.tags {
+  list-style: none;
+  margin: .4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+}
+.tags li {
+  font-size: .62rem;
+  font-weight: 600;
+  background: var(--card-tag-bg);
+  padding: .15rem .05rem;
+  border-radius: 999px;
+  letter-spacing: .5px;
+  color: var(--card-tag-text);
+}
+
+.tag-link {
+  font-size: .62rem;
+  font-weight: 600;
+  background: var(--card-tag-bg);
+  padding: .45rem .65rem;
+  border-radius: 999px;
+  letter-spacing: .5px;
+  color: var(--card-tag-text);
+  text-decoration: none;
+  transition: background .2s ease, transform .15s ease;
+  position: relative;
+}
+
+.tag-link:hover,
+.tag-link:focus-visible {
+  background: var(--card-tag-hover-bg);
+  transform: translateY(-1px);
+  outline: none;
+  
+}
+</style>

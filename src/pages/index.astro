@@ -22,21 +22,36 @@ const educationItems = [
 
 const workItems = [
   {
-    imageSrc:   '/bruce.png',
-    link:        'https://www.brucepower.com',
-    altText:     'bruce power logo',
-    label:      'As a software developer at Bruce Power, I led full-stack development (PHP, JavaScript, SQL) of a completely overhauled platform to automate supplier performance scorecard processes, reducing monthly reporting time by 40% and enhancing data accuracy. I managed supplier assessments for Tier 1 and Tier 2 suppliers across safety, quality, cost, capacity, and schedule metrics. Additionally, I implemented process automation and applied machine learning to predict financial and operational outcomes, improving overall supply chain efficiency.',
+    imageSrc: '/bruce.png',
+    link: 'https://www.brucepower.com',
+    altText: 'Bruce Power',
+    label: `☑️ Led full‑stack development (PHP, JavaScript, SQL) to completely overhaul the supplier scorecard platform  
+
+☑️ Automated reporting, slashing monthly scorecard prep time by 40% and boosting data accuracy
+
+☑️ Managed Tier 1 & Tier 2 supplier assessments across safety, quality, cost, capacity & schedule  
+
+☑️ Built ML‑driven automations to predict financial/operational outcomes and supercharge supply‑chain efficiency
+    `,
   },
   {
-  imageSrc:   '/monkey.jpg',
-    link:        '/',
-    altText:     '',
-    label:      'Coming soon!',
+  imageSrc:   '/blog.jpg',
+    link:        '/blog',
+    altText:     'Personal Blog',
+    label: `☑️ Curated mix of personal essays, tutorials & reflections on identity, coding, and photography
+
+☑️ Powered by Astro with MDX for flexible, markdown‑driven posts
+
+☑️ Auto‑imports all markdown files with Vite for a zero‑config setup
+
+☑️ Sleek card UI built with TailwindCSS: thumbnails, excerpts, dates & tags
+
+☑️ Optimized images, dark/light themes, and tag‑based filtering for smooth browsing`,
   },
   {
-  imageSrc:   '/redpanda.jpg',
+  imageSrc:   'https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627034446-6ac70f8f-la.jpg',
     link:        '/',
-    altText:     '',
+    altText:     'Third Thing',
     label:      'Coming soon!',
   },
 ];
@@ -75,6 +90,9 @@ const workItems = [
     alt="Yash standing in the middle of a city street"
   />
 
-  <Gallery />         
+  <div class="mt-12">
+    <Gallery />
+  </div>
+  
   
 </Layout>

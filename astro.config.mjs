@@ -4,9 +4,6 @@ import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 
 
-import {Swiper, SwiperSlide} from 'swiper/react';
-
-
 import react from '@astrojs/react';
 
 
