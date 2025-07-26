@@ -1,47 +1,41 @@
-# Astro Starter Kit: Minimal
+# 2026 Portfolio Site &nbsp;![Astro](https://img.shields.io/badge/Built%20with-Astro-ff5d01?logo=astro&logoColor=white)
 
-```sh
-npm create astro@latest -- --template minimal
-```
+A fast, accessible, and fully‑responsive portfolio, showcasing projects, experience, and photography.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+&nbsp;  
+[Live Site](https://yashnilay.ca/) | [Report Issue](../../issues)
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
 
-## 🚀 Project Structure
+## ✨ Features
 
-Inside of your Astro project, you'll see the following folders and files:
+| Feature | Notes |
+|---------|-------|
+| **Astro Islands architecture** | Static HTML with partial hydration for snappy page loads. |
+| **Tailwind CSS design system** | Utility‑first classes + custom theme for rapid iteration. |
+| **Automatic dark / light mode** | Follows user preference with a toggle in the nav. |
+| **Projects & Resume sections** | MD/MDX‑driven content for easy updates. |
+| **Photography carousel** | Swiper‑powered slider fed by my self‑hosted Piwigo gallery. |
+| **SEO‑ready** | Clean metadata and Open Graph tags for rich link previews. |
+| **CI + CD** | GitHub Actions deploy to **GitHub Pages / Cloudflare Pages** (configured in `.github/workflows`). |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+---
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🚀 Quick start
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+> Requires **Node ≥ 18** and **npm** (or pnpm/yarn).
 
-Any static assets, like images, can be placed in the `public/` directory.
+```bash
+# 1) Clone
+git clone https://github.com/DarkishLocket10/2026site.git
+cd 2026site
 
-## 🧞 Commands
+# 2) Install deps
+npm install
 
-All commands are run from the root of the project, from a terminal:
+# 3) Develop locally
+npm run dev         # http://localhost:4321
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+# 4) Production build + preview
+npm run build
+npm run preview
