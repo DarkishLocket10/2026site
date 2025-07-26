@@ -16,9 +16,12 @@ Have you ever wondered why taking a close up "<u><a href="https://petapixel.com/
 I have a problem with that name; *it’s wildly misleading.*
 
 <figure>
-  <img src="https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627033838-685a6eb8-xl.jpg" alt="Shinsaibashi-Suji Shopping Street in Osaka, Japan." />
-  <figcaption>Shinsaibashi-Suji Shopping Street in Osaka, Japan. • ƒ/2.5 • 74mm </figcaption>
+  <a href="https://piwigo.darkishlocket10.me/index.php?/category/16" target="_blank">
+    <img src="https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627033838-685a6eb8-xl.jpg" alt="Shinsaibashi-Suji Shopping Street in Osaka, Japan." />
+  </a>
+  <figcaption>Shinsaibashi-Suji Shopping Street in Osaka, Japan. • ƒ/2.5 • 74mm</figcaption>
 </figure>
+
 
 #### What's going on?
 
@@ -26,6 +29,7 @@ What you're actually seeing is a shift in perspective that comes from where your
 
 #### Why do I care?
 I can't expect the masses to completely change what they call it, and I don't. If you walk away knowing a bit more about managing spatial relationships, helping you nail the look of your next photograph, that's a win in my book. My hope is that you, the reader, will get to hit pause long enough to ask *why* you're framing the shot the way you are, and in that quiet moment give yourself permission to rethink your position, and try something delightfully unexpected. To me, that's a big part of what I think photography is about.
+
 
 <figure>
   <img src="https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627035358-4d8c66cc-xl.jpg" alt="A motorcycle in Downtown Osaka, Japan" />
@@ -43,7 +47,9 @@ It wasn't until several years into being a photographer where I stopped to ask m
 
 I attempted a dolly zoom with my phone camera. I switched to the 0.5x camera (13mm full‑frame equiv.), placed her head in the middle of the frame, and began moving the camera away while simultaneously zooming in. I matched the speed of both movements to the best of my ability, which was pretty challenging to do with a phone camera, but the effect was clear enough for me.
 
-Here's an experiment for you to see this effect in action. All you need is:
+**Here's an experiment for you to see this effect in action.** 
+
+All you need is:
 
 • A **camera that can zoom** (I'll be using my phone).
 
@@ -58,7 +64,7 @@ Step 1: **Zoom all the way out.** Use your widest lens. On my phone, I'll use my
 Step 2: **Get close to your subject** and try to place it within the very middle of the shot. Consistency between shots is important, so try to keep your subject the same size in the frame. If you're having trouble with framing, Try turning on <u><a href="https://en.wikipedia.org/wiki/Rule_of_thirds" target="_blank" >rule of thirds</a></u> in your camera settings, and fill the entire middle square with your subject. When everything is lined up, **take the picture!**
 
 <figure>
-    <img src="/src/pages/posts/images/post 1 - lens compression/sc_0.5.png" alt="" />
+    <img src="/postphotos/post 1 - lens compression/sc_0.5.png" alt="" />
     <figcaption>0.5x camera (≈13mm full‑frame equiv.)</figcaption>
 </figure>
 
@@ -66,7 +72,7 @@ Step 2: **Get close to your subject** and try to place it within the very middle
 Step 3: **Take a step back, and zoom in.** To see a big difference, I switched to the 2x camera (≈48mm full‑frame equiv.). Make sure the subject is once again filling the middle square of your frame. Your subject should be the same size between this frame and the last photo you took. Once that's done, **take another picture**.
 
 <figure>
-    <img src="/src/pages/posts/images/post 1 - lens compression/sc_2.0.png" alt="" />
+    <img src="/postphotos/post 1 - lens compression/sc_2.0.png" alt="" />
     <figcaption>2x camera (≈48mm full‑frame equiv.)</figcaption>
 </figure>
 
@@ -74,8 +80,8 @@ Step 3: **Take a step back, and zoom in.** To see a big difference, I switched t
 Step 4: **Rinse and repeat to your heart's content**! I took one more photo by zooming in 5x (≈120mm full‑frame equiv.), and taking another step back.
 
 <figure>
-    <img src="/src/pages/posts/images/post 1 - lens compression/sc_5.0.png" alt="" />
-    <figcaption>5x (≈120mm full‑frame equiv.)</figcaption>
+    <img src="/postphotos/post 1 - lens compression/sc_5.0.png" alt="" />
+    <figcaption>5x camera (≈120mm full‑frame equiv.)</figcaption>
 </figure>
 
 **Now check out your pictures!** Comparing your photos, you'll be able to notice the change in perspective at work. 
@@ -87,7 +93,7 @@ Even though your subject is roughly the same size in each of your shots, the bac
 (Quick proof: Take a wide shot from the same spot as your 2× photo, then crop the centre. The background-to-subject proportions are the same, just with less quality as the zoomed photo.)
 
 <figure>
-    <img src="/src/pages/posts/images/post 1 - lens compression/lenscompression.gif" alt="" />
+    <img src="/postphotos/post 1 - lens compression/lenscompression.gif" alt="a little comparison gif" />
     <figcaption>A little comparison gif</figcaption>
 </figure>
 
@@ -100,8 +106,10 @@ As I mentioned earlier, it took me three years to question why my favourite foca
 
 My hope is that whoever's reading this post is in a place where they can have a moment of introspection while also exploring their curiosity. I like to remind myself to move against the grain and pursue what makes me wonder. I'm just happy that I get to share this with you, the reader, and whoever's unfortunate enough to be a passenger in my car, forced to listen to my insane rants about terminology, whether they like it or not :P
 
-<figure>
-    <img src="/src/pages/posts/images/post 1 - lens compression/yash.jpg" alt="" />
-    <figcaption>Me @ Víkurfjara Black Sand Beach | Photo by <u><a href="https://josiahhenson.ca" target="_blank">Josiah Henson</a></u></figcaption>
-</figure>
 
+<figure>
+  <a href="https://www.josiahhenson.ca/photos/2025/europe/" target="_blank">
+    <img src="/postphotos/post 1 - lens compression/yash.jpg" alt="Shinsaibashi-Suji Shopping Street in Osaka, Japan." />
+  </a>
+  <figcaption>Me @ Víkurfjara Black Sand Beach | Photo by <u><a href="https://josiahhenson.ca" target="_blank">Josiah Henson</a></u></figcaption>
+</figure>
