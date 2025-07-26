@@ -1,6 +1,6 @@
-/* global.css */
 
 @import "tailwindcss";
+
 /* Typography hierarchy */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
@@ -9,7 +9,7 @@ h1, h2, h3, h4, h5, h6 {
   margin: 2.25rem 0 1rem;
 }
 
-h1 { font-size: clamp(2.2rem, 5vw, 3.25rem); margin-top: 0; }
+h1 { font-size: clamp(2.2rem, 5vw, 2.25rem); margin-top: 0; }
 h2 { font-size: 1.9rem; }
 h3 { font-size: 1.55rem; }
 h4 { font-size: 1.25rem; }
@@ -42,7 +42,7 @@ body {
   margin: 0;
   background-color: var(--bg);   /* unify backgrounds */
   color:            var(--text);
-  font-family: sans-serif;
+  font-family: "inter", sans-serif;
 }
 
 /* 2) Turn body into a flex column */
@@ -61,7 +61,27 @@ main {
   box-sizing: border-box;
 }
 
-h1 {
-  margin: 1rem 0;
-  font-size: 2.5rem;
+.post__content figure {
+  margin: 2.5rem auto;
+  text-align: center;
 }
+
+.post__content figure img {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  max-width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post__content figcaption {
+  font-size: 0.92rem;
+  color: var(--color-text-soft, #888);
+  margin-top: 0.7rem;
+  font-style: italic;
+  line-height: 1.4;
+  text-align: center;
+}
+
+

@@ -1,12 +1,12 @@
 ---
 layout: ../../layouts/MarkdownPostLayout.astro
-title: My Second Blog Post
+title: Coming Soon
 author: Yash Patel
-description: "After learning some Astro, I couldn't stop!"
+description: "Click Clack Moo"
 image:
-    url: "https://docs.astro.build/assets/arc.webp"
-    alt: "The Astro logo on a dark background with a purple gradient arc."
+    url: "https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/01/20250301194604-a121a0d4-xl.jpg"
+    alt: "NYC"
 pubDate: 2025-07-20
-tags: ["astro", "blogging", "learning in public", "successes"]
+tags: ["Blog"]
 ---
-After a successful first week learning Astro, I decided to try some more. I wrote and imported a small component from memory!
+Come back later, this one is still cooking.

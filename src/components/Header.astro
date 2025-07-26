@@ -1,6 +1,6 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
-
+import "../styles/glass3d.css";
 const nav = [
   { href: "/#hero",                   label: "Home" },
   { href: "/#professional-experience", label: "Hire me" },
@@ -9,10 +9,7 @@ const nav = [
 ];
 ---
 <header
-  class="
-    sticky top-0 z-30
-    backdrop-blur-md
-    text-[color:var(--text)]
+  class="glass3d no-rim sticky top-0 z-30
   "
   style="height: 4.5rem;"
 >

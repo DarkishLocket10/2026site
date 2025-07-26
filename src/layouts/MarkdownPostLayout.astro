@@ -29,6 +29,14 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
 ---
 <BaseLayout pageTitle={title} description={description}>
   <article class="post">
+
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+
+  <a href="/blog" class="back-button" aria-label="Back to blog list">
+    <span class="iconify" data-icon="mdi:arrow-left" aria-hidden="true"></span>
+  </a>
+
+
     <header class="post__header">
       <h1 class="post__title">{title}</h1>
       {description && <p class="post__description">{description}</p>}
@@ -48,7 +56,7 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
           ))}
         </nav>
       )}
-      {image?.url && (
+      {image?.url && frontmatter.showHero !== false &&(
         <figure class="hero">
           <img
             src={image.url}
@@ -60,6 +68,8 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
           />
           {image.alt && <figcaption class="hero__caption">{image.alt}</figcaption>}
         </figure>
+
+        
       )}
     </header>
 
@@ -86,8 +96,36 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
 </BaseLayout>
 
 <style>
+
+.back-button {
+
+  top: 1rem;
+  left: 0.8rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--card-tag-bg, #e0e0e0);
+  color: var(--card-tag-text, #333);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.back-button:hover,
+.back-button:focus-visible {
+  background: var(--card-tag-hover-bg, #ccc);
+  transform: scale(1.05);
+  outline: none;
+}
+
+
   :root {
-    --font-sans: system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+    --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
     --font-serif: Georgia,'Palatino Linotype',Palatino,'Book Antiqua',serif;
     --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
@@ -98,8 +136,21 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
     --line-height: 1.6;
     --transition: 150ms cubic-bezier(.4,0,.2,1);
   }
+ 
+    .post__content.prose,
+    .post__content.prose h1,
+    .post__content.prose h2,
+    .post__content.prose h3,
+    .post__content.prose h4,
+    .post__content.prose h5,
+    .post__content.prose h6,
+    .post__content.prose strong {
+      font-family: "Inter", sans-serif;
+      font-weight: 200;
+    }
 
 
+    
   .post {
     font-family: var(--font-serif);
     color: var(--text);
@@ -124,7 +175,7 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
   .post__description {
     font-size: 1.25rem;
     font-weight: 400;
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     margin: 0 0 1.25rem;
     color: var(--color-text-soft);
   }
@@ -286,6 +337,14 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
   }
 
 
+  .post__content ul, .post__content ol {
+    list-style: disc inside;
+    margin-left: 1.5rem;
+  }
+
+  .post__content ol {
+    list-style: decimal inside;
+  }
 
 
   
