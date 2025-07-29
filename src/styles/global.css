@@ -17,10 +17,15 @@
   --card-tag-text: #52545a;
   --card-image-wrap-bg: #f3f4f6;
   --card-tag-hover-bg: #b0bdd1;
+
+  --row-f1-bg: #fffce8;   /* pale yellow  */
+  --row-f2-bg: #f0f8ff;   /* alice‑blue   */
+  --row-f3-bg: #f3fbf4;   /* mint green   */
+
 }
 .dark {
   --bg:   #282c34;
-  --text: #e6e6e6;
+  --text: #dfdfdf;
   --color-text-soft: #afaeae;
   --color-bg-alt: #3c5964;
   --color-code-bg: #f1f4f7;
@@ -32,6 +37,11 @@
   --card-tag-text: #cfd3d8;
   --card-image-wrap-bg: #2a2e32;
   --card-tag-hover-bg: #3c5964;
+
+    /* the same hues, but much darker for a dark UI */
+    --row-f1-bg: #3e3a25; /* muted yellow‑slate  */
+    --row-f2-bg: #1e2937; /* blue‑slate          */
+    --row-f3-bg: #1f3121; /* green‑slate         */
 }
 
 
@@ -191,3 +201,24 @@ h1 {
   background: rgba(0,0,0,0.03);
 }
 
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;   /* aligns numbers nicely */
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d0d7de;            /* GitHub‑like neutral border */
+}
+
+@media (prefers-color-scheme: dark) {
+  .comparison-table th,
+  .comparison-table td { border-color: #30363d; }
+}
+
+/* ----------  function‑group backgrounds  ---------- */
+.comparison-table .f1 { background: var(--row-f1-bg); }
+.comparison-table .f2 { background: var(--row-f2-bg); }
+.comparison-table .f3 { background: var(--row-f3-bg); }

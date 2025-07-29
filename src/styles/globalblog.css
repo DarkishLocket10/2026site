@@ -84,4 +84,20 @@ main {
   text-align: center;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
 
+th,
+td {
+  border: 1px solid var(--text);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+thead {
+  background-color: #eec2ff1c;
+  font-weight: bold;
+}
