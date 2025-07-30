@@ -14,8 +14,9 @@ type EducationItem = {
   details: string;
 };
 
-const { title = 'Education', items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
+const {items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
 ---
+
 <section id="education" class="mx-auto max-w-7xl px-6 py-6
   opacity-0 -translate-x-6
   transition-all duration-700 ease-out
@@ -24,7 +25,7 @@ const { title = 'Education', items = [] }: { title?: string; items?: EducationIt
   "
     data-fade>
   <h2 class="text-5xl font-extrabold ">
-    {title}
+    <h2 class="text-2xl font-semibold mb-6">Education</h2>
   </h2>
 
   <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-12
@@ -49,12 +50,36 @@ const { title = 'Education', items = [] }: { title?: string; items?: EducationIt
           <h3 class="mt-2 text-2xl font-semibold ">
             {institution}
           </h3>
+          <h4>
           {details}
+          </h4>
           <p class="mt-1 ">
             
           </p>
         </div>
       </div>
     ))}
+   
+  <style>
+
+
+h2 {
+  font-size: clamp(2.2rem, 5vw, 2.25rem);
+  margin-top: 0;
+}
+
+h3 {
+  font-size: clamp(1.2rem, 2vw, 2.25rem);
+  margin-top: 0;
+}
+
+h4 {
+  font-size: clamp(.5rem, 1.3vw, 1rem);
+  font-weight: 400;
+  margin-top: -.25rem;
+}
+
+</style>
+
   </div>
 </section>

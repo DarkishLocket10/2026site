@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/MarkdownPostLayout.astro
-title: Comparing Scalar Optimization Methods – Quadratic Approximation, Fixed‑Step, and Backtracking Line Searches
+title: Comparing three classic 1D search methods
 author: Yash Patel
 description: "Minimizer? I hardly know her!"
 image:
@@ -36,7 +36,7 @@ My aim is two‑fold:
 
 ---
 
-### 1 Quadratic Approximation
+### Quadratic Approximation
 
 A single Taylor expansion anchors the entire search. At a chosen point $t_1$ we evaluate the function, its gradient, and its Hessian matrix:
 
@@ -66,7 +66,7 @@ $$
 
 ---
 
-### 2 Fixed‑Step Gradient Descent
+### Fixed‑Step Gradient Descent
 
 Classic steepest descent with a constant step size $s$ (here $s = \tfrac{1}{100}$ of the bracket width). Each update is
 
@@ -82,7 +82,7 @@ A small stepsize keeps things safe, but the cost is speed. A large stepsize risk
 
 ---
 
-### 3 Backtracking (Armijo) Line Search
+### Backtracking (Armijo) Line Search
 
 Start with a generous step $s_0$ ($\tfrac{1}{10}$ of the bracket) and shrink it geometrically ($s \leftarrow \beta s$, $\beta=0.5$) until Armijo’s condition holds:
 
@@ -205,3 +205,4 @@ The lesson that I can gain from this is that **context matters**. It's easy to g
 
 1. Antoniou, A., & Lu, W.‑S. (2007). *Practical Optimization*. Springer.
 2. Ellis, R. E. *Non‑Linear Data Analytics* – Class Notes 2–4 (2025 edition).
+

@@ -141,6 +141,30 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
     --transition: 150ms cubic-bezier(.4,0,.2,1);
   }
  
+    /* Typography hierarchy */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -.015em;
+      margin: 2.25rem 0 1rem;
+    }
+
+    h1 { font-size: clamp(2.2rem, 5vw, 2.25rem); margin-top: 0; }
+    h2 { font-size: 1.9rem; }
+    h3 { font-size: 1.55rem; }
+    h4 { font-size: 1.25rem; }
+    h5 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .06em; }
+    h6 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; /* gray-500 */ }
+
+  p {
+    margin: 0 0 1.25rem;
+    line-height: 1.6;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+
     .post__content.prose,
     .post__content.prose h1,
     .post__content.prose h2,
