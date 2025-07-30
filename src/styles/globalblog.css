@@ -101,3 +101,14 @@ thead {
   background-color: #eec2ff1c;
   font-weight: bold;
 }
+
+.post__content pre code {
+  white-space: pre-wrap;    /* wrap long lines */
+  word-wrap: break-word;
+}
+
+
+.markdown-table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}

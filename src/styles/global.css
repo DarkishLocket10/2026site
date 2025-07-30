@@ -201,6 +201,8 @@ h1 {
   background: rgba(0,0,0,0.03);
 }
 
+
+
 .comparison-table {
   width: 100%;
   border-collapse: collapse;
@@ -222,3 +224,26 @@ h1 {
 .comparison-table .f1 { background: var(--row-f1-bg); }
 .comparison-table .f2 { background: var(--row-f2-bg); }
 .comparison-table .f3 { background: var(--row-f3-bg); }
+
+
+.markdown table {         /* or .prose table if you use @tailwindcss/typography */
+  display: block;         /* lets overflow work on the table element itself   */
+  overflow-x: auto;       /* adds the horizontal scrollbar when needed        */
+  white-space: nowrap;    /* keeps long cell contents on one line             */
+  -webkit-overflow-scrolling: touch; /* smoother scrolling on iOS             */
+}
+
+
+  .table-img {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    .table-html {
+      display: none;
+    }
+    .table-img {
+      display: block;
+      width: 100%;
+    }
+  }

@@ -11,9 +11,7 @@ tags: ["Blog", "Computer Science"]
 showHero: false
 ---
 
-## Comparing Scalar Optimization Methods – Quadratic Approximation, Fixed‑Step, and Backtracking Line Searches
-
-### Abstract
+### What are we doing?
 
 Finding a minimizer is a deceptively simple goal: we want the point where a function bottoms‑out. Getting to that point can be wildly different depending on the algorithm we choose. In this post, I revisit three classic one‑dimensional search methods—**quadratic approximation**, **fixed‑step gradient descent**, and **backtracking (Armijo) line search**, and pit them against the same trio of textbook functions.
 
@@ -106,6 +104,7 @@ Think of it as a smarter version of fixed‑step: it *learns* how far it can saf
 
 ### Results
 
+<div class="table-html">
 <table class="comparison-table">
   <thead>
     <tr>
@@ -149,7 +148,8 @@ Think of it as a smarter version of fixed‑step: it *learns* how far it can saf
     </tr>
   </tbody>
 </table>
-
+</div>
+<img src="/postphotos/post 3 - Lines/table.png" alt="Table preview" class="table-img" loading="lazy" />
 
 
 † *Caveat:* for **f₃** the quadratic model returns the stationary point of the approximation, not the true minimizer (which is near $t=–7.274$). The mismatch illustrates how brittle a single‑point quadratic fit can be on oscillatory functions.
@@ -165,7 +165,7 @@ Think of it as a smarter version of fixed‑step: it *learns* how far it can saf
 
 ### Discussion
 
-*Quadratic Approximation* is wildly quick. one Shot and done, but it gambles on the curve really being quadratic nearby. On **f₁** that gamble paid off reasonably; on **f₃** it missed the valley altogether, highlighting it's trade-off between speed and robustness.
+*Quadratic Approximation* is wildly quick. One shot and done, but it gambles on the curve really being quadratic nearby. On **f₁** that gamble paid off reasonably; on **f₃** it missed the valley altogether, highlighting it's trade-off between speed and robustness.
 
 *Fixed‑Step* descent was more accurate, but had a much worse *iteration count* (500 steps on **f₂**!). A fixed stepsize struggles to balance cautiousness and urgency across different situations.
 
