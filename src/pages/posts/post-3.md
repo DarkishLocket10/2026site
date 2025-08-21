@@ -4,7 +4,7 @@ title: Comparing three classic 1D search methods
 author: Yash Patel
 description: "Minimizer? I hardly know her!"
 image:
-    url: "https://piwigo.darkishlocket10.me/_data/i/upload/2025/02/18/20250218213837-c798ba57-xl.jpg"
+    url: "/postphotos/post 3 - Lines/outputs.png"
     alt: "Figure 1: Left represents the graph in a rectilinear grid, right represents the graph when plotted according to a computed clustering of vertices"
 pubDate: 2025-07-29
 tags: ["Blog", "Computer Science"]
@@ -204,5 +204,4 @@ The lesson that I can gain from this is that **context matters**. It's easy to g
 ### References
 
 1. Antoniou, A., & Lu, W.‑S. (2007). *Practical Optimization*. Springer.
-2. Ellis, R. E. *Non‑Linear Data Analytics* – Class Notes 2–4 (2025 edition).
-
+2. Ellis, R. E. *Non‑Linear Data Analytics*
