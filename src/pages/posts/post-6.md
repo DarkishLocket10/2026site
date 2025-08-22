@@ -13,7 +13,6 @@ showHero: false
 
 <figure>
     <img src="/postphotos/post 6 - spotify/gambino.jpg" alt="Childish Gambino at Scotiabank Arena, shot by me" />
-  </a>
   <figcaption>Childish Gambino @ Scotiabank Arena, shot by me.</figcaption>
 </figure>
 
@@ -29,10 +28,8 @@ Recently, I found out that you can simply <u><a href="https://support.spotify.co
 
 **Let's pick apart my Spotify listening history.**
 
-
 <figure>
     <img src="/postphotos/post 6 - spotify/gambino2.jpg" alt="Childish Gambino at Scotiabank Arena, shot by me" />
-  </a>
   <figcaption>Before I hit you with a bunch of graphs, here's another shot of Childish Gambino @ Scotiabank Arena, also shot by me.</figcaption>
 </figure>
 
@@ -97,7 +94,6 @@ First, I aggregated the data by day to see how many hours I listened on each dat
 
 <figure>
     <img src="/postphotos/post 6 - spotify/daily_listening_hours.png" alt="Chart displaying my daily listening hours for the past eight years." />
-  </a>
   <figcaption>Chart displaying my daily listening hours for the past ~eight years.</figcaption>
 </figure>
 
@@ -108,7 +104,6 @@ Something I don't really see during the yearly Spotify Wrapped is how much I lis
 
 <figure>
     <img src="/postphotos/post 6 - spotify/avg_listening_heatmap.png" alt="Heatmap displaying my hourly listening amounts" />
-  </a>
   <figcaption>Average hours listened per day at each hour, by day. Darker cells indicate higher average hours.</figcaption>
 </figure>
 
@@ -123,32 +118,40 @@ Several patterns jump out to me:
 Python makes it incredibly easy to whip together a heatmap:
 
 ```python
-
 # Extract weekday (0=Monday) and hour of day
 df['weekday_num'] = df['timestamp'].dt.dayofweek
 df['hour'] = df['timestamp'].dt.hour
 
-# How many days exist for each weekday in the dataset?
-weekday_day_counts = df.groupby('weekday_num')['date'].nunique().to_dict()
+# Days present for each weekday
+weekday_day_counts = df.groupby('weekday_num')['date'].nunique()
 
 # Total hours for each (weekday, hour)
-heat = df.groupby(['weekday_num', 'hour'])['hours_played'].sum().reset_index()
-
-# Convert total hours to average hours per day for that weekday
-heat['avg_hours'] = heat.apply(
-    lambda row: row['hours_played'] / weekday_day_counts[row['weekday_num']], axis=1
+heat = (
+    df.groupby(['weekday_num', 'hour'])['hours_played']
+      .sum()
+      .reset_index()
 )
 
-# Pivot into a matrix form
+# Vectorized: divide by days for that weekday
+heat['avg_hours'] = heat['hours_played'] / heat['weekday_num'].map(weekday_day_counts)
+
+# Pivot to matrix
 pivot = heat.pivot(index='weekday_num', columns='hour', values='avg_hours')
 
-# Label the rows for readability
+# Labels
 week_labels = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 pivot.index = week_labels
 
-# Plot the heatmap
+# Plot
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 plt.figure(figsize=(12, 4))
-sns.heatmap(pivot, cmap='YlGnBu', cbar_kws={'label': 'Average Listening Hours per Day'})
+sns.heatmap(
+    pivot,
+    cmap='YlGnBu',
+    cbar_kws={'label': 'Average Listening Hours per Day'},
+)
 plt.title('Average Listening Heatmap: Day of Week vs Hour of Day')
 plt.xlabel('Hour of Day')
 plt.ylabel('Day of Week')
@@ -164,7 +167,6 @@ The plot focuses on the period from January 2023 onwards to give a clearer pictu
 
 <figure>
     <img src="/postphotos/post 6 - spotify/forecast.png" alt="Graph displaying my listening trends" />
-  </a>
   <figcaption>My listening trends with a forecast.</figcaption>
 </figure>
 
@@ -176,7 +178,6 @@ Here, I aggregated the listening hours by month and genre. I plotted this inform
 
 <figure>
     <img src="/postphotos/post 6 - spotify/genre_stacked.png" alt="Stacked area chart displaying my top five genres" />
-  </a>
   <figcaption>Stacked area chart displaying my top five genres</figcaption>
 </figure>
 
@@ -188,7 +189,6 @@ Alongside my evolution in taste, we can take a look at the monthly share of hour
 
 <figure>
     <img src="/postphotos/post 6 - spotify/discovery_vs_comfort.png" alt="100% area chart showing times of music discovery followed by comfort listening" />
-  </a>
   <figcaption>100% area chart showing times of music discovery followed by comfort listening.</figcaption>
 </figure>
 
@@ -197,7 +197,6 @@ I skip songs like there's no tomorrow sometimes. I am actually very excited abou
 
 <figure>
     <img src="/postphotos/post 6 - spotify/skip_heatmap.png" alt="Heatmap displaying my hourly listening amounts" />
-  </a>
   <figcaption>Heatmap displaying how much I skip music for each hour of the day. A *lighter* square means I'm skipping more often. The highest skip ratio found was 60%.</figcaption>
 </figure>
 
@@ -208,7 +207,6 @@ This is probably my favourite graph that I have put together because I've learne
 Sifting through my own Spotify history has been super nostalgic and surprisingly insightful. Simple aggregations revealed listening trends that I didn't know existed, like *12:00 a.m. on a Sunday* being when I decide to start jamming out. It's fun taking a look at the data points and trying to remember what was going on in my life during that time. A pleasant surprise was discovering habits that I can act on. My original idea for this post was to take a dive into a huge dataset while also having a retrospective on life. I noticed my musical tastes shifted alongside pivotal moments in my life. Of course, those major moments in my life aren't displayed here, but echoes of them are hidden in the shifts, peaks, and quiet valleys of my listening history.
 
 <figure>
-    <img src="/postphotos/post 6 - spotify/gambino3.jpg" alt=" Another Childish Gambino at Scotiabank Arena, shot by me" />
-  </a>
+    <img src="/postphotos/post 6 - spotify/gambino3.jpg" alt="Another Childish Gambino at Scotiabank Arena, shot by me" />
   <figcaption>You made it to the end! Here's another picture I took of Childish Gambino @ Scotiabank Arena. I swear I've been to more concerts- I am just very proud of the photos I took here. Also, I need to upload those other photos so I can use them here.</figcaption>
 </figure>

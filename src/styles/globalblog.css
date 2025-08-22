@@ -104,6 +104,7 @@ thead {
 .post__content pre code {
   white-space: pre-wrap;    /* wrap long lines */
   word-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 
@@ -111,3 +112,31 @@ thead {
   max-width: 100%;
   overflow-x: auto;
 }
+
+/* keep display math from widening the page */
+.katex-display,
+mjx-container[display="true"] {
+  max-width: 100%;
+  overflow-x: auto;       /* scroll inside math if still too wide */
+  overflow-y: hidden;
+}
+
+/* base inline-block so centering still works */
+.katex-display > .katex { display: inline-block; }
+
+/* shrink math responsively; adjust numbers to taste */
+.katex,
+.katex-display .katex,
+mjx-container .mjx-math {
+  font-size: clamp(0.80rem, 2.6vw, 1.05rem);
+}
+
+/* optional: display math slightly larger than inline, but still shrinky */
+.katex-display .katex,
+mjx-container[display="true"] .mjx-math {
+  font-size: clamp(0.90rem, 3.0vw, 1.15rem);
+}
+
+/* belt-and-suspenders */
+body { overflow-x: hidden; }
+

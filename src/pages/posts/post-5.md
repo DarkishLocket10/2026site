@@ -150,9 +150,9 @@ Xmz = zscore(Xm);
 Z2 = U(:,1:2) * S(1:2,1:2);       % unscaled training coordinates
 Zplot = 10 * Z2;                  % display-only scaling
 
-% RBF SVM with gamma = 1  ⇒  KernelScale = 1/sqrt(2)
+% RBF SVM with gamma = 1  ⇒  KernelScale = 10/sqrt(2)
 model = fitcsvm(Z2, labels, 'KernelFunction','rbf', ...
-                'KernelScale', 1/sqrt(2), 'BoxConstraint', 1);
+                'KernelScale', 10/sqrt(2), 'BoxConstraint', 1);
 
 pred = predict(model, Z2);        % resubstitution accuracy
 acc  = mean(pred == labels);
