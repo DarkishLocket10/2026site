@@ -20,11 +20,13 @@ showHero: false
 
 I've been thinking a lot about how I can mess around with data to scratch an itch I've been feeling over the past few months. There have been two concrete things I've been wanting to do:
 
-• Play with a large, real dataset.
+• Play with a large, real dataset again.
 
 • Find meaningful conclusions and put them on display.
 
-Recently, I found out that you can simply <u><a href="https://support.spotify.com/us/article/data-rights-and-privacy-settings/" target="_blank">request your extended listening data from Spotify</a></u> with a few clicks and a consent signature. Since I’ve been reasonably faithful to listening to my music on Spotify, I now have a huge dataset that provides countless opportunities for analysis.
+Yes, we do get to do this in university, but that's a pretty closed environment typically with synthetic data. I had an incredible amount of fun during my internship when I got to handle a huge dataset with real data, riddled with problems waiting to be solved. I very much understand how insane that sounds, and I can already hear data analysts groan at the sound of that, but I genuinely find it satisfying when I trudge through the data cleaning step, and create some meaningful insights. Honestly, *I miss it*.
+
+Recently, I found out that you can simply <u><a href="https://support.spotify.com/us/article/data-rights-and-privacy-settings/" target="_blank">request your extended listening data from Spotify</a></u> with a few clicks and a consent signature. Since I’ve been reasonably faithful to listening to my music on Spotify, I have accumulated a huge dataset that provides countless opportunities for analysis.
 
 **Let's pick apart my Spotify listening history.**
 
@@ -51,6 +53,11 @@ Spotify, like many social platforms, collects an incredible amount of data from 
 ***What am I going to do with the data?***
 
 Let's process the data, create some graphs, and draw some insights. I'm going to have to clean the data and explore the history. I've attempted to create a time-series forecast of my listening habits, alongside other very colourful charts.
+
+
+***That sounds difficult. Why would you do this to yourself?***
+
+Like I mentioned earlier, *I like it*. As masochistic as that may sound, I'm sometimes drawn to complex problems. Honestly, after working with many different messy datasets, my Spotify dataset is pretty clean, all things considered. The problem solving comes in during data translation, so I can process it easily; and then figuring out how to creatively display the data I want to analyze in the best way possible.
 
 All of my code will be in Python, using familiar libraries like `pandas`, `matplotlib`, and `pmdarima`.
 
@@ -90,11 +97,11 @@ The earliest play in the dataset is September 4, 2017, and the latest play is Ja
 ---
 
 ### Listening over time
-First, I aggregated the data by day to see how many hours I listened on each date. The result, plotted below, covers the entire seven-plus years of history. Peaks correspond to marathon listening sessions, whereas the **troughs** are days when I hardly used Spotify.
+First, I aggregated the data by day to see how many hours I listened on each date. The result, plotted below, covers the entire seven-plus years of history. Peaks correspond to marathon listening sessions, whereas the troughs are days when I hardly used Spotify.
 
 <figure>
     <img src="/postphotos/post 6 - spotify/daily_listening_hours.png" alt="Chart displaying my daily listening hours for the past eight years." />
-  <figcaption>Chart displaying my daily listening hours for the past ~eight years.</figcaption>
+  <figcaption>My daily listening hours for the past ~eight years.</figcaption>
 </figure>
 
 What's fun is that I can relate those peaks to road trips and times of prolonged study sessions. I also see a general upward trend. My listening time started climbing in early 2023 and stayed high through 2024. More often, I found myself having music on in the background as I got older.
@@ -197,7 +204,7 @@ I skip songs like there's no tomorrow sometimes. I am actually very excited abou
 
 <figure>
     <img src="/postphotos/post 6 - spotify/skip_heatmap.png" alt="Heatmap displaying my hourly listening amounts" />
-  <figcaption>Heatmap displaying how much I skip music for each hour of the day. A *lighter* square means I'm skipping more often. The highest skip ratio found was 60%.</figcaption>
+  <figcaption>Heatmap displaying how much I skip music for each hour of the day. A lighter square means I'm skipping more often. The highest skip ratio found was ~60%.</figcaption>
 </figure>
 
 This is probably my favourite graph that I have put together because I've learned something new about myself here. I've recently been on a journey to <u><a href="https://www.youtube.com/watch?v=gzLPa6NbcrE/" target="_blank">cut down on the amount of decisions</a></u> that I make during the day. I can see myself get more more choosy during parts of the day where I might be trying to find my aforementioned "zone". Using this newfound information, it looks like I need to work on making more playlists that keep me in that focused state. Honestly, this data is so exciting to me because it provides a clear path to turn this knowledge into actionable steps.
@@ -208,5 +215,5 @@ Sifting through my own Spotify history has been super nostalgic and surprisingly
 
 <figure>
     <img src="/postphotos/post 6 - spotify/gambino3.jpg" alt="Another Childish Gambino at Scotiabank Arena, shot by me" />
-  <figcaption>You made it to the end! Here's another picture I took of Childish Gambino @ Scotiabank Arena. I swear I've been to more concerts- I am just very proud of the photos I took here. Also, I need to upload those other photos so I can use them here.</figcaption>
+  <figcaption>Hey, you made it to the end! Here's another picture I took of Childish Gambino @ Scotiabank Arena. I swear I've been to more concerts- I am just very proud of the photos I took here. Also, I need to upload those other photos so I can use them here.</figcaption>
 </figure>
