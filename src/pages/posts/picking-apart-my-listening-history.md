@@ -44,7 +44,7 @@ My listening history spans from September 2017 all the way to January 2025. Over
 
 ***Why Spotify?***
 
-I keep coming back to this platform because of its insane recommendation algorithm. Of course, since I have been using it for so long, Spotify has a dense dataset to learn my listening patterns to suggest my next favourite song.
+I keep coming back to this platform because of its insane recommendation algorithm. Since I have been using it for so long, Spotify has a dense dataset to learn my listening patterns to suggest my next favourite song.
 
 ***Why am I doing this?***
 
@@ -67,6 +67,9 @@ The extended streaming history I requested from Spotify comes as large JSON file
 
 Here's some Python code to paint an idea of what we are looking at:
 
+<details>
+  <summary><strong>Click here to reveal the code snippet</strong></summary>
+
 ```python
 import os, json
 import pandas as pd
@@ -88,6 +91,7 @@ df['date'] = df['timestamp'].dt.date
 # Convert milliseconds to hours for easier interpretation
 df['hours_played'] = pd.to_numeric(df['ms_played'], errors='coerce').fillna(0) / (1000 * 60 * 60)
 ```
+</details>
 ‎
 
 The earliest play in the dataset is September 4, 2017, and the latest play is January 12, 2025. There were some days where I hardly listened to anything at all, and on others, it looked like I just kept a playlist running for hours.
@@ -120,9 +124,10 @@ Several patterns jump out to me:
 
 • Early mornings (around 5:00 a.m. to 7:00 a.m.) are almost silent. I only listen to music when I'm <u><a href="https://jamesclear.com/reset-the-room" target="_blank">resetting the house</a></u> before my morning coffee and book, where I prefer complete silence.
 
-• Sunday morning has a spike as well. I never really thought too much about what I'm doing at that time and day, but thinking about it, that statistic is definitely me having a random and abnormal burst of energy to get things done. That happened a lot during high school and early university, before I developed more control over my routine.
+• There's a consistent listening period from Saturday at 1:00 PM until it hits 1:00 AM on Sunday. After that, the amount of listening tends to die down. You can see a consistent routine here. Looking back, I would probably use my free time to catch up on work or play games- both of those activities often involve music in the background. It's fun to see what times I call it quits for the night. 
 
-Python makes it incredibly easy to whip together a heatmap:
+<details>
+  <summary><strong>Click here to reveal the code snippet</strong></summary>
 
 ```python
 # Extract weekday (0=Monday) and hour of day
@@ -164,8 +169,8 @@ plt.xlabel('Hour of Day')
 plt.ylabel('Day of Week')
 plt.tight_layout()
 plt.show()
-
 ```
+</details>
 
 ### Let's do some forecasting
 I attempted to forecast how many hours I'd listen in the weeks following the start of January 2025. Since daily data is pretty noisy, I aggregated it into weekly totals and used the `pmdarima` library, selecting an appropriate ARIMA model.
@@ -211,7 +216,7 @@ This is probably my favourite graph that I have put together because I've learne
 
 ### Closing thoughts
 
-Sifting through my own Spotify history has been super nostalgic and surprisingly insightful. Simple aggregations revealed listening trends that I didn't know existed, like *12:00 a.m. on a Sunday* being when I decide to start jamming out. It's fun taking a look at the data points and trying to remember what was going on in my life during that time. A pleasant surprise was discovering habits that I can act on. My original idea for this post was to take a dive into a huge dataset while also having a retrospective on life. I noticed my musical tastes shifted alongside pivotal moments in my life. Of course, those major moments in my life aren't displayed here, but echoes of them are hidden in the shifts, peaks, and quiet valleys of my listening history.
+Sifting through my own Spotify history has been super nostalgic and surprisingly insightful. Simple aggregations revealed listening trends that I didn't know existed, like *12:00 a.m. on a Sunday* being when I consistently jam out before calling it a night. It's fun taking a look at the data points and trying to remember what was going on in my life during that time. A pleasant surprise was discovering habits that I can act on. My original idea for this post was to take a dive into a huge dataset while also having a retrospective on life. I noticed my musical tastes shifted alongside pivotal moments in my life. Of course, those major moments in my life aren't displayed here, but echoes of them are hidden in the shifts, peaks, and quiet valleys of my listening history.
 
 <figure>
     <img src="/postphotos/post 6 - spotify/gambino3.jpg" alt="Another Childish Gambino at Scotiabank Arena, shot by me" />

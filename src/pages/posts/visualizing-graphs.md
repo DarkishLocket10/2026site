@@ -7,7 +7,7 @@ image:
     url: "/postphotos/post 2 - edge graphs/Graphs.svg"
     alt: "Figure 1: Left represents the graph in a rectilinear grid, right represents the graph when plotted according to a computed clustering of vertices"
 pubDate: 2025-07-20
-tags: ["Blog", "Computer Science"]
+tags: ["Computer Science"]
 showHero: false
 ---
 Graphs are everywhere. From the complex web of social networks, to transportation systems, as these networks grow, interpreting their structure becomes challenging. We can use linear algebra to provide methods to reveal patterns. Let's explore graph representation through Laplacian matrices and spectral clustering using Fiedler vectors, which can provide practical insights into graph analysis.

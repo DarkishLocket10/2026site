@@ -7,7 +7,7 @@ image:
     url: "/postphotos/post 3 - Lines/outputs.png"
     alt: "Figure 1: Left represents the graph in a rectilinear grid, right represents the graph when plotted according to a computed clustering of vertices"
 pubDate: 2025-07-29
-tags: ["Blog", "Computer Science"]
+tags: ["Computer Science"]
 showHero: false
 ---
 

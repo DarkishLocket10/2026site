@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/MarkdownPostLayout.astro
-title: '5 things I learned from my first short film'
+title: 'Five things I learned from my first short film'
 pubDate: 2025-07-31
 description: 'cinema?'
 author: 'Yash Patel'

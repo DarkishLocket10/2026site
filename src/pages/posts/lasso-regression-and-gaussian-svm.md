@@ -7,7 +7,7 @@ author: 'Yash Patel'
 image:
     url: '/postphotos/post 5 - Lasso/traceplot.png'
     alt: 'Plot Representing Lines of best fit for OLS and CLS relative to the data points.'
-tags: ["Blog", "Computer Science"]
+tags: ["Computer Science"]
 showHero: false
 ---
 
