@@ -1,6 +1,12 @@
 <footer>
-<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 1.1rem; padding: 1rem 2rem;">
-    <span>© Yash Patel. All rights reserved.</span>
-    <a href="/#hero" style="text-decoration: none; color: inherit; font-weight: bold;">Back to top ↑</a>
-</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 1.1rem; padding: 1rem 2rem;">
+        <span>© Yash Patel. All rights reserved.</span>
+        <a href="/#hero" id="back-to-top" style="text-decoration: none; color: inherit; font-weight: bold;">Back to top ↑</a>
+    </div>
+    <script type="module" is:inline>
+        document.getElementById('back-to-top')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        });
+    </script>
 </footer>

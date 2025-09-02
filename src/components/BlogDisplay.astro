@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BlogPostCard from '../layouts/BlogPostCard.astro';
 import '../types/blog.ts';
+import {Icon} from 'astro-icon/components';
 
 
 
@@ -31,6 +32,8 @@ allPosts.sort(
 );
 ---
 
+
+
 <div class="mx-auto max-w-7xl px-6 py-6
   opacity-0 -translate-x-6
   transition-all duration-700 ease-out
@@ -39,8 +42,20 @@ allPosts.sort(
   "
     data-fade>
 <h2 class="text-2xl font-semibold mb-6">My recent blog posts</h2>
+
 <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     {allPosts.slice(0, 4).map(post => <BlogPostCard post={post} />)}
+
+    <a
+        href="/blog"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Email me"
+        class="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-[#9C84EE]/10 transition-colors"
+    >
+        <Icon name="simple-icons:lbry" size={24} />
+        <span class="font-medium">View all posts</span>
+    </a>
 
 </div>
 </div>
