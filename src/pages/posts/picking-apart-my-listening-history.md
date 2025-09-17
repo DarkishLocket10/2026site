@@ -16,13 +16,13 @@ showHero: false
   <figcaption>Childish Gambino @ Scotiabank Arena, shot by me.</figcaption>
 </figure>
 
-### Setting the stage
+### Setting the tempo
 
 I've been thinking a lot about how I can mess around with data to scratch an itch I've been feeling over the past few months. There have been two concrete things I've been wanting to do:
 
-• Play with a large, real dataset again.
+- Play with a large, real dataset again.
 
-• Find meaningful conclusions and put them on display.
+- Find meaningful conclusions and put them on display.
 
 Yes, we do get to do this in university, but that's a pretty closed environment typically with synthetic data. I had an incredible amount of fun during my internship when I got to handle a huge dataset with real data, riddled with problems waiting to be solved. I very much understand how insane that sounds, and I can already hear data analysts groan at the sound of that, but I genuinely find it satisfying when I trudge through the data cleaning step, and create some meaningful insights. Honestly, *I miss it*.
 
