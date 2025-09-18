@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/MarkdownPostLayout.astro
 title: 'Creating CullPix'
-pubDate: 2025-09-18
+pubDate: 2025-09-17
 description: 'Building my very own app'
 author: 'Yash Patel'
 image:
