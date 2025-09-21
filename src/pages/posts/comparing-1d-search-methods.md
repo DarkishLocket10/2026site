@@ -13,7 +13,7 @@ showHero: false
 
 ### What are we doing?
 
-Finding a minimizer is a deceptively simple goal: we want the point where a function bottoms‑out. Getting to that point can be wildly different depending on the algorithm we choose. In this post, I revisit three classic one‑dimensional search methods—**quadratic approximation**, **fixed‑step gradient descent**, and **backtracking (Armijo) line search**, and pit them against the same trio of textbook functions.
+Finding a minimizer is a deceptively simple goal: we want the point where a function bottoms‑out. Getting to that point can be wildly different depending on the algorithm we choose. In this post, I revisit three classic one‑dimensional search methods-**quadratic approximation**, **fixed‑step gradient descent**, and **backtracking (Armijo) line search**, and pit them against the same trio of textbook functions.
 
 My aim is two‑fold:
 

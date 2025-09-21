@@ -29,7 +29,7 @@ I got into three film classes: two of them being introduction to film theory and
 ### I should mention...
 As much as I love film, I am not an expert. I have <u><a href="https://piwigo.darkishlocket10.me/" target="_blank">five years of photography</a></u> under my belt, so I understand basic camera fundamentals. Before this film, my main knowledge base came from an ungodly amount of time spent watching <u><a href="https://trakt.tv/users/darkishlocket10" target="_blank">movies and TV shows</a></u>. I learned a crazy amount from this project, and I'm super excited to keep filming.
 
-Another thing—there wasn't really a budget. We lucked out on gear because I hoard a bunch of camera equipment, so we used my photography/videography kit:  a gimbal had been gathering dust, my Sony α7R V, four lenses, a tripod, and lavalier microphones (can't be too careful, right?).
+Another thing-there wasn't really a budget. We lucked out on gear because I hoard a bunch of camera equipment, so we used my photography/videography kit:  a gimbal had been gathering dust, my Sony α7R V, four lenses, a tripod, and lavalier microphones (can't be too careful, right?).
 
 Anyway, here are some of the most important things I took away from working on this project.
 
@@ -54,7 +54,7 @@ One of my best friends has this nice philosophy that he applies to life when he'
 
 ### 2. Listen to notes
 
-Listening helps, and real understanding goes a long way- whatever that means. But seriously though, you need to listen to the people around you. There were times when I got lost in the sauce, trying to perfectly satisfy my personal vision, but that wasn't what the film needed. Of course I wasn't a complete goofball: when someone said, "Hey, that method doesn't look right," or "Hey, we're a bit tight on time—let's try it *this* way", I didn't shrug them off. I implemented their notes, and in the long run it really helped us out. At the time, I had a hard time coming to terms with their words, but sometimes you need to understand that your team members aren't trying to sabotage the film or destroy your vision. They want what's best for your vision and the film as a whole. Trusting the people around you is wildly important, so getting out of your own way and hearing out what others have to say benefits everyone.
+Listening helps, and real understanding goes a long way- whatever that means. But seriously though, you need to listen to the people around you. There were times when I got lost in the sauce, trying to perfectly satisfy my personal vision, but that wasn't what the film needed. Of course I wasn't a complete goofball: when someone said, "Hey, that method doesn't look right," or "Hey, we're a bit tight on time-let's try it *this* way", I didn't shrug them off. I implemented their notes, and in the long run it really helped us out. At the time, I had a hard time coming to terms with their words, but sometimes you need to understand that your team members aren't trying to sabotage the film or destroy your vision. They want what's best for your vision and the film as a whole. Trusting the people around you is wildly important, so getting out of your own way and hearing out what others have to say benefits everyone.
 
 ---
 ### 3. Don't be afraid to try new things
@@ -73,7 +73,7 @@ Here's where I can thank my teammates for their endless patience. From day one, 
 ---
 ### 4. Try to not get disheartened when things don't work at first
  
-Shit happens. On the first few days of filming, I had plans and backup plans. At times, I had backup plans for the backup plans. Who am I, Batman? No. Seriously, we faced several catastrophic problems that I couldn't account for. Instead of panicking, we regrouped and constructed a new plan with what we had. I was even met with times where I found a mistake and felt a semblance of hopelessness. That was wildly dramatic. I had time and angels of group members. Whenever a mistake surfaced, we flagged it immediately and solved it together. Though the days of filming were wildly laborious, each person was a trooper, and we got that shit done. These moments of friction aren't meant to bring you down; they're opportunities to learn. Solving a tough problem can be incredibly rewarding—you might find your brain working in ways you never expected.
+Shit happens. On the first few days of filming, I had plans and backup plans. At times, I had backup plans for the backup plans. Who am I, Batman? No. Seriously, we faced several catastrophic problems that I couldn't account for. Instead of panicking, we regrouped and constructed a new plan with what we had. I was even met with times where I found a mistake and felt a semblance of hopelessness. That was wildly dramatic. I had time and angels of group members. Whenever a mistake surfaced, we flagged it immediately and solved it together. Though the days of filming were wildly laborious, each person was a trooper, and we got that shit done. These moments of friction aren't meant to bring you down; they're opportunities to learn. Solving a tough problem can be incredibly rewarding-you might find your brain working in ways you never expected.
 
 
 <figure>
