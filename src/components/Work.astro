@@ -73,21 +73,17 @@ const { title = 'Work', items = [] }: Props = Astro.props;
         </div>
         )}
 
-          <div class="flex-shrink-0 flex items-start justify-center p-4">
-            <img
-              src={imageSrc}
-              alt={altText}
-              loading="lazy"
-              class="
-                p-1
-                max-w-full max-h-full
-                object-contain
-                transform scale-95
-                border-b-4 border-current/20
-                rounded-lg
-              "
-            />
-          </div>
+    <div class="flex-shrink-0 p-4">
+      <div class="w-full aspect-[32/10.25] overflow-hidden rounded-lg border-b-4 border-current/20">
+        <img
+          src={imageSrc}
+          alt={altText}
+          loading="lazy"
+          class="w-full h-full object-cover" 
+        />
+      </div>
+    </div>
+
 
           <div class="mt-[3px] px-4 text-left flex-1 overflow-y-auto scrollbar">
             <p class="text-sm font-medium text-current whitespace-pre-wrap">

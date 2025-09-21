@@ -11,7 +11,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 { font-size: clamp(2.2rem, 5vw, 2.25rem); margin-top: 0; }
 h2 { font-size: 1.9rem; }
 h3 { font-size: 1.55rem; }
-h4 { font-size: 1.25rem; }
+h4 { font-size: 1.35rem; }
 h5 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .06em; }
 h6 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; /* gray-500 */ }
 
@@ -159,4 +159,35 @@ ul li, ol li {
 /* Adjusts the overall list indentation */
 ul, ol {
   padding-left: 1.5em; /* or use a pixel value like 20px */
+}
+
+/* Baseline: make code blocks scroll sideways if they overflow */
+:where(pre) {
+  max-width: 100%;
+  overflow-x: auto;       /* ← horizontal scrollbar when needed */
+  overflow-y: hidden;
+  white-space: pre;       /* preserve code formatting, no wrapping */
+  box-sizing: border-box; /* keeps padding from pushing width wider */
+  -webkit-overflow-scrolling: touch; /* smooth on iOS */
+}
+
+/* Keep <code> from reintroducing wrapping rules via themes */
+:where(pre > code) {
+  white-space: inherit;
+}
+
+/* Optional — nicer, compact horizontal scrollbar */
+:where(pre)::-webkit-scrollbar {
+  height: 8px;            /* horizontal scrollbar height */
+}
+:where(pre)::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: color-mix(in oklab, currentColor 40%, transparent);
+}
+:where(pre)::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Firefox thin scrollbar */
+:where(pre) {
+  scrollbar-width: thin;
 }

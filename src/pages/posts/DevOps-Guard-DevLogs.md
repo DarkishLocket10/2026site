@@ -16,6 +16,8 @@ DevOpsGuard is envisioned as a web API service that tracks work items (tickets),
 
 I realized that my .NET and C# skills were developed during the second year of my degree, but haven't really been used all that much since. Over the past four days, I took it upon myself to carefully build an application from the ground up and log everything. This will help me revisit this part of my skillset, rebuild it, and come out with a new project under my belt.
 
+<u><a href="https://github.com/DarkishLocket10/devops-guard" target="_blank">Check it out on GitHub</a></u>
+
 <figure>
   <a>
     <img src="/postphotos/post 8 - devops/devops.png" alt="Screenshot of the DevOps Guard dashboard" />
@@ -32,7 +34,7 @@ I had several constraints/goals I set out for this project:
 - OpenAPI with summaries and examples
 - Background Job (daily) to snapshot metrics
 - CSV export for history
-- Docker Compa; GHCR image publishing
+- Docker Compose for API; GHCR image publishing
 - A single-file dashboard (no Node) served from wwwroot/
 
 ---
@@ -47,6 +49,7 @@ Sanity Checks
 - `docker run hello-world` (success)
 - `dotnet new`(works)
 - Browser opens `https://localhost<port>/swagger`
+
 These are some super simple validations to make sure everything is working before I kicked things off.
 
 ---
@@ -58,7 +61,6 @@ src/
   DevOpsGuard.Domain/        // entities, enums
   DevOpsGuard.Infrastructure/ // EF Core DbContext, configurations, repositories, migrations
   DevOpsGuard.Api/            // minimal API, endpoints, filters, wwwroot dashboard
-
 ```
 
 Key design decisions:
