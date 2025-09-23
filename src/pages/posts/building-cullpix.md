@@ -80,7 +80,7 @@ Displaying hundreds of thumbnails in the sidebar was another potential bottlenec
 ---
 
 ### That was a lot
-Writing CullPix taught me so much about C++. It honestly felt like moving from building with LEGO bricks to working in a woodworking shop. What's cool is that I get to use the sharp tools! I did get to reintroduce myself to the fine art of memory management, which is something I learned back in my second year of university. Honestly, it's not scared at all, and Qt's parent-child hierarchy makes ownership explicit. You still need to think about object lifetimes, especially when threads are involved, yadda yadda... But hey, the app is super fast, so that's pretty cool. Honestly, the biggest thing I took away from this is something invalulabe to me: ***Proof***.
+Writing CullPix taught me so much about C++. It honestly felt like moving from building with LEGO bricks to working in a woodworking shop. What's cool is that I get to use the sharp tools! I did get to reintroduce myself to the fine art of memory management, which is something I learned back in my second year of university. Honestly, it's not scary at all, and Qt's parent-child hierarchy makes ownership explicit. You still need to think about object lifetimes, especially when threads are involved, yadda yadda... But hey, the app is super fast, so that's pretty cool. Honestly, the biggest thing I took away from this is something invalulabe to me: ***Proof***.
 
 <figure>
     <img src="/postphotos/post 7 - cullpix/me.jpeg" alt="me after an all-night crunch session during exam season" />
