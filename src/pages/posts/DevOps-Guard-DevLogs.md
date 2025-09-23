@@ -421,9 +421,9 @@ Each time I hit an error, I:
 
 ### High-level flow (Mermaid)
 
-[[Click here for a link to the Chart on mermaid.js]](https://mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=share#pako:eNp1UNtOwkAQ_ZXJPGnSEgqFrhtjws1IJPHSYIzUh7Vd2gbabbZbBYF_d3uBYIz7sDuzc-bMObNDXwQcKS7X4suPmFQwe_ZSLwWYT8E094NCRRRezcHj1Lzn271p3oCOS4h-_kPMpzVHfddAmNzCSEgOJWA8XFy4TzNwufzk8vK9BubFRyhZFsGQ-atQiiIN6gKA--kv7kSueFD1xD6nMGbxegtuyrI8Eqrh4Meecuq1nvVH4Emd5mzE_NI5cl9gssmE3sW5l6b6kPHGeVlCA0MZB0iVLLiBCZcJK1PcVfZRRTzhHlIdBkyuPPTSg-7JWPomRHJs007DCOmSrXOdFVnAFB_HTO8iOf1KbYzLkd6JQtqxKg6kO9wgJZ1W125fEct2-g7pdR0Dt0gdu2URx-5bDrF0rU8OBn5XQ9st4vTaZ8c6_ABmdZx6)
+[[Click here to view the chart on mermaid.jsS]](https://mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=share#pako:eNp1UNtOwkAQ_ZXJPGnSEgqFrhtjws1IJPHSYIzUh7Vd2gbabbZbBYF_d3uBYIz7sDuzc-bMObNDXwQcKS7X4suPmFQwe_ZSLwWYT8E094NCRRRezcHj1Lzn271p3oCOS4h-_kPMpzVHfddAmNzCSEgOJWA8XFy4TzNwufzk8vK9BubFRyhZFsGQ-atQiiIN6gKA--kv7kSueFD1xD6nMGbxegtuyrI8Eqrh4Meecuq1nvVH4Emd5mzE_NI5cl9gssmE3sW5l6b6kPHGeVlCA0MZB0iVLLiBCZcJK1PcVfZRRTzhHlIdBkyuPPTSg-7JWPomRHJs007DCOmSrXOdFVnAFB_HTO8iOf1KbYzLkd6JQtqxKg6kO9wgJZ1W125fEct2-g7pdR0Dt0gdu2URx-5bDrF0rU8OBn5XQ9st4vTaZ8c6_ABmdZx6)
 
-``` mermaid
+<pre class="mermaid">
 flowchart LR
 
   UI --|Auth: X-API-Key|--> API
@@ -447,12 +447,13 @@ API --|Auth: X-API-Key|--> UI
   API -- CSV Export --> UI
 
   API -- OpenAPI --> UI
-```
+</pre>
 
 ### ERD
-[[Click here for a link to the ER diagram on mermaid.js]](https://mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=share#pako:eNp9UstuwjAQ_BVrzwiR8kiaG4RDUVsVQVGlKhc3XhKLxI7sTVSK-Pc6KS3Ch552dsY7s1r5BJkWCDGgWUqeG16lirE3bQ4rwoqduo4xS0aq3IGVYOtHj3uVVKLHbdG0MvPZtZHaSDr-0IITdpUtG1w67FsQp8Z6ZKKrWitU5PFza2Wu0Pd44h9Y2sS210SSFbLEoINiTjvKPGlXixvpnKquPKPzzOxW8doWmv47zDWF19SYm5h9qTl1YMGzQ6nzB-QlFeuMPHlb8oXbMSs2zuxPlqoXGXtp0YgGE90of3Ij7WHe5pfVYQC5kQJiMg0OoEJT8a6Ffv8UqMAKU4gdFNwcUkjV2c3UXL1rXf2OGd3kBcR7XlrXNf2FLr_l7wkqgaZfCOJp7wDxCT4hju6G48noPgom4SyMpuNwAEeIw8kwiMLJLAijwGmz6DyArz5yNIzC6fkbtBbTJQ)
+[[Click here to view the diagram on mermaid.js]](https://mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=share#pako:eNp9UstuwjAQ_BVrzwiR8kiaG4RDUVsVQVGlKhc3XhKLxI7sTVSK-Pc6KS3Ch552dsY7s1r5BJkWCDGgWUqeG16lirE3bQ4rwoqduo4xS0aq3IGVYOtHj3uVVKLHbdG0MvPZtZHaSDr-0IITdpUtG1w67FsQp8Z6ZKKrWitU5PFza2Wu0Pd44h9Y2sS210SSFbLEoINiTjvKPGlXixvpnKquPKPzzOxW8doWmv47zDWF19SYm5h9qTl1YMGzQ6nzB-QlFeuMPHlb8oXbMSs2zuxPlqoXGXtp0YgGE90of3Ij7WHe5pfVYQC5kQJiMg0OoEJT8a6Ffv8UqMAKU4gdFNwcUkjV2c3UXL1rXf2OGd3kBcR7XlrXNf2FLr_l7wkqgaZfCOJp7wDxCT4hju6G48noPgom4SyMpuNwAEeIw8kwiMLJLAijwGmz6DyArz5yNIzC6fkbtBbTJQ)
 
-```mermaid
+
+<pre class="mermaid">
 erDiagram
   WorkItem {
     string   Id PK
@@ -476,8 +477,8 @@ erDiagram
     int      OverdueCount
     float    RiskAvg
   }
+</pre>
 
-```
 
 
 
