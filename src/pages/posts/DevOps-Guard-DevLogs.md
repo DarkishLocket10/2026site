@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/MarkdownPostLayout.astro
 title: 'DevOps Guard - DevLogs'
-pubDate: 2025-09-17
+pubDate: 2025-09-20
 description: 'Revisiting .NET and C#'
 author: 'Yash Patel'
 image:
