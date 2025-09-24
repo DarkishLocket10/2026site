@@ -47,7 +47,7 @@ const {items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
         {/* content sits above the bar */}
         <div class="relative z-10">
           <span class="text-sm ">{years}</span>
-          <h3 class="mt-2 text-2xl font-semibold ">
+          <h3 class="!mt-2 !text-3xl font-semibold ">
             {institution}
           </h3>
           <h4>
@@ -68,13 +68,9 @@ h2 {
   margin-top: 0;
 }
 
-h3 {
-  font-size: clamp(1.2rem, 2vw, 2.25rem);
-  margin-top: 0;
-}
 
 h4 {
-  font-size: clamp(.5rem, 1.3vw, 1rem);
+  font-size: clamp(.9rem, calc(.7rem + 1vw), 1rem);
   font-weight: 400;
   margin-top: -.25rem;
 }

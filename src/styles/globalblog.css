@@ -16,8 +16,9 @@ h5 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .06em; }
 h6 { font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; /* gray-500 */ }
 
 p {
-  margin: 0 0 1.25rem;
+  margin: 0 0 .5rem;
   line-height: 1.6;
+  font-weight: 300;
 }
 p:last-child {
   margin-bottom: 0;
@@ -101,10 +102,31 @@ thead {
   font-weight: bold;
 }
 
-.post__content pre code {
-  white-space: pre-wrap;    /* wrap long lines */
-  word-wrap: break-word;
-  overflow-wrap: anywhere;
+pre {
+  background: var(--code-bg); /* full-width background */
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+pre code {
+  background: transparent; /* let pre handle background */
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: block;
+}
+
+
+/* Inline code (adaptive background) */
+p code,
+li code,
+span code {
+  font-size: 0.9em;
+  font-weight: 500;
+  background: color-mix(in srgb, var(--bg) 85%, black); /* slightly darker than bg */
+  padding: 0.15em 0.3em;
+  border-radius: 0.25rem;
 }
 
 
@@ -182,12 +204,8 @@ ul, ol {
 }
 :where(pre)::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background: color-mix(in oklab, currentColor 40%, transparent);
+  background: color-mix(in oklab, currentColor 30%, transparent);
 }
-:where(pre)::-webkit-scrollbar-track {
-  background: transparent;
-}
-/* Firefox thin scrollbar */
-:where(pre) {
-  scrollbar-width: thin;
-}
+
+
+
