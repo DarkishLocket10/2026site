@@ -120,7 +120,7 @@ On my way, I ran into a few compiler/EF expression tree issues:
 
 Fix: switch to expression-bodied lambdas:
 ```csharp
-	v => v == null ? 0 : v.Aggregate(0, (h, s) => HashCode.Combine(h, s?.GetHashCode() ?? 0))
+v => v == null ? 0 : v.Aggregate(0, (h, s) => HashCode.Combine(h, s?.GetHashCode() ?? 0))
 ```
 
 - Using `is` pattern or local function in comparer "*An expression tree may not contain....*".
