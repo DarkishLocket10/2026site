@@ -1,9 +1,15 @@
 ---
+
+import { Icon } from 'astro-icon/components';
+
+
+
 type WorkItem = {
   imageSrc: string;
   link:     string;
   altText:  string;
   label:    string;
+  icons?:   string[]; // e.g., ["mdi:language-csharp", "logos:php", "logos:javascript"]
 };
 
 interface Props {
@@ -39,7 +45,7 @@ const { title = 'Work', items = [] }: Props = Astro.props;
     "
     data-fade
   >
-    {items.map(({ imageSrc, link, altText, label }) => (
+    {items.map(({ imageSrc, link, altText, label, icons = [] }) => (
       <a
         href={link}
         target="_blank"
@@ -64,13 +70,25 @@ const { title = 'Work', items = [] }: Props = Astro.props;
           
         
         
-        {altText && (
+      {altText && (
         <div class="px-4 pt-2">
-          <p class="text-xs italic text-current/70 text-center truncate">
-            {altText}
-          </p>
+          <div class="flex items-center justify-between gap-3">
+            <p class="!mt-2 text-[1rem] italic text-current/80 text-left truncate leading-[1.2]">
+
+              {altText}
+            </p>
+
+            {Array.isArray(icons) && icons.length > 0 && (
+              <div class="flex shrink-0 items-center gap-2">
+                {icons.slice(0, 5).map((icon, i) => (
+                  <Icon name={icon} width="20" height="20" class="opacity-80" title={icon} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-        )}
+      )}
+
 
     <div class="flex-shrink-0 p-4">
       <div class="w-full aspect-[32/10.5] overflow-hidden rounded-lg border-b-4 border-current/20">

@@ -63,11 +63,11 @@ const { title, subtitle, description, image, alt } = Astro.props;
 <div
   class="
     mt-8
-    flex flex-wrap           <!-- wrap on narrow screens -->
-    sm:flex-nowrap           <!-- stay one row ≥ 640 px -->
+    flex flex-wrap
+    sm:flex-nowrap
     items-center
-    justify-center           <!-- nicely centered when wrapping -->
-    gap-x-6 gap-y-4          <!-- horizontal & vertical gaps -->
+    justify-center
+    gap-x-6 gap-y-4
     opacity-0 -translate-x-6
     transition-all duration-700 ease-out
     motion-reduce:opacity-100 motion-reduce:translate-x-0
