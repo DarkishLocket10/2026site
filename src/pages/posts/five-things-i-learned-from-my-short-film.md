@@ -29,7 +29,7 @@ I got into three film classes: two of them being introduction to film theory and
 ### I should mention...
 As much as I love film, I am not an expert. I have <u><a href="https://piwigo.darkishlocket10.me/" target="_blank">five years of photography</a></u> under my belt, so I understand basic camera fundamentals. Before this film, my main knowledge base came from an ungodly amount of time spent watching <u><a href="https://trakt.tv/users/darkishlocket10" target="_blank">movies and TV shows</a></u>. I learned a crazy amount from this project, and I'm super excited to keep filming.
 
-Another thing-there wasn't really a budget. We lucked out on gear because I hoard a bunch of camera equipment, so we used my photography/videography kit:  a gimbal had been gathering dust, my Sony α7R V, four lenses, a tripod, and lavalier microphones (can't be too careful, right?).
+Another thing-there wasn't really a budget. We lucked out on gear because I hoard a bunch of camera equipment, so we used my photography/videography kit:  a gimbal which had been gathering dust, my Sony α7R V, four lenses, a tripod, and lavalier microphones (can't be too careful, right?).
 
 Anyway, here are some of the most important things I took away from working on this project.
 
