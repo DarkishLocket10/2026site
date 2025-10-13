@@ -38,7 +38,7 @@ const { title = 'Work', items = [] }: Props = Astro.props;
   <div
     class="
       grid gap-6
-      grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]
+      grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4
       opacity-0 translate-x-6
       transition-all duration-700 ease-out delay-300
       motion-reduce:opacity-100 motion-reduce:translate-x-0
