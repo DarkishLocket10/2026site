@@ -1,0 +1,1887 @@
+---
+---
+
+<div id="exif-tool" class="grid grid-cols-1 lg:grid-cols-[390px_1fr] gap-5 items-start">
+  <div class="esc-controls rounded-2xl p-5 space-y-5">
+    <div>
+      <h3 class="esc-section-title">Image</h3>
+      <div class="esc-dropzone" id="esc-dropzone" tabindex="0" role="button" aria-label="Upload photo for EXIF story card">
+        <input id="esc-file" type="file" accept="image/*" class="esc-dropzone-input" tabindex="-1" />
+        <div class="esc-dropzone-empty" id="esc-dropzone-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" class="esc-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          <span class="esc-dropzone-label">Drop a photo here</span>
+          <span class="esc-dropzone-hint">Paste, drag, or click to upload</span>
+        </div>
+        <div class="esc-dropzone-filled" id="esc-dropzone-filled" style="display:none">
+          <img id="esc-thumb" class="esc-dropzone-thumb" alt="Uploaded photo preview" />
+          <span id="esc-name" class="esc-dropzone-name"></span>
+          <span class="esc-dropzone-replace">Click to replace photo</span>
+          <button type="button" class="esc-dropzone-remove" id="esc-remove" aria-label="Remove photo">&times;</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3" style="margin-top:10px">
+        <button type="button" class="esc-btn-secondary" id="esc-auto-fill">Fill from EXIF</button>
+        <button type="button" class="esc-btn-secondary" id="esc-copy-caption">Copy caption</button>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="esc-section-title">Preset</h3>
+      <div class="esc-field">
+        <label for="esc-preset">Card style</label>
+        <select id="esc-preset">
+          <option value="street-notes" selected>Street Notes</option>
+          <option value="postcard-airmail">Postcard Air Mail</option>
+          <option value="lens-ledger">Lens Ledger</option>
+          <option value="gallery-plaque">Gallery Plaque</option>
+          <option value="contact-sheet">Contact Sheet</option>
+          <option value="transit-pass">Transit Pass</option>
+          <option value="field-journal">Field Journal</option>
+          <option value="editorial-fold">Editorial Fold</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="esc-field"><label for="esc-width">Width</label><input id="esc-width" type="number" min="600" step="10" value="1080" /></div>
+        <div class="esc-field"><label for="esc-height">Height</label><input id="esc-height" type="number" min="600" step="10" value="1350" /></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="esc-field">
+          <label for="esc-type-scale">Type scale</label>
+          <select id="esc-type-scale">
+            <option value="0.92">Compact</option>
+            <option value="1" selected>Balanced</option>
+            <option value="1.08">Large</option>
+            <option value="1.16">Poster</option>
+          </select>
+        </div>
+        <div class="esc-field">
+          <label for="esc-density">Spacing density</label>
+          <select id="esc-density">
+            <option value="0.9">Tight</option>
+            <option value="1" selected>Balanced</option>
+            <option value="1.1">Airy</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="esc-section-title">Story</h3>
+      <div class="esc-field"><label for="esc-title">Title</label><input id="esc-title" type="text" value="Night frame in motion" /></div>
+      <div class="esc-field"><label for="esc-subtitle">Subtitle</label><input id="esc-subtitle" type="text" value="A compact photo card built from real metadata" /></div>
+      <div class="esc-field"><label for="esc-caption">Caption</label><textarea id="esc-caption" rows="3">Street lights, long shadows, and a lens choice that changed the whole feel of the frame.</textarea></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="esc-field"><label for="esc-location">Location</label><input id="esc-location" type="text" value="Osaka, Japan" /></div>
+        <div class="esc-field"><label for="esc-tags">Tags</label><input id="esc-tags" type="text" value="Street • Night • Travel" /></div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="esc-section-title">Metadata</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="esc-field"><label for="esc-camera">Camera</label><input id="esc-camera" type="text" value="Sony a7 III" /></div>
+        <div class="esc-field"><label for="esc-lens">Lens</label><input id="esc-lens" type="text" value="Tamron 28-75mm F/2.8" /></div>
+        <div class="esc-field"><label for="esc-focal">Focal length</label><input id="esc-focal" type="text" value="74mm" /></div>
+        <div class="esc-field"><label for="esc-aperture">Aperture</label><input id="esc-aperture" type="text" value="f/2.8" /></div>
+        <div class="esc-field"><label for="esc-shutter">Shutter</label><input id="esc-shutter" type="text" value="1/250s" /></div>
+        <div class="esc-field"><label for="esc-iso">ISO</label><input id="esc-iso" type="text" value="ISO 400" /></div>
+      </div>
+      <div class="esc-field"><label for="esc-date">Date taken</label><input id="esc-date" type="text" value="Jul 27, 2025" /></div>
+    </div>
+
+    <div>
+      <h3 class="esc-section-title">Palette</h3>
+      <div class="esc-palette-target-row">
+        <label for="esc-palette-target">Click swatches to apply to</label>
+        <select id="esc-palette-target">
+          <option value="bg" selected>Background</option>
+          <option value="text">Text</option>
+          <option value="accent">Accent</option>
+          <option value="border">Border</option>
+          <option value="muted">Muted panel</option>
+        </select>
+      </div>
+      <div class="esc-palette-grid" id="esc-palette-grid">
+        <button type="button" class="esc-palette-chip" data-role="dominant">Dominant</button>
+        <button type="button" class="esc-palette-chip" data-role="accent">Accent</button>
+        <button type="button" class="esc-palette-chip" data-role="muted">Muted</button>
+        <button type="button" class="esc-palette-chip" data-role="shadow">Shadow</button>
+        <button type="button" class="esc-palette-chip" data-role="highlight">Highlight</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3" style="margin-top:10px">
+        <button type="button" class="esc-btn-secondary" id="esc-extract-palette">Extract palette</button>
+        <button type="button" class="esc-btn-primary" id="esc-apply-palette">Apply palette</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3" style="margin-top:10px">
+        <div class="esc-field">
+          <label for="esc-bg">Background</label>
+          <div class="esc-color-row"><input id="esc-bg" type="color" value="#161616" /><input id="esc-bg-hex" type="text" value="#161616" maxlength="7" /></div>
+        </div>
+        <div class="esc-field">
+          <label for="esc-text">Text</label>
+          <div class="esc-color-row"><input id="esc-text" type="color" value="#f3eadf" /><input id="esc-text-hex" type="text" value="#f3eadf" maxlength="7" /></div>
+        </div>
+        <div class="esc-field">
+          <label for="esc-accent">Accent</label>
+          <div class="esc-color-row"><input id="esc-accent" type="color" value="#c98b45" /><input id="esc-accent-hex" type="text" value="#c98b45" maxlength="7" /></div>
+        </div>
+        <div class="esc-field">
+          <label for="esc-muted">Muted panel</label>
+          <div class="esc-color-row"><input id="esc-muted" type="color" value="#2b2b2b" /><input id="esc-muted-hex" type="text" value="#2b2b2b" maxlength="7" /></div>
+        </div>
+        <div class="esc-field">
+          <label for="esc-border">Border</label>
+          <div class="esc-color-row"><input id="esc-border" type="color" value="#4b4b4b" /><input id="esc-border-hex" type="text" value="#4b4b4b" maxlength="7" /></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="esc-section-title">Composition</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <label class="esc-check-label"><input id="esc-show-image" type="checkbox" checked /><span>Show image</span></label>
+        <label class="esc-check-label"><input id="esc-show-title" type="checkbox" checked /><span>Show title</span></label>
+        <label class="esc-check-label"><input id="esc-show-subtitle" type="checkbox" checked /><span>Show subtitle</span></label>
+        <label class="esc-check-label"><input id="esc-show-palette" type="checkbox" checked /><span>Show palette</span></label>
+        <label class="esc-check-label"><input id="esc-show-story" type="checkbox" checked /><span>Show caption</span></label>
+        <label class="esc-check-label"><input id="esc-show-tags" type="checkbox" checked /><span>Show tags</span></label>
+        <label class="esc-check-label"><input id="esc-show-location" type="checkbox" checked /><span>Show location</span></label>
+        <label class="esc-check-label"><input id="esc-show-meta" type="checkbox" checked /><span>Show metadata</span></label>
+        <label class="esc-check-label"><input id="esc-shadow" type="checkbox" checked /><span>Card shadow</span></label>
+        <label class="esc-check-label"><input id="esc-grain" type="checkbox" checked /><span>Subtle grain</span></label>
+        <label class="esc-check-label"><input id="esc-border-toggle" type="checkbox" checked /><span>Border frame</span></label>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="esc-section-title">Export</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="esc-field">
+          <label for="esc-format">Format</label>
+          <select id="esc-format">
+            <option value="png" selected>PNG</option>
+            <option value="jpeg">JPEG</option>
+          </select>
+        </div>
+        <div class="esc-field" id="esc-quality-wrap" style="display:none">
+          <label for="esc-quality">Quality</label>
+          <input id="esc-quality" type="range" min="10" max="100" value="92" step="2" />
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3" style="margin-top:8px">
+        <button type="button" class="esc-btn-primary" id="esc-render">Render</button>
+        <button type="button" class="esc-btn-secondary" id="esc-download">Download</button>
+        <button type="button" class="esc-btn-secondary" id="esc-copy">Copy</button>
+      </div>
+    </div>
+
+    <div id="esc-status" class="esc-hint" aria-live="polite">Upload a JPEG or PNG to build a story card.</div>
+  </div>
+
+  <div class="esc-preview rounded-2xl p-5">
+    <canvas id="esc-canvas" width="1080" height="1350"></canvas>
+    <div id="esc-summary" class="esc-summary"></div>
+  </div>
+</div>
+
+<style is:global>
+  #exif-tool .esc-controls,
+  #exif-tool .esc-preview {
+    background: var(--card-bg);
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .dark #exif-tool .esc-controls,
+  .dark #exif-tool .esc-preview {
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  #exif-tool .esc-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    color: var(--color-text-soft);
+  }
+
+  #exif-tool .esc-field {
+    margin-bottom: 10px;
+  }
+
+  #exif-tool .esc-field label,
+  #exif-tool .esc-palette-target-row label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  #exif-tool input[type="text"],
+  #exif-tool input[type="number"],
+  #exif-tool textarea,
+  #exif-tool select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    background: var(--card-bg);
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+
+  .dark #exif-tool input[type="text"],
+  .dark #exif-tool input[type="number"],
+  .dark #exif-tool textarea,
+  .dark #exif-tool select {
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  #exif-tool input[type="text"]:focus,
+  #exif-tool input[type="number"]:focus,
+  #exif-tool textarea:focus,
+  #exif-tool select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  #exif-tool textarea {
+    resize: vertical;
+    min-height: 76px;
+  }
+
+  #exif-tool input[type="color"] {
+    width: 42px;
+    min-width: 42px;
+    height: 36px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 3px;
+    background: var(--card-bg);
+  }
+
+  .dark #exif-tool input[type="color"] {
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  #exif-tool input[type="range"],
+  #exif-tool input[type="checkbox"] {
+    accent-color: var(--color-accent);
+  }
+
+  #exif-tool .esc-check-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  #exif-tool .esc-color-row {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  #exif-tool .esc-color-row input[type="text"] {
+    font-family: 'Courier New', monospace;
+    text-transform: lowercase;
+    padding: 6px 8px;
+  }
+
+  #exif-tool .esc-btn-primary,
+  #exif-tool .esc-btn-secondary {
+    border-radius: 10px;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s, border-color 0.15s;
+  }
+
+  #exif-tool .esc-btn-primary {
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+  }
+
+  #exif-tool .esc-btn-primary:hover {
+    opacity: 0.88;
+  }
+
+  #exif-tool .esc-btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+
+  .dark #exif-tool .esc-btn-secondary {
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  #exif-tool .esc-btn-secondary:hover {
+    background: rgba(0,0,0,0.05);
+    border-color: var(--color-accent);
+  }
+
+  .dark #exif-tool .esc-btn-secondary:hover {
+    background: rgba(255,255,255,0.07);
+  }
+
+  #exif-tool .esc-dropzone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    border: 2px dashed rgba(0,0,0,0.15);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+    outline: none;
+  }
+
+  .dark #exif-tool .esc-dropzone {
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  #exif-tool .esc-dropzone:hover,
+  #exif-tool .esc-dropzone:focus-visible,
+  #exif-tool .esc-dropzone.esc-drag-over {
+    border-color: var(--color-accent);
+    background: rgba(136,90,156,0.06);
+  }
+
+  .dark #exif-tool .esc-dropzone:hover,
+  .dark #exif-tool .esc-dropzone:focus-visible,
+  .dark #exif-tool .esc-dropzone.esc-drag-over {
+    background: rgba(172,95,207,0.07);
+  }
+
+  #exif-tool .esc-dropzone-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  #exif-tool .esc-dropzone-empty,
+  #exif-tool .esc-dropzone-filled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    padding: 12px;
+    z-index: 1;
+  }
+
+  #exif-tool .esc-dropzone-icon {
+    width: 30px;
+    height: 30px;
+    color: var(--color-text-soft);
+    opacity: 0.55;
+  }
+
+  #exif-tool .esc-dropzone-label {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  #exif-tool .esc-dropzone-hint,
+  #exif-tool .esc-dropzone-name,
+  #exif-tool .esc-hint {
+    font-size: 12px;
+    color: var(--color-text-soft);
+    line-height: 1.5;
+  }
+
+  #exif-tool .esc-dropzone-thumb {
+    max-width: 100%;
+    max-height: 96px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  #exif-tool .esc-dropzone-replace {
+    font-size: 11px;
+    color: var(--color-accent);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  #exif-tool .esc-dropzone:hover .esc-dropzone-replace {
+    opacity: 0.85;
+  }
+
+  #exif-tool .esc-dropzone-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 3;
+    padding: 0;
+  }
+
+  #exif-tool .esc-dropzone:hover .esc-dropzone-remove {
+    opacity: 1;
+  }
+
+  #exif-tool .esc-palette-target-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  #exif-tool .esc-palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #exif-tool .esc-palette-chip {
+    min-height: 62px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.12);
+    padding: 8px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+    transition: transform 0.15s, border-color 0.15s;
+    white-space: pre-line;
+    line-height: 1.25;
+  }
+
+  .dark #exif-tool .esc-palette-chip {
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  #exif-tool .esc-palette-chip:hover {
+    transform: translateY(-1px);
+    border-color: var(--color-accent);
+  }
+
+  #exif-tool #esc-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: transparent;
+  }
+
+  .dark #exif-tool #esc-canvas {
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  #exif-tool .esc-summary {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  #exif-tool .esc-summary-card {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 14px;
+    background: rgba(0,0,0,0.02);
+  }
+
+  .dark #exif-tool .esc-summary-card {
+    border-color: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+  }
+
+  #exif-tool .esc-summary-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-soft);
+    margin-bottom: 8px;
+  }
+
+  #exif-tool .esc-summary-line {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  #exif-tool .esc-summary-palette {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  #exif-tool .esc-summary-swatch {
+    min-height: 56px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.08);
+    padding: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  @media (min-width: 1024px) {
+    #exif-tool .esc-preview {
+      position: sticky;
+      top: 6rem;
+    }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  import { parse as parseExif, gps as parseGps } from 'exifr';
+
+  var PRESETS = {
+    'street-notes': { width: 1080, height: 1350, layout: 'street', titleSize: 54 },
+    'postcard-airmail': { width: 1600, height: 1000, layout: 'postcard', titleSize: 44 },
+    'lens-ledger': { width: 1600, height: 960, layout: 'ledger', titleSize: 42 },
+    'gallery-plaque': { width: 1400, height: 1000, layout: 'gallery', titleSize: 40 },
+    'contact-sheet': { width: 1200, height: 1200, layout: 'contact', titleSize: 38 },
+    'transit-pass': { width: 1600, height: 900, layout: 'transit', titleSize: 40 },
+    'field-journal': { width: 1300, height: 1500, layout: 'journal', titleSize: 48 },
+    'editorial-fold': { width: 1600, height: 1100, layout: 'editorial', titleSize: 46 }
+  };
+
+  function initExifStoryCard() {
+    var root = document.getElementById('exif-tool');
+    if (!root || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    var $ = function (id) { return root.querySelector('#' + id); };
+
+    var fileInput = $('esc-file');
+    var dropzone = $('esc-dropzone');
+    var dropzoneEmpty = $('esc-dropzone-empty');
+    var dropzoneFilled = $('esc-dropzone-filled');
+    var thumb = $('esc-thumb');
+    var nameEl = $('esc-name');
+    var removeBtn = $('esc-remove');
+    var autoFillBtn = $('esc-auto-fill');
+    var copyCaptionBtn = $('esc-copy-caption');
+
+    var presetInput = $('esc-preset');
+    var widthInput = $('esc-width');
+    var heightInput = $('esc-height');
+    var typeScaleInput = $('esc-type-scale');
+    var densityInput = $('esc-density');
+
+    var titleInput = $('esc-title');
+    var subtitleInput = $('esc-subtitle');
+    var captionInput = $('esc-caption');
+    var locationInput = $('esc-location');
+    var tagsInput = $('esc-tags');
+
+    var cameraInput = $('esc-camera');
+    var lensInput = $('esc-lens');
+    var focalInput = $('esc-focal');
+    var apertureInput = $('esc-aperture');
+    var shutterInput = $('esc-shutter');
+    var isoInput = $('esc-iso');
+    var dateInput = $('esc-date');
+
+    var paletteTargetInput = $('esc-palette-target');
+    var paletteGrid = $('esc-palette-grid');
+    var extractPaletteBtn = $('esc-extract-palette');
+    var applyPaletteBtn = $('esc-apply-palette');
+
+    var bgInput = $('esc-bg');
+    var bgHex = $('esc-bg-hex');
+    var textInput = $('esc-text');
+    var textHex = $('esc-text-hex');
+    var accentInput = $('esc-accent');
+    var accentHex = $('esc-accent-hex');
+    var mutedInput = $('esc-muted');
+    var mutedHex = $('esc-muted-hex');
+    var borderInput = $('esc-border');
+    var borderHex = $('esc-border-hex');
+
+    var showPaletteInput = $('esc-show-palette');
+    var showImageInput = $('esc-show-image');
+    var showTitleInput = $('esc-show-title');
+    var showSubtitleInput = $('esc-show-subtitle');
+    var showStoryInput = $('esc-show-story');
+    var showTagsInput = $('esc-show-tags');
+    var showLocationInput = $('esc-show-location');
+    var showMetaInput = $('esc-show-meta');
+    var shadowInput = $('esc-shadow');
+    var grainInput = $('esc-grain');
+    var borderToggleInput = $('esc-border-toggle');
+
+    var formatInput = $('esc-format');
+    var qualityWrap = $('esc-quality-wrap');
+    var qualityInput = $('esc-quality');
+    var renderBtn = $('esc-render');
+    var downloadBtn = $('esc-download');
+    var copyBtn = $('esc-copy');
+    var statusEl = $('esc-status');
+    var summaryEl = $('esc-summary');
+    var canvas = $('esc-canvas');
+
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    var state = {
+      fileName: '',
+      image: null,
+      objectUrl: '',
+      exifRaw: null,
+      gpsRaw: null,
+      palette: {
+        dominant: '#6d7280',
+        accent: '#c98b45',
+        muted: '#71717a',
+        shadow: '#1f2937',
+        highlight: '#f3eadf'
+      }
+    };
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+    }
+
+    function normalizeHex(value) {
+      var raw = String(value || '').trim().toLowerCase();
+      if (!raw) return '#000000';
+      if (raw.charAt(0) !== '#') raw = '#' + raw;
+      if (/^#[0-9a-f]{3}$/.test(raw)) {
+        return '#' + raw.charAt(1) + raw.charAt(1) + raw.charAt(2) + raw.charAt(2) + raw.charAt(3) + raw.charAt(3);
+      }
+      if (!/^#[0-9a-f]{6}$/.test(raw)) return '#000000';
+      return raw;
+    }
+
+    function syncColorInputs(colorInput, hexInput) {
+      colorInput.value = normalizeHex(colorInput.value);
+      hexInput.value = colorInput.value;
+
+      colorInput.addEventListener('input', function () {
+        hexInput.value = colorInput.value.toLowerCase();
+        renderCard();
+      });
+
+      hexInput.addEventListener('change', function () {
+        var normalized = normalizeHex(hexInput.value);
+        hexInput.value = normalized;
+        colorInput.value = normalized;
+        renderCard();
+      });
+    }
+
+    function hexToRgb(hex) {
+      var normalized = normalizeHex(hex).slice(1);
+      return {
+        r: parseInt(normalized.slice(0, 2), 16),
+        g: parseInt(normalized.slice(2, 4), 16),
+        b: parseInt(normalized.slice(4, 6), 16)
+      };
+    }
+
+    function rgbToHex(rgb) {
+      return '#' + [rgb.r, rgb.g, rgb.b].map(function (value) {
+        var channel = Math.max(0, Math.min(255, Math.round(value)));
+        return channel.toString(16).padStart(2, '0');
+      }).join('');
+    }
+
+    function withAlpha(hex, alpha) {
+      return normalizeHex(hex) + Math.max(0, Math.min(255, Math.round(alpha * 255))).toString(16).padStart(2, '0');
+    }
+
+    function luminance(hex) {
+      var rgb = hexToRgb(hex);
+      return (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+    }
+
+    function contrastColor(hex) {
+      return luminance(hex) > 0.54 ? '#111111' : '#f3eadf';
+    }
+
+    function colorDistance(hexA, hexB) {
+      var a = hexToRgb(hexA);
+      var b = hexToRgb(hexB);
+      var dr = a.r - b.r;
+      var dg = a.g - b.g;
+      var db = a.b - b.b;
+      return Math.sqrt(dr * dr + dg * dg + db * db);
+    }
+
+    function saturation(hex) {
+      var rgb = hexToRgb(hex);
+      var max = Math.max(rgb.r, rgb.g, rgb.b);
+      var min = Math.min(rgb.r, rgb.g, rgb.b);
+      return max === 0 ? 0 : (max - min) / max;
+    }
+
+    function mixColors(hexA, hexB, weight) {
+      var a = hexToRgb(hexA);
+      var b = hexToRgb(hexB);
+      return rgbToHex({
+        r: a.r + (b.r - a.r) * weight,
+        g: a.g + (b.g - a.g) * weight,
+        b: a.b + (b.b - a.b) * weight
+      });
+    }
+
+    function formatExposureTime(value) {
+      if (value == null || value === '') return '';
+      var numeric = Number(value);
+      if (!Number.isFinite(numeric) || numeric <= 0) return String(value);
+      if (numeric >= 1) return numeric.toFixed(numeric % 1 === 0 ? 0 : 1) + 's';
+      return '1/' + Math.round(1 / numeric) + 's';
+    }
+
+    function formatAperture(value) {
+      if (value == null || value === '') return '';
+      var numeric = Number(value);
+      if (!Number.isFinite(numeric)) return String(value);
+      return 'f/' + numeric.toFixed(numeric % 1 === 0 ? 0 : 1);
+    }
+
+    function formatFocalLength(value) {
+      if (value == null || value === '') return '';
+      var numeric = Number(value);
+      if (!Number.isFinite(numeric)) return String(value);
+      return numeric.toFixed(numeric % 1 === 0 ? 0 : 1) + 'mm';
+    }
+
+    function formatIso(value) {
+      if (value == null || value === '') return '';
+      return /^iso/i.test(String(value)) ? String(value) : 'ISO ' + value;
+    }
+
+    function formatDate(value) {
+      if (!value) return '';
+      var date = value instanceof Date ? value : new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function cleanedFileTitle(fileName) {
+      return String(fileName || '')
+        .replace(/\.[^.]+$/, '')
+        .replace(/[\-_]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, function (match) { return match.toUpperCase(); });
+    }
+
+    function formatCoordinate(value, positive, negative) {
+      if (!Number.isFinite(value)) return '';
+      return Math.abs(value).toFixed(3) + ' ' + (value >= 0 ? positive : negative);
+    }
+
+    function gpsText() {
+      if (!state.gpsRaw || !Number.isFinite(state.gpsRaw.latitude) || !Number.isFinite(state.gpsRaw.longitude)) return '';
+      return formatCoordinate(state.gpsRaw.latitude, 'N', 'S') + ', ' + formatCoordinate(state.gpsRaw.longitude, 'E', 'W');
+    }
+
+    function buildLocationHeadline() {
+      var manual = String(locationInput.value || '').trim();
+      var gpsLine = gpsText();
+      if (manual) return 'Captured in ' + manual;
+      if (gpsLine) return 'Shot near ' + gpsLine;
+      return 'Location details can be added here';
+    }
+
+    function buildLocationSubline() {
+      var manual = String(locationInput.value || '').trim();
+      var gpsLine = gpsText();
+      if (manual && gpsLine) return gpsLine;
+      if (manual) return 'Manual location label';
+      if (gpsLine) return 'Derived from embedded GPS metadata';
+      return 'Add a place name or use a GPS-enabled photo';
+    }
+
+    function getLocationDisplay() {
+      var manual = String(locationInput.value || '').trim();
+      var gpsLine = gpsText();
+      if (manual && gpsLine) return manual + ' | ' + gpsLine;
+      if (manual) return manual;
+      if (gpsLine) return 'Near ' + gpsLine;
+      return 'Location unavailable';
+    }
+
+    function getTags() {
+      return String(tagsInput.value || '')
+        .split(/\u2022|\||,/) 
+        .map(function (item) { return item.trim(); })
+        .filter(Boolean);
+    }
+
+    function typeScale() {
+      return Number(typeScaleInput.value) || 1;
+    }
+
+    function densityScale() {
+      return Number(densityInput.value) || 1;
+    }
+
+    function scaled(value) {
+      return Math.round(value * densityScale());
+    }
+
+    function getMetaItems() {
+      return [
+        { label: 'Camera', value: cameraInput.value.trim() },
+        { label: 'Lens', value: lensInput.value.trim() },
+        { label: 'Focal', value: focalInput.value.trim() },
+        { label: 'Aperture', value: apertureInput.value.trim() },
+        { label: 'Shutter', value: shutterInput.value.trim() },
+        { label: 'ISO', value: isoInput.value.trim() },
+        { label: 'Date', value: dateInput.value.trim() },
+        { label: 'Place', value: showLocationInput.checked ? getLocationDisplay() : '' }
+      ].filter(function (item) { return item.value; });
+    }
+
+    function updateDropzoneState(filled) {
+      dropzoneEmpty.style.display = filled ? 'none' : '';
+      dropzoneFilled.style.display = filled ? '' : 'none';
+    }
+
+    function revokeObjectUrl() {
+      if (state.objectUrl) {
+        URL.revokeObjectURL(state.objectUrl);
+        state.objectUrl = '';
+      }
+    }
+
+    function loadImageFromFile(file) {
+      return new Promise(function (resolve, reject) {
+        var image = new Image();
+        var objectUrl = URL.createObjectURL(file);
+        image.onload = function () {
+          resolve({ image: image, objectUrl: objectUrl });
+        };
+        image.onerror = function () {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error('Failed to load image.'));
+        };
+        image.src = objectUrl;
+      });
+    }
+
+    async function handleFile(file) {
+      if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+        setStatus('Please upload an image file.');
+        return;
+      }
+
+      setStatus('Loading image and reading metadata...');
+
+      try {
+        var loaded = await loadImageFromFile(file);
+        revokeObjectUrl();
+        state.image = loaded.image;
+        state.objectUrl = loaded.objectUrl;
+        state.fileName = file.name;
+        thumb.src = state.objectUrl;
+        nameEl.textContent = file.name;
+        updateDropzoneState(true);
+
+        await extractMetadata(file);
+        extractPalette();
+
+        if (!titleInput.value.trim()) titleInput.value = cleanedFileTitle(file.name);
+        setStatus('Metadata and palette ready. Tweak the card and export when ready.');
+        renderCard();
+      } catch (error) {
+        console.error(error);
+        setStatus('Could not read that image. Try another file.');
+      }
+    }
+
+    async function extractMetadata(file) {
+      try {
+        state.exifRaw = await parseExif(file, ['Make', 'Model', 'LensModel', 'FocalLength', 'FNumber', 'ExposureTime', 'ISO', 'DateTimeOriginal', 'CreateDate', 'ExposureCompensation', 'WhiteBalance', 'Flash', 'MeteringMode']);
+      } catch (error) {
+        state.exifRaw = null;
+      }
+
+      try {
+        state.gpsRaw = await parseGps(file);
+      } catch (error) {
+        state.gpsRaw = null;
+      }
+
+      fillInputsFromExif();
+    }
+
+    function fillInputsFromExif() {
+      if (!state.exifRaw) {
+        setStatus('No EXIF metadata found. Manual editing is still available.');
+        return;
+      }
+
+      var make = state.exifRaw.Make || '';
+      var model = state.exifRaw.Model || '';
+      var camera = [make, model].filter(Boolean).join(' ').trim();
+      if (camera) cameraInput.value = camera;
+      if (state.exifRaw.LensModel) lensInput.value = state.exifRaw.LensModel;
+      if (state.exifRaw.FocalLength != null) focalInput.value = formatFocalLength(state.exifRaw.FocalLength);
+      if (state.exifRaw.FNumber != null) apertureInput.value = formatAperture(state.exifRaw.FNumber);
+      if (state.exifRaw.ExposureTime != null) shutterInput.value = formatExposureTime(state.exifRaw.ExposureTime);
+      if (state.exifRaw.ISO != null) isoInput.value = formatIso(state.exifRaw.ISO);
+      if (state.exifRaw.DateTimeOriginal || state.exifRaw.CreateDate) dateInput.value = formatDate(state.exifRaw.DateTimeOriginal || state.exifRaw.CreateDate);
+      if (state.gpsRaw && !String(locationInput.value || '').trim()) {
+        locationInput.value = 'Near ' + gpsText();
+      }
+    }
+
+    function extractPalette() {
+      if (!state.image) {
+        setStatus('Upload an image before extracting a palette.');
+        return;
+      }
+
+      var sampleCanvas = document.createElement('canvas');
+      var sampleCtx = sampleCanvas.getContext('2d');
+      if (!sampleCtx) return;
+
+      var maxSide = 72;
+      var scale = Math.min(1, maxSide / Math.max(state.image.naturalWidth || state.image.width, state.image.naturalHeight || state.image.height));
+      var width = Math.max(16, Math.round((state.image.naturalWidth || state.image.width) * scale));
+      var height = Math.max(16, Math.round((state.image.naturalHeight || state.image.height) * scale));
+      sampleCanvas.width = width;
+      sampleCanvas.height = height;
+      sampleCtx.drawImage(state.image, 0, 0, width, height);
+      var data = sampleCtx.getImageData(0, 0, width, height).data;
+      var buckets = new Map();
+
+      for (var index = 0; index < data.length; index += 16) {
+        var alpha = data[index + 3];
+        if (alpha < 180) continue;
+        var red = Math.round(data[index] / 24) * 24;
+        var green = Math.round(data[index + 1] / 24) * 24;
+        var blue = Math.round(data[index + 2] / 24) * 24;
+        var key = rgbToHex({ r: red, g: green, b: blue });
+        buckets.set(key, (buckets.get(key) || 0) + 1);
+      }
+
+      var sorted = Array.from(buckets.entries())
+        .sort(function (a, b) { return b[1] - a[1]; })
+        .map(function (entry) { return entry[0]; });
+
+      var unique = [];
+      sorted.forEach(function (hex) {
+        if (unique.length >= 12) return;
+        if (unique.every(function (existing) { return colorDistance(existing, hex) > 44; })) unique.push(hex);
+      });
+
+      if (!unique.length) unique = ['#6d7280', '#c98b45', '#71717a', '#1f2937', '#f3eadf'];
+      var pool = unique.slice(0, 8);
+      state.palette = {
+        dominant: pool[0],
+        accent: pool.slice().sort(function (a, b) { return saturation(b) - saturation(a); })[0] || pool[0],
+        muted: pool.slice().sort(function (a, b) { return saturation(a) - saturation(b); })[0] || mixColors(pool[0], '#808080', 0.45),
+        shadow: pool.slice().sort(function (a, b) { return luminance(a) - luminance(b); })[0] || '#111111',
+        highlight: pool.slice().sort(function (a, b) { return luminance(b) - luminance(a); })[0] || '#f3eadf'
+      };
+
+      updatePaletteButtons();
+      setStatus('Palette extracted from the uploaded photo.');
+    }
+
+    function updatePaletteButtons() {
+      Array.from(paletteGrid.querySelectorAll('[data-role]')).forEach(function (button) {
+        var role = button.getAttribute('data-role');
+        var color = state.palette[role] || '#888888';
+        button.style.background = color;
+        button.style.color = contrastColor(color);
+        button.textContent = role.charAt(0).toUpperCase() + role.slice(1) + '\n' + color;
+      });
+    }
+
+    function applyPaletteToControls() {
+      var background = luminance(state.palette.shadow) < 0.34 ? state.palette.shadow : mixColors(state.palette.dominant, '#111111', 0.55);
+      var text = contrastColor(background);
+      var accent = state.palette.accent;
+      var border = mixColors(background, text, 0.2);
+      bgInput.value = normalizeHex(background);
+      bgHex.value = bgInput.value;
+      textInput.value = normalizeHex(text);
+      textHex.value = textInput.value;
+      accentInput.value = normalizeHex(accent);
+      accentHex.value = accentInput.value;
+      mutedInput.value = normalizeHex(state.palette.muted);
+      mutedHex.value = mutedInput.value;
+      borderInput.value = normalizeHex(border);
+      borderHex.value = borderInput.value;
+      renderCard();
+    }
+
+    function roundedRect(x, y, width, height, radius) {
+      var r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    function fillRoundedRect(x, y, width, height, radius, fillStyle) {
+      ctx.save();
+      ctx.fillStyle = fillStyle;
+      roundedRect(x, y, width, height, radius);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function strokeRoundedRect(x, y, width, height, radius, strokeStyle, lineWidth) {
+      ctx.save();
+      ctx.strokeStyle = strokeStyle;
+      ctx.lineWidth = lineWidth;
+      roundedRect(x, y, width, height, radius);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawFrameBackground(width, height) {
+      ctx.clearRect(0, 0, width, height);
+      fillRoundedRect(0, 0, width, height, 0, bgInput.value);
+
+      var glow = ctx.createRadialGradient(width * 0.16, height * 0.12, 20, width * 0.16, height * 0.12, width * 0.9);
+      glow.addColorStop(0, withAlpha(accentInput.value, 0.2));
+      glow.addColorStop(1, withAlpha(bgInput.value, 0));
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, width, height);
+
+      if (grainInput.checked) {
+        ctx.save();
+        ctx.globalAlpha = 0.05;
+        for (var index = 0; index < 240; index += 1) {
+          ctx.fillStyle = index % 2 === 0 ? textInput.value : accentInput.value;
+          ctx.fillRect(Math.random() * width, Math.random() * height, 1.3, 1.3);
+        }
+        ctx.restore();
+      }
+
+      if (borderToggleInput.checked) {
+        strokeRoundedRect(18, 18, width - 36, height - 36, 30, borderInput.value, 2);
+      }
+    }
+
+    function drawPhotoFrame(x, y, width, height, options) {
+      options = options || {};
+      var radius = options.radius == null ? 24 : options.radius;
+      var matte = options.matte || mixColors(mutedInput.value, bgInput.value, 0.45);
+      var border = options.border || borderInput.value;
+      var alignX = options.alignX == null ? 0.5 : options.alignX;
+      var alignY = options.alignY == null ? 0.5 : options.alignY;
+
+      if (options.shadow !== false) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.22)';
+        ctx.shadowBlur = 26;
+        ctx.shadowOffsetY = 12;
+        fillRoundedRect(x, y, width, height, radius, matte);
+        ctx.restore();
+      }
+
+      fillRoundedRect(x, y, width, height, radius, matte);
+      strokeRoundedRect(x, y, width, height, radius, withAlpha(border, 0.8), 1.5);
+
+      if (!showImageInput.checked || !state.image) {
+        ctx.fillStyle = mixColors(textInput.value, bgInput.value, 0.45);
+        ctx.font = '600 26px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(showImageInput.checked ? 'Upload a photo to start' : 'Image layer hidden', x + width / 2, y + height / 2 - 10);
+        ctx.font = '400 18px Inter, Arial, sans-serif';
+        ctx.fillText(showImageInput.checked ? 'Metadata and palette will populate automatically' : 'Use the toggle panel to bring it back', x + width / 2, y + height / 2 + 22);
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        return;
+      }
+
+      var inset = options.innerInset == null ? 14 : options.innerInset;
+      var innerX = x + inset;
+      var innerY = y + inset;
+      var innerW = width - inset * 2;
+      var innerH = height - inset * 2;
+
+      ctx.save();
+      roundedRect(innerX, innerY, innerW, innerH, Math.max(12, radius - 8));
+      ctx.clip();
+
+      var imageWidth = state.image.naturalWidth || state.image.width;
+      var imageHeight = state.image.naturalHeight || state.image.height;
+      var scale = Math.max(innerW / imageWidth, innerH / imageHeight);
+      var drawWidth = imageWidth * scale;
+      var drawHeight = imageHeight * scale;
+      var minX = innerX + innerW - drawWidth;
+      var minY = innerY + innerH - drawHeight;
+      var drawX = minX + (innerX - minX) * alignX;
+      var drawY = minY + (innerY - minY) * alignY;
+      ctx.drawImage(state.image, drawX, drawY, drawWidth, drawHeight);
+
+      if (options.overlay) {
+        var overlay = ctx.createLinearGradient(innerX, innerY, innerX, innerY + innerH);
+        overlay.addColorStop(0, withAlpha('#000000', 0));
+        overlay.addColorStop(1, withAlpha('#000000', options.overlayStrength == null ? 0.45 : options.overlayStrength));
+        ctx.fillStyle = overlay;
+        ctx.fillRect(innerX, innerY, innerW, innerH);
+      }
+
+      ctx.restore();
+    }
+
+    function wrapLines(text, maxWidth, font, maxLines) {
+      ctx.font = font;
+      var words = String(text || '').split(/\s+/).filter(Boolean);
+      if (!words.length) return [];
+      var lines = [];
+      var current = words[0];
+
+      for (var index = 1; index < words.length; index += 1) {
+        var tentative = current + ' ' + words[index];
+        if (ctx.measureText(tentative).width <= maxWidth) {
+          current = tentative;
+        } else {
+          lines.push(current);
+          current = words[index];
+          if (maxLines && lines.length >= maxLines - 1) break;
+        }
+      }
+
+      if (!maxLines || lines.length < maxLines) lines.push(current);
+      if (maxLines && lines.length === maxLines) {
+        var last = lines[maxLines - 1];
+        while (ctx.measureText(last + '...').width > maxWidth && last.length > 1) {
+          last = last.slice(0, -1).trim();
+        }
+        lines[maxLines - 1] = last + (String(text).length > lines.join(' ').length ? '...' : '');
+      }
+
+      return lines;
+    }
+
+    function drawTextLines(lines, x, y, lineHeight, fillStyle, font) {
+      ctx.save();
+      ctx.fillStyle = fillStyle;
+      ctx.font = font;
+      lines.forEach(function (line, index) {
+        ctx.fillText(line, x, y + lineHeight * index);
+      });
+      ctx.restore();
+      return y + lineHeight * lines.length;
+    }
+
+    function drawKicker(text, x, y) {
+      if (!text) return y;
+      ctx.fillStyle = accentInput.value;
+      ctx.font = '700 17px Inter, Arial, sans-serif';
+      ctx.fillText(text.toUpperCase(), x, y);
+      return y + 28;
+    }
+
+    function drawBodyCopy(text, x, y, width, fontSize, maxLines, weight) {
+      if (!showStoryInput.checked || !String(text || '').trim()) return y;
+      var size = Math.round(fontSize * typeScale());
+      return drawTextLines(
+        wrapLines(text, width, (weight || '400') + ' ' + size + 'px Inter, Arial, sans-serif', maxLines),
+        x,
+        y,
+        Math.round((size + 6) * densityScale()),
+        mixColors(textInput.value, bgInput.value, 0.18),
+        (weight || '400') + ' ' + size + 'px Inter, Arial, sans-serif'
+      );
+    }
+
+    function drawTitleBlock(x, y, width, preset, titleLines, subtitleLines) {
+      var cursor = y;
+      if (showTitleInput.checked && String(titleInput.value || '').trim()) {
+        var titleSize = Math.round(preset.titleSize * typeScale());
+        cursor = drawTextLines(
+          wrapLines(titleInput.value, width, '700 ' + titleSize + 'px Inter, Arial, sans-serif', titleLines || 2),
+          x,
+          cursor,
+          Math.round((titleSize + 7) * densityScale()),
+          textInput.value,
+          '700 ' + titleSize + 'px Inter, Arial, sans-serif'
+        );
+      }
+      if (showSubtitleInput.checked && String(subtitleInput.value || '').trim()) {
+        cursor += scaled(6);
+        var subtitleSize = Math.round(20 * typeScale());
+        cursor = drawTextLines(
+          wrapLines(subtitleInput.value, width, '500 ' + subtitleSize + 'px Inter, Arial, sans-serif', subtitleLines || 2),
+          x,
+          cursor,
+          Math.round((subtitleSize + 6) * densityScale()),
+          mixColors(textInput.value, bgInput.value, 0.22),
+          '500 ' + subtitleSize + 'px Inter, Arial, sans-serif'
+        );
+      }
+      return cursor;
+    }
+
+    function drawTagPills(tags, x, y, maxWidth) {
+      if (!showTagsInput.checked || !tags.length) return y;
+      var cursorX = x;
+      var cursorY = y;
+      ctx.font = '700 14px Inter, Arial, sans-serif';
+      tags.forEach(function (tag) {
+        var pillWidth = ctx.measureText(tag).width + 26;
+        if (cursorX + pillWidth > x + maxWidth) {
+          cursorX = x;
+          cursorY += 38;
+        }
+        fillRoundedRect(cursorX, cursorY - 22, pillWidth, 30, 15, mixColors(accentInput.value, mutedInput.value, 0.66));
+        ctx.fillStyle = textInput.value;
+        ctx.fillText(tag, cursorX + 13, cursorY - 2);
+        cursorX += pillWidth + 8;
+      });
+      return cursorY + 16;
+    }
+
+    function drawMetaRows(items, x, y, width, columns, rowHeight, variant) {
+      if (!showMetaInput.checked) return y;
+      columns = columns || 2;
+      rowHeight = rowHeight || 66;
+      var gap = 12;
+      var colWidth = (width - gap * (columns - 1)) / columns;
+      items.forEach(function (item, index) {
+        var col = index % columns;
+        var row = Math.floor(index / columns);
+        var boxX = x + col * (colWidth + gap);
+        var boxY = y + row * (rowHeight + gap);
+        var fill = variant === 'light'
+          ? mixColors(mutedInput.value, '#ffffff', 0.58)
+          : mixColors(mutedInput.value, bgInput.value, 0.42);
+        fillRoundedRect(boxX, boxY, colWidth, rowHeight, 18, fill);
+        strokeRoundedRect(boxX, boxY, colWidth, rowHeight, 18, withAlpha(borderInput.value, 0.65), 1);
+        ctx.fillStyle = mixColors(textInput.value, bgInput.value, 0.32);
+        ctx.font = '700 12px Inter, Arial, sans-serif';
+        ctx.fillText(item.label.toUpperCase(), boxX + 16, boxY + 22);
+        ctx.fillStyle = textInput.value;
+        ctx.font = '600 16px Inter, Arial, sans-serif';
+        var lines = wrapLines(item.value, colWidth - 32, '600 16px Inter, Arial, sans-serif', 2);
+        lines.forEach(function (line, lineIndex) {
+          ctx.fillText(line, boxX + 16, boxY + 44 + lineIndex * 18);
+        });
+      });
+      return y + Math.ceil(items.length / columns) * (rowHeight + gap) - gap;
+    }
+
+    function drawPaletteRow(x, y, width, compact) {
+      if (!showPaletteInput.checked) return y;
+      var roles = ['dominant', 'accent', 'muted', 'shadow', 'highlight'];
+      var gap = 8;
+      var swatchWidth = (width - gap * (roles.length - 1)) / roles.length;
+      var swatchHeight = compact ? 48 : 58;
+      roles.forEach(function (role, index) {
+        var color = state.palette[role] || '#888888';
+        var swatchX = x + index * (swatchWidth + gap);
+        fillRoundedRect(swatchX, y, swatchWidth, swatchHeight, 14, color);
+        var textColor = contrastColor(color);
+        ctx.fillStyle = textColor;
+        ctx.font = compact ? '700 11px Inter, Arial, sans-serif' : '700 12px Inter, Arial, sans-serif';
+        ctx.fillText(role.charAt(0).toUpperCase() + role.slice(1), swatchX + 10, y + 20);
+        ctx.fillText(color.toUpperCase(), swatchX + 10, y + (compact ? 36 : 40));
+      });
+      return y + swatchHeight;
+    }
+
+    function drawLocationModule(x, y, width, variant) {
+      if (!showLocationInput.checked) return y;
+      var fill = variant === 'light'
+        ? mixColors('#ffffff', accentInput.value, 0.08)
+        : mixColors(mutedInput.value, bgInput.value, 0.36);
+      fillRoundedRect(x, y, width, 84, 20, fill);
+      strokeRoundedRect(x, y, width, 84, 20, withAlpha(borderInput.value, 0.55), 1);
+      ctx.fillStyle = accentInput.value;
+      ctx.font = '700 13px Inter, Arial, sans-serif';
+      ctx.fillText('LOCATION MODULE', x + 16, y + 22);
+      ctx.fillStyle = textInput.value;
+      ctx.font = '700 18px Inter, Arial, sans-serif';
+      ctx.fillText(buildLocationHeadline(), x + 16, y + 48);
+      ctx.fillStyle = mixColors(textInput.value, bgInput.value, 0.26);
+      ctx.font = '500 13px Inter, Arial, sans-serif';
+      ctx.fillText(buildLocationSubline(), x + 16, y + 68);
+      return y + 84;
+    }
+
+    function renderStreetNotes(width, height, preset) {
+      var pad = scaled(56);
+      var panelHeight = Math.round(height * 0.38);
+      var imageHeight = height - panelHeight - pad - 36;
+      drawPhotoFrame(pad, pad, width - pad * 2, imageHeight, { radius: 32, overlay: true, overlayStrength: 0.48 });
+
+      var chipWidth = Math.min(width * 0.4, 420);
+      fillRoundedRect(width - pad - chipWidth, pad + 26, chipWidth, 72, 18, withAlpha(bgInput.value, 0.72));
+      strokeRoundedRect(width - pad - chipWidth, pad + 26, chipWidth, 72, 18, withAlpha(borderInput.value, 0.6), 1);
+      ctx.fillStyle = accentInput.value;
+      ctx.font = '700 12px Inter, Arial, sans-serif';
+      ctx.fillText('SHOT NOTE', width - pad - chipWidth + 18, pad + 48);
+      ctx.fillStyle = textInput.value;
+      ctx.font = '700 17px Inter, Arial, sans-serif';
+      ctx.fillText(buildLocationHeadline(), width - pad - chipWidth + 18, pad + 72);
+
+      var panelY = height - panelHeight - pad + 18;
+      fillRoundedRect(pad + 18, panelY, width - (pad + 18) * 2, panelHeight, 28, mixColors(mutedInput.value, bgInput.value, 0.38));
+      strokeRoundedRect(pad + 18, panelY, width - (pad + 18) * 2, panelHeight, 28, withAlpha(borderInput.value, 0.8), 1.25);
+
+      var innerX = pad + 52;
+      var innerY = panelY + 52;
+      innerY = drawKicker('Street Notes', innerX, innerY);
+      innerY = drawTitleBlock(innerX, innerY, width - innerX * 2, preset, 2, 2);
+      innerY += scaled(10);
+      innerY = drawBodyCopy(captionInput.value, innerX, innerY, width - innerX * 2, 18, 3, '400');
+      innerY += scaled(16);
+      innerY = drawTagPills(getTags(), innerX, innerY, width - innerX * 2);
+      innerY += scaled(18);
+      drawMetaRows(getMetaItems().slice(0, 6), innerX, innerY, width - innerX * 2, 3, 62);
+      drawPaletteRow(innerX, height - pad - 82, width - innerX * 2, true);
+    }
+
+    function drawAirmailStripes(x, y, width, height) {
+      var stripeWidth = 12;
+      for (var index = 0; index < width / stripeWidth + 2; index += 1) {
+        ctx.fillStyle = index % 2 === 0 ? accentInput.value : state.palette.highlight;
+        ctx.save();
+        ctx.translate(x + index * stripeWidth, y);
+        ctx.rotate(Math.PI / 4);
+        ctx.fillRect(0, 0, stripeWidth / 1.5, height * 0.22);
+        ctx.restore();
+      }
+    }
+
+    function renderPostcard(width, height, preset) {
+      fillRoundedRect(34, 34, width - 68, height - 68, 26, mixColors(bgInput.value, '#ffffff', 0.07));
+      strokeRoundedRect(34, 34, width - 68, height - 68, 26, withAlpha(borderInput.value, 0.9), 2);
+      drawAirmailStripes(56, 50, 140, 90);
+
+      var photoX = 74;
+      var photoY = 88;
+      var photoW = width * 0.55;
+      var photoH = height - 176;
+      drawPhotoFrame(photoX, photoY, photoW, photoH, { radius: 20, matte: '#f7f1e8', border: mixColors('#ffffff', borderInput.value, 0.35), innerInset: 18, shadow: true });
+
+      var panelX = photoX + photoW + 38;
+      var panelW = width - panelX - 74;
+      var cursorY = 114;
+      cursorY = drawKicker('Postcard Air Mail', panelX, cursorY);
+      cursorY = drawTitleBlock(panelX, cursorY, panelW, preset, 3, 2);
+      cursorY += scaled(16);
+      cursorY = drawLocationModule(panelX, cursorY, panelW, 'light') + scaled(16);
+      cursorY = drawBodyCopy(captionInput.value, panelX, cursorY, panelW, 18, 5, '400');
+      cursorY += scaled(16);
+      cursorY = drawTagPills(getTags(), panelX, cursorY, panelW) + 14;
+      drawMetaRows(getMetaItems().slice(0, 4), panelX, cursorY, panelW, 1, 58, 'light');
+      drawPaletteRow(panelX, height - 134, panelW, false);
+
+      var stampW = 138;
+      fillRoundedRect(width - 74 - stampW, 74, stampW, 94, 18, mixColors(accentInput.value, bgInput.value, 0.18));
+      strokeRoundedRect(width - 74 - stampW, 74, stampW, 94, 18, accentInput.value, 2);
+      ctx.fillStyle = textInput.value;
+      ctx.font = '700 12px Inter, Arial, sans-serif';
+      ctx.fillText('POSTMARK', width - 74 - stampW + 16, 102);
+      ctx.font = '700 20px Inter, Arial, sans-serif';
+      ctx.fillText(dateInput.value || 'Date', width - 74 - stampW + 16, 132);
+      ctx.font = '500 14px Inter, Arial, sans-serif';
+      ctx.fillText(getLocationDisplay(), width - 74 - stampW + 16, 154);
+    }
+
+    function renderLedger(width, height, preset) {
+      var panelW = width * 0.34;
+      fillRoundedRect(34, 34, panelW, height - 68, 28, mixColors(mutedInput.value, bgInput.value, 0.2));
+      strokeRoundedRect(34, 34, panelW, height - 68, 28, withAlpha(borderInput.value, 0.9), 1.5);
+      drawPhotoFrame(panelW + 56, 34, width - panelW - 90, height - 68, { radius: 28, overlay: true, overlayStrength: 0.36, alignX: 0.58 });
+
+      var x = 68;
+      var y = 86;
+      y = drawKicker('Lens Ledger', x, y);
+      y = drawTitleBlock(x, y, panelW - 68, preset, 3, 2);
+      y += scaled(18);
+      y = drawLocationModule(x, y, panelW - 68, 'dark') + 18;
+      y = drawMetaRows(getMetaItems().slice(0, 6), x, y, panelW - 68, 1, 58, 'dark') + 18;
+      drawPaletteRow(x, height - 138, panelW - 68, true);
+
+      fillRoundedRect(width - 340, height - 154, 286, 92, 20, withAlpha(bgInput.value, 0.68));
+      strokeRoundedRect(width - 340, height - 154, 286, 92, 20, withAlpha(borderInput.value, 0.75), 1);
+      ctx.fillStyle = accentInput.value;
+      ctx.font = '700 12px Inter, Arial, sans-serif';
+      ctx.fillText('FRAME NOTES', width - 320, height - 120);
+      ctx.fillStyle = textInput.value;
+      ctx.font = '600 16px Inter, Arial, sans-serif';
+      if (showStoryInput.checked) {
+        drawTextLines(wrapLines(captionInput.value, 246, '600 16px Inter, Arial, sans-serif', 2), width - 320, height - 94, 22, textInput.value, '600 16px Inter, Arial, sans-serif');
+      }
+    }
+
+    function renderGallery(width, height, preset) {
+      drawPhotoFrame(36, 36, width - 72, height - 72, { radius: 30, overlay: true, overlayStrength: 0.56, innerInset: 0, matte: bgInput.value, shadow: false, alignY: 0.46 });
+
+      var plaqueX = 60;
+      var plaqueY = height - 312;
+      var plaqueW = width - 120;
+      fillRoundedRect(plaqueX, plaqueY, plaqueW, 230, 26, withAlpha(mutedInput.value, 0.86));
+      strokeRoundedRect(plaqueX, plaqueY, plaqueW, 230, 26, withAlpha(borderInput.value, 0.9), 1.5);
+      var x = plaqueX + 34;
+      var y = plaqueY + 42;
+      y = drawKicker('Gallery Plaque', x, y);
+      y = drawTitleBlock(x, y, plaqueW * 0.56, preset, 2, 2);
+      var rightX = plaqueX + plaqueW * 0.62;
+      drawLocationModule(rightX, plaqueY + 34, plaqueW * 0.33, 'dark');
+      drawMetaRows(getMetaItems().slice(0, 4), rightX, plaqueY + 132, plaqueW * 0.33, 1, 50, 'dark');
+      drawPaletteRow(x, height - 136, plaqueW * 0.52, true);
+    }
+
+    function renderContact(width, height, preset) {
+      var pad = 46;
+      fillRoundedRect(pad, pad, width - pad * 2, height - pad * 2, 26, mixColors(mutedInput.value, bgInput.value, 0.16));
+      strokeRoundedRect(pad, pad, width - pad * 2, height - pad * 2, 26, withAlpha(borderInput.value, 0.85), 1.2);
+
+      ctx.fillStyle = accentInput.value;
+      ctx.font = '700 14px Inter, Arial, sans-serif';
+      ctx.fillText('CONTACT SHEET', pad + 24, pad + 30);
+      ctx.fillStyle = mixColors(textInput.value, bgInput.value, 0.25);
+      ctx.font = '500 13px Inter, Arial, sans-serif';
+      ctx.fillText(dateInput.value || 'Date', width - pad - 120, pad + 30);
+
+      drawPhotoFrame(pad + 24, pad + 52, width - pad * 2 - 48, height * 0.52, { radius: 22, overlay: true, overlayStrength: 0.34, innerInset: 12, alignX: 0.52, alignY: 0.46 });
+      var stripY = height * 0.58 + 34;
+      var stripX = pad + 24;
+      var stripW = width - pad * 2 - 48;
+      var smallW = (stripW - 24) / 3;
+      drawPhotoFrame(stripX, stripY, smallW, 158, { radius: 18, innerInset: 8, alignX: 0.25, shadow: false, matte: mixColors(bgInput.value, mutedInput.value, 0.35) });
+      drawPhotoFrame(stripX + smallW + 12, stripY, smallW, 158, { radius: 18, innerInset: 8, alignX: 0.5, shadow: false, matte: mixColors(bgInput.value, mutedInput.value, 0.35) });
+      drawPhotoFrame(stripX + (smallW + 12) * 2, stripY, smallW, 158, { radius: 18, innerInset: 8, alignX: 0.75, shadow: false, matte: mixColors(bgInput.value, mutedInput.value, 0.35) });
+
+      var textY = stripY + 196;
+      textY = drawKicker('Contact Sheet', stripX, textY);
+      textY = drawTitleBlock(stripX, textY, stripW * 0.58, preset, 2, 0);
+      textY += scaled(6);
+      textY = drawBodyCopy(captionInput.value, stripX, textY, stripW * 0.58, 18, 3, '400');
+      drawLocationModule(stripX + stripW * 0.62, stripY + 198, stripW * 0.38, 'dark');
+      drawPaletteRow(stripX + stripW * 0.62, stripY + 302, stripW * 0.38, true);
+    }
+
+    function renderTransit(width, height, preset) {
+      var pad = 42;
+      fillRoundedRect(pad, pad, width - pad * 2, height - pad * 2, 28, mixColors(mutedInput.value, bgInput.value, 0.22));
+      strokeRoundedRect(pad, pad, width - pad * 2, height - pad * 2, 28, accentInput.value, 2);
+      fillRoundedRect(pad + 18, pad + 18, 160, height - pad * 2 - 36, 22, mixColors(accentInput.value, bgInput.value, 0.18));
+      ctx.save();
+      ctx.translate(pad + 66, height / 2 + 120);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = textInput.value;
+      ctx.font = '700 40px Inter, Arial, sans-serif';
+      ctx.fillText('TRANSIT PASS', 0, 0);
+      ctx.restore();
+      drawPhotoFrame(pad + 200, pad + 34, width * 0.44, height - pad * 2 - 68, { radius: 26, overlay: true, overlayStrength: 0.26, alignX: 0.56 });
+      var infoX = pad + width * 0.44 + 228;
+      var infoW = width - infoX - pad - 22;
+      var y = pad + 74;
+      y = drawKicker('Transit Pass', infoX, y);
+      y = drawTitleBlock(infoX, y, infoW, preset, 3, 2);
+      y += scaled(14);
+      y = drawLocationModule(infoX, y, infoW, 'dark') + scaled(16);
+      y = drawTagPills(getTags(), infoX, y, infoW) + scaled(10);
+      y = drawMetaRows(getMetaItems().slice(0, 4), infoX, y, infoW, 1, 56, 'dark') + scaled(12);
+      drawPaletteRow(infoX, y, infoW, true);
+    }
+
+    function renderJournal(width, height, preset) {
+      var pad = 52;
+      fillRoundedRect(pad, pad, width - pad * 2, height - pad * 2, 22, mixColors('#f6f0e6', bgInput.value, 0.12));
+      strokeRoundedRect(pad, pad, width - pad * 2, height - pad * 2, 22, withAlpha(borderInput.value, 0.7), 1.5);
+      for (var line = 0; line < 16; line += 1) {
+        ctx.strokeStyle = withAlpha(borderInput.value, 0.16);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(pad + 34, pad + 86 + line * 72);
+        ctx.lineTo(width - pad - 34, pad + 86 + line * 72);
+        ctx.stroke();
+      }
+      drawPhotoFrame(pad + 60, pad + 76, width - pad * 2 - 120, height * 0.42, { radius: 18, matte: '#f4ecdf', border: mixColors(borderInput.value, '#ffffff', 0.3), innerInset: 12, alignY: 0.44 });
+      var x = pad + 64;
+      var y = pad + height * 0.42 + 110;
+      y = drawKicker('Field Journal', x, y);
+      y = drawTitleBlock(x, y, width - pad * 2 - 128, preset, 2, 2);
+      y += scaled(12);
+      y = drawBodyCopy(captionInput.value, x, y, width - pad * 2 - 128, 18, 4, '400');
+      y += scaled(14);
+      y = drawLocationModule(x, y, width - pad * 2 - 128, 'light') + scaled(14);
+      y = drawTagPills(getTags(), x, y, width - pad * 2 - 128) + scaled(10);
+      drawMetaRows(getMetaItems().slice(0, 6), x, y, width - pad * 2 - 128, 2, 56, 'light');
+    }
+
+    function renderEditorial(width, height, preset) {
+      var pad = 44;
+      fillRoundedRect(34, 34, width - 68, height - 68, 24, mixColors(mutedInput.value, bgInput.value, 0.16));
+      drawPhotoFrame(pad, pad, width * 0.57, height - pad * 2, { radius: 18, overlay: true, overlayStrength: 0.18, innerInset: 0, matte: bgInput.value, shadow: false, alignX: 0.46 });
+      var foldX = width * 0.57 + 30;
+      ctx.strokeStyle = withAlpha(borderInput.value, 0.4);
+      ctx.setLineDash([10, 10]);
+      ctx.beginPath();
+      ctx.moveTo(foldX, pad + 12);
+      ctx.lineTo(foldX, height - pad - 12);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      var x = foldX + 34;
+      var y = 96;
+      y = drawKicker('Editorial Fold', x, y);
+      y = drawTitleBlock(x, y, width - x - 56, preset, 3, 2);
+      y += scaled(14);
+      y = drawBodyCopy(captionInput.value, x, y, width - x - 56, 19, 5, '400');
+      y += scaled(18);
+      y = drawLocationModule(x, y, width - x - 56, 'dark') + scaled(18);
+      y = drawTagPills(getTags(), x, y, width - x - 56) + scaled(12);
+      y = drawMetaRows(getMetaItems().slice(0, 4), x, y, width - x - 56, 1, 58, 'dark') + scaled(12);
+      drawPaletteRow(x, height - 120, width - x - 56, true);
+    }
+
+    function renderCard() {
+      var width = Math.max(600, Number(widthInput.value) || 1080);
+      var height = Math.max(600, Number(heightInput.value) || 1080);
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.boxShadow = shadowInput.checked ? '0 18px 46px rgba(0,0,0,0.2)' : 'none';
+      drawFrameBackground(width, height);
+
+      var preset = PRESETS[presetInput.value] || PRESETS['street-notes'];
+      if (preset.layout === 'postcard') {
+        renderPostcard(width, height, preset);
+      } else if (preset.layout === 'ledger') {
+        renderLedger(width, height, preset);
+      } else if (preset.layout === 'gallery') {
+        renderGallery(width, height, preset);
+      } else if (preset.layout === 'contact') {
+        renderContact(width, height, preset);
+      } else if (preset.layout === 'transit') {
+        renderTransit(width, height, preset);
+      } else if (preset.layout === 'journal') {
+        renderJournal(width, height, preset);
+      } else if (preset.layout === 'editorial') {
+        renderEditorial(width, height, preset);
+      } else {
+        renderStreetNotes(width, height, preset);
+      }
+
+      renderSummary();
+    }
+
+    function buildCaptionText() {
+      var parts = [];
+      if (showTitleInput.checked && titleInput.value.trim()) parts.push(titleInput.value.trim());
+      if (showStoryInput.checked && captionInput.value.trim()) parts.push(captionInput.value.trim());
+      var meta = [cameraInput.value, lensInput.value, focalInput.value, apertureInput.value, shutterInput.value, isoInput.value].filter(Boolean).join(' • ');
+      if (showMetaInput.checked && meta) parts.push(meta);
+      if (showLocationInput.checked) parts.push(getLocationDisplay());
+      if (dateInput.value.trim()) parts.push(dateInput.value.trim());
+      return parts.filter(Boolean).join('\n');
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function capitalize(value) {
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    function renderSummary() {
+      var metaLines = getMetaItems().map(function (item) {
+        return '<div class="esc-summary-line"><strong>' + escapeHtml(item.label) + '</strong>: ' + escapeHtml(item.value) + '</div>';
+      }).join('');
+
+      var paletteLines = ['dominant', 'accent', 'muted', 'shadow', 'highlight'].map(function (role) {
+        var color = state.palette[role] || '#888888';
+        return '<div class="esc-summary-swatch" style="background:' + color + ';color:' + contrastColor(color) + '"><div>' + capitalize(role) + '</div><div>' + color.toUpperCase() + '</div></div>';
+      }).join('');
+
+      summaryEl.innerHTML = [
+        '<div class="esc-summary-card">',
+        '<div class="esc-summary-title">Caption Preview</div>',
+        '<div class="esc-summary-line">' + escapeHtml(buildCaptionText()).replace(/\n/g, '<br />') + '</div>',
+        '</div>',
+        '<div class="esc-summary-card">',
+        '<div class="esc-summary-title">Location Module</div>',
+        '<div class="esc-summary-line"><strong>' + escapeHtml(buildLocationHeadline()) + '</strong></div>',
+        '<div class="esc-summary-line">' + escapeHtml(buildLocationSubline()) + '</div>',
+        '</div>',
+        '<div class="esc-summary-card">',
+        '<div class="esc-summary-title">Shot Details</div>',
+        metaLines || '<div class="esc-summary-line">Upload an image or fill in the fields manually.</div>',
+        '</div>',
+        '<div class="esc-summary-card">',
+        '<div class="esc-summary-title">Extracted Palette</div>',
+        '<div class="esc-summary-palette">' + paletteLines + '</div>',
+        '</div>'
+      ].join('');
+    }
+
+    function applyPresetDimensions() {
+      var preset = PRESETS[presetInput.value];
+      if (!preset) return;
+      widthInput.value = String(preset.width);
+      heightInput.value = String(preset.height);
+      renderCard();
+    }
+
+    async function downloadCard() {
+      renderCard();
+      var link = document.createElement('a');
+      var format = formatInput.value;
+      link.download = (state.fileName ? cleanedFileTitle(state.fileName).replace(/\s+/g, '-').toLowerCase() : 'story-card') + '.' + (format === 'jpeg' ? 'jpg' : 'png');
+      link.href = format === 'jpeg' ? canvas.toDataURL('image/jpeg', Number(qualityInput.value) / 100) : canvas.toDataURL('image/png');
+      link.click();
+      setStatus('Story card downloaded.');
+    }
+
+    async function copyCardToClipboard() {
+      if (!navigator.clipboard || typeof ClipboardItem === 'undefined') {
+        setStatus('Clipboard image copy is not supported in this browser.');
+        return;
+      }
+
+      renderCard();
+      var format = formatInput.value === 'jpeg' ? 'image/jpeg' : 'image/png';
+      canvas.toBlob(async function (blob) {
+        if (!blob) {
+          setStatus('Could not copy the card image.');
+          return;
+        }
+
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ [format]: blob })]);
+          setStatus('Story card copied to the clipboard.');
+        } catch (error) {
+          console.error(error);
+          setStatus('Clipboard copy failed.');
+        }
+      }, format, Number(qualityInput.value) / 100);
+    }
+
+    async function copyCaptionText() {
+      if (!navigator.clipboard) {
+        setStatus('Clipboard text copy is not supported in this browser.');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(buildCaptionText());
+        setStatus('Caption text copied to the clipboard.');
+      } catch (error) {
+        console.error(error);
+        setStatus('Could not copy the caption text.');
+      }
+    }
+
+    function clearImage() {
+      revokeObjectUrl();
+      state.image = null;
+      state.fileName = '';
+      state.exifRaw = null;
+      state.gpsRaw = null;
+      thumb.removeAttribute('src');
+      nameEl.textContent = '';
+      fileInput.value = '';
+      updateDropzoneState(false);
+      setStatus('Image removed. You can still edit the card manually.');
+      renderCard();
+    }
+
+    syncColorInputs(bgInput, bgHex);
+    syncColorInputs(textInput, textHex);
+    syncColorInputs(accentInput, accentHex);
+    syncColorInputs(mutedInput, mutedHex);
+    syncColorInputs(borderInput, borderHex);
+    updatePaletteButtons();
+
+    fileInput.addEventListener('change', function () {
+      handleFile(fileInput.files && fileInput.files[0]);
+    });
+
+    dropzone.addEventListener('click', function (event) {
+      if (event.target === removeBtn) return;
+      fileInput.click();
+    });
+
+    dropzone.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        fileInput.click();
+      }
+    });
+
+    ['dragenter', 'dragover'].forEach(function (eventName) {
+      dropzone.addEventListener(eventName, function (event) {
+        event.preventDefault();
+        dropzone.classList.add('esc-drag-over');
+      });
+    });
+
+    ['dragleave', 'dragend', 'drop'].forEach(function (eventName) {
+      dropzone.addEventListener(eventName, function (event) {
+        event.preventDefault();
+        dropzone.classList.remove('esc-drag-over');
+      });
+    });
+
+    dropzone.addEventListener('drop', function (event) {
+      var files = event.dataTransfer && event.dataTransfer.files;
+      handleFile(files && files[0]);
+    });
+
+    document.addEventListener('paste', function (event) {
+      if (!root.isConnected) return;
+      var items = event.clipboardData && event.clipboardData.items;
+      if (!items) return;
+      for (var index = 0; index < items.length; index += 1) {
+        if (items[index].type.indexOf('image/') === 0) {
+          handleFile(items[index].getAsFile());
+          return;
+        }
+      }
+    });
+
+    removeBtn.addEventListener('click', function (event) {
+      event.stopPropagation();
+      clearImage();
+    });
+
+    autoFillBtn.addEventListener('click', function () {
+      fillInputsFromExif();
+      renderCard();
+      setStatus(state.exifRaw ? 'Fields refreshed from EXIF data.' : 'No EXIF data available for autofill.');
+    });
+
+    copyCaptionBtn.addEventListener('click', copyCaptionText);
+
+    presetInput.addEventListener('change', applyPresetDimensions);
+    formatInput.addEventListener('change', function () {
+      qualityWrap.style.display = formatInput.value === 'jpeg' ? '' : 'none';
+    });
+
+    extractPaletteBtn.addEventListener('click', function () {
+      extractPalette();
+      renderCard();
+    });
+
+    applyPaletteBtn.addEventListener('click', function () {
+      applyPaletteToControls();
+      setStatus('Extracted palette applied to the card theme.');
+    });
+
+    Array.from(paletteGrid.querySelectorAll('[data-role]')).forEach(function (button) {
+      button.addEventListener('click', function () {
+        var role = button.getAttribute('data-role');
+        var target = paletteTargetInput.value;
+        var color = state.palette[role] || '#888888';
+        if (target === 'bg') {
+          bgInput.value = color;
+          bgHex.value = color;
+        } else if (target === 'text') {
+          textInput.value = color;
+          textHex.value = color;
+        } else if (target === 'accent') {
+          accentInput.value = color;
+          accentHex.value = color;
+        } else if (target === 'muted') {
+          mutedInput.value = color;
+          mutedHex.value = color;
+        } else if (target === 'border') {
+          borderInput.value = color;
+          borderHex.value = color;
+        }
+        renderCard();
+      });
+    });
+
+    [
+      titleInput,
+      subtitleInput,
+      captionInput,
+      locationInput,
+      tagsInput,
+      cameraInput,
+      lensInput,
+      focalInput,
+      apertureInput,
+      shutterInput,
+      isoInput,
+      dateInput,
+      widthInput,
+      heightInput,
+      typeScaleInput,
+      densityInput,
+      showImageInput,
+      showTitleInput,
+      showSubtitleInput,
+      showPaletteInput,
+      showStoryInput,
+      showTagsInput,
+      showLocationInput,
+      showMetaInput,
+      shadowInput,
+      grainInput,
+      borderToggleInput,
+      qualityInput
+    ].forEach(function (element) {
+      element.addEventListener('input', renderCard);
+      element.addEventListener('change', renderCard);
+    });
+
+    renderBtn.addEventListener('click', function () {
+      renderCard();
+      setStatus('Story card rendered.');
+    });
+
+    downloadBtn.addEventListener('click', downloadCard);
+    copyBtn.addEventListener('click', copyCardToClipboard);
+
+    applyPresetDimensions();
+    renderCard();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExifStoryCard, { once: true });
+  } else {
+    initExifStoryCard();
+  }
+
+  document.addEventListener('astro:page-load', initExifStoryCard);
+</script>

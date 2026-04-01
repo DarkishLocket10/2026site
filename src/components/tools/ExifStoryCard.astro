@@ -1,0 +1,2438 @@
+---
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800&family=Libre+Franklin:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<div id="exif-tool" class="esc-root">
+  <div class="esc-panel">
+    <!-- Image upload -->
+    <section class="esc-section">
+      <div class="esc-dropzone" id="esc-dropzone" tabindex="0" role="button" aria-label="Upload photo">
+        <input id="esc-file" type="file" accept="image/*" class="esc-sr-only" tabindex="-1" />
+        <div class="esc-dropzone-empty" id="esc-dropzone-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" class="esc-drop-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+          <span class="esc-drop-title">Drop a photo here</span>
+          <span class="esc-drop-hint">or paste / click to upload</span>
+        </div>
+        <div class="esc-dropzone-filled" id="esc-dropzone-filled" style="display:none">
+          <img id="esc-thumb" class="esc-thumb" alt="Preview" />
+          <span id="esc-name" class="esc-drop-hint"></span>
+          <span class="esc-drop-replace">Replace</span>
+          <button type="button" class="esc-drop-remove" id="esc-remove" aria-label="Remove">&times;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layout -->
+    <details class="esc-details" open>
+      <summary class="esc-summary-toggle"><span class="esc-summary-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>Layout</summary>
+      <div class="esc-details-body">
+        <div class="esc-field">
+          <select id="esc-preset">
+            <option value="street-notes" selected>Street Notes</option>
+            <option value="postcard-airmail">Postcard</option>
+            <option value="lens-ledger">Lens Ledger</option>
+            <option value="gallery-plaque">Gallery Plaque</option>
+            <option value="contact-sheet">Contact Sheet</option>
+            <option value="transit-pass">Transit Pass</option>
+            <option value="field-journal">Field Journal</option>
+            <option value="editorial-fold">Editorial Fold</option>
+          </select>
+        </div>
+        <div class="esc-field">
+          <label for="esc-layout-label">Layout label</label>
+          <input id="esc-layout-label" type="text" value="" placeholder="Street Notes" autocomplete="off" />
+        </div>
+        <div class="esc-row-3">
+          <div class="esc-field"><label for="esc-width">W</label><input id="esc-width" type="number" min="600" step="10" value="1080" /></div>
+          <div class="esc-field"><label for="esc-height">H</label><input id="esc-height" type="number" min="600" step="10" value="1350" /></div>
+          <div class="esc-field">
+            <label for="esc-photo-align">Crop</label>
+            <select id="esc-photo-align">
+              <option value="0.2">Top</option>
+              <option value="0.5" selected>Center</option>
+              <option value="0.8">Bottom</option>
+            </select>
+          </div>
+        </div>
+        <div class="esc-row-2">
+          <div class="esc-field">
+            <label for="esc-type-scale">Type</label>
+            <select id="esc-type-scale">
+              <option value="0.88">Compact</option>
+              <option value="1" selected>Balanced</option>
+              <option value="1.1">Large</option>
+              <option value="1.2">Display</option>
+            </select>
+          </div>
+          <div class="esc-field">
+            <label for="esc-density">Density</label>
+            <select id="esc-density">
+              <option value="0.85">Tight</option>
+              <option value="1" selected>Balanced</option>
+              <option value="1.15">Airy</option>
+            </select>
+          </div>
+        </div>
+        <div id="esc-preset-opts"></div>
+      </div>
+    </details>
+
+    <!-- Style -->
+    <details class="esc-details">
+      <summary class="esc-summary-toggle"><span class="esc-summary-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.912 5.813h6.124l-4.974 3.614 1.912 5.813L12 14.626l-4.974 3.614 1.912-5.813-4.974-3.614h6.124z"/></svg></span>Style</summary>
+      <div class="esc-details-body">
+        <div class="esc-row-2">
+          <div class="esc-field">
+            <label for="esc-title-font">Title font</label>
+            <select id="esc-title-font">
+              <option value="serif" selected>Serif</option>
+              <option value="sans">Sans-serif</option>
+              <option value="editorial">Editorial</option>
+              <option value="grotesk">Grotesk</option>
+            </select>
+          </div>
+          <div class="esc-field">
+            <label for="esc-body-font">Body font</label>
+            <select id="esc-body-font">
+              <option value="sans" selected>Sans-serif</option>
+              <option value="serif">Serif</option>
+              <option value="mono">Monospace</option>
+            </select>
+          </div>
+        </div>
+        <div class="esc-field">
+          <label for="esc-photo-ratio">Photo size <span id="esc-photo-ratio-val" class="esc-range-val">42%</span></label>
+          <input id="esc-photo-ratio" type="range" min="25" max="65" value="42" step="1" style="width:100%" />
+        </div>
+        <div class="esc-field">
+          <label for="esc-card-padding">Card padding <span id="esc-card-padding-val" class="esc-range-val">Medium</span></label>
+          <input id="esc-card-padding" type="range" min="20" max="70" value="44" step="2" style="width:100%" />
+        </div>
+        <div class="esc-field">
+          <label for="esc-overlay-amt">Photo overlay <span id="esc-overlay-amt-val" class="esc-range-val">35%</span></label>
+          <input id="esc-overlay-amt" type="range" min="0" max="70" value="35" step="5" style="width:100%" />
+        </div>
+        <div class="esc-field">
+          <label for="esc-corner-radius">Corner radius <span id="esc-corner-radius-val" class="esc-range-val">24px</span></label>
+          <input id="esc-corner-radius" type="range" min="0" max="40" value="24" step="2" style="width:100%" />
+        </div>
+        <div class="esc-field">
+          <label for="esc-pal-size">Palette strip <span id="esc-pal-size-val" class="esc-range-val">44px</span></label>
+          <input id="esc-pal-size" type="range" min="22" max="72" value="44" step="2" style="width:100%" />
+        </div>
+        <div class="esc-color-editors" style="margin-top:14px">
+          <span class="esc-ce-label">Text colors</span>
+          <div class="esc-color-grid">
+            <div class="esc-color-field"><label>Label</label><input id="esc-color-label" type="color" value="#c98b45" /><input id="esc-color-label-hex" type="text" value="#c98b45" maxlength="7" /></div>
+            <div class="esc-color-field"><label>Title</label><input id="esc-color-title" type="color" value="#f3eadf" /><input id="esc-color-title-hex" type="text" value="#f3eadf" maxlength="7" /></div>
+            <div class="esc-color-field"><label>Body</label><input id="esc-color-body" type="color" value="#cbc4bb" /><input id="esc-color-body-hex" type="text" value="#cbc4bb" maxlength="7" /></div>
+            <div class="esc-color-field"><label>Meta</label><input id="esc-color-meta" type="color" value="#bcb5ad" /><input id="esc-color-meta-hex" type="text" value="#bcb5ad" maxlength="7" /></div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Story -->
+    <details class="esc-details" open>
+      <summary class="esc-summary-toggle"><span class="esc-summary-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>Story</summary>
+      <div class="esc-details-body">
+        <div class="esc-field"><input id="esc-title" type="text" value="Night frame in motion" placeholder="Title" /></div>
+        <div class="esc-field"><input id="esc-subtitle" type="text" value="A compact photo card built from real metadata" placeholder="Subtitle" /></div>
+        <div class="esc-field"><textarea id="esc-caption" rows="2" placeholder="Caption">Street lights, long shadows, and a lens choice that changed the whole feel of the frame.</textarea></div>
+        <div class="esc-row-2">
+          <div class="esc-field"><input id="esc-location" type="text" value="Osaka, Japan" placeholder="Location" /></div>
+          <div class="esc-field"><input id="esc-tags" type="text" value="Street, Night, Travel" placeholder="Tags" /></div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Metadata -->
+    <details class="esc-details" open>
+      <summary class="esc-summary-toggle">
+        <span class="esc-summary-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Metadata
+        <button type="button" class="esc-inline-btn" id="esc-auto-fill" title="Fill from EXIF">Auto-fill</button>
+      </summary>
+      <div class="esc-details-body">
+        <div class="esc-row-2">
+          <div class="esc-field"><input id="esc-camera" type="text" value="Sony a7 III" placeholder="Camera" /></div>
+          <div class="esc-field"><input id="esc-lens" type="text" value="Tamron 28-75mm F/2.8" placeholder="Lens" /></div>
+        </div>
+        <div class="esc-row-4">
+          <div class="esc-field"><input id="esc-focal" type="text" value="74mm" placeholder="Focal" /></div>
+          <div class="esc-field"><input id="esc-aperture" type="text" value="f/2.8" placeholder="Aperture" /></div>
+          <div class="esc-field"><input id="esc-shutter" type="text" value="1/250s" placeholder="Shutter" /></div>
+          <div class="esc-field"><input id="esc-iso" type="text" value="ISO 400" placeholder="ISO" /></div>
+        </div>
+        <div class="esc-field"><input id="esc-date" type="text" value="Jul 27, 2025" placeholder="Date" /></div>
+      </div>
+    </details>
+
+    <!-- Palette -->
+    <details class="esc-details">
+      <summary class="esc-summary-toggle">
+        <span class="esc-summary-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/></svg></span>Palette
+        <button type="button" class="esc-inline-btn" id="esc-extract-palette" title="Extract from image">Extract</button>
+      </summary>
+      <div class="esc-details-body">
+        <div class="esc-swatch-row" id="esc-palette-grid">
+          <button type="button" class="esc-swatch" data-role="dominant">Dominant</button>
+          <button type="button" class="esc-swatch" data-role="accent">Accent</button>
+          <button type="button" class="esc-swatch" data-role="muted">Muted</button>
+          <button type="button" class="esc-swatch" data-role="shadow">Shadow</button>
+          <button type="button" class="esc-swatch" data-role="highlight">Highlight</button>
+        </div>
+        <div class="esc-row-2" style="margin-bottom:8px">
+          <div class="esc-field" style="margin-bottom:0">
+            <label for="esc-extr-prec">Detail <span id="esc-extr-prec-val" class="esc-range-val">Medium</span></label>
+            <input id="esc-extr-prec" type="range" min="8" max="32" value="20" step="4" style="width:100%" />
+          </div>
+          <div class="esc-field" style="margin-bottom:0">
+            <label for="esc-extr-spread">Spread <span id="esc-extr-spread-val" class="esc-range-val">Medium</span></label>
+            <input id="esc-extr-spread" type="range" min="20" max="80" value="40" step="5" style="width:100%" />
+          </div>
+        </div>
+        <button type="button" class="esc-btn esc-btn-fill esc-btn-sm" id="esc-apply-palette" style="width:100%">Apply palette to card</button>
+
+        <!-- Visual palette preset picker -->
+        <div class="esc-pp-section">
+          <div class="esc-pp-header">
+            <span class="esc-pp-header-label">Presets</span>
+            <button type="button" class="esc-pp-toggle" id="esc-pp-toggle" aria-expanded="false">
+              <span class="esc-pp-preview">
+                <span class="esc-pp-dot" id="esc-pp-dot-bg"></span>
+                <span class="esc-pp-dot" id="esc-pp-dot-acc"></span>
+                <span class="esc-pp-dot" id="esc-pp-dot-mut"></span>
+              </span>
+              <span class="esc-pp-name" id="esc-pp-name">Custom</span>
+              <svg class="esc-pp-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+          <div class="esc-pp-panel" id="esc-pp-panel">
+            <div class="esc-pp-scroll" id="esc-pp-scroll"><!-- Built by JS --></div>
+          </div>
+        </div>
+
+        <!-- Per-channel color editors -->
+        <div class="esc-color-editors">
+          <span class="esc-ce-label">Customize</span>
+          <div class="esc-color-grid">
+            <div class="esc-color-field"><label>BG</label><input id="esc-bg" type="color" value="#161616" /><input id="esc-bg-hex" type="text" value="#161616" maxlength="7" /></div>
+            <div class="esc-color-field"><label>Text</label><input id="esc-text" type="color" value="#f3eadf" /><input id="esc-text-hex" type="text" value="#f3eadf" maxlength="7" /></div>
+            <div class="esc-color-field"><label>Accent</label><input id="esc-accent" type="color" value="#c98b45" /><input id="esc-accent-hex" type="text" value="#c98b45" maxlength="7" /></div>
+            <div class="esc-color-field"><label>Muted</label><input id="esc-muted" type="color" value="#2b2b2b" /><input id="esc-muted-hex" type="text" value="#2b2b2b" maxlength="7" /></div>
+            <div class="esc-color-field"><label>Border</label><input id="esc-border" type="color" value="#4b4b4b" /><input id="esc-border-hex" type="text" value="#4b4b4b" maxlength="7" /></div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Show / Hide -->
+    <details class="esc-details">
+      <summary class="esc-summary-toggle"><span class="esc-summary-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>Show / Hide</summary>
+      <div class="esc-details-body">
+        <div class="esc-toggle-grid">
+          <label class="esc-toggle"><input id="esc-show-image" type="checkbox" checked /><span>Image</span></label>
+          <label class="esc-toggle"><input id="esc-show-label" type="checkbox" checked /><span>Label</span></label>
+          <label class="esc-toggle"><input id="esc-show-title" type="checkbox" checked /><span>Title</span></label>
+          <label class="esc-toggle"><input id="esc-show-subtitle" type="checkbox" checked /><span>Subtitle</span></label>
+          <label class="esc-toggle"><input id="esc-show-story" type="checkbox" checked /><span>Caption</span></label>
+          <label class="esc-toggle"><input id="esc-show-tags" type="checkbox" checked /><span>Tags</span></label>
+          <label class="esc-toggle"><input id="esc-show-location" type="checkbox" checked /><span>Location</span></label>
+          <label class="esc-toggle"><input id="esc-show-meta" type="checkbox" checked /><span>Metadata</span></label>
+          <label class="esc-toggle"><input id="esc-show-palette" type="checkbox" checked /><span>Palette</span></label>
+          <label class="esc-toggle"><input id="esc-shadow" type="checkbox" checked /><span>Shadow</span></label>
+          <label class="esc-toggle"><input id="esc-grain" type="checkbox" checked /><span>Grain</span></label>
+          <label class="esc-toggle"><input id="esc-border-toggle" type="checkbox" checked /><span>Border</span></label>
+        </div>
+      </div>
+    </details>
+
+    <!-- Export bar -->
+    <div class="esc-export-bar">
+      <select id="esc-format" class="esc-export-fmt">
+        <option value="png" selected>PNG</option>
+        <option value="jpeg">JPEG</option>
+      </select>
+      <span id="esc-quality-wrap" style="display:none">
+        <input id="esc-quality" type="range" min="10" max="100" value="92" step="2" class="esc-quality-range" />
+      </span>
+      <div class="esc-export-actions">
+        <button type="button" class="esc-btn esc-btn-sm" id="esc-copy-caption" title="Copy caption text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+        </button>
+        <button type="button" class="esc-btn esc-btn-sm" id="esc-copy" title="Copy image">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
+        <button type="button" class="esc-btn esc-btn-fill esc-btn-sm" id="esc-download">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <div id="esc-status" class="esc-status" aria-live="polite"></div>
+  </div>
+
+  <div class="esc-canvas-wrap">
+    <canvas id="esc-canvas" width="1080" height="1350"></canvas>
+  </div>
+</div>
+
+<style is:global>
+  /* ── Root layout ── */
+  .esc-root {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .esc-root {
+      grid-template-columns: 280px 1fr;
+    }
+    .esc-canvas-wrap {
+      position: sticky;
+      top: 5.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .esc-root {
+      grid-template-columns: minmax(300px, 340px) 1fr;
+    }
+    .esc-canvas-wrap {
+      position: sticky;
+      top: 5.5rem;
+    }
+  }
+  @media (min-width: 1400px) {
+    .esc-root {
+      grid-template-columns: 360px 1fr;
+    }
+  }
+
+  /* ── Panel ── */
+  .esc-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .esc-section {
+    padding: 0 0 6px 0;
+  }
+
+  /* ── Collapsible sections via <details> ── */
+  .esc-details {
+    border-top: 1px solid rgba(128,128,128,0.1);
+  }
+  .esc-details[open] > .esc-summary-toggle {
+    margin-bottom: 0;
+  }
+
+  .esc-summary-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 2px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-soft);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    transition: color 0.15s;
+  }
+  .esc-summary-toggle::-webkit-details-marker { display: none; }
+  .esc-summary-toggle::after {
+    content: '';
+    width: 5px; height: 5px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.2s;
+    margin-left: auto;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+  .esc-details[open] > .esc-summary-toggle::after {
+    transform: rotate(45deg);
+  }
+  .esc-summary-toggle:hover { color: var(--text); }
+  .esc-summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: rgba(128,128,128,0.08);
+    flex-shrink: 0;
+  }
+  .esc-summary-icon svg { opacity: 0.6; }
+
+  .esc-details-body {
+    padding: 4px 2px 14px;
+  }
+
+  /* ── Inline button in summary ── */
+  .esc-inline-btn {
+    margin-left: auto;
+    margin-right: 16px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    background: rgba(128,128,128,0.08);
+    color: var(--color-accent);
+    border: 1px solid rgba(128,128,128,0.12);
+    transition: all 0.15s;
+  }
+  .esc-inline-btn:hover {
+    background: rgba(128,128,128,0.14);
+    border-color: var(--color-accent);
+  }
+
+  /* ── Fields ── */
+  .esc-field {
+    margin-bottom: 8px;
+  }
+  .esc-field:last-child { margin-bottom: 0; }
+  .esc-field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-soft);
+    margin-bottom: 3px;
+    opacity: 0.7;
+  }
+
+  #exif-tool input[type="text"],
+  #exif-tool input[type="number"],
+  #exif-tool textarea,
+  #exif-tool select,
+  .esc-root input[type="text"],
+  .esc-root input[type="number"],
+  .esc-root textarea,
+  .esc-root select {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid rgba(128,128,128,0.15);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    background: var(--card-bg);
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  /* Select dropdown arrow */
+  #exif-tool select,
+  .esc-root select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 8px center !important;
+    padding-right: 28px !important;
+  }
+  /* Select option styling */
+  #exif-tool select option,
+  .esc-root select option {
+    background: var(--card-bg);
+    color: var(--text);
+    padding: 8px;
+  }
+  .esc-root input[type="text"]::placeholder,
+  .esc-root textarea::placeholder {
+    color: var(--color-text-soft);
+    opacity: 0.5;
+  }
+  .esc-root input[type="text"]:focus,
+  .esc-root input[type="number"]:focus,
+  .esc-root textarea:focus,
+  .esc-root select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(136,90,156,0.1);
+  }
+  .esc-root textarea {
+    resize: vertical;
+    min-height: 52px;
+  }
+
+  /* ── Color fields ── */
+  .esc-color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin-top: 10px;
+  }
+  .esc-color-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .esc-color-field label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-soft);
+    opacity: 0.6;
+    margin: 0;
+  }
+  .esc-root .esc-color-field input[type="color"] {
+    width: 100%;
+    height: 26px;
+    border: 1px solid rgba(128,128,128,0.12);
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 2px;
+    background: transparent;
+  }
+  .esc-root .esc-color-field input[type="text"] {
+    width: 100%;
+    padding: 2px 2px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 9px;
+    text-align: center;
+    text-transform: lowercase;
+    border: none;
+    background: transparent;
+    color: var(--color-text-soft);
+    opacity: 0.7;
+  }
+  .esc-root .esc-color-field input[type="text"]:focus {
+    opacity: 1;
+    color: var(--text);
+  }
+
+  .esc-root input[type="range"],
+  .esc-root input[type="checkbox"] {
+    accent-color: var(--color-accent);
+  }
+
+  /* ── Grid helpers ── */
+  .esc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .esc-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .esc-row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  @media (max-width: 360px) {
+    .esc-row-4 { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── Buttons ── */
+  .esc-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(128,128,128,0.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .esc-btn:hover {
+    border-color: var(--color-accent);
+    background: rgba(136,90,156,0.06);
+  }
+  .esc-btn-fill {
+    background: var(--color-accent);
+    color: #fff;
+    border-color: transparent;
+  }
+  .esc-btn-fill:hover {
+    opacity: 0.9;
+    background: var(--color-accent);
+    border-color: transparent;
+  }
+  .esc-btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 7px;
+  }
+
+  /* ── Dropzone ── */
+  .esc-dropzone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 110px;
+    border: 2px dashed rgba(128,128,128,0.15);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+    outline: none;
+  }
+  .esc-dropzone:hover,
+  .esc-dropzone:focus-visible,
+  .esc-dropzone.esc-drag-over {
+    border-color: var(--color-accent);
+    background: rgba(136,90,156,0.04);
+  }
+
+  .esc-sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  .esc-dropzone-empty,
+  .esc-dropzone-filled {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    width: 100%; padding: 12px; z-index: 1;
+  }
+  .esc-drop-icon { width: 24px; height: 24px; color: var(--color-text-soft); opacity: 0.35; }
+  .esc-drop-title { font-size: 13px; font-weight: 600; }
+  .esc-drop-hint { font-size: 11px; color: var(--color-text-soft); opacity: 0.6; }
+  .esc-thumb { max-width: 100%; max-height: 70px; border-radius: 8px; object-fit: cover; }
+  .esc-drop-replace {
+    font-size: 11px; color: var(--color-accent);
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .esc-dropzone:hover .esc-drop-replace { opacity: 0.85; }
+  .esc-drop-remove {
+    position: absolute; top: 6px; right: 6px;
+    width: 22px; height: 22px; border-radius: 999px;
+    border: none; background: rgba(0,0,0,0.5); color: #fff;
+    font-size: 14px; line-height: 1; display: flex;
+    align-items: center; justify-content: center;
+    cursor: pointer; opacity: 0; transition: opacity 0.15s; z-index: 3; padding: 0;
+  }
+  .esc-dropzone:hover .esc-drop-remove { opacity: 1; }
+
+  /* ── Swatch row ── */
+  .esc-swatch-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .esc-swatch {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 1px solid rgba(128,128,128,0.08);
+    padding: 5px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 8px;
+    font-weight: 700;
+    text-align: left;
+    line-height: 1.2;
+    white-space: pre-line;
+    transition: transform 0.12s, border-color 0.12s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .esc-swatch:hover { transform: translateY(-1px); border-color: var(--color-accent); }
+
+  /* ── Toggles ── */
+  .esc-toggle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+  }
+  .esc-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background 0.12s;
+    color: var(--color-text-soft);
+  }
+  .esc-toggle:hover {
+    background: rgba(128,128,128,0.06);
+    color: var(--text);
+  }
+  .esc-toggle input[type="checkbox"] {
+    width: 13px; height: 13px;
+    margin: 0;
+  }
+
+  /* ── Export bar ── */
+  .esc-export-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 2px;
+    border-top: 1px solid rgba(128,128,128,0.1);
+    margin-top: 2px;
+  }
+  .esc-export-fmt {
+    width: 80px !important;
+    padding: 5px 8px !important;
+    padding-right: 26px !important;
+    font-size: 12px !important;
+    border-radius: 6px !important;
+    flex-shrink: 0;
+    background-color: var(--card-bg) !important;
+  }
+  .esc-quality-range {
+    width: 60px;
+  }
+  .esc-export-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+
+  /* ── Canvas ── */
+  .esc-canvas-wrap canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 14px;
+    border: 1px solid rgba(128,128,128,0.08);
+    background: transparent;
+  }
+
+  /* ── Status ── */
+  .esc-status {
+    font-size: 11px;
+    color: var(--color-text-soft);
+    opacity: 0.6;
+    line-height: 1.5;
+    padding: 4px 2px 0;
+    min-height: 20px;
+  }
+  .esc-status:empty { display: none; }
+
+  /* ── Range value labels ── */
+  .esc-range-val {
+    float: right;
+    font-weight: 500;
+    color: var(--color-accent);
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── Preset-specific options ── */
+  #esc-preset-opts:empty { display: none; }
+  #esc-preset-opts .esc-field { margin-top: 8px; }
+
+  /* ── Visual palette preset picker ── */
+  .esc-pp-section {
+    margin-top: 14px;
+  }
+
+  .esc-pp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .esc-pp-header-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-soft);
+    opacity: 0.6;
+  }
+
+  .esc-pp-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 7px 4px 5px;
+    border-radius: 8px;
+    border: 1px solid rgba(128,128,128,0.15);
+    background: rgba(128,128,128,0.04);
+    color: var(--text);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+  .esc-pp-toggle:hover {
+    border-color: var(--color-accent);
+    background: rgba(128,128,128,0.08);
+  }
+  .esc-pp-toggle[aria-expanded="true"] .esc-pp-chevron {
+    transform: rotate(180deg);
+  }
+
+  .esc-pp-chevron {
+    transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
+    opacity: 0.45;
+    flex-shrink: 0;
+  }
+
+  .esc-pp-preview {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+  }
+  .esc-pp-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1px solid rgba(128,128,128,0.18);
+    display: block;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .esc-pp-name {
+    max-width: 88px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.75;
+  }
+
+  /* Sliding panel */
+  .esc-pp-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1),
+                opacity 0.22s ease;
+    opacity: 0;
+  }
+  .esc-pp-panel.esc-pp-open {
+    max-height: 720px;
+    opacity: 1;
+  }
+
+  .esc-pp-scroll {
+    padding: 6px 0 4px;
+  }
+
+  .esc-pp-group {
+    margin-bottom: 9px;
+  }
+  .esc-pp-group:last-child { margin-bottom: 0; }
+
+  .esc-pp-group-label {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--color-text-soft);
+    opacity: 0.45;
+    margin-bottom: 4px;
+    padding-left: 1px;
+  }
+
+  .esc-pp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .esc-pp-card {
+    position: relative;
+    border: 2px solid transparent;
+    border-radius: 7px;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.12s ease, border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  .esc-pp-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(128,128,128,0.35);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+  .esc-pp-card:focus-visible {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(136,90,156,0.25);
+  }
+  .esc-pp-card.esc-pp-selected {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent), 0 2px 8px rgba(0,0,0,0.18);
+    transform: translateY(-1px);
+  }
+
+  .esc-pp-card-accent-bar {
+    height: 4px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+  .esc-pp-card-body {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    padding: 3px 5px;
+  }
+  .esc-pp-card-name {
+    font-size: 7.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: left;
+  }
+
+  /* Selected checkmark badge */
+  .esc-pp-card.esc-pp-selected::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 1.5px rgba(255,255,255,0.5);
+  }
+
+  /* Color editors row */
+  .esc-color-editors {
+    margin-top: 12px;
+  }
+  .esc-ce-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-soft);
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  import { parse as parseExif, gps as parseGps } from 'exifr';
+
+  var PRESETS = {
+    'street-notes':     { w: 1080, h: 1350, layout: 'street',    ts: 48 },
+    'postcard-airmail':  { w: 1600, h: 1000, layout: 'postcard',  ts: 40 },
+    'lens-ledger':       { w: 1600, h: 960,  layout: 'ledger',    ts: 38 },
+    'gallery-plaque':    { w: 1400, h: 1000, layout: 'gallery',   ts: 36 },
+    'contact-sheet':     { w: 1200, h: 1200, layout: 'contact',   ts: 34 },
+    'transit-pass':      { w: 1600, h: 900,  layout: 'transit',   ts: 36 },
+    'field-journal':     { w: 1300, h: 1500, layout: 'journal',   ts: 42 },
+    'editorial-fold':    { w: 1600, h: 1100, layout: 'editorial', ts: 40 }
+  };
+
+  var PRESET_OPTS = {
+    'street-notes':     [{ id:'shot-chip', label:'Shot location chip', type:'check', def:true }],
+    'postcard-airmail':  [{ id:'airmail-stripe', label:'Airmail stripes', type:'check', def:true }, { id:'postmark', label:'Postmark stamp', type:'check', def:true }],
+    'lens-ledger':       [{ id:'panel-side', label:'Panel side', type:'select', options:[['left','Left'],['right','Right']], def:'left' }],
+    'gallery-plaque':    [{ id:'plaque-opacity', label:'Plaque opacity', type:'range', min:0.5, max:1, step:0.05, def:0.88 }],
+    'contact-sheet':     [{ id:'film-border', label:'Film sprocket border', type:'check', def:true }],
+    'transit-pass':      [{ id:'band-side', label:'Band side', type:'select', options:[['left','Left'],['right','Right']], def:'left' }],
+    'field-journal':     [{ id:'ruled-lines', label:'Ruled lines', type:'check', def:true }],
+    'editorial-fold':    [{ id:'fold-line', label:'Fold line', type:'check', def:true }, { id:'img-side', label:'Image side', type:'select', options:[['left','Left'],['right','Right']], def:'left' }]
+  };
+
+  function initExifStoryCard() {
+    var root = document.getElementById('exif-tool');
+    if (!root || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    var $ = function (id) { return root.querySelector('#' + id); };
+
+    var fileInput       = $('esc-file');
+    var dropzone        = $('esc-dropzone');
+    var dropzoneEmpty   = $('esc-dropzone-empty');
+    var dropzoneFilled  = $('esc-dropzone-filled');
+    var thumb           = $('esc-thumb');
+    var nameEl          = $('esc-name');
+    var removeBtn       = $('esc-remove');
+    var autoFillBtn     = $('esc-auto-fill');
+    var copyCaptionBtn  = $('esc-copy-caption');
+
+    var presetInput     = $('esc-preset');
+    var widthInput      = $('esc-width');
+    var heightInput     = $('esc-height');
+    var typeScaleInput  = $('esc-type-scale');
+    var densityInput    = $('esc-density');
+    var photoAlignInput = $('esc-photo-align');
+    var presetOptsEl    = $('esc-preset-opts');
+
+    var titleInput    = $('esc-title');
+    var subtitleInput = $('esc-subtitle');
+    var captionInput  = $('esc-caption');
+    var locationInput = $('esc-location');
+    var tagsInput     = $('esc-tags');
+
+    var cameraInput   = $('esc-camera');
+    var lensInput     = $('esc-lens');
+    var focalInput    = $('esc-focal');
+    var apertureInput = $('esc-aperture');
+    var shutterInput  = $('esc-shutter');
+    var isoInput      = $('esc-iso');
+    var dateInput     = $('esc-date');
+
+    var ppToggleBtn  = $('esc-pp-toggle');
+    var ppPanel      = $('esc-pp-panel');
+    var ppNameEl     = $('esc-pp-name');
+    var ppDotBg      = $('esc-pp-dot-bg');
+    var ppDotAcc     = $('esc-pp-dot-acc');
+    var ppDotMut     = $('esc-pp-dot-mut');
+    var ppScroll     = $('esc-pp-scroll');
+    var currentPaletteKey = '';
+    var paletteGrid  = $('esc-palette-grid');
+    var extractPaletteBtn  = $('esc-extract-palette');
+    var applyPaletteBtn    = $('esc-apply-palette');
+
+    var bgInput      = $('esc-bg');
+    var bgHex        = $('esc-bg-hex');
+    var textInput    = $('esc-text');
+    var textHex      = $('esc-text-hex');
+    var accentInput  = $('esc-accent');
+    var accentHex    = $('esc-accent-hex');
+    var mutedInput   = $('esc-muted');
+    var mutedHex     = $('esc-muted-hex');
+    var borderInput  = $('esc-border');
+    var borderHex    = $('esc-border-hex');
+
+    var showImageInput    = $('esc-show-image');
+    var showLabelInput    = $('esc-show-label');
+    var showTitleInput    = $('esc-show-title');
+    var showSubtitleInput = $('esc-show-subtitle');
+    var showPaletteInput  = $('esc-show-palette');
+    var showStoryInput    = $('esc-show-story');
+    var showTagsInput     = $('esc-show-tags');
+    var showLocationInput = $('esc-show-location');
+    var showMetaInput     = $('esc-show-meta');
+    var shadowInput       = $('esc-shadow');
+    var grainInput        = $('esc-grain');
+    var borderToggleInput = $('esc-border-toggle');
+
+    var layoutLabelInput = $('esc-layout-label');
+
+    var titleFontInput   = $('esc-title-font');
+    var bodyFontInput    = $('esc-body-font');
+    var photoRatioInput  = $('esc-photo-ratio');
+    var photoRatioVal    = $('esc-photo-ratio-val');
+    var cardPaddingInput = $('esc-card-padding');
+    var cardPaddingVal   = $('esc-card-padding-val');
+    var overlayAmtInput  = $('esc-overlay-amt');
+    var overlayAmtVal    = $('esc-overlay-amt-val');
+    var cornerRadiusInput = $('esc-corner-radius');
+    var cornerRadiusVal   = $('esc-corner-radius-val');
+    var palSizeInput     = $('esc-pal-size');
+    var palSizeVal       = $('esc-pal-size-val');
+
+    var colorLabelInput  = $('esc-color-label');  var colorLabelHex  = $('esc-color-label-hex');
+    var colorTitleInput  = $('esc-color-title');  var colorTitleHex  = $('esc-color-title-hex');
+    var colorBodyInput   = $('esc-color-body');   var colorBodyHex   = $('esc-color-body-hex');
+    var colorMetaInput   = $('esc-color-meta');   var colorMetaHex   = $('esc-color-meta-hex');
+
+    var extractPrecInput   = $('esc-extr-prec');
+    var extractPrecVal     = $('esc-extr-prec-val');
+    var extractSpreadInput = $('esc-extr-spread');
+    var extractSpreadVal   = $('esc-extr-spread-val');
+
+    var formatInput  = $('esc-format');
+    var qualityWrap  = $('esc-quality-wrap');
+    var qualityInput = $('esc-quality');
+    var downloadBtn  = $('esc-download');
+    var copyBtn      = $('esc-copy');
+    var statusEl     = $('esc-status');
+    var canvas       = $('esc-canvas');
+
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    var state = {
+      fileName: '',
+      image: null,
+      objectUrl: '',
+      exifRaw: null,
+      gpsRaw: null,
+      palette: { dominant:'#6d7280', accent:'#c98b45', muted:'#71717a', shadow:'#1f2937', highlight:'#f3eadf' }
+    };
+
+    /* ── Preset-specific options ── */
+    var presetOptValues = {};
+    function buildPresetOpts() {
+      var key = presetInput.value;
+      var opts = PRESET_OPTS[key] || [];
+      presetOptsEl.innerHTML = '';
+      opts.forEach(function (opt) {
+        presetOptValues[opt.id] = presetOptValues[opt.id] != null ? presetOptValues[opt.id] : opt.def;
+        var wrap = document.createElement('div');
+        wrap.className = 'esc-field';
+        if (opt.type === 'check') {
+          var lbl = document.createElement('label');
+          lbl.className = 'esc-toggle';
+          lbl.style.marginTop = '4px';
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = !!presetOptValues[opt.id];
+          cb.addEventListener('change', function () { presetOptValues[opt.id] = cb.checked; renderCard(); });
+          var sp = document.createElement('span');
+          sp.textContent = opt.label;
+          lbl.appendChild(cb);
+          lbl.appendChild(sp);
+          wrap.appendChild(lbl);
+        } else if (opt.type === 'select') {
+          var lb = document.createElement('label');
+          lb.textContent = opt.label;
+          var sel = document.createElement('select');
+          opt.options.forEach(function (o) {
+            var op = document.createElement('option');
+            op.value = o[0]; op.textContent = o[1];
+            if (o[0] === presetOptValues[opt.id]) op.selected = true;
+            sel.appendChild(op);
+          });
+          sel.addEventListener('change', function () { presetOptValues[opt.id] = sel.value; renderCard(); });
+          wrap.appendChild(lb);
+          wrap.appendChild(sel);
+        } else if (opt.type === 'range') {
+          var lb2 = document.createElement('label');
+          lb2.textContent = opt.label;
+          var rng = document.createElement('input');
+          rng.type = 'range'; rng.min = opt.min; rng.max = opt.max; rng.step = opt.step;
+          rng.value = presetOptValues[opt.id];
+          rng.style.width = '100%';
+          rng.addEventListener('input', function () { presetOptValues[opt.id] = Number(rng.value); renderCard(); });
+          wrap.appendChild(lb2);
+          wrap.appendChild(rng);
+        }
+        presetOptsEl.appendChild(wrap);
+      });
+    }
+    function popt(id) {
+      return presetOptValues[id] != null ? presetOptValues[id] : (PRESET_OPTS[presetInput.value] || []).reduce(function (v, o) { return o.id === id ? o.def : v; }, null);
+    }
+
+    /* ── Utilities ── */
+    function setStatus(m) { statusEl.textContent = m; }
+
+    function normalizeHex(v) {
+      var raw = String(v || '').trim().toLowerCase();
+      if (!raw) return '#000000';
+      if (raw.charAt(0) !== '#') raw = '#' + raw;
+      if (/^#[0-9a-f]{3}$/.test(raw)) return '#' + raw[1]+raw[1]+raw[2]+raw[2]+raw[3]+raw[3];
+      if (!/^#[0-9a-f]{6}$/.test(raw)) return '#000000';
+      return raw;
+    }
+
+    function syncColor(ci, hi) {
+      ci.value = normalizeHex(ci.value);
+      hi.value = ci.value;
+      ci.addEventListener('input', function () { hi.value = ci.value.toLowerCase(); clearPaletteSelection(); renderCard(); });
+      hi.addEventListener('change', function () { var n = normalizeHex(hi.value); hi.value = n; ci.value = n; clearPaletteSelection(); renderCard(); });
+    }
+
+    function hexToRgb(h) { var n = normalizeHex(h).slice(1); return { r: parseInt(n.slice(0,2),16), g: parseInt(n.slice(2,4),16), b: parseInt(n.slice(4,6),16) }; }
+    function rgbToHex(c) { return '#' + [c.r,c.g,c.b].map(function(v){ return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0'); }).join(''); }
+    function withAlpha(h, a) { return normalizeHex(h) + Math.max(0,Math.min(255,Math.round(a*255))).toString(16).padStart(2,'0'); }
+    function lum(h) { var c = hexToRgb(h); return (0.2126*c.r + 0.7152*c.g + 0.0722*c.b) / 255; }
+    function contrast(h) { return lum(h) > 0.54 ? '#111111' : '#f3eadf'; }
+    function colorDist(a, b) { var x = hexToRgb(a), y = hexToRgb(b); return Math.sqrt((x.r-y.r)**2 + (x.g-y.g)**2 + (x.b-y.b)**2); }
+    function sat(h) { var c = hexToRgb(h); var mx = Math.max(c.r,c.g,c.b), mn = Math.min(c.r,c.g,c.b); return mx === 0 ? 0 : (mx-mn)/mx; }
+    function mix(a, b, w) { var x = hexToRgb(a), y = hexToRgb(b); return rgbToHex({ r: x.r+(y.r-x.r)*w, g: x.g+(y.g-x.g)*w, b: x.b+(y.b-x.b)*w }); }
+
+    function fmtExposure(v) { if (v==null||v==='') return ''; var n=Number(v); if (!isFinite(n)||n<=0) return String(v); return n>=1 ? n.toFixed(n%1===0?0:1)+'s' : '1/'+Math.round(1/n)+'s'; }
+    function fmtAperture(v) { if (v==null||v==='') return ''; var n=Number(v); return isFinite(n) ? 'f/'+n.toFixed(n%1===0?0:1) : String(v); }
+    function fmtFocal(v) { if (v==null||v==='') return ''; var n=Number(v); return isFinite(n) ? n.toFixed(n%1===0?0:1)+'mm' : String(v); }
+    function fmtIso(v) { if (v==null||v==='') return ''; return /^iso/i.test(String(v)) ? String(v) : 'ISO '+v; }
+    function fmtDate(v) { if (!v) return ''; var d = v instanceof Date ? v : new Date(v); return isNaN(d.getTime()) ? String(v) : d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
+    function cleanTitle(f) { return String(f||'').replace(/\.[^.]+$/,'').replace(/[-_]+/g,' ').trim().replace(/\b\w/g,function(m){return m.toUpperCase();}); }
+    function fmtCoord(v,pos,neg) { return isFinite(v) ? Math.abs(v).toFixed(3)+' '+(v>=0?pos:neg) : ''; }
+
+    function gpsText() {
+      if (!state.gpsRaw || !isFinite(state.gpsRaw.latitude) || !isFinite(state.gpsRaw.longitude)) return '';
+      return fmtCoord(state.gpsRaw.latitude,'N','S') + ', ' + fmtCoord(state.gpsRaw.longitude,'E','W');
+    }
+
+    function locationHeadline() {
+      var m = String(locationInput.value||'').trim();
+      if (m) return m;
+      var g = gpsText();
+      if (g) return g;
+      return '';
+    }
+
+    function locationSubline() {
+      var m = String(locationInput.value||'').trim();
+      var g = gpsText();
+      if (m && g) return g;
+      return '';
+    }
+
+    function getLocationDisplay() {
+      var m = String(locationInput.value||'').trim();
+      var g = gpsText();
+      if (m && g) return m + ' \u2022 ' + g;
+      return m || g || '';
+    }
+
+    function getTags() {
+      return String(tagsInput.value||'').split(/[,\u2022|]/).map(function(s){return s.trim();}).filter(Boolean);
+    }
+
+    function ts() { return Number(typeScaleInput.value) || 1; }
+    function ds() { return Number(densityInput.value) || 1; }
+    function sc(v) { return Math.round(v * ds()); }
+    function pa() { return Number(photoAlignInput.value) || 0.5; }
+    function palSz() { return Number(palSizeInput ? palSizeInput.value : 44); }
+    function getKickerText(fallback) {
+      if (showLabelInput && !showLabelInput.checked) return '';
+      var v = layoutLabelInput ? layoutLabelInput.value.trim() : '';
+      return v || fallback;
+    }
+
+    function getMetaItems() {
+      return [
+        { label: 'Camera', value: cameraInput.value.trim() },
+        { label: 'Lens', value: lensInput.value.trim() },
+        { label: 'Focal', value: focalInput.value.trim() },
+        { label: 'Aperture', value: apertureInput.value.trim() },
+        { label: 'Shutter', value: shutterInput.value.trim() },
+        { label: 'ISO', value: isoInput.value.trim() },
+        { label: 'Date', value: dateInput.value.trim() },
+        { label: 'Location', value: showLocationInput.checked ? getLocationDisplay() : '' }
+      ].filter(function (i) { return i.value; });
+    }
+
+    /* ── Dropzone ── */
+    function setDropzone(filled) { dropzoneEmpty.style.display = filled ? 'none' : ''; dropzoneFilled.style.display = filled ? '' : 'none'; }
+    function revokeUrl() { if (state.objectUrl) { URL.revokeObjectURL(state.objectUrl); state.objectUrl = ''; } }
+
+    function loadImg(file) {
+      return new Promise(function (res, rej) {
+        var img = new Image();
+        var url = URL.createObjectURL(file);
+        img.onload = function () { res({ image: img, url: url }); };
+        img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('Load failed')); };
+        img.src = url;
+      });
+    }
+
+    async function handleFile(file) {
+      if (!file || !file.type || file.type.indexOf('image/') !== 0) { setStatus('Upload an image file.'); return; }
+      setStatus('Reading image\u2026');
+      try {
+        var loaded = await loadImg(file);
+        revokeUrl();
+        state.image = loaded.image;
+        state.objectUrl = loaded.url;
+        state.fileName = file.name;
+        thumb.src = state.objectUrl;
+        nameEl.textContent = file.name;
+        setDropzone(true);
+        await extractMeta(file);
+        extractPalette();
+        if (!titleInput.value.trim()) titleInput.value = cleanTitle(file.name);
+        setStatus('');
+        renderCard();
+      } catch (e) { console.error(e); setStatus('Could not read that image.'); }
+    }
+
+    async function extractMeta(file) {
+      try { state.exifRaw = await parseExif(file, ['Make','Model','LensModel','FocalLength','FNumber','ExposureTime','ISO','DateTimeOriginal','CreateDate']); } catch(e) { state.exifRaw = null; }
+      try { state.gpsRaw = await parseGps(file); } catch(e) { state.gpsRaw = null; }
+      fillFromExif();
+    }
+
+    function fillFromExif() {
+      if (!state.exifRaw) { setStatus('No EXIF found.'); return; }
+      var e = state.exifRaw;
+      var cam = [e.Make||'', e.Model||''].filter(Boolean).join(' ').trim();
+      if (cam) cameraInput.value = cam;
+      if (e.LensModel) lensInput.value = e.LensModel;
+      if (e.FocalLength != null) focalInput.value = fmtFocal(e.FocalLength);
+      if (e.FNumber != null) apertureInput.value = fmtAperture(e.FNumber);
+      if (e.ExposureTime != null) shutterInput.value = fmtExposure(e.ExposureTime);
+      if (e.ISO != null) isoInput.value = fmtIso(e.ISO);
+      if (e.DateTimeOriginal || e.CreateDate) dateInput.value = fmtDate(e.DateTimeOriginal || e.CreateDate);
+      if (state.gpsRaw && !String(locationInput.value||'').trim()) locationInput.value = gpsText();
+    }
+
+    function extractPalette() {
+      if (!state.image) return;
+
+      // ── Step 1: downsample for speed ──────────────────────────────────────
+      var sc2 = document.createElement('canvas'), sx2 = sc2.getContext('2d');
+      if (!sx2) return;
+      var iw = state.image.naturalWidth  || state.image.width;
+      var ih = state.image.naturalHeight || state.image.height;
+      var maxS = 128, s2 = Math.min(1, maxS / Math.max(iw, ih));
+      var sw2 = Math.max(16, Math.round(iw * s2));
+      var sh2 = Math.max(16, Math.round(ih * s2));
+      sc2.width = sw2; sc2.height = sh2;
+      sx2.drawImage(state.image, 0, 0, sw2, sh2);
+      var d = sx2.getImageData(0, 0, sw2, sh2).data;
+
+      // ── Step 2: quantize into buckets ─────────────────────────────────────
+      // extractPrecInput: 8=fine, 32=broad (smaller bucket = more distinct colors captured)
+      var bucket = Number(extractPrecInput ? extractPrecInput.value : 20);
+      var bk = new Map();
+      for (var i = 0; i < d.length; i += 4) {
+        if (d[i+3] < 160) continue; // skip near-transparent
+        var key2 = rgbToHex({
+          r: Math.round(d[i]   / bucket) * bucket,
+          g: Math.round(d[i+1] / bucket) * bucket,
+          b: Math.round(d[i+2] / bucket) * bucket
+        });
+        bk.set(key2, (bk.get(key2) || 0) + 1);
+      }
+
+      // ── Step 3: sort by frequency, enforce perceptual diversity ───────────
+      var sorted2 = Array.from(bk.entries())
+        .sort(function(a, b) { return b[1] - a[1]; })
+        .map(function(e) { return e[0]; });
+      var minDist = Number(extractSpreadInput ? extractSpreadInput.value : 40);
+      var pool = [];
+      sorted2.forEach(function(h2) {
+        if (pool.length < 12 && pool.every(function(e) { return colorDist(e, h2) > minDist; }))
+          pool.push(h2);
+      });
+      if (!pool.length) pool = ['#6d7280','#c98b45','#71717a','#1f2937','#f3eadf'];
+
+      // ── Step 4: assign roles with perceptual logic ────────────────────────
+      // Dominant  — most frequent color
+      var dominant2 = pool[0];
+
+      // Accent — most saturated with sat > threshold; prefer visually different from dominant
+      var accentCands = pool.slice().sort(function(a, b) { return sat(b) - sat(a); });
+      var accent2 = accentCands.find(function(c) { return sat(c) > 0.18; }) || accentCands[0] || dominant2;
+
+      // Muted — low saturation, mid-luminance (avoid very dark/very light near-grays)
+      var mutedCands = pool.slice()
+        .filter(function(c) { var l = lum(c); return l > 0.06 && l < 0.75; })
+        .sort(function(a, b) { return sat(a) - sat(b); });
+      var muted2 = mutedCands[0] || mix(dominant2, '#808080', 0.5);
+
+      // Shadow — darkest in pool; prefer distinctly dark (lum < 0.25)
+      var shadow2 = pool.slice().sort(function(a, b) { return lum(a) - lum(b); })[0] || '#111111';
+
+      // Highlight — lightest in pool; prefer distinctly light (lum > 0.6)
+      var highlight2 = pool.slice().sort(function(a, b) { return lum(b) - lum(a); })[0] || '#f3eadf';
+
+      // If shadow and highlight are too close, derive from dominant
+      if (colorDist(shadow2, highlight2) < 40) {
+        shadow2    = mix(dominant2, '#000000', 0.7);
+        highlight2 = mix(dominant2, '#ffffff', 0.7);
+      }
+
+      state.palette = {
+        dominant:  dominant2,
+        accent:    accent2,
+        muted:     muted2,
+        shadow:    shadow2,
+        highlight: highlight2
+      };
+      updateSwatches();
+    }
+
+    function updateSwatches() {
+      Array.from(paletteGrid.querySelectorAll('[data-role]')).forEach(function(btn){
+        var role = btn.getAttribute('data-role');
+        var c = state.palette[role] || '#888';
+        btn.style.background = c;
+        btn.style.color = contrast(c);
+        btn.textContent = role.charAt(0).toUpperCase()+role.slice(1)+'\n'+c;
+      });
+    }
+
+    function applyPalette() {
+      var bg = lum(state.palette.shadow) < 0.34 ? state.palette.shadow : mix(state.palette.dominant, '#111111', 0.55);
+      var tx = contrast(bg);
+      bgInput.value = normalizeHex(bg); bgHex.value = bgInput.value;
+      textInput.value = normalizeHex(tx); textHex.value = textInput.value;
+      accentInput.value = normalizeHex(state.palette.accent); accentHex.value = accentInput.value;
+      mutedInput.value = normalizeHex(state.palette.muted); mutedHex.value = mutedInput.value;
+      borderInput.value = normalizeHex(mix(bg, tx, 0.2)); borderHex.value = borderInput.value;
+      resetFontColors();
+      renderCard();
+    }
+
+    /* ── Palette presets ── */
+    var PALETTE_PRESETS = {
+      'street-noir':      { bg:'#0A0A0A', text:'#E8E4DF', accent:'#D4281C', muted:'#3A3A3A', border:'#1F1F1F' },
+      'street-riso':      { bg:'#F5F0E0', text:'#1A1612', accent:'#E63946', muted:'#B8AE9E', border:'#D4CDB8' },
+      'street-neon':      { bg:'#0C1420', text:'#D4E0EC', accent:'#FF6B2C', muted:'#2A3A4E', border:'#182838' },
+      'post-kodachrome':  { bg:'#F2E8D0', text:'#4A3728', accent:'#C45B3E', muted:'#C4B494', border:'#D8CBA8' },
+      'post-seaside':     { bg:'#EDE8E0', text:'#2C3E50', accent:'#5B8C7A', muted:'#B0A898', border:'#CCC4B4' },
+      'post-airmail':     { bg:'#FAF6EE', text:'#1C2B3A', accent:'#B83230', muted:'#A8B0B8', border:'#3068A8' },
+      'ledger-lcd':       { bg:'#111111', text:'#E0DDD5', accent:'#4ADE80', muted:'#3A3A38', border:'#252525' },
+      'ledger-blueprint': { bg:'#EEF0F4', text:'#1A2332', accent:'#2563EB', muted:'#B0B8C4', border:'#C8D0DC' },
+      'ledger-scope':     { bg:'#0A0E08', text:'#78D44C', accent:'#B8E06A', muted:'#283820', border:'#1C2A14' },
+      'gallery-white':    { bg:'#F7F5F0', text:'#2C2C2C', accent:'#1A1A1A', muted:'#8C8880', border:'#E4E0D8' },
+      'gallery-dark':     { bg:'#1A1918', text:'#E8E4DE', accent:'#FFFFFF', muted:'#6A6460', border:'#2E2C28' },
+      'gallery-concrete': { bg:'#E2DED8', text:'#1E1E1E', accent:'#3A3A3A', muted:'#A09A90', border:'#C8C2B8' },
+      'contact-darkroom': { bg:'#0E0C0A', text:'#C8B898', accent:'#8B1A1A', muted:'#2A2420', border:'#1C1810' },
+      'contact-proof':    { bg:'#F8F4EC', text:'#1A1A1A', accent:'#E85D20', muted:'#9CA088', border:'#D0C8B4' },
+      'contact-ilford':   { bg:'#F0EEE8', text:'#141414', accent:'#5C5C5C', muted:'#A0A098', border:'#C4C0B8' },
+      'transit-boarding':  { bg:'#FFFFFF', text:'#1A1A2E', accent:'#0066CC', muted:'#C0C4CC', border:'#E0E4E8' },
+      'transit-jr':       { bg:'#F4F0E8', text:'#2A2A2A', accent:'#2E7D32', muted:'#98A0A8', border:'#D8D4CC' },
+      'transit-metro':    { bg:'#141820', text:'#E4E8EC', accent:'#F5A623', muted:'#3A4050', border:'#242830' },
+      'journal-kraft':    { bg:'#C4A67A', text:'#2C1E10', accent:'#1A5C34', muted:'#A08A60', border:'#B09468' },
+      'journal-weathered':{ bg:'#D8C8A8', text:'#3A2E20', accent:'#7A4422', muted:'#BCA880', border:'#C4B08C' },
+      'journal-expedition':{ bg:'#1E1810', text:'#D4C4A0', accent:'#C8842A', muted:'#3A3020', border:'#2C2418' },
+      'edit-aperture':    { bg:'#FAF8F4', text:'#1C1C1C', accent:'#C41E3A', muted:'#7A7670', border:'#E8E4DE' },
+      'edit-natgeo':      { bg:'#FEFCF6', text:'#1A1A1A', accent:'#FFCC00', muted:'#6B6860', border:'#E0DCD4' },
+      'edit-noir':        { bg:'#141414', text:'#F0ECE4', accent:'#D4A04A', muted:'#4A4844', border:'#242220' }
+    };
+
+    function resetFontColors() {
+      var label = normalizeHex(accentInput.value);
+      var title = normalizeHex(textInput.value);
+      var body  = normalizeHex(mix(textInput.value, bgInput.value, 0.18));
+      var meta  = normalizeHex(mix(textInput.value, bgInput.value, 0.30));
+      if (colorLabelInput) { colorLabelInput.value = label; colorLabelHex.value = label; }
+      if (colorTitleInput) { colorTitleInput.value = title; colorTitleHex.value = title; }
+      if (colorBodyInput)  { colorBodyInput.value  = body;  colorBodyHex.value  = body; }
+      if (colorMetaInput)  { colorMetaInput.value  = meta;  colorMetaHex.value  = meta; }
+    }
+
+    function applyPalettePreset(key) {
+      var p = PALETTE_PRESETS[key];
+      if (!p) return;
+      bgInput.value = p.bg; bgHex.value = p.bg;
+      textInput.value = p.text; textHex.value = p.text;
+      accentInput.value = p.accent; accentHex.value = p.accent;
+      mutedInput.value = p.muted; mutedHex.value = p.muted;
+      borderInput.value = p.border; borderHex.value = p.border;
+      resetFontColors();
+      renderCard();
+    }
+
+    /* ── Palette preset picker helpers ── */
+    var PP_GROUPS = [
+      { label: 'Street Notes',   keys: ['street-noir','street-riso','street-neon'] },
+      { label: 'Postcard',       keys: ['post-kodachrome','post-seaside','post-airmail'] },
+      { label: 'Lens Ledger',    keys: ['ledger-lcd','ledger-blueprint','ledger-scope'] },
+      { label: 'Gallery Plaque', keys: ['gallery-white','gallery-dark','gallery-concrete'] },
+      { label: 'Contact Sheet',  keys: ['contact-darkroom','contact-proof','contact-ilford'] },
+      { label: 'Transit Pass',   keys: ['transit-boarding','transit-jr','transit-metro'] },
+      { label: 'Field Journal',  keys: ['journal-kraft','journal-weathered','journal-expedition'] },
+      { label: 'Editorial',      keys: ['edit-aperture','edit-natgeo','edit-noir'] }
+    ];
+    var PP_NAMES = {
+      'street-noir':'Moriyama Noir','street-riso':'Risograph Zine','street-neon':'Shinjuku Night',
+      'post-kodachrome':'Kodachrome','post-seaside':'Seaside Chrome','post-airmail':'Airmail',
+      'ledger-lcd':'LCD Readout','ledger-blueprint':'Blueprint','ledger-scope':'Oscilloscope',
+      'gallery-white':'White Cube','gallery-dark':'Black Box','gallery-concrete':'Concrete',
+      'contact-darkroom':'Darkroom','contact-proof':'Proof Sheet','contact-ilford':'Ilford B\u0026W',
+      'transit-boarding':'Boarding Pass','transit-jr':'JR Rail','transit-metro':'Metro Night',
+      'journal-kraft':'Kraft','journal-weathered':'Weathered','journal-expedition':'Expedition',
+      'edit-aperture':'Aperture','edit-natgeo':'National Geo','edit-noir':'Noir Editorial'
+    };
+
+    function buildPaletteGrid() {
+      if (!ppScroll) return;
+      ppScroll.innerHTML = '';
+      PP_GROUPS.forEach(function(group) {
+        var groupEl = document.createElement('div');
+        groupEl.className = 'esc-pp-group';
+        var labelEl = document.createElement('span');
+        labelEl.className = 'esc-pp-group-label';
+        labelEl.textContent = group.label;
+        groupEl.appendChild(labelEl);
+        var gridEl = document.createElement('div');
+        gridEl.className = 'esc-pp-grid';
+        group.keys.forEach(function(key) {
+          var p = PALETTE_PRESETS[key];
+          if (!p) return;
+          var card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'esc-pp-card';
+          card.dataset.key = key;
+          card.title = PP_NAMES[key] || key;
+          card.style.background = p.bg;
+          var bar = document.createElement('span');
+          bar.className = 'esc-pp-card-accent-bar';
+          bar.style.background = p.accent;
+          var body = document.createElement('span');
+          body.className = 'esc-pp-card-body';
+          body.style.background = p.bg;
+          var name = document.createElement('span');
+          name.className = 'esc-pp-card-name';
+          name.style.color = p.text;
+          name.textContent = PP_NAMES[key] || key;
+          body.appendChild(name);
+          card.appendChild(bar);
+          card.appendChild(body);
+          card.addEventListener('click', function() { selectPalettePreset(key); });
+          gridEl.appendChild(card);
+        });
+        groupEl.appendChild(gridEl);
+        ppScroll.appendChild(groupEl);
+      });
+    }
+
+    function selectPalettePreset(key) {
+      currentPaletteKey = key;
+      applyPalettePreset(key);
+      updatePpToggle(key);
+      var cards = ppPanel ? ppPanel.querySelectorAll('.esc-pp-card') : [];
+      cards.forEach(function(c) { c.classList.toggle('esc-pp-selected', c.dataset.key === key); });
+      closePpPanel();
+    }
+
+    function clearPaletteSelection() {
+      if (!currentPaletteKey) return;
+      currentPaletteKey = '';
+      updatePpToggle('');
+      var cards = ppPanel ? ppPanel.querySelectorAll('.esc-pp-card') : [];
+      cards.forEach(function(c) { c.classList.remove('esc-pp-selected'); });
+    }
+
+    function updatePpToggle(key) {
+      var p = key ? PALETTE_PRESETS[key] : null;
+      if (ppNameEl) ppNameEl.textContent = key ? (PP_NAMES[key] || key) : 'Custom';
+      if (ppDotBg)  ppDotBg.style.background  = p ? p.bg     : bgInput.value;
+      if (ppDotAcc) ppDotAcc.style.background  = p ? p.accent : accentInput.value;
+      if (ppDotMut) ppDotMut.style.background  = p ? p.muted  : mutedInput.value;
+    }
+
+    function closePpPanel() {
+      if (ppPanel)     ppPanel.classList.remove('esc-pp-open');
+      if (ppToggleBtn) ppToggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Canvas drawing helpers ── */
+    function roundRect(x,y,w,h,r) {
+      r = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+    }
+    function fillRect(x,y,w,h,r,f) { ctx.save(); ctx.fillStyle=f; roundRect(x,y,w,h,r); ctx.fill(); ctx.restore(); }
+    function strokeRect(x,y,w,h,r,s,lw) { ctx.save(); ctx.strokeStyle=s; ctx.lineWidth=lw; roundRect(x,y,w,h,r); ctx.stroke(); ctx.restore(); }
+
+    /* ── Proportional spacing helpers ── */
+    function base(W) { return Math.round(W * 0.0074); } // ~8px at 1080w
+
+    function drawBg(W, H) {
+      ctx.clearRect(0, 0, W, H);
+      fillRect(0, 0, W, H, 0, bgInput.value);
+      if (grainInput.checked) {
+        ctx.save();
+        ctx.globalAlpha = 0.045;
+        ctx.globalCompositeOperation = 'overlay';
+        var grainCount = Math.round(W * H / 5000);
+        for (var i=0; i<grainCount; i++) {
+          ctx.fillStyle = i%2===0 ? '#ffffff' : '#000000';
+          ctx.fillRect(Math.random()*W, Math.random()*H, 1, 1);
+        }
+        ctx.restore();
+      }
+      if (borderToggleInput.checked) {
+        var inset = base(W) * 2;
+        strokeRect(inset, inset, W-inset*2, H-inset*2, 24, withAlpha(borderInput.value, 0.3), 1);
+      }
+    }
+
+    function drawPhoto(x, y, w, h, opts) {
+      opts = opts || {};
+      var r = opts.radius != null ? opts.radius : 20;
+      var matteColor = opts.matte || mix(mutedInput.value, bgInput.value, 0.4);
+      var bord = opts.border || borderInput.value;
+      var alignX = opts.alignX != null ? opts.alignX : 0.5;
+      var alignY = opts.alignY != null ? opts.alignY : pa();
+
+      if (opts.shadow !== false) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.18)';
+        ctx.shadowBlur = 20; ctx.shadowOffsetY = 8;
+        fillRect(x, y, w, h, r, matteColor);
+        ctx.restore();
+      }
+      fillRect(x, y, w, h, r, matteColor);
+      strokeRect(x, y, w, h, r, withAlpha(bord, 0.5), 1);
+
+      if (!showImageInput.checked || !state.image) {
+        ctx.save();
+        ctx.fillStyle = mix(textInput.value, bgInput.value, 0.4);
+        ctx.font = '400 20px '+lf().body+', sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(showImageInput.checked ? 'Upload a photo' : 'Image hidden', x+w/2, y+h/2);
+        ctx.restore();
+        return;
+      }
+
+      var ins = opts.inset != null ? opts.inset : 10;
+      var ix = x+ins, iy = y+ins, iw = w-ins*2, ih = h-ins*2;
+      ctx.save();
+      roundRect(ix, iy, iw, ih, Math.max(8, r-4));
+      ctx.clip();
+
+      var imgW = state.image.naturalWidth||state.image.width;
+      var imgH = state.image.naturalHeight||state.image.height;
+      var scale = Math.max(iw/imgW, ih/imgH);
+      var dw = imgW*scale, dh = imgH*scale;
+      var dx = ix + (iw - dw) * alignX;
+      var dy = iy + (ih - dh) * alignY;
+      ctx.drawImage(state.image, dx, dy, dw, dh);
+
+      if (opts.overlay) {
+        var grad = ctx.createLinearGradient(ix, iy, ix, iy+ih);
+        grad.addColorStop(0, withAlpha('#000000', 0));
+        grad.addColorStop(1, withAlpha('#000000', opts.overlayAmt || 0.4));
+        ctx.fillStyle = grad;
+        ctx.fillRect(ix, iy, iw, ih);
+      }
+      ctx.restore();
+    }
+
+    function wrap(text, maxW, font, maxLines) {
+      ctx.font = font;
+      var words = String(text||'').split(/\s+/).filter(Boolean);
+      if (!words.length) return [];
+      var lines = [], cur = words[0];
+      for (var i=1; i<words.length; i++) {
+        var try_ = cur + ' ' + words[i];
+        if (ctx.measureText(try_).width <= maxW) { cur = try_; }
+        else { lines.push(cur); cur = words[i]; if (maxLines && lines.length >= maxLines-1) break; }
+      }
+      if (!maxLines || lines.length < maxLines) lines.push(cur);
+      if (maxLines && lines.length === maxLines) {
+        var last = lines[maxLines-1];
+        while (ctx.measureText(last+'\u2026').width > maxW && last.length > 1) last = last.slice(0,-1).trim();
+        if (String(text).length > lines.join(' ').length) lines[maxLines-1] = last + '\u2026';
+      }
+      return lines;
+    }
+
+    /* ── Font system ── */
+    var FONT_MAP_TITLE = {
+      serif:     '"Playfair Display", "Georgia", serif',
+      sans:      '"Space Grotesk", Inter, system-ui, sans-serif',
+      editorial: '"Cormorant Garamond", "Georgia", serif',
+      grotesk:   '"Space Grotesk", system-ui, sans-serif'
+    };
+    var FONT_MAP_BODY = {
+      sans:  'Inter, system-ui, sans-serif',
+      serif: '"Cormorant Garamond", "Georgia", serif',
+      mono:  '"DM Mono", "Space Mono", monospace'
+    };
+    var FONT_MONO   = '"DM Mono", "Space Mono", "SF Mono", monospace';
+    var FONT_KICKER = '"Space Grotesk", Inter, system-ui, sans-serif';
+
+    function FONT_TITLE() { return FONT_MAP_TITLE[titleFontInput.value] || FONT_MAP_TITLE.serif; }
+    function FONT_BODY()  { return FONT_MAP_BODY[bodyFontInput.value] || FONT_MAP_BODY.sans; }
+    function photoRatio() { return Number(photoRatioInput.value) / 100; }
+    function cardPad()    { return Number(cardPaddingInput.value); }
+    function overlayAmt() { return Number(overlayAmtInput.value) / 100; }
+    function cornerR()    { return Number(cornerRadiusInput.value); }
+
+    function updateRangeLabels() {
+      if (photoRatioVal) photoRatioVal.textContent = photoRatioInput.value + '%';
+      if (cardPaddingVal) cardPaddingVal.textContent = Number(cardPaddingInput.value) <= 30 ? 'Tight' : Number(cardPaddingInput.value) <= 50 ? 'Medium' : 'Generous';
+      if (overlayAmtVal) overlayAmtVal.textContent = overlayAmtInput.value + '%';
+      if (cornerRadiusVal) cornerRadiusVal.textContent = cornerRadiusInput.value + 'px';
+      if (palSizeVal) palSizeVal.textContent = palSizeInput.value + 'px';
+      if (extractPrecVal) {
+        var prec = Number(extractPrecInput.value);
+        extractPrecVal.textContent = prec <= 10 ? 'Fine' : prec <= 16 ? 'Medium' : prec <= 24 ? 'Coarse' : 'Broad';
+      }
+      if (extractSpreadVal) {
+        var spread = Number(extractSpreadInput.value);
+        extractSpreadVal.textContent = spread <= 28 ? 'Tight' : spread <= 48 ? 'Medium' : 'Wide';
+      }
+    }
+
+    function drawLines(lines, x, y, lh, fill, font) {
+      ctx.save(); ctx.fillStyle = fill; ctx.font = font;
+      ctx.textBaseline = 'top';
+      lines.forEach(function(l,i) { ctx.fillText(l, x, y + lh*i); });
+      ctx.restore();
+      return y + lh * lines.length;
+    }
+
+    /* ── Per-layout font overrides ── */
+    var LAYOUT_FONTS = {
+      street:    { kicker: '"Space Grotesk"', title: '"Space Grotesk"', body: 'Inter', mono: '"DM Mono"' },
+      postcard:  { kicker: '"Libre Franklin"', title: '"Playfair Display"', body: '"Cormorant Garamond"', mono: '"DM Mono"' },
+      ledger:    { kicker: '"Space Grotesk"', title: '"Space Grotesk"', body: 'Inter', mono: '"DM Mono"' },
+      gallery:   { kicker: '"Libre Franklin"', title: '"Libre Franklin"', body: '"Libre Franklin"', mono: '"Libre Franklin"' },
+      contact:   { kicker: '"DM Mono"', title: '"Space Grotesk"', body: '"DM Mono"', mono: '"DM Mono"' },
+      transit:   { kicker: '"Space Grotesk"', title: '"Space Grotesk"', body: 'Inter', mono: '"DM Mono"' },
+      journal:   { kicker: 'Caveat', title: 'Caveat', body: 'Caveat', mono: '"DM Mono"' },
+      editorial: { kicker: '"Space Grotesk"', title: '"Playfair Display"', body: '"Cormorant Garamond"', mono: '"Space Grotesk"' }
+    };
+    var currentLayoutFonts = null;
+
+    function lf() {
+      return currentLayoutFonts || { kicker: FONT_KICKER, title: FONT_TITLE(), body: FONT_BODY(), mono: FONT_MONO };
+    }
+
+    function drawKicker(text, x, y, size) {
+      if (!text) return y;
+      size = size || 12;
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = colorLabelInput ? colorLabelInput.value : accentInput.value;
+      ctx.font = '700 '+size+'px '+lf().kicker+', system-ui, sans-serif';
+      ctx.fillText(text.toUpperCase(), x, y);
+      ctx.restore();
+      return y + Math.round(size * 2.2);
+    }
+
+    function drawTitle(x, y, w, preset, maxLines) {
+      var cursor = y;
+      if (showTitleInput.checked && titleInput.value.trim()) {
+        var sz = Math.round(preset.ts * ts());
+        var font = '700 '+sz+'px '+lf().title+', Georgia, serif';
+        var lh = Math.round((sz + 8) * ds());
+        var titleColor = colorTitleInput ? colorTitleInput.value : textInput.value;
+        cursor = drawLines(wrap(titleInput.value, w, font, maxLines||2), x, cursor, lh, titleColor, font);
+        cursor += sc(6);
+      }
+      if (showSubtitleInput.checked && subtitleInput.value.trim()) {
+        var ssz = Math.round(17 * ts());
+        var sfont = '400 '+ssz+'px '+lf().body+', system-ui, sans-serif';
+        var slh = Math.round((ssz + 6) * ds());
+        var bodyColor = colorBodyInput ? colorBodyInput.value : mix(textInput.value, bgInput.value, 0.25);
+        cursor = drawLines(wrap(subtitleInput.value, w, sfont, 2), x, cursor, slh, bodyColor, sfont);
+        cursor += sc(4);
+      }
+      return cursor;
+    }
+
+    function drawCaption(x, y, w, maxLines, maxY, colorOverride) {
+      if (!showStoryInput.checked || !captionInput.value.trim()) return y;
+      if (maxY && y > maxY - 20) return y;
+      var sz = Math.round(15 * ts());
+      var font = '400 '+sz+'px '+lf().body+', system-ui, sans-serif';
+      var lh = Math.round((sz + 8) * ds());
+      var lines = wrap(captionInput.value, w, font, maxLines||3);
+      if (maxY) {
+        while (lines.length > 1 && y + lh * lines.length > maxY) lines.pop();
+        if (y + lh > maxY) return y;
+      }
+      var captColor = colorOverride || (colorBodyInput ? colorBodyInput.value : mix(textInput.value, bgInput.value, 0.18));
+      return drawLines(lines, x, y, lh, captColor, font);
+    }
+
+    function drawTags(tags, x, y, maxW, maxY) {
+      if (!showTagsInput.checked || !tags.length) return y;
+      if (maxY && y > maxY - 30) return y;
+      var curX = x, curY = y;
+      var sz = Math.round(12 * ts());
+      ctx.font = '600 '+sz+'px '+lf().kicker+', sans-serif';
+      var pillH = Math.round(sz + 12);
+      var maxRows = 2; var rowCount = 0;
+      for (var t = 0; t < tags.length; t++) {
+        var tag = tags[t];
+        var pw = ctx.measureText(tag).width + 20;
+        if (curX + pw > x + maxW && curX > x) {
+          curX = x; curY += pillH + 5; rowCount++;
+          if (rowCount >= maxRows) break;
+          if (maxY && curY + pillH > maxY) break;
+        }
+        fillRect(curX, curY, pw, pillH, pillH/2, mix(accentInput.value, bgInput.value, 0.78));
+        ctx.save();
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = textInput.value;
+        ctx.font = '600 '+sz+'px '+lf().kicker+', sans-serif';
+        ctx.fillText(tag, curX + 10, curY + pillH/2);
+        ctx.restore();
+        curX += pw + 5;
+      }
+      return curY + pillH + 6;
+    }
+
+    function drawMeta(items, x, y, w, cols, rowH, maxY) {
+      if (!showMetaInput.checked || !items.length) return y;
+      if (maxY && y > maxY - 40) return y;
+      cols = cols || 2;
+      rowH = rowH || Math.round(56 * ds());
+      var gap = 6;
+      var cw = (w - gap * (cols-1)) / cols;
+      // Limit items to what fits vertically
+      if (maxY) {
+        var maxRows = Math.max(1, Math.floor((maxY - y) / (rowH + gap)));
+        var maxItems = maxRows * cols;
+        if (items.length > maxItems) items = items.slice(0, maxItems);
+      }
+      items.forEach(function(it, i) {
+        var col = i % cols, row = Math.floor(i / cols);
+        var bx = x + col * (cw + gap);
+        var by = y + row * (rowH + gap);
+        fillRect(bx, by, cw, rowH, 12, mix(mutedInput.value, bgInput.value, 0.35));
+        strokeRect(bx, by, cw, rowH, 12, withAlpha(borderInput.value, 0.2), 1);
+        ctx.save();
+        ctx.textBaseline = 'top';
+        var metaColor = colorMetaInput ? colorMetaInput.value : textInput.value;
+        ctx.fillStyle = mix(metaColor, bgInput.value, 0.38);
+        ctx.font = '700 '+Math.round(9*ts())+'px '+lf().kicker+', sans-serif';
+        ctx.fillText(it.label.toUpperCase(), bx+10, by+8);
+        ctx.fillStyle = metaColor;
+        var vsz = Math.round(13*ts());
+        ctx.font = '500 '+vsz+'px '+lf().mono+', monospace';
+        var vlines = wrap(it.value, cw-20, ctx.font, 2);
+        vlines.forEach(function(l,li) { ctx.fillText(l, bx+10, by+24+li*(vsz+3)); });
+        ctx.restore();
+      });
+      return y + Math.ceil(items.length / cols) * (rowH + gap);
+    }
+
+    function drawPalette(x, y, w, compact) {
+      if (!showPaletteInput.checked) return y;
+      var roles = ['dominant','accent','muted','shadow','highlight'];
+      var gap = 4;
+      var sw = (w - gap * (roles.length-1)) / roles.length;
+      var sh = palSz();
+      var labelSz = sh >= 50 ? 9 : 8;
+      var hexSz   = sh >= 50 ? 9 : 8;
+      var showHex = sh >= 36;
+      var showLabel = sh >= 30;
+      roles.forEach(function(role, i) {
+        var c = state.palette[role] || '#888';
+        var sx = x + i * (sw + gap);
+        fillRect(sx, y, sw, sh, Math.min(8, sh/4), c);
+        if (!showLabel) return;
+        ctx.save();
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = contrast(c);
+        ctx.font = '700 '+labelSz+'px '+lf().kicker+',sans-serif';
+        ctx.fillText(role.charAt(0).toUpperCase()+role.slice(1), sx+5, y+5);
+        if (showHex) {
+          ctx.font = '500 '+hexSz+'px '+lf().mono+',monospace';
+          ctx.fillText(c.toUpperCase(), sx+5, y+5+labelSz+4);
+        }
+        ctx.restore();
+      });
+      return y + sh;
+    }
+
+    function drawLocation(x, y, w, maxY) {
+      if (!showLocationInput.checked) return y;
+      if (maxY && y > maxY - 30) return y;
+      var hl = locationHeadline();
+      var sl = locationSubline();
+      if (!hl && !sl) return y;
+      var labelSz = Math.round(9 * ts());
+      var headSz = Math.round(14 * ts());
+      var subSz = Math.round(11 * ts());
+      var h = sl ? Math.round(22 + headSz + subSz + 10) : Math.round(22 + headSz + 6);
+      if (maxY && y + h > maxY) return y;
+      fillRect(x, y, w, h, 12, mix(mutedInput.value, bgInput.value, 0.3));
+      strokeRect(x, y, w, h, 12, withAlpha(borderInput.value, 0.2), 1);
+      ctx.save();
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = accentInput.value;
+      ctx.font = '700 '+labelSz+'px '+lf().kicker+', sans-serif';
+      ctx.fillText('LOCATION', x+10, y+7);
+      ctx.fillStyle = textInput.value;
+      ctx.font = '600 '+headSz+'px '+lf().body+', sans-serif';
+      var hlines = wrap(hl, w-20, ctx.font, 1);
+      hlines.forEach(function(l) { ctx.fillText(l, x+10, y+7+labelSz+4); });
+      if (sl) {
+        ctx.fillStyle = mix(textInput.value, bgInput.value, 0.3);
+        ctx.font = '400 '+subSz+'px '+lf().mono+', monospace';
+        ctx.fillText(sl, x+10, y+7+labelSz+4+headSz+3);
+      }
+      ctx.restore();
+      return y + h;
+    }
+
+    /* ── Renderers ── */
+
+    function renderStreet(W, H, P) {
+      var pad = sc(cardPad());
+      var r = cornerR();
+      var imgH = Math.round(H * photoRatio());
+      drawPhoto(pad, pad, W - pad*2, imgH, { radius: r, overlay: true, overlayAmt: overlayAmt() });
+
+      // Location chip on photo
+      if (popt('shot-chip') && showLocationInput.checked && locationHeadline()) {
+        var chipSz = Math.round(13*ts());
+        ctx.font = '600 '+chipSz+'px '+lf().body+', sans-serif';
+        var chipText = wrap(locationHeadline(), W * 0.45, ctx.font, 1)[0] || '';
+        var chipW = ctx.measureText(chipText).width + 24;
+        var chipX = pad + 16, chipY = pad + imgH - 54;
+        fillRect(chipX, chipY, chipW, 36, 8, withAlpha(bgInput.value, 0.8));
+        ctx.save(); ctx.textBaseline = 'middle';
+        ctx.fillStyle = textInput.value;
+        ctx.font = '600 '+chipSz+'px '+lf().body+', sans-serif';
+        ctx.fillText(chipText, chipX+12, chipY+18);
+        ctx.restore();
+      }
+
+      // Info panel
+      var panGap = sc(10);
+      var panY = pad + imgH + panGap;
+      var panH = H - panY - pad + 4;
+      var panX = pad + 8;
+      var panW = W - pad*2 - 16;
+      fillRect(panX, panY, panW, panH, Math.max(r-4, 8), mix(mutedInput.value, bgInput.value, 0.28));
+      strokeRect(panX, panY, panW, panH, Math.max(r-4, 8), withAlpha(borderInput.value, 0.35), 1);
+
+      // Thin accent line at top of panel
+      ctx.save();
+      ctx.fillStyle = withAlpha(accentInput.value, 0.5);
+      roundRect(panX+20, panY, panW-40, 2, 1);
+      ctx.fill();
+      ctx.restore();
+
+      var ix = panX + sc(24);
+      var iw = panW - sc(48);
+      var y = panY + sc(22);
+
+      var palH = palSz();
+      var palY = panY + panH - palH - sc(12);
+      var contentBottom = palY - sc(6);
+
+      y = drawKicker(getKickerText('Street Notes'), ix, y);
+      y = drawTitle(ix, y, iw, P, 2);
+      y += sc(6);
+      y = drawCaption(ix, y, iw, 3, contentBottom);
+      y += sc(8);
+      y = drawTags(getTags(), ix, y, iw, contentBottom);
+      y += sc(6);
+      y = drawMeta(getMetaItems().slice(0,6), ix, y, iw, 3, Math.round(52*ds()), contentBottom);
+      drawPalette(ix, palY, iw, true);
+    }
+
+    function renderPostcard(W, H, P) {
+      var border = Math.round(cardPad() * 0.72);
+      var r = cornerR();
+      fillRect(border, border, W-border*2, H-border*2, r, mix(bgInput.value, textInput.value, 0.04));
+      strokeRect(border, border, W-border*2, H-border*2, r, withAlpha(borderInput.value, 0.5), 1.5);
+
+      // Airmail stripes - red and blue diagonal
+      if (popt('airmail-stripe')) {
+        var stripeH = 8;
+        var sY = border;
+        ctx.save();
+        roundRect(border, border, W-border*2, 28, r);
+        ctx.clip();
+        for (var si=0; si < (W/16)+2; si++) {
+          ctx.fillStyle = si%2===0 ? '#c0392b' : '#2c3e80';
+          ctx.fillRect(border + si*16, sY, 8, stripeH);
+        }
+        ctx.restore();
+        // Bottom stripe too
+        ctx.save();
+        roundRect(border, H-border-28, W-border*2, 28, r);
+        ctx.clip();
+        for (var si2=0; si2 < (W/16)+2; si2++) {
+          ctx.fillStyle = si2%2===0 ? '#c0392b' : '#2c3e80';
+          ctx.fillRect(border + si2*16, H-border-8, 8, stripeH);
+        }
+        ctx.restore();
+      }
+
+      var innerPad = Math.round(border * 0.9);
+      var photoX = border + innerPad;
+      var photoY = border + innerPad;
+      var photoW = Math.round(W * photoRatio());
+      var photoH = H - border*2 - innerPad*2;
+      drawPhoto(photoX, photoY, photoW, photoH, { radius: Math.max(r-6,4), matte:'#f0eae0', border: mix('#e0d8cc', borderInput.value, 0.3), inset: 14, shadow:true });
+
+      if (popt('postmark') && (dateInput.value.trim() || locationHeadline())) {
+        var stW = 120, stH = 72;
+        var stX = photoX + photoW - stW - 14;
+        var stY = photoY + 14;
+        fillRect(stX, stY, stW, stH, 12, withAlpha(accentInput.value, 0.85));
+        ctx.save(); ctx.textBaseline = 'top';
+        ctx.fillStyle = contrast(accentInput.value);
+        ctx.font = '700 9px '+lf().kicker+', sans-serif';
+        ctx.fillText('POSTMARK', stX+10, stY+8);
+        ctx.font = '700 15px '+lf().mono+', monospace';
+        ctx.fillText(dateInput.value || '', stX+10, stY+22);
+        ctx.font = '400 10px '+lf().body+', sans-serif';
+        var stLoc = wrap(locationHeadline(), stW-20, ctx.font, 2);
+        stLoc.forEach(function(l,i) { ctx.fillText(l, stX+10, stY+42+i*12); });
+        ctx.restore();
+      }
+
+      var px = photoX + photoW + sc(28);
+      var pw = W - px - border - 20;
+      var y = border + 40;
+      var bottom = H - border - 20;
+
+      var palH2 = palSz();
+      var palY2 = Math.max(bottom - palH2, y);
+      var contentBottom2 = palY2 - sc(6);
+
+      y = drawKicker(getKickerText('Postcard'), px, y, 11);
+      y = drawTitle(px, y, pw, P, 3);
+      y += sc(10);
+      y = drawLocation(px, y, pw, contentBottom2); y += sc(10);
+      y = drawCaption(px, y, pw, 4, contentBottom2); y += sc(10);
+      y = drawTags(getTags(), px, y, pw, contentBottom2); y += sc(6);
+      y = drawMeta(getMetaItems().slice(0,6), px, y, pw, 2, Math.round(50*ds()), contentBottom2);
+      palY2 = Math.max(y + sc(4), bottom - palH2);
+      if (palY2 + palH2 <= bottom + 4) drawPalette(px, palY2, pw, true);
+    }
+
+    function renderLedger(W, H, P) {
+      var pad = Math.round(cardPad() * 0.72);
+      var panelW = Math.round(W * (1 - photoRatio() - 0.08));
+      var panelLeft = popt('panel-side') !== 'right';
+
+      var panX = panelLeft ? pad : W - pad - panelW;
+      var imgX = panelLeft ? pad + panelW + 12 : pad;
+      var imgW = W - pad*2 - panelW - 12;
+
+      fillRect(panX, pad, panelW, H-pad*2, 22, mix(mutedInput.value, bgInput.value, 0.2));
+      strokeRect(panX, pad, panelW, H-pad*2, 22, withAlpha(borderInput.value, 0.5), 1);
+      drawPhoto(imgX, pad, imgW, H-pad*2, { radius: cornerR(), overlay: true, overlayAmt: overlayAmt(), alignX: 0.55 });
+
+      if (showStoryInput.checked && captionInput.value.trim()) {
+        var ovH = 78, ovY = H - pad - ovH;
+        var ovX = imgX + 16, ovW = imgW - 32;
+        fillRect(ovX, ovY, ovW, ovH, 14, withAlpha(bgInput.value, 0.72));
+        ctx.save(); ctx.textBaseline = 'top';
+        ctx.fillStyle = mix(textInput.value, bgInput.value, 0.08);
+        ctx.font = '400 '+Math.round(13*ts())+'px '+lf().body+', sans-serif';
+        var capLines = wrap(captionInput.value, ovW-24, ctx.font, 3);
+        capLines.forEach(function(l,i) { ctx.fillText(l, ovX+12, ovY+12+i*Math.round(18*ds())); });
+        ctx.restore();
+      }
+
+      var ix = panX + sc(24);
+      var iw = panelW - sc(48);
+      var y = pad + sc(32);
+      var bottom = H - pad - sc(56);
+
+      var palH3 = palSz();
+      var contentBottom3 = bottom - palH3 - sc(6);
+
+      y = drawKicker(getKickerText('Lens Ledger'), ix, y, 11);
+      y = drawTitle(ix, y, iw, P, 3);
+      y += sc(12);
+      y = drawLocation(ix, y, iw, contentBottom3); y += sc(10);
+      y = drawTags(getTags(), ix, y, iw, contentBottom3); y += sc(6);
+      y = drawMeta(getMetaItems().slice(0,6), ix, y, iw, 1, Math.round(48*ds()), contentBottom3);
+      drawPalette(ix, bottom - palH3, iw, true);
+    }
+
+    function renderGallery(W, H, P) {
+      var r = cornerR();
+      drawPhoto(28, 28, W-56, H-56, { radius: r, overlay: true, overlayAmt: Math.max(overlayAmt(), 0.4), inset: 0, matte: bgInput.value, shadow: false, alignY: 0.45 });
+
+      var plaqueOp = popt('plaque-opacity') || 0.88;
+      var px = 48, plaqueW = W - 96;
+      var plaqueH = Math.round(H * 0.24);
+      var plaqueY = H - 48 - plaqueH;
+      fillRect(px, plaqueY, plaqueW, plaqueH, 22, withAlpha(mutedInput.value, plaqueOp));
+      strokeRect(px, plaqueY, plaqueW, plaqueH, 22, withAlpha(borderInput.value, 0.5), 1);
+
+      var lx = px + sc(28);
+      var leftW = Math.round(plaqueW * 0.54);
+      var y = plaqueY + sc(24);
+
+      var plaqueBottom4 = plaqueY + plaqueH - sc(8);
+      var palH4 = palSz();
+      var palMaxY4 = plaqueBottom4 - palH4;
+      var contentBottom4 = palMaxY4 - sc(6);
+
+      y = drawKicker(getKickerText('Gallery Plaque'), lx, y, 11);
+      y = drawTitle(lx, y, leftW, P, 2);
+      y += sc(6);
+      var galPalY = Math.min(Math.max(y, palMaxY4), plaqueBottom4 - palH4);
+      drawPalette(lx, galPalY, leftW, true);
+
+      var rx = px + leftW + sc(40);
+      var rw = plaqueW - leftW - sc(68);
+      var ry = plaqueY + sc(24);
+      ry = drawLocation(rx, ry, rw, contentBottom4); ry += sc(8);
+      drawMeta(getMetaItems().slice(0,4), rx, ry, rw, 1, Math.round(44*ds()), contentBottom4);
+    }
+
+    function renderContact(W, H, P) {
+      var pad = Math.round(cardPad() * 0.9);
+      fillRect(pad, pad, W-pad*2, H-pad*2, 22, mix(mutedInput.value, bgInput.value, 0.12));
+      strokeRect(pad, pad, W-pad*2, H-pad*2, 22, withAlpha(borderInput.value, 0.4), 1);
+
+      var hx = pad + 20;
+      ctx.save(); ctx.textBaseline = 'top';
+      ctx.fillStyle = colorLabelInput ? colorLabelInput.value : accentInput.value;
+      ctx.font = '700 '+Math.round(11*ts())+'px '+lf().kicker+', sans-serif';
+      ctx.fillText(getKickerText('Contact Sheet').toUpperCase(), hx, pad+12);
+      ctx.fillStyle = colorMetaInput ? mix(colorMetaInput.value, bgInput.value, 0.2) : mix(textInput.value, bgInput.value, 0.25);
+      ctx.font = '500 '+Math.round(11*ts())+'px '+lf().mono+', monospace';
+      var dateStr = dateInput.value || '';
+      if (dateStr) ctx.fillText(dateStr, W-pad-20-ctx.measureText(dateStr).width, pad+12);
+      ctx.restore();
+
+      if (popt('film-border')) {
+        var sprY = pad + 38;
+        ctx.fillStyle = withAlpha(borderInput.value, 0.5);
+        ctx.fillRect(hx, sprY, W-pad*2-40, 2);
+        for (var si=0; si < Math.floor((W-pad*2-40)/20); si++) {
+          fillRect(hx + si*20 + 4, sprY - 4, 8, 10, 2, withAlpha(borderInput.value, 0.25));
+        }
+      }
+
+      var phY = pad + 52;
+      var phH = Math.round((H - pad*2 - 52) * 0.44);
+      drawPhoto(hx, phY, W-pad*2-40, phH, { radius: 18, overlay: true, overlayAmt: 0.25, inset: 8, alignX: 0.5, alignY: pa() });
+
+      var stY = phY + phH + 10;
+      var stH = Math.round((H-pad*2-52) * 0.14);
+      var stGap = 10;
+      var stW = (W-pad*2-40 - stGap*2) / 3;
+      drawPhoto(hx, stY, stW, stH, { radius: 14, inset: 6, alignX: 0.2, shadow: false, matte: mix(bgInput.value,mutedInput.value,0.3) });
+      drawPhoto(hx+stW+stGap, stY, stW, stH, { radius: 14, inset: 6, alignX: 0.5, shadow: false, matte: mix(bgInput.value,mutedInput.value,0.3) });
+      drawPhoto(hx+(stW+stGap)*2, stY, stW, stH, { radius: 14, inset: 6, alignX: 0.8, shadow: false, matte: mix(bgInput.value,mutedInput.value,0.3) });
+
+      if (popt('film-border')) {
+        var sprY2 = stY + stH + 8;
+        ctx.fillStyle = withAlpha(borderInput.value, 0.5);
+        ctx.fillRect(hx, sprY2, W-pad*2-40, 2);
+        for (var si2=0; si2 < Math.floor((W-pad*2-40)/20); si2++) {
+          fillRect(hx + si2*20 + 4, sprY2 - 4, 8, 10, 2, withAlpha(borderInput.value, 0.25));
+        }
+      }
+
+      var textY = stY + stH + 22;
+      var textW = (W - pad*2 - 40);
+      var leftW = Math.round(textW * 0.55);
+      var rightX = hx + leftW + 20;
+      var rightW = textW - leftW - 20;
+      var y = textY;
+      var contactBottom = H - pad - sc(8);
+      var palH5 = palSz();
+      var contactPalY = contactBottom - palH5;
+      var contentBottom5 = contactPalY - sc(4);
+
+      y = drawKicker(getKickerText('Contact Sheet'), hx, y, 11);
+      y = drawTitle(hx, y, leftW, P, 2);
+      y += sc(6);
+      y = drawCaption(hx, y, leftW, 3, contentBottom5);
+      y += sc(6);
+      y = drawTags(getTags(), hx, y, leftW, contentBottom5);
+
+      drawLocation(rightX, textY, rightW, contentBottom5);
+      drawPalette(rightX, contactPalY, rightW, true);
+    }
+
+    function renderTransit(W, H, P) {
+      var pad = Math.round(cardPad() * 0.82);
+      var bandW = Math.round(W * 0.065);
+      var bandLeft = popt('band-side') !== 'right';
+
+      fillRect(pad, pad, W-pad*2, H-pad*2, 22, mix(mutedInput.value, bgInput.value, 0.15));
+      strokeRect(pad, pad, W-pad*2, H-pad*2, 22, withAlpha(accentInput.value, 0.6), 2);
+
+      var bandX = bandLeft ? pad+10 : W-pad-10-bandW;
+      fillRect(bandX, pad+10, bandW, H-pad*2-20, 16, mix(accentInput.value, bgInput.value, 0.2));
+      ctx.save();
+      ctx.translate(bandX + bandW/2, H/2 + 90);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillStyle = textInput.value;
+      ctx.font = '800 '+Math.round(30*ts())+'px '+lf().kicker+', sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('TRANSIT PASS', 0, 0);
+      ctx.restore();
+
+      var perfX = bandLeft ? pad + bandW + 20 : W - pad - bandW - 20;
+      ctx.save();
+      ctx.strokeStyle = withAlpha(borderInput.value, 0.35);
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(perfX, pad + 16);
+      ctx.lineTo(perfX, H - pad - 16);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      var photoX = bandLeft ? pad + bandW + 32 : pad + 16;
+      var photoW = Math.round((W - pad*2 - bandW - 32) * 0.48);
+      drawPhoto(photoX, pad+16, photoW, H-pad*2-32, { radius: 18, overlay: true, overlayAmt: 0.2, alignX: 0.5 });
+
+      var infoX = bandLeft ? photoX + photoW + sc(24) : pad + photoW + 32 + sc(24);
+      var infoW = W - infoX - pad - 16;
+      if (!bandLeft) { infoX = pad + 16; infoW = photoX - pad - 32; }
+
+      var y = pad + sc(40);
+      var bottom = H - pad - sc(20);
+      var palH6 = palSz();
+      var transitPalY = bottom - palH6;
+      var contentBottom6 = transitPalY - sc(6);
+
+      y = drawKicker(getKickerText('Transit Pass'), infoX, y, 11);
+      y = drawTitle(infoX, y, infoW, P, 3);
+      y += sc(10);
+      y = drawLocation(infoX, y, infoW, contentBottom6); y += sc(8);
+      y = drawTags(getTags(), infoX, y, infoW, contentBottom6); y += sc(6);
+      y = drawMeta(getMetaItems().slice(0,4), infoX, y, infoW, 1, Math.round(48*ds()), contentBottom6);
+      if (y + palH6 <= bottom + 4) drawPalette(infoX, Math.max(y + sc(4), transitPalY), infoW, true);
+    }
+
+    function renderJournal(W, H, P) {
+      var pad = sc(cardPad());
+      var innerBg = mix('#f4ece0', bgInput.value, 0.12);
+      fillRect(pad, pad, W-pad*2, H-pad*2, 18, innerBg);
+      strokeRect(pad, pad, W-pad*2, H-pad*2, 18, withAlpha(borderInput.value, 0.4), 1);
+
+      if (popt('ruled-lines')) {
+        var lineGap = sc(64);
+        for (var li=1; li < Math.floor((H-pad*2)/lineGap); li++) {
+          ctx.strokeStyle = withAlpha(borderInput.value, 0.1);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(pad+28, pad + li*lineGap);
+          ctx.lineTo(W-pad-28, pad + li*lineGap);
+          ctx.stroke();
+        }
+      }
+
+      var imgMargin = Math.round(W * 0.038);
+      var imgX = pad + imgMargin;
+      var imgW = W - pad*2 - imgMargin*2;
+      var imgH = Math.round(H * photoRatio());
+      var imgTopPad = sc(36);
+      drawPhoto(imgX, pad + imgTopPad, imgW, imgH, { radius: 16, matte: '#f0e8da', border: mix(borderInput.value, '#d4c8b8', 0.3), inset: 10, alignY: pa() });
+
+      var y = pad + imgTopPad + imgH + sc(18);
+      var ix = imgX;
+      var iw = imgW;
+      var bottom = H - pad - sc(20);
+
+      var palH7 = palSz();
+      var journalPalY = bottom - palH7;
+      var contentBottom7 = journalPalY - sc(6);
+
+      // Derive readable text colours for the cream journal page
+      var journalPageLum = lum(innerBg);
+      var journalCapColor = journalPageLum > 0.35
+        ? mix(colorBodyInput ? colorBodyInput.value : textInput.value, '#1a1008', 0.7)
+        : (colorBodyInput ? colorBodyInput.value : mix(textInput.value, bgInput.value, 0.18));
+
+      y = drawKicker(getKickerText('Field Journal'), ix, y, Math.round(13 * ts()));
+      y = drawTitle(ix, y, iw, P, 2);
+      y += sc(10);
+      y = drawCaption(ix, y, iw, 4, contentBottom7, journalCapColor);
+      y += sc(10);
+      y = drawLocation(ix, y, iw, contentBottom7); y += sc(8);
+      y = drawTags(getTags(), ix, y, iw, contentBottom7); y += sc(6);
+      y = drawMeta(getMetaItems().slice(0,6), ix, y, iw, 2, Math.round(50*ds()), contentBottom7);
+      if (y + palH7 <= bottom + 4) drawPalette(ix, Math.max(y + sc(4), journalPalY), iw, true);
+    }
+
+    function renderEditorial(W, H, P) {
+      var pad = Math.round(cardPad() * 0.82);
+      var r = cornerR();
+      var imgLeft = popt('img-side') !== 'right';
+      var imgW = Math.round(W * (photoRatio() + 0.12));
+
+      fillRect(pad-4, pad-4, W-pad*2+8, H-pad*2+8, r, mix(mutedInput.value, bgInput.value, 0.1));
+
+      var imgX = imgLeft ? pad : W - pad - imgW;
+      drawPhoto(imgX, pad, imgW, H-pad*2, { radius: 16, overlay: true, overlayAmt: 0.15, inset: 0, matte: bgInput.value, shadow: false, alignX: 0.45 });
+
+      if (popt('fold-line')) {
+        var foldX = imgLeft ? pad + imgW + 8 : W - pad - imgW - 8;
+        ctx.save();
+        ctx.strokeStyle = withAlpha(borderInput.value, 0.25);
+        ctx.setLineDash([8, 8]);
+        ctx.beginPath();
+        ctx.moveTo(foldX, pad + 10);
+        ctx.lineTo(foldX, H - pad - 10);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      var tx = imgLeft ? pad + imgW + sc(28) : pad + sc(20);
+      var tw = W - imgW - pad*2 - sc(40);
+      var y = pad + sc(36);
+      var bottom = H - pad - sc(20);
+
+      var palH8 = palSz();
+      var editPalY = bottom - palH8;
+      var contentBottom8 = editPalY - sc(6);
+
+      y = drawKicker(getKickerText('Editorial'), tx, y, 11);
+      y = drawTitle(tx, y, tw, P, 3);
+      y += sc(12);
+      y = drawCaption(tx, y, tw, 4, contentBottom8);
+      y += sc(12);
+      y = drawLocation(tx, y, tw, contentBottom8); y += sc(10);
+      y = drawTags(getTags(), tx, y, tw, contentBottom8); y += sc(8);
+      y = drawMeta(getMetaItems().slice(0,4), tx, y, tw, 1, Math.round(50*ds()), contentBottom8);
+      if (y + palH8 <= bottom + 4) drawPalette(tx, Math.max(y + sc(4), editPalY), tw, true);
+    }
+
+    /* ── Main render ── */
+    function renderCard() {
+      var W = Math.max(600, Number(widthInput.value) || 1080);
+      var H = Math.max(600, Number(heightInput.value) || 1080);
+      canvas.width = W; canvas.height = H;
+      canvas.style.boxShadow = shadowInput.checked ? '0 12px 40px rgba(0,0,0,0.15)' : 'none';
+      drawBg(W, H);
+
+      var P = PRESETS[presetInput.value] || PRESETS['street-notes'];
+      var layout = P.layout;
+      currentLayoutFonts = LAYOUT_FONTS[layout] || null;
+      if      (layout === 'postcard')  renderPostcard(W, H, P);
+      else if (layout === 'ledger')    renderLedger(W, H, P);
+      else if (layout === 'gallery')   renderGallery(W, H, P);
+      else if (layout === 'contact')   renderContact(W, H, P);
+      else if (layout === 'transit')   renderTransit(W, H, P);
+      else if (layout === 'journal')   renderJournal(W, H, P);
+      else if (layout === 'editorial') renderEditorial(W, H, P);
+      else                             renderStreet(W, H, P);
+      currentLayoutFonts = null;
+    }
+
+    /* ── Caption builder ── */
+    function buildCaption() {
+      var parts = [];
+      if (showTitleInput.checked && titleInput.value.trim()) parts.push(titleInput.value.trim());
+      if (showStoryInput.checked && captionInput.value.trim()) parts.push(captionInput.value.trim());
+      var meta = [cameraInput.value, lensInput.value, focalInput.value, apertureInput.value, shutterInput.value, isoInput.value].filter(Boolean).join(' \u2022 ');
+      if (showMetaInput.checked && meta) parts.push(meta);
+      if (showLocationInput.checked && getLocationDisplay()) parts.push(getLocationDisplay());
+      if (dateInput.value.trim()) parts.push(dateInput.value.trim());
+      return parts.filter(Boolean).join('\n');
+    }
+
+    /* ── Preset change ── */
+    function applyPreset() {
+      var P = PRESETS[presetInput.value];
+      if (!P) return;
+      widthInput.value = String(P.w);
+      heightInput.value = String(P.h);
+      buildPresetOpts();
+      renderCard();
+    }
+
+    /* ── Export ── */
+    async function download() {
+      renderCard();
+      var a = document.createElement('a');
+      var fmt = formatInput.value;
+      a.download = (state.fileName ? cleanTitle(state.fileName).replace(/\s+/g,'-').toLowerCase() : 'story-card') + '.' + (fmt==='jpeg'?'jpg':'png');
+      a.href = fmt==='jpeg' ? canvas.toDataURL('image/jpeg', Number(qualityInput.value)/100) : canvas.toDataURL('image/png');
+      a.click();
+      setStatus('Downloaded.');
+    }
+
+    async function copyCard() {
+      if (!navigator.clipboard || typeof ClipboardItem === 'undefined') { setStatus('Clipboard not supported.'); return; }
+      renderCard();
+      var fmt = formatInput.value === 'jpeg' ? 'image/jpeg' : 'image/png';
+      canvas.toBlob(async function(blob) {
+        if (!blob) { setStatus('Copy failed.'); return; }
+        try { await navigator.clipboard.write([new ClipboardItem({[fmt]:blob})]); setStatus('Copied!'); }
+        catch(e) { console.error(e); setStatus('Copy failed.'); }
+      }, fmt, Number(qualityInput.value)/100);
+    }
+
+    async function copyCaptionText() {
+      if (!navigator.clipboard) { setStatus('Clipboard not supported.'); return; }
+      try { await navigator.clipboard.writeText(buildCaption()); setStatus('Caption copied!'); }
+      catch(e) { console.error(e); setStatus('Copy failed.'); }
+    }
+
+    function clearImage() {
+      revokeUrl(); state.image = null; state.fileName = '';
+      state.exifRaw = null; state.gpsRaw = null;
+      thumb.removeAttribute('src'); nameEl.textContent = '';
+      fileInput.value = ''; setDropzone(false);
+      setStatus(''); renderCard();
+    }
+
+    /* ── Wire up ── */
+    syncColor(bgInput, bgHex);
+    syncColor(textInput, textHex);
+    syncColor(accentInput, accentHex);
+    syncColor(mutedInput, mutedHex);
+    syncColor(borderInput, borderHex);
+    if (colorLabelInput) syncColor(colorLabelInput, colorLabelHex);
+    if (colorTitleInput) syncColor(colorTitleInput, colorTitleHex);
+    if (colorBodyInput)  syncColor(colorBodyInput,  colorBodyHex);
+    if (colorMetaInput)  syncColor(colorMetaInput,  colorMetaHex);
+    updateSwatches();
+
+    fileInput.addEventListener('change', function() { handleFile(fileInput.files && fileInput.files[0]); });
+    dropzone.addEventListener('click', function(e) { if (e.target === removeBtn) return; fileInput.click(); });
+    dropzone.addEventListener('keydown', function(e) { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); fileInput.click(); } });
+    ['dragenter','dragover'].forEach(function(ev) { dropzone.addEventListener(ev, function(e) { e.preventDefault(); dropzone.classList.add('esc-drag-over'); }); });
+    ['dragleave','dragend','drop'].forEach(function(ev) { dropzone.addEventListener(ev, function(e) { e.preventDefault(); dropzone.classList.remove('esc-drag-over'); }); });
+    dropzone.addEventListener('drop', function(e) { handleFile(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); });
+    document.addEventListener('paste', function(e) {
+      if (!root.isConnected) return;
+      var items = e.clipboardData && e.clipboardData.items;
+      if (!items) return;
+      for (var i=0; i<items.length; i++) { if (items[i].type.indexOf('image/')===0) { handleFile(items[i].getAsFile()); return; } }
+    });
+    removeBtn.addEventListener('click', function(e) { e.stopPropagation(); clearImage(); });
+    autoFillBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); fillFromExif(); renderCard(); setStatus(state.exifRaw ? 'Filled from EXIF.' : 'No EXIF data.'); });
+    copyCaptionBtn.addEventListener('click', copyCaptionText);
+    presetInput.addEventListener('change', applyPreset);
+    formatInput.addEventListener('change', function() { qualityWrap.style.display = formatInput.value==='jpeg' ? '' : 'none'; });
+    extractPaletteBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); extractPalette(); renderCard(); });
+    applyPaletteBtn.addEventListener('click', function() { applyPalette(); });
+    // Palette preset picker toggle
+    if (ppToggleBtn && ppPanel) {
+      ppToggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var open = ppPanel.classList.toggle('esc-pp-open');
+        ppToggleBtn.setAttribute('aria-expanded', String(open));
+      });
+      ppPanel.addEventListener('click', function(e) { e.stopPropagation(); });
+      document.addEventListener('click', function() { closePpPanel(); });
+    }
+    buildPaletteGrid();
+    updatePpToggle('');
+
+    [titleInput, subtitleInput, captionInput, locationInput, tagsInput,
+     cameraInput, lensInput, focalInput, apertureInput, shutterInput, isoInput, dateInput,
+     widthInput, heightInput, typeScaleInput, densityInput, photoAlignInput,
+     layoutLabelInput,
+     titleFontInput, bodyFontInput, photoRatioInput, cardPaddingInput,
+     overlayAmtInput, cornerRadiusInput, palSizeInput,
+     extractPrecInput, extractSpreadInput,
+     colorLabelInput, colorTitleInput, colorBodyInput, colorMetaInput,
+     showImageInput, showLabelInput, showTitleInput, showSubtitleInput, showPaletteInput,
+     showStoryInput, showTagsInput, showLocationInput, showMetaInput,
+     shadowInput, grainInput, borderToggleInput, qualityInput
+    ].forEach(function(el) {
+      el.addEventListener('input', function() { updateRangeLabels(); renderCard(); });
+      el.addEventListener('change', function() { updateRangeLabels(); renderCard(); });
+    });
+
+    downloadBtn.addEventListener('click', download);
+    copyBtn.addEventListener('click', copyCard);
+
+    buildPresetOpts();
+    updateRangeLabels();
+    resetFontColors();
+    applyPreset();
+    renderCard();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExifStoryCard, { once: true });
+  } else {
+    initExifStoryCard();
+  }
+  document.addEventListener('astro:page-load', initExifStoryCard);
+</script>
