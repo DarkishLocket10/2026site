@@ -1,0 +1,1175 @@
+---
+---
+
+<div id="ss-tool" class="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-5 items-start">
+  <!-- ──────────── Controls Panel ──────────── -->
+  <div class="ss-controls rounded-2xl p-5 space-y-5">
+
+    <!-- Images -->
+    <div>
+      <h3 class="ss-section-title">Images</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Old image drop zone -->
+        <div class="ss-dropzone" id="ss-drop-old" tabindex="0" role="button" aria-label="Upload old image">
+          <input id="ss-old-file" type="file" accept="image/*" class="ss-dropzone-input" tabindex="-1" />
+          <div class="ss-dropzone-empty" id="ss-drop-old-empty">
+            <svg xmlns="http://www.w3.org/2000/svg" class="ss-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <span class="ss-dropzone-label">Old</span>
+            <span class="ss-dropzone-hint">Drop, paste, or click</span>
+          </div>
+          <div class="ss-dropzone-filled" id="ss-drop-old-filled" style="display:none">
+            <img id="ss-thumb-old" class="ss-dropzone-thumb" alt="Old image preview" />
+            <span class="ss-dropzone-name" id="ss-name-old"></span>
+            <span class="ss-dropzone-replace">Click to replace</span>
+            <button type="button" class="ss-dropzone-remove" id="ss-remove-old" aria-label="Remove old image">&times;</button>
+          </div>
+        </div>
+        <!-- New image drop zone -->
+        <div class="ss-dropzone" id="ss-drop-new" tabindex="0" role="button" aria-label="Upload new image">
+          <input id="ss-new-file" type="file" accept="image/*" class="ss-dropzone-input" tabindex="-1" />
+          <div class="ss-dropzone-empty" id="ss-drop-new-empty">
+            <svg xmlns="http://www.w3.org/2000/svg" class="ss-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <span class="ss-dropzone-label">New</span>
+            <span class="ss-dropzone-hint">Drop, paste, or click</span>
+          </div>
+          <div class="ss-dropzone-filled" id="ss-drop-new-filled" style="display:none">
+            <img id="ss-thumb-new" class="ss-dropzone-thumb" alt="New image preview" />
+            <span class="ss-dropzone-name" id="ss-name-new"></span>
+            <span class="ss-dropzone-replace">Click to replace</span>
+            <button type="button" class="ss-dropzone-remove" id="ss-remove-new" aria-label="Remove new image">&times;</button>
+          </div>
+        </div>
+      </div>
+      <div class="ss-field" style="margin-top:8px; margin-bottom: 0;">
+        <button id="ss-swap-images" class="ss-btn-secondary w-full" type="button">Swap old/new images</button>
+      </div>
+      <div class="ss-field" style="margin-top:10px">
+        <label for="ss-fit-mode">Fit mode</label>
+        <select id="ss-fit-mode">
+          <option value="fit" selected>Fit (letterbox)</option>
+          <option value="fill">Fill (crop)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Zoom & Position -->
+    <div>
+      <h3 class="ss-section-title">Zoom &amp; Position</h3>
+      <div class="ss-field">
+        <label for="ss-zoom-old">Old zoom: <span id="ss-zoom-old-val">100</span>%</label>
+        <input id="ss-zoom-old" type="range" min="25" max="400" value="100" step="5" />
+        <button id="ss-reset-old" class="ss-mini-btn w-full" type="button">Reset old zoom &amp; pan</button>
+      </div>
+      <div class="ss-field">
+        <label for="ss-zoom-new">New zoom: <span id="ss-zoom-new-val">100</span>%</label>
+        <input id="ss-zoom-new" type="range" min="25" max="400" value="100" step="5" />
+        <button id="ss-reset-new" class="ss-mini-btn w-full" type="button">Reset new zoom &amp; pan</button>
+      </div>
+      <p class="ss-hint" style="margin-top:6px">Drag on the preview to pan zoomed images.</p>
+    </div>
+
+    <!-- Labels -->
+    <div>
+      <h3 class="ss-section-title">Labels</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="ss-field"><label for="ss-old-label">Old label</label><input id="ss-old-label" type="text" value="OLD" /></div>
+        <div class="ss-field"><label for="ss-new-label">New label</label><input id="ss-new-label" type="text" value="NEW" /></div>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div>
+      <h3 class="ss-section-title">Canvas</h3>
+      <div class="ss-field">
+        <label for="ss-preset">Preset size</label>
+        <select id="ss-preset">
+          <option value="custom">Custom</option>
+          <option value="1600x900" selected>Blog Banner (1600&times;900)</option>
+          <option value="1920x1080">Presentation (1920&times;1080)</option>
+          <option value="1200x630">Social Media (1200&times;630)</option>
+          <option value="1080x1080">Square (1080&times;1080)</option>
+          <option value="750x1334">Mobile (750&times;1334)</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="ss-field"><label for="ss-width">Width</label><input id="ss-width" type="number" min="400" step="10" value="1600" /></div>
+        <div class="ss-field"><label for="ss-height">Height</label><input id="ss-height" type="number" min="200" step="10" value="900" /></div>
+        <div class="ss-field"><label for="ss-gap">Gap</label><input id="ss-gap" type="number" min="0" step="1" value="32" /></div>
+      </div>
+      <div class="ss-field">
+        <label class="ss-check-label">
+          <input id="ss-auto-height" type="checkbox" checked />
+          <span>Auto height from images</span>
+        </label>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="ss-field"><label for="ss-padding">Padding</label><input id="ss-padding" type="number" min="0" step="1" value="32" /></div>
+        <div class="ss-field"><label for="ss-radius">Radius</label><input id="ss-radius" type="number" min="0" step="1" value="18" /></div>
+        <div class="ss-field">
+          <label for="ss-corner">Label pos</label>
+          <select id="ss-corner">
+            <option value="top-left" selected>Top left</option>
+            <option value="top-right">Top right</option>
+            <option value="bottom-left">Bottom left</option>
+            <option value="bottom-right">Bottom right</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Style -->
+    <div>
+      <h3 class="ss-section-title">Style</h3>
+      <div class="ss-color-presets">
+        <button type="button" class="ss-preset-btn" data-preset="light" title="Light theme">Light</button>
+        <button type="button" class="ss-preset-btn" data-preset="dark" title="Dark theme">Dark</button>
+        <button type="button" class="ss-preset-btn" data-preset="transparent" title="Transparent background">Transparent</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="ss-field">
+          <label for="ss-bg-color">Background</label>
+          <div class="ss-color-row">
+            <input id="ss-bg-color" type="color" value="#ffffff" class="ss-color-swatch" />
+            <input id="ss-bg-color-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
+          </div>
+        </div>
+        <div class="ss-field">
+          <label for="ss-img-bg">Image fill</label>
+          <div class="ss-color-row">
+            <input id="ss-img-bg" type="color" value="#ffffff" class="ss-color-swatch" />
+            <input id="ss-img-bg-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
+          </div>
+        </div>
+        <div class="ss-field">
+          <label for="ss-label-bg">Label bg</label>
+          <div class="ss-color-row">
+            <input id="ss-label-bg" type="color" value="#111827" class="ss-color-swatch" />
+            <input id="ss-label-bg-hex" type="text" value="#111827" maxlength="7" class="ss-color-hex" spellcheck="false" />
+          </div>
+        </div>
+        <div class="ss-field">
+          <label for="ss-label-text">Label text</label>
+          <div class="ss-color-row">
+            <input id="ss-label-text" type="color" value="#ffffff" class="ss-color-swatch" />
+            <input id="ss-label-text-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
+          </div>
+        </div>
+      </div>
+      <div class="ss-field">
+        <label class="ss-check-label">
+          <input id="ss-transparent-bg" type="checkbox" />
+          <span>Transparent background</span>
+        </label>
+      </div>
+      <div class="ss-field">
+        <label class="ss-check-label">
+          <input id="ss-shadow" type="checkbox" checked />
+          <span>Image shadow</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div>
+      <h3 class="ss-section-title">Export</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="ss-field">
+          <label for="ss-format">Format</label>
+          <select id="ss-format">
+            <option value="png" selected>PNG</option>
+            <option value="jpeg">JPEG</option>
+          </select>
+        </div>
+        <div class="ss-field" id="ss-quality-wrap" style="display:none">
+          <label for="ss-quality">Quality: <span id="ss-quality-val">92</span>%</label>
+          <input id="ss-quality" type="range" min="10" max="100" step="5" value="92" />
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3" style="margin-top:8px">
+        <button id="ss-render"   class="ss-btn-primary"   type="button">Render</button>
+        <button id="ss-download" class="ss-btn-secondary" type="button">Download</button>
+        <button id="ss-copy"     class="ss-btn-secondary" type="button">Copy</button>
+      </div>
+    </div>
+
+    <div id="ss-status" class="ss-hint" aria-live="polite">Ready.</div>
+  </div>
+
+  <!-- ──────────── Preview Panel ──────────── -->
+  <div class="ss-preview rounded-2xl p-5">
+    <canvas id="ss-canvas" width="1600" height="900"></canvas>
+    <p class="ss-hint" style="margin-top:10px">
+      Drag on either image panel to reposition when zoomed. Use images with similar aspect ratios for the cleanest result.
+    </p>
+  </div>
+</div>
+
+<!-- ──────────── Styles ──────────── -->
+<style is:global>
+  #ss-tool .ss-controls,
+  #ss-tool .ss-preview {
+    background: var(--card-bg);
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .dark #ss-tool .ss-controls,
+  .dark #ss-tool .ss-preview {
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  #ss-tool .ss-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    color: var(--color-text-soft);
+  }
+
+  #ss-tool .ss-field {
+    margin-bottom: 10px;
+  }
+  #ss-tool .ss-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  #ss-tool input[type="text"],
+  #ss-tool input[type="number"],
+  #ss-tool select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    background: var(--card-bg);
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+  .dark #ss-tool input[type="text"],
+  .dark #ss-tool input[type="number"],
+  .dark #ss-tool select {
+    border-color: rgba(255,255,255,0.15);
+  }
+  #ss-tool input[type="text"]:focus,
+  #ss-tool input[type="number"]:focus,
+  #ss-tool select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  #ss-tool input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 4px;
+    background: var(--card-bg);
+  }
+  .dark #ss-tool input[type="color"] {
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  /* Color row: swatch + hex input */
+  #ss-tool .ss-color-row {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+  }
+  #ss-tool .ss-color-swatch {
+    width: 42px !important;
+    min-width: 42px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    padding: 3px;
+  }
+  #ss-tool .ss-color-hex {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 8px !important;
+    font-family: 'Courier New', monospace;
+    font-size: 13px !important;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+  }
+
+  #ss-tool .ss-color-disabled {
+    opacity: 0.55;
+  }
+
+  /* Preset buttons */
+  #ss-tool .ss-color-presets {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  #ss-tool .ss-preset-btn {
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .dark #ss-tool .ss-preset-btn {
+    border-color: rgba(255,255,255,0.12);
+  }
+  #ss-tool .ss-preset-btn:hover {
+    border-color: var(--color-accent);
+    background: rgba(136,90,156,0.06);
+  }
+
+  /* ── Drop zones ── */
+  #ss-tool .ss-dropzone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 130px;
+    border: 2px solid rgba(0,0,0,0.15);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+    outline: none;
+  }
+  .dark #ss-tool .ss-dropzone {
+    border-color: rgba(255,255,255,0.12);
+  }
+  #ss-tool .ss-dropzone:hover,
+  #ss-tool .ss-dropzone:focus-visible {
+    border-color: var(--color-accent);
+    background: rgba(136,90,156,0.04);
+  }
+  .dark #ss-tool .ss-dropzone:hover,
+  .dark #ss-tool .ss-dropzone:focus-visible {
+    background: rgba(172,95,207,0.06);
+  }
+  #ss-tool .ss-dropzone.ss-drag-over {
+    border-color: var(--color-accent);
+    background: rgba(136,90,156,0.1);
+  }
+  #ss-tool .ss-dropzone-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  #ss-tool .ss-dropzone-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  #ss-tool .ss-dropzone-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--color-text-soft);
+    opacity: 0.5;
+  }
+  #ss-tool .ss-dropzone-label {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  #ss-tool .ss-dropzone-hint {
+    font-size: 11px;
+    color: var(--color-text-soft);
+    opacity: 0.7;
+  }
+  #ss-tool .ss-dropzone-filled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+    cursor: pointer;
+  }
+  #ss-tool .ss-dropzone-thumb {
+    max-width: 100%;
+    max-height: 80px;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+  #ss-tool .ss-dropzone-name {
+    font-size: 11px;
+    color: var(--color-text-soft);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  #ss-tool .ss-dropzone-replace {
+    font-size: 11px;
+    color: var(--color-accent);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  #ss-tool .ss-dropzone:hover .ss-dropzone-replace {
+    opacity: 0.8;
+  }
+  #ss-tool .ss-dropzone-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.15s;
+    padding: 0;
+  }
+  #ss-tool .ss-dropzone:hover .ss-dropzone-remove {
+    opacity: 1;
+  }
+
+  #ss-tool input[type="range"] {
+    width: 100%;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+
+  #ss-tool input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+
+  #ss-tool .ss-check-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  #ss-tool .ss-btn-primary {
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  #ss-tool .ss-btn-primary:hover { opacity: 0.85; }
+
+  #ss-tool .ss-btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .dark #ss-tool .ss-btn-secondary {
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text);
+  }
+  #ss-tool .ss-btn-secondary:hover {
+    background: rgba(0,0,0,0.05);
+  }
+  .dark #ss-tool .ss-btn-secondary:hover {
+    background: rgba(255,255,255,0.07);
+  }
+
+  #ss-tool .ss-mini-btn {
+    margin-top: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .dark #ss-tool .ss-mini-btn {
+    border-color: rgba(255,255,255,0.15);
+  }
+  #ss-tool .ss-mini-btn:hover {
+    background: rgba(0,0,0,0.05);
+  }
+  .dark #ss-tool .ss-mini-btn:hover {
+    background: rgba(255,255,255,0.07);
+  }
+
+  #ss-tool #ss-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: transparent;
+    cursor: grab;
+  }
+  #ss-tool #ss-canvas.ss-canvas-transparent {
+    background-image:
+      linear-gradient(45deg, #e0e0e0 25%, #f3f3f3 25%),
+      linear-gradient(-45deg, #e0e0e0 25%, #f3f3f3 25%),
+      linear-gradient(45deg, #f3f3f3 75%, #e0e0e0 75%),
+      linear-gradient(-45deg, #f3f3f3 75%, #e0e0e0 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  }
+  .dark #ss-tool #ss-canvas {
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  #ss-tool .ss-hint {
+    font-size: 12px;
+    color: var(--color-text-soft);
+    line-height: 1.5;
+  }
+
+  /* Sticky preview on desktop */
+  @media (min-width: 1024px) {
+    #ss-tool .ss-preview {
+      position: sticky;
+      top: 6rem;
+    }
+  }
+</style>
+
+<!-- ──────────── Script ──────────── -->
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function () {
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ── Element refs ──
+  var oldFileInput   = $('ss-old-file');
+  var newFileInput   = $('ss-new-file');
+  var dropOld        = $('ss-drop-old');
+  var dropNew        = $('ss-drop-new');
+  var dropOldEmpty   = $('ss-drop-old-empty');
+  var dropOldFilled  = $('ss-drop-old-filled');
+  var dropNewEmpty   = $('ss-drop-new-empty');
+  var dropNewFilled  = $('ss-drop-new-filled');
+  var thumbOld       = $('ss-thumb-old');
+  var thumbNew       = $('ss-thumb-new');
+  var nameOld        = $('ss-name-old');
+  var nameNew        = $('ss-name-new');
+  var removeOldBtn   = $('ss-remove-old');
+  var removeNewBtn   = $('ss-remove-new');
+  var swapImagesBtn  = $('ss-swap-images');
+  var fitModeInput   = $('ss-fit-mode');
+
+  var zoomOldInput   = $('ss-zoom-old');
+  var zoomNewInput   = $('ss-zoom-new');
+  var zoomOldVal     = $('ss-zoom-old-val');
+  var zoomNewVal     = $('ss-zoom-new-val');
+  var resetOldBtn    = $('ss-reset-old');
+  var resetNewBtn    = $('ss-reset-new');
+
+  var oldLabelInput  = $('ss-old-label');
+  var newLabelInput  = $('ss-new-label');
+
+  var presetInput    = $('ss-preset');
+  var widthInput     = $('ss-width');
+  var heightInput    = $('ss-height');
+  var gapInput       = $('ss-gap');
+  var autoHeightInput = $('ss-auto-height');
+  var paddingInput   = $('ss-padding');
+  var radiusInput    = $('ss-radius');
+  var cornerInput    = $('ss-corner');
+
+  var bgColorInput   = $('ss-bg-color');
+  var bgColorHex     = $('ss-bg-color-hex');
+  var imgBgInput     = $('ss-img-bg');
+  var imgBgHex       = $('ss-img-bg-hex');
+  var labelBgInput   = $('ss-label-bg');
+  var labelBgHex     = $('ss-label-bg-hex');
+  var labelTextInput = $('ss-label-text');
+  var labelTextHex   = $('ss-label-text-hex');
+  var shadowInput    = $('ss-shadow');
+  var transparentBgInput = $('ss-transparent-bg');
+
+  var formatInput    = $('ss-format');
+  var qualityWrap    = $('ss-quality-wrap');
+  var qualityInput   = $('ss-quality');
+  var qualityVal     = $('ss-quality-val');
+  var renderBtn      = $('ss-render');
+  var downloadBtn    = $('ss-download');
+  var copyBtn        = $('ss-copy');
+
+  var canvas  = $('ss-canvas');
+  var statusEl = $('ss-status');
+
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // ── State ──
+  var oldImg = null, newImg = null;
+  var oldOffsetX = 0, oldOffsetY = 0;
+  var newOffsetX = 0, newOffsetY = 0;
+  var isDragging = false, dragTarget = null;
+  var dragStartX = 0, dragStartY = 0;
+
+  // ── Helpers ──
+  function setStatus(msg) { statusEl.textContent = msg; }
+
+  function fileToImage(file) {
+    return new Promise(function (resolve, reject) {
+      if (!file) { resolve(null); return; }
+      var reader = new FileReader();
+      reader.onload = function () {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = reject;
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function roundedRect(c, x, y, w, h, r) {
+    var rr = Math.min(r, w / 2, h / 2);
+    c.beginPath();
+    c.moveTo(x + rr, y);
+    c.arcTo(x + w, y, x + w, y + h, rr);
+    c.arcTo(x + w, y + h, x, y + h, rr);
+    c.arcTo(x, y + h, x, y, rr);
+    c.arcTo(x, y, x + w, y, rr);
+    c.closePath();
+  }
+
+  function getLargerImage() {
+    if (oldImg && newImg) {
+      return (oldImg.width * oldImg.height >= newImg.width * newImg.height) ? oldImg : newImg;
+    }
+    return oldImg || newImg || null;
+  }
+
+  function computeHeight(W, pad, gap, fallback) {
+    if (!autoHeightInput.checked) return fallback;
+    var img = getLargerImage();
+    if (!img || !img.width || !img.height) return fallback;
+    var innerW = Math.max(1, W - pad * 2);
+    var panelW = Math.max(1, (innerW - gap) / 2);
+    return Math.max(200, Math.round(panelW / (img.width / img.height) + pad * 2));
+  }
+
+  // ── Drawing ──
+  function drawPlaceholder(x, y, w, h) {
+    var r = Number(radiusInput.value);
+    var dark = document.documentElement.classList.contains('dark');
+    ctx.fillStyle = dark ? '#2a2e32' : '#f3f4f6';
+    roundedRect(ctx, x, y, w, h, r);
+    ctx.fill();
+    ctx.strokeStyle = dark ? '#404448' : '#d1d5db';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = dark ? '#9ca3af' : '#6b7280';
+    ctx.font = '600 22px Inter, Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Paste or upload image', x + w / 2, y + h / 2);
+    ctx.textAlign = 'start';
+    ctx.textBaseline = 'alphabetic';
+  }
+
+  function drawLabel(text, ax, ay, corner) {
+    ctx.font = '700 28px Inter, Arial, sans-serif';
+    var px = 16, py = 10;
+    var tw = ctx.measureText(text).width;
+    var bw = tw + px * 2, bh = 28 + py * 2;
+    var m = 16;
+    var lx = ax + m, ly = ay + m;
+    if (corner.indexOf('right') !== -1) lx = ax - m - bw;
+    if (corner.indexOf('bottom') !== -1) ly = ay - m - bh;
+    ctx.fillStyle = labelBgInput.value;
+    roundedRect(ctx, lx, ly, bw, bh, 12);
+    ctx.fill();
+    ctx.fillStyle = labelTextInput.value;
+    ctx.textBaseline = 'top';
+    ctx.fillText(text, lx + px, ly + py);
+  }
+
+  function drawImagePanel(img, px, py, pw, ph, label, zoom, offX, offY) {
+    var r = Number(radiusInput.value);
+    var corner = cornerInput.value;
+
+    // Shadow
+    if (shadowInput.checked && img) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.12)';
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 8;
+      ctx.fillStyle = transparentBgInput.checked ? 'rgba(0,0,0,0)' : bgColorInput.value;
+      roundedRect(ctx, px, py, pw, ph, r);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    if (!img) {
+      drawPlaceholder(px, py, pw, ph);
+      var ax0 = corner.indexOf('right') !== -1 ? px + pw : px;
+      var ay0 = corner.indexOf('bottom') !== -1 ? py + ph : py;
+      drawLabel(label, ax0, ay0, corner);
+      return;
+    }
+
+    // Clip & draw
+    ctx.save();
+    roundedRect(ctx, px, py, pw, ph, r);
+    ctx.clip();
+    ctx.fillStyle = imgBgInput.value;
+    ctx.fillRect(px, py, pw, ph);
+
+    var fitMode = fitModeInput.value;
+    var baseScale = fitMode === 'fill'
+      ? Math.max(pw / img.width, ph / img.height)
+      : Math.min(pw / img.width, ph / img.height);
+    var scale = baseScale * (zoom / 100);
+    var dw = img.width * scale;
+    var dh = img.height * scale;
+    var dx = px + (pw - dw) / 2 + offX;
+    var dy = py + (ph - dh) / 2 + offY;
+    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.restore();
+
+    // Border
+    ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    ctx.lineWidth = 2;
+    roundedRect(ctx, px, py, pw, ph, r);
+    ctx.stroke();
+
+    // Label
+    var ax = corner.indexOf('right') !== -1 ? px + pw : px;
+    var ay = corner.indexOf('bottom') !== -1 ? py + ph : py;
+    drawLabel(label, ax, ay, corner);
+  }
+
+  function render() {
+    var W    = Math.max(400, Number(widthInput.value) || 1600);
+    var fH   = Math.max(200, Number(heightInput.value) || 900);
+    var pad  = Math.max(0, Number(paddingInput.value) || 0);
+    var gap  = Math.max(0, Number(gapInput.value) || 0);
+    var H    = computeHeight(W, pad, gap, fH);
+
+    canvas.width  = W;
+    canvas.height = H;
+    if (autoHeightInput.checked && H !== fH) heightInput.value = H;
+
+    ctx.clearRect(0, 0, W, H);
+    if (!transparentBgInput.checked) {
+      ctx.fillStyle = bgColorInput.value;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    var innerW = W - pad * 2;
+    var innerH = H - pad * 2;
+    var panelW = (innerW - gap) / 2;
+
+    drawImagePanel(oldImg, pad, pad, panelW, innerH,
+      oldLabelInput.value || 'OLD', Number(zoomOldInput.value), oldOffsetX, oldOffsetY);
+    drawImagePanel(newImg, pad + panelW + gap, pad, panelW, innerH,
+      newLabelInput.value || 'NEW', Number(zoomNewInput.value), newOffsetX, newOffsetY);
+  }
+
+  // ── Preset ──
+  presetInput.addEventListener('change', function () {
+    var v = presetInput.value;
+    if (v === 'custom') return;
+    var parts = v.split('x');
+    widthInput.value  = parts[0];
+    heightInput.value = parts[1];
+    autoHeightInput.checked = false;
+    render();
+  });
+  widthInput.addEventListener('input', function () { presetInput.value = 'custom'; });
+  heightInput.addEventListener('input', function () { presetInput.value = 'custom'; });
+
+  // ── Zoom ──
+  zoomOldInput.addEventListener('input', function () { zoomOldVal.textContent = zoomOldInput.value; render(); });
+  zoomNewInput.addEventListener('input', function () { zoomNewVal.textContent = zoomNewInput.value; render(); });
+  resetOldBtn.addEventListener('click', function () {
+    zoomOldInput.value = 100;
+    zoomOldVal.textContent = '100';
+    oldOffsetX = oldOffsetY = 0;
+    render();
+    setStatus('Old zoom and pan reset.');
+  });
+  resetNewBtn.addEventListener('click', function () {
+    zoomNewInput.value = 100;
+    zoomNewVal.textContent = '100';
+    newOffsetX = newOffsetY = 0;
+    render();
+    setStatus('New zoom and pan reset.');
+  });
+
+  // ── Drag to pan (mouse) ──
+  function getPanelMidX() {
+    var pad = Number(paddingInput.value);
+    var gap = Number(gapInput.value);
+    var innerW = canvas.width - pad * 2;
+    var panelW = (innerW - gap) / 2;
+    return pad + panelW + gap / 2;
+  }
+
+  canvas.addEventListener('mousedown', function (e) {
+    var rect = canvas.getBoundingClientRect();
+    var sx = canvas.width / rect.width;
+    var x  = (e.clientX - rect.left) * sx;
+    isDragging = true;
+    dragTarget = x < getPanelMidX() ? 'old' : 'new';
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    canvas.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    var rect  = canvas.getBoundingClientRect();
+    var scale = canvas.width / rect.width;
+    var dx = (e.clientX - dragStartX) * scale;
+    var dy = (e.clientY - dragStartY) * scale;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    if (dragTarget === 'old') { oldOffsetX += dx; oldOffsetY += dy; }
+    else { newOffsetX += dx; newOffsetY += dy; }
+    render();
+  });
+
+  document.addEventListener('mouseup', function () {
+    if (isDragging) { isDragging = false; canvas.style.cursor = 'grab'; }
+  });
+
+  // ── Drag to pan (touch) ──
+  canvas.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) return;
+    var t = e.touches[0];
+    var rect = canvas.getBoundingClientRect();
+    var sx = canvas.width / rect.width;
+    var x  = (t.clientX - rect.left) * sx;
+    isDragging = true;
+    dragTarget = x < getPanelMidX() ? 'old' : 'new';
+    dragStartX = t.clientX;
+    dragStartY = t.clientY;
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('touchmove', function (e) {
+    if (!isDragging || e.touches.length !== 1) return;
+    var t = e.touches[0];
+    var rect  = canvas.getBoundingClientRect();
+    var scale = canvas.width / rect.width;
+    var dx = (t.clientX - dragStartX) * scale;
+    var dy = (t.clientY - dragStartY) * scale;
+    dragStartX = t.clientX;
+    dragStartY = t.clientY;
+    if (dragTarget === 'old') { oldOffsetX += dx; oldOffsetY += dy; }
+    else { newOffsetX += dx; newOffsetY += dy; }
+    render();
+  }, { passive: false });
+
+  document.addEventListener('touchend', function () { isDragging = false; });
+
+  // ── Drop zone helpers ──
+  function updateDropZone(which) {
+    var img       = which === 'old' ? oldImg : newImg;
+    var emptyEl   = which === 'old' ? dropOldEmpty : dropNewEmpty;
+    var filledEl  = which === 'old' ? dropOldFilled : dropNewFilled;
+    var thumbEl   = which === 'old' ? thumbOld : thumbNew;
+    var nameEl    = which === 'old' ? nameOld : nameNew;
+    var fileInput = which === 'old' ? oldFileInput : newFileInput;
+    if (img) {
+      thumbEl.src = img.src;
+      nameEl.textContent = img.width + ' × ' + img.height + ' px';
+      emptyEl.style.display = 'none';
+      filledEl.style.display = '';
+    } else {
+      emptyEl.style.display = '';
+      filledEl.style.display = 'none';
+      thumbEl.src = '';
+      nameEl.textContent = '';
+      fileInput.value = '';
+    }
+  }
+
+  function setImage(which, img) {
+    if (which === 'old') oldImg = img;
+    else newImg = img;
+    updateDropZone(which);
+    render();
+  }
+
+  function syncTransparentUi() {
+    var disabled = transparentBgInput.checked;
+    bgColorInput.disabled = disabled;
+    bgColorHex.disabled = disabled;
+    bgColorInput.classList.toggle('ss-color-disabled', disabled);
+    bgColorHex.classList.toggle('ss-color-disabled', disabled);
+    canvas.classList.toggle('ss-canvas-transparent', disabled);
+  }
+
+  function loadFileFromInput(which) {
+    var file = which === 'old' ? oldFileInput.files[0] : newFileInput.files[0];
+    fileToImage(file).then(function (img) {
+      setImage(which, img);
+      setStatus('Image loaded.');
+    }).catch(function () { setStatus('Could not read the image.'); });
+  }
+
+  function loadFromBlob(which, blob) {
+    fileToImage(blob).then(function (img) {
+      setImage(which, img);
+      setStatus('Image loaded.');
+    }).catch(function () { setStatus('Could not read the image.'); });
+  }
+
+  // ── File inputs (hidden behind drop zones) ──
+  oldFileInput.addEventListener('change', function () { loadFileFromInput('old'); });
+  newFileInput.addEventListener('change', function () { loadFileFromInput('new'); });
+
+  // ── Remove buttons ──
+  removeOldBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    oldImg = null; oldFileInput.value = '';
+    oldOffsetX = oldOffsetY = 0;
+    updateDropZone('old');
+    render();
+    setStatus('Old image removed.');
+  });
+  removeNewBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    newImg = null; newFileInput.value = '';
+    newOffsetX = newOffsetY = 0;
+    updateDropZone('new');
+    render();
+    setStatus('New image removed.');
+  });
+
+  swapImagesBtn.addEventListener('click', function () {
+    var tmpImg = oldImg;
+    oldImg = newImg;
+    newImg = tmpImg;
+
+    var tmpOX = oldOffsetX;
+    var tmpOY = oldOffsetY;
+    oldOffsetX = newOffsetX;
+    oldOffsetY = newOffsetY;
+    newOffsetX = tmpOX;
+    newOffsetY = tmpOY;
+
+    var tmpZoom = zoomOldInput.value;
+    zoomOldInput.value = zoomNewInput.value;
+    zoomNewInput.value = tmpZoom;
+    zoomOldVal.textContent = zoomOldInput.value;
+    zoomNewVal.textContent = zoomNewInput.value;
+
+    updateDropZone('old');
+    updateDropZone('new');
+    render();
+    setStatus('Swapped old and new images.');
+  });
+
+  // ── Click / keyboard upload triggers ──
+  function bindZonePicker(zone, input, removeBtn) {
+    zone.addEventListener('click', function (e) {
+      if (e.target === removeBtn) return;
+      input.click();
+    });
+    zone.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      input.click();
+    });
+  }
+  bindZonePicker(dropOld, oldFileInput, removeOldBtn);
+  bindZonePicker(dropNew, newFileInput, removeNewBtn);
+
+  // ── Drag and drop on zones ──
+  function setupDropZone(zone, which) {
+    zone.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      zone.classList.add('ss-drag-over');
+    });
+    zone.addEventListener('dragleave', function () {
+      zone.classList.remove('ss-drag-over');
+    });
+    zone.addEventListener('drop', function (e) {
+      e.preventDefault();
+      zone.classList.remove('ss-drag-over');
+      var files = e.dataTransfer && e.dataTransfer.files;
+      if (!files || !files.length) return;
+      var file = files[0];
+      if (!file.type || file.type.indexOf('image/') !== 0) {
+        setStatus('That file is not an image.');
+        return;
+      }
+      loadFromBlob(which, file);
+    });
+  }
+  setupDropZone(dropOld, 'old');
+  setupDropZone(dropNew, 'new');
+
+  // ── Global paste: goes to first empty slot, or old ──
+  document.addEventListener('paste', function (e) {
+    var items = e.clipboardData && e.clipboardData.items ? e.clipboardData.items : [];
+    for (var i = 0; i < items.length; i++) {
+      if (!items[i].type || items[i].type.indexOf('image/') !== 0) continue;
+      var target = !oldImg ? 'old' : (!newImg ? 'new' : 'old');
+      var file = items[i].getAsFile();
+      loadFromBlob(target, file);
+      setStatus('Pasted into ' + target.toUpperCase() + '.');
+      e.preventDefault();
+      return;
+    }
+  });
+
+  // ── Format / quality ──
+  formatInput.addEventListener('change', function () {
+    qualityWrap.style.display = formatInput.value === 'jpeg' ? '' : 'none';
+  });
+  qualityInput.addEventListener('input', function () {
+    qualityVal.textContent = qualityInput.value;
+  });
+
+  // ── Export ──
+  renderBtn.addEventListener('click', function () { render(); setStatus('Preview updated.'); });
+
+  downloadBtn.addEventListener('click', function () {
+    var fmt  = formatInput.value;
+    if (fmt === 'jpeg' && transparentBgInput.checked) {
+      setStatus('JPEG does not support transparency. Switch to PNG or disable transparent background.');
+      return;
+    }
+    var ext  = fmt === 'jpeg' ? 'jpg' : 'png';
+    var mime = fmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+    var q    = fmt === 'jpeg' ? Number(qualityInput.value) / 100 : undefined;
+    var link = document.createElement('a');
+    link.download = 'comparison.' + ext;
+    link.href = canvas.toDataURL(mime, q);
+    link.click();
+    setStatus('Downloaded as ' + ext.toUpperCase() + '.');
+  });
+
+  copyBtn.addEventListener('click', function () {
+    if (!navigator.clipboard || typeof ClipboardItem === 'undefined') {
+      setStatus('Clipboard image copy is not supported in this browser. Use Download instead.');
+      return;
+    }
+    canvas.toBlob(function (blob) {
+      if (!blob) { setStatus('Could not copy. Try downloading instead.'); return; }
+      navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(function () {
+        setStatus('Copied to clipboard.');
+      }).catch(function () {
+        setStatus('Could not copy. Try downloading instead.');
+      });
+    }, 'image/png');
+  });
+
+  // ── Color sync (swatch ↔ hex) ──
+  function linkColor(swatch, hex) {
+    swatch.addEventListener('input', function () {
+      hex.value = swatch.value;
+      render();
+    });
+    hex.addEventListener('input', function () {
+      var v = hex.value.trim();
+      if (/^#[0-9a-f]{6}$/i.test(v)) {
+        swatch.value = v;
+        render();
+      }
+    });
+    hex.addEventListener('blur', function () {
+      hex.value = swatch.value;
+    });
+  }
+  linkColor(bgColorInput, bgColorHex);
+  linkColor(imgBgInput, imgBgHex);
+  linkColor(labelBgInput, labelBgHex);
+  linkColor(labelTextInput, labelTextHex);
+
+  // ── Style presets ──
+  var stylePresets = {
+    light:       { bg: '#ffffff', imgBg: '#ffffff', labelBg: '#111827', labelText: '#ffffff', transparent: false },
+    dark:        { bg: '#1e1e1e', imgBg: '#2a2a2a', labelBg: '#ffffff', labelText: '#111827', transparent: false },
+    transparent: { bg: '#ffffff', imgBg: '#ffffff', labelBg: '#111827', labelText: '#ffffff', transparent: true }
+  };
+
+  document.querySelectorAll('#ss-tool .ss-preset-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var p = stylePresets[btn.getAttribute('data-preset')];
+      if (!p) return;
+      bgColorInput.value = p.bg;       bgColorHex.value = p.bg;
+      imgBgInput.value   = p.imgBg;    imgBgHex.value   = p.imgBg;
+      labelBgInput.value = p.labelBg;  labelBgHex.value = p.labelBg;
+      labelTextInput.value = p.labelText; labelTextHex.value = p.labelText;
+      transparentBgInput.checked = p.transparent;
+      syncTransparentUi();
+      render();
+      setStatus('Applied ' + btn.getAttribute('data-preset') + ' theme.');
+    });
+  });
+
+  // ── Live update on any control change ──
+  var liveControls = [
+    oldLabelInput, newLabelInput, widthInput, heightInput, gapInput,
+    paddingInput, radiusInput, cornerInput, autoHeightInput, fitModeInput, shadowInput,
+    transparentBgInput
+  ];
+  liveControls.forEach(function (el) {
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+
+  transparentBgInput.addEventListener('change', function () {
+    syncTransparentUi();
+    render();
+  });
+
+  // ── Init ──
+  syncTransparentUi();
+  render();
+  setStatus('Ready. Upload or paste images to get started.');
+});
+</script>
