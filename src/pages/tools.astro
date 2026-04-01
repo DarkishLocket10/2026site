@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ScreenshotCompare from '../components/tools/ScreenshotCompare.astro';
+import ExifStoryCard from '../components/tools/ExifStoryCard.astro';
 ---
 
 <BaseLayout title="Yash | Tools" description="A collection of useful utilities">
@@ -48,6 +49,20 @@ import ScreenshotCompare from '../components/tools/ScreenshotCompare.astro';
         </div>
       </button>
 
+      <button
+        data-tool-btn="exif-story-card"
+        class="tool-card"
+        type="button"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="tool-card-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 15.75L17.25 4.929m0 0H9.75m7.5 0v7.5M6.75 19.5h10.5A1.5 1.5 0 0018.75 18V10.5m-12 9A1.5 1.5 0 015.25 18V7.5A1.5 1.5 0 016.75 6h6" />
+        </svg>
+        <div>
+          <span class="tool-card-title">EXIF Story Card Builder</span>
+          <span class="tool-card-desc">Turn a photo, its metadata, and its palette into a shareable card</span>
+        </div>
+      </button>
+
       <!-- Placeholder for future tools -->
       <div class="tool-card-placeholder">
         <svg xmlns="http://www.w3.org/2000/svg" class="tool-card-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="opacity:0.4">
@@ -69,6 +84,9 @@ import ScreenshotCompare from '../components/tools/ScreenshotCompare.astro';
     >
       <div data-tool-content="screenshot-compare">
         <ScreenshotCompare />
+      </div>
+      <div data-tool-content="exif-story-card" style="display:none">
+        <ExifStoryCard />
       </div>
     </div>
   </section>
