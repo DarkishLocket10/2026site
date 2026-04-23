@@ -36,10 +36,10 @@ const { title, subtitle, description, image, alt } = Astro.props;
 
   <h2
     class="
-      text-4xl font-semibold 
+      text-4xl font-semibold
       opacity-0 -translate-x-6
       transition-all duration-700 ease-out
-      delay-100                       <!-- 0.1 s later -->
+      delay-100
       motion-reduce:opacity-100 motion-reduce:translate-x-0
     "
     data-fade
@@ -49,10 +49,10 @@ const { title, subtitle, description, image, alt } = Astro.props;
 
 <p
   class="
-    text-lg  
+    text-lg
     opacity-0 -translate-x-6
     transition-all duration-700 ease-out
-    delay-200                       <!-- 0.2 s later -->
+    delay-200
     motion-reduce:opacity-100 motion-reduce:translate-x-0
   "
   data-fade
@@ -64,12 +64,13 @@ const { title, subtitle, description, image, alt } = Astro.props;
   class="
     mt-8
     flex flex-wrap
-    sm:flex-nowrap
     items-center
     justify-center
-    gap-x-6 gap-y-4
+    gap-x-5 gap-y-4
+    lg:gap-x-6
     opacity-0 -translate-x-6
     transition-all duration-700 ease-out
+    delay-300
     motion-reduce:opacity-100 motion-reduce:translate-x-0
   "
   data-fade
@@ -90,7 +91,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
       aria-label={label}
       class="text-current hover:opacity-80 transition-opacity"
     >
-      <Icon name={name} size={38} />
+      <Icon name={name} size={32} />
     </a>
   ))}
 

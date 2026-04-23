@@ -16,13 +16,13 @@ const { title, subtitle, description, image, alt } = Astro.props;
   <figure data-tilt
     class="
       mt-10 md:mt-0 relative
-      opacity-0 -translate-x-6         /* enter from left */
+      opacity-0 -translate-x-6
       transition-all duration-700 ease-out
-        delay-800                        /* 0.8 s later */
+      delay-300
       motion-reduce:opacity-100 motion-reduce:translate-x-0
-      order-2 md:order-1               /* mobile: below, md+: first */
+      order-2 md:order-1
     "
-    data-fade                          
+    data-fade
     style="perspective: 1200px"
   >
     <img
@@ -56,20 +56,13 @@ const { title, subtitle, description, image, alt } = Astro.props;
   </figure>
 
   <!-- ✨ TEXT – right on desktop -->
-  <div class="space-y-6 order-1 md:order-2
-      mt-10 md:mt-0 relative
-    opacity-0 translate-x-6         
-    transition-all duration-700 ease-out
-    delay-300
-    motion-reduce:opacity-100 motion-reduce:translate-y-0
-  "
-  data-fade  >
+  <div class="space-y-6 order-1 md:order-2 mt-10 md:mt-0 relative">
     <h1
       class="
         text-5xl font-extrabold leading-tight
-        opacity-0 translate-x-6            /* enter from right */
+        opacity-0 translate-x-6
         transition-all duration-700 ease-out
-        delay-300
+        delay-0
         motion-reduce:opacity-100 motion-reduce:translate-x-0
       "
       data-fade
@@ -82,7 +75,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
         text-4xl font-semibold
         opacity-0 translate-x-6
         transition-all duration-700 ease-out
-        delay-300
+        delay-100
         motion-reduce:opacity-100 motion-reduce:translate-x-0
       "
       data-fade
@@ -91,11 +84,11 @@ const { title, subtitle, description, image, alt } = Astro.props;
     </h2>
 
     <p
-      class=" 
+      class="
         text-lg
         opacity-0 translate-x-6
         transition-all duration-700 ease-out
-        delay-300
+        delay-200
         motion-reduce:opacity-100 motion-reduce:translate-x-0
       "
       data-fade
