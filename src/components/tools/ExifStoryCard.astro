@@ -368,7 +368,7 @@
     align-items: center;
     justify-content: center;
     width: 24px; height: 24px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     background: rgba(128,128,128,0.08);
     flex-shrink: 0;
   }
@@ -383,7 +383,7 @@
     margin-left: auto;
     margin-right: 16px;
     padding: 3px 10px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font: inherit;
     font-size: 10px;
     font-weight: 700;
@@ -427,7 +427,7 @@
     width: 100%;
     padding: 7px 10px;
     border: 1px solid rgba(128,128,128,0.15);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     font: inherit;
     font-size: 13px;
     background: var(--card-bg);
@@ -495,7 +495,7 @@
     width: 100%;
     height: 26px;
     border: 1px solid rgba(128,128,128,0.12);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     cursor: pointer;
     padding: 2px;
     background: transparent;
@@ -533,7 +533,7 @@
   /* ── Buttons ── */
   .esc-btn {
     padding: 8px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     font: inherit;
     font-size: 13px;
     font-weight: 600;
@@ -564,7 +564,7 @@
   .esc-btn-sm {
     padding: 6px 12px;
     font-size: 12px;
-    border-radius: 7px;
+    border-radius: var(--radius-md);
   }
 
   /* ── Dropzone ── */
@@ -576,7 +576,7 @@
     justify-content: center;
     min-height: 110px;
     border: 2px dashed rgba(128,128,128,0.15);
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     overflow: hidden;
@@ -604,7 +604,7 @@
   .esc-drop-icon { width: 24px; height: 24px; color: var(--color-text-soft); opacity: 0.35; }
   .esc-drop-title { font-size: 13px; font-weight: 600; }
   .esc-drop-hint { font-size: 11px; color: var(--color-text-soft); opacity: 0.6; }
-  .esc-thumb { max-width: 100%; max-height: 70px; border-radius: 8px; object-fit: cover; }
+  .esc-thumb { max-width: 100%; max-height: 70px; border-radius: var(--radius-lg); object-fit: cover; }
   .esc-drop-replace {
     font-size: 11px; color: var(--color-accent);
     opacity: 0; transition: opacity 0.15s;
@@ -612,7 +612,7 @@
   .esc-dropzone:hover .esc-drop-replace { opacity: 0.85; }
   .esc-drop-remove {
     position: absolute; top: 6px; right: 6px;
-    width: 22px; height: 22px; border-radius: 999px;
+    width: 22px; height: 22px; border-radius: var(--radius-pill);
     border: none; background: rgba(0,0,0,0.5); color: #fff;
     font-size: 14px; line-height: 1; display: flex;
     align-items: center; justify-content: center;
@@ -629,7 +629,7 @@
   }
   .esc-swatch {
     aspect-ratio: 1;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     border: 1px solid rgba(128,128,128,0.08);
     padding: 5px;
     cursor: pointer;
@@ -660,7 +660,7 @@
     font-weight: 500;
     cursor: pointer;
     padding: 4px 6px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     transition: background 0.12s;
     color: var(--color-text-soft);
   }
@@ -687,7 +687,7 @@
     padding: 5px 8px !important;
     padding-right: 26px !important;
     font-size: 12px !important;
-    border-radius: 6px !important;
+    border-radius: var(--radius-md) !important;
     flex-shrink: 0;
     background-color: var(--card-bg) !important;
   }
@@ -705,7 +705,7 @@
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 14px;
+    border-radius: var(--radius-xl);
     border: 1px solid rgba(128,128,128,0.08);
     background: transparent;
   }
@@ -761,7 +761,7 @@
     align-items: center;
     gap: 5px;
     padding: 4px 7px 4px 5px;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     border: 1px solid rgba(128,128,128,0.15);
     background: rgba(128,128,128,0.04);
     color: var(--text);
@@ -794,7 +794,7 @@
   .esc-pp-dot {
     width: 9px;
     height: 9px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     border: 1px solid rgba(128,128,128,0.18);
     display: block;
     flex-shrink: 0;
@@ -851,7 +851,7 @@
   .esc-pp-card {
     position: relative;
     border: 2px solid transparent;
-    border-radius: 7px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     cursor: pointer;
     padding: 0;
@@ -908,7 +908,7 @@
     right: 5px;
     width: 10px;
     height: 10px;
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     background: var(--color-accent);
     box-shadow: 0 0 0 1.5px rgba(255,255,255,0.5);
   }

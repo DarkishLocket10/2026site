@@ -38,7 +38,7 @@ function visitMeta(item: WorkItem) {
 }
 ---
 
-<section id="work" class="mx-auto max-w-7xl px-6 py-5">
+<section id="work" class="mx-auto w-full max-w-7xl px-6 py-5 overflow-x-clip">
   <h2
     class="
       text-4xl font-semibold
@@ -53,88 +53,109 @@ function visitMeta(item: WorkItem) {
 
   <div
     class="
-      grid gap-6
-      grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4
+      work-carousel-wrap relative mt-6 py-4
       opacity-0 translate-x-6
       transition-all duration-700 ease-out delay-100
       motion-reduce:opacity-100 motion-reduce:translate-x-0
     "
     data-fade
   >
-    {items.map((item) => {
-      const { imageSrc, link, altText, label, summary = [], icons = [] } = item;
-      const visit = visitMeta(item);
-      return (
-        <article
-          class="work-card block"
-          style="aspect-ratio:5/8.2; perspective: 800px;"
-          data-tilt
-        >
-          <div class="tilt-content card-frame flex flex-col h-full overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm will-change-transform">
-            <button
-              type="button"
-              class="card-main flex-1 flex flex-col min-h-0 text-left w-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9C84EE]"
-              data-work-open
-              data-label={label}
-              aria-label={`View details for ${altText}`}
-            >
-              {altText && (
-                <div class="title-row px-4 pt-4 pb-1">
-                  <div class="flex items-center justify-between gap-3">
-                    <p class="!my-0 text-[1rem] italic text-current/80 text-left truncate leading-[1.2]">
-                      {altText}
-                    </p>
-                    {Array.isArray(icons) && icons.length > 0 && (
-                      <div class="flex shrink-0 items-center gap-2">
-                        {icons.slice(0, 5).map((icon) => (
-                          <Icon name={icon} width="18" height="18" class="opacity-70" title={icon} />
-                        ))}
+    <div class="work-swiper swiper mx-auto" style="max-width: 320px; aspect-ratio: 5 / 8.2;">
+      <div class="swiper-wrapper">
+        {items.map((item) => {
+          const { imageSrc, link, altText, label, summary = [], icons = [] } = item;
+          const visit = visitMeta(item);
+          return (
+            <div class="swiper-slide">
+              <article class="work-card block h-full">
+                <div class="tilt-content card-frame flex flex-col h-full overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                  <button
+                    type="button"
+                    class="card-main flex-1 flex flex-col min-h-0 text-left w-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    data-work-open
+                    data-label={label}
+                    aria-label={`View details for ${altText}`}
+                  >
+                    {altText && (
+                      <div class="title-row px-4 pt-4 pb-1">
+                        <div class="flex items-center justify-between gap-3">
+                          <p class="!my-0 text-[1rem] italic text-current/80 text-left truncate leading-[1.2]">
+                            {altText}
+                          </p>
+                          {Array.isArray(icons) && icons.length > 0 && (
+                            <div class="flex shrink-0 items-center gap-2">
+                              {icons.slice(0, 5).map((icon) => (
+                                <Icon name={icon} width="18" height="18" class="opacity-70" title={icon} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
+
+                    <div class="image-panel flex-shrink-0 p-3">
+                      <div class="w-full aspect-[32/10.1] overflow-hidden rounded-lg border-b-2 border-accent/40">
+                        <img
+                          src={imageSrc}
+                          alt={altText}
+                          loading="lazy"
+                          class="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+
+                    <ul class="summary px-4 pb-3 text-sm space-y-2 text-current/90">
+                      {summary.slice(0, 5).map((s) => (
+                        <li class="flex gap-2">
+                          <span class="text-accent shrink-0 mt-[1px] leading-tight" aria-hidden="true">›</span>
+                          <span class="leading-snug">{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
+
+                  <div class="visit-wrap mt-auto px-3 pb-3">
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center gap-2 px-3 py-2 border border-current/15 rounded-lg hover:bg-accent/10 hover:border-accent/50 transition-colors text-sm"
+                    >
+                      {visit.iconName ? (
+                        <Icon name={visit.iconName} size={20} />
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                      )}
+                      <span class="font-medium">{visit.label}</span>
+                    </a>
                   </div>
                 </div>
-              )}
-
-              <div class="image-panel flex-shrink-0 p-3">
-                <div class="w-full aspect-[32/10.1] overflow-hidden rounded-lg border-b-2 border-[#9C84EE]/40">
-                  <img
-                    src={imageSrc}
-                    alt={altText}
-                    loading="lazy"
-                    class="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-
-              <ul class="summary px-4 pb-3 text-sm space-y-2 text-current/90">
-                {summary.slice(0, 5).map((s) => (
-                  <li class="flex gap-2">
-                    <span class="text-[#9C84EE] shrink-0 mt-[1px] leading-tight" aria-hidden="true">›</span>
-                    <span class="leading-snug">{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </button>
-
-            <div class="visit-wrap mt-auto px-3 pb-3">
-              <a
-                href={link}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center gap-2 px-3 py-2 border border-current/15 rounded-lg hover:bg-[#9C84EE]/10 hover:border-[#9C84EE]/50 transition-colors text-sm"
-              >
-                {visit.iconName ? (
-                  <Icon name={visit.iconName} size={20} />
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                )}
-                <span class="font-medium">{visit.label}</span>
-              </a>
+              </article>
             </div>
-          </div>
-        </article>
-      );
-    })}
+          );
+        })}
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-center gap-4">
+      <button
+        type="button"
+        class="work-nav-prev w-10 h-10 flex items-center justify-center rounded-full border border-current/15 hover:bg-accent/10 hover:border-accent/50 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+        aria-label="Previous project"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <div class="work-pagination flex items-center gap-2" style="position: static; width: auto;"></div>
+
+      <button
+        type="button"
+        class="work-nav-next w-10 h-10 flex items-center justify-center rounded-full border border-current/15 hover:bg-accent/10 hover:border-accent/50 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+        aria-label="Next project"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
   </div>
 
   <div
@@ -160,7 +181,7 @@ function visitMeta(item: WorkItem) {
 
       <button
         type="button"
-        class="absolute -top-3 -right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 ring-1 ring-black/5 dark:ring-white/10 shadow-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9C84EE]"
+        class="absolute -top-3 -right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 ring-1 ring-black/5 dark:ring-white/10 shadow-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         data-close
         aria-label="Close details"
       >
@@ -175,14 +196,54 @@ function visitMeta(item: WorkItem) {
     --glow-x: 0;
     --glow-y: 0;
     background:
-      linear-gradient(180deg, rgba(156, 132, 238, 0.06) 0%, rgba(156, 132, 238, 0) 35%),
-      rgb(from currentColor r g b / 0.04);
+      linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 8%, transparent) 0%, transparent 40%),
+      var(--modal-surface, #ffffff);
     transition: transform 200ms ease-out, box-shadow 150ms ease-out;
   }
-  .work-card:hover .card-frame {
+  .swiper-slide-active .work-card:hover .card-frame,
+  .work-card:not(.swiper-slide .work-card):hover .card-frame {
     box-shadow:
-      0 0 0 1px rgba(156, 132, 238, 0.15),
-      calc(var(--glow-x) * -10px) calc(var(--glow-y) * -10px + 4px) 26px -6px rgba(156, 132, 238, 0.2);
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 15%, transparent),
+      calc(var(--glow-x) * -10px) calc(var(--glow-y) * -10px + 4px) 26px -6px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .work-carousel-wrap .swiper-pagination-bullet {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    opacity: 0.25;
+    cursor: pointer;
+    transition: width 220ms ease-out, opacity 220ms ease-out, background-color 220ms ease-out;
+  }
+  .work-carousel-wrap .swiper-pagination-bullet-active {
+    width: 24px;
+    opacity: 1;
+    background: var(--color-accent);
+  }
+
+  .work-carousel-wrap .swiper-slide .card-frame {
+    transition: filter 180ms ease-out, box-shadow 180ms ease-out, transform 200ms ease-out;
+  }
+  .work-carousel-wrap .swiper-slide-active .card-frame {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 10px 28px -10px rgba(0, 0, 0, 0.55),
+      0 4px 14px -6px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+  .work-carousel-wrap .swiper-slide:not(.swiper-slide-active) .card-frame {
+    filter: brightness(0.78) saturate(0.88);
+  }
+  .work-carousel-wrap .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next) .card-frame {
+    filter: brightness(0.65) saturate(0.8);
+  }
+
+  .work-carousel-wrap .swiper-slide {
+    border-radius: var(--radius-xl);
+  }
+  .work-carousel-wrap .swiper-slide:not(.swiper-slide-active) {
+    cursor: pointer;
   }
 
   .work-modal {
@@ -215,13 +276,13 @@ function visitMeta(item: WorkItem) {
   }
   .work-modal .modal-card {
     background:
-      linear-gradient(180deg, rgba(156, 132, 238, 0.05) 0%, rgba(156, 132, 238, 0) 30%),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 5%, transparent) 0%, transparent 30%),
       var(--modal-surface, #ffffff);
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.05) inset,
-      0 0 0 1px rgba(156, 132, 238, 0.12),
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 12%, transparent),
       0 30px 60px -20px rgba(0, 0, 0, 0.5),
-      0 10px 30px -10px rgba(156, 132, 238, 0.25);
+      0 10px 30px -10px color-mix(in srgb, var(--color-accent) 25%, transparent);
   }
   :root {
     --modal-surface: #ffffff;
@@ -276,7 +337,7 @@ function visitMeta(item: WorkItem) {
     line-height: 1.5;
   }
   .work-modal-content .modal-label :global(li > span:first-child) {
-    color: #9C84EE;
+    color: var(--color-accent);
     flex-shrink: 0;
     font-weight: 700;
     line-height: 1.5;
@@ -289,7 +350,7 @@ function visitMeta(item: WorkItem) {
   .work-modal-content .visit-wrap a {
     padding: 0.75rem 1rem;
     font-size: 0.95rem;
-    border-radius: 0.75rem;
+    border-radius: var(--radius-xl);
   }
   .work-modal-content .visit-wrap svg {
     width: 22px;
@@ -368,14 +429,22 @@ function visitMeta(item: WorkItem) {
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
       if (lastFocused && typeof lastFocused.focus === 'function') {
-        lastFocused.focus();
+        lastFocused.focus({ preventScroll: true });
+        if (typeof lastFocused.blur === 'function') {
+          setTimeout(() => lastFocused.blur(), 0);
+        }
       }
     }
 
     document.querySelectorAll('.work-card').forEach((article) => {
       const btn = article.querySelector('[data-work-open]');
       if (!btn) return;
-      btn.addEventListener('click', () => openFrom(article));
+      btn.addEventListener('click', (e) => {
+        const slide = article.closest('.swiper-slide');
+        if (slide && !slide.classList.contains('swiper-slide-active')) return;
+        e.stopPropagation();
+        openFrom(article);
+      });
     });
 
     backdrop.addEventListener('click', close);
@@ -384,4 +453,41 @@ function visitMeta(item: WorkItem) {
       if (e.key === 'Escape') close();
     });
   })();
+</script>
+
+<script>
+  import Swiper from 'swiper';
+  import { EffectCards, Navigation, Pagination, Keyboard, A11y } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/effect-cards';
+
+  const el = document.querySelector('.work-swiper');
+  if (el) {
+    new Swiper(el, {
+      modules: [EffectCards, Navigation, Pagination, Keyboard, A11y],
+      effect: 'cards',
+      cardsEffect: {
+        perSlideRotate: 4,
+        perSlideOffset: 14,
+        slideShadows: true,
+      },
+      grabCursor: true,
+      loop: false,
+      keyboard: { enabled: true },
+      threshold: 12,
+      touchAngle: 30,
+      touchStartPreventDefault: false,
+      preventInteractionOnTransition: true,
+      navigation: {
+        prevEl: '.work-nav-prev',
+        nextEl: '.work-nav-next',
+      },
+      pagination: {
+        el: '.work-pagination',
+        clickable: true,
+        bulletClass: 'swiper-pagination-bullet',
+        bulletActiveClass: 'swiper-pagination-bullet-active',
+      },
+    });
+  }
 </script>
