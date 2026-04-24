@@ -1,5 +1,7 @@
 ---
-const photos = [
+// Hand-picked fallback set — renders even if the Piwigo build-time fetch fails
+// (e.g. the build server can't reach Piwigo, the API is disabled, etc.).
+const hardcodedPhotos = [
   { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/01/20250301202330-2d6bec2d-la.jpg', alt: 'Photograph 1' },
   { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/29/20250329031845-add54cca-la.jpg', alt: 'Photograph 2' },
   { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/02/19/20250219181031-65d3f3e1-la.jpg', alt: 'Photograph 3' },
@@ -9,277 +11,1124 @@ const photos = [
   { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627034917-c78eec00-xl.jpg', alt: 'Photograph 7' },
   { src: 'https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/27/20250627035358-4d8c66cc-xl.jpg', alt: 'Photograph 8' },
 ];
+
+// Build-time fetch: runs once per `astro build` on the build server (no CORS
+// there since it's server-side), gets a random batch, and bakes the URLs
+// straight into the HTML. This is the guaranteed-to-work path.
+const PIWIGO_BUILD_API =
+  'https://piwigo.darkishlocket10.me/ws.php'
+  + '?format=json&method=pwg.categories.getImages'
+  + '&recursive=true&per_page=50&order=random';
+
+async function fetchPiwigoAtBuild() {
+  try {
+    const res = await fetch(PIWIGO_BUILD_API, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data || data.stat !== 'ok') return [];
+    const apiImages = (data.result && data.result.images) || [];
+    return apiImages
+      .map((raw) => {
+        const d = raw.derivatives || {};
+        const pick = d.large || d.medium || d.xlarge || d.small || d.xxlarge;
+        const src = (pick && pick.url) || raw.element_url;
+        if (!src) return null;
+        const w = (pick && pick.width)  || raw.width;
+        const h = (pick && pick.height) || raw.height;
+        return {
+          src,
+          alt: raw.name || raw.file || 'Photograph',
+          width:  w || null,
+          height: h || null,
+        };
+      })
+      .filter(Boolean);
+  } catch (err) {
+    console.warn('[gallery] Piwigo build-time fetch failed:', err?.message || err);
+    return [];
+  }
+}
+
+const piwigoPhotos = await fetchPiwigoAtBuild();
+const photos = [...hardcodedPhotos, ...piwigoPhotos];
 ---
 
-<section class="gallery-wrap mx-auto w-full max-w-7xl px-6 py-6 overflow-x-clip">
-  <div class="gallery-stage relative">
-    <div class="gallery-main swiper">
-      <div class="swiper-wrapper">
-        {photos.map((p) => (
-          <div class="swiper-slide">
-            <figure class="gallery-figure">
-              <img src={p.src} alt={p.alt} loading="lazy" decoding="async" />
-            </figure>
-          </div>
-        ))}
-      </div>
-    </div>
+<section class="gallery-wrap mx-auto w-full max-w-[88rem] px-6 py-10 overflow-x-clip">
+  <svg class="polaroid-filter-defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <filter id="polaroid-gloss" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.014 0.019" numOctaves="2" seed="9" stitchTiles="stitch" result="turb"/>
+        <feDisplacementMap in="SourceGraphic" in2="turb" scale="5.5" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
 
-    <button type="button" class="gallery-nav gallery-prev" aria-label="Previous photo">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <button type="button" class="gallery-nav gallery-next" aria-label="Next photo">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-    </button>
-
-    <div class="gallery-counter" aria-hidden="true">
-      <span class="gallery-counter-current">1</span>
-      <span class="gallery-counter-sep">/</span>
-      <span class="gallery-counter-total">{photos.length}</span>
+  <div class="gallery-viewport" id="gallery-viewport" data-state="loading" aria-label="Photo carousel">
+    <div class="gallery-track" id="gallery-track" role="list">
+      {photos.map((p, i) => {
+        const ratio = p.width && p.height ? (p.width / p.height).toFixed(4) : undefined;
+        return (
+          <button
+            type="button"
+            class="gallery-tile"
+            data-tile
+            data-index={i}
+            data-ratio={ratio}
+            role="listitem"
+            aria-label={`Open ${p.alt}`}
+          >
+            <img
+              src={p.src}
+              alt={p.alt}
+              loading={i < hardcodedPhotos.length ? 'eager' : 'lazy'}
+              decoding="async"
+              width={p.width || undefined}
+              height={p.height || undefined}
+            />
+          </button>
+        );
+      })}
     </div>
   </div>
 
-  <div class="gallery-thumbs swiper" aria-label="Photo thumbnails">
-    <div class="swiper-wrapper">
-      {photos.map((p) => (
-        <div class="swiper-slide">
-          <button type="button" class="gallery-thumb" aria-label={`Go to ${p.alt}`}>
-            <img src={p.src} alt="" loading="lazy" decoding="async" />
-          </button>
-        </div>
-      ))}
-    </div>
+  <div
+    class="gallery-lightbox"
+    data-lightbox
+    data-open="false"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Photo viewer"
+  >
+    <div class="gallery-lightbox-backdrop" data-close></div>
+    <figure class="gallery-lightbox-figure">
+      <img data-lightbox-img src="" alt="" />
+    </figure>
+    <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" data-prev aria-label="Previous photo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="gallery-lightbox-nav gallery-lightbox-next" data-next aria-label="Next photo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <button type="button" class="gallery-lightbox-close" data-close aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <div class="gallery-lightbox-counter" aria-hidden="true">1 / {photos.length}</div>
   </div>
 </section>
 
 <style>
-  .gallery-wrap {
-    --gallery-radius: var(--radius-2xl);
-  }
-
-  .gallery-stage {
-    position: relative;
-  }
-
-  .gallery-main {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    max-height: 72vh;
-    border-radius: var(--gallery-radius);
-    overflow: visible;
-  }
-
-  .gallery-main .swiper-slide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 260ms ease-out, transform 260ms ease-out;
-  }
-  .gallery-main .swiper-slide:not(.swiper-slide-active) {
-    opacity: 0.35;
-  }
-
-  .gallery-figure {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    border-radius: var(--gallery-radius);
+  /* Inline SVG used only to define the filter — never rendered. */
+  .polaroid-filter-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
     overflow: hidden;
-    background: var(--card-bg);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.04) inset,
-      0 30px 60px -24px rgba(0, 0, 0, 0.55);
+    pointer-events: none;
   }
 
-  .gallery-figure img {
+  /* ── Wrap: hosts the ambient "sun" glow behind the carousel ─────────── */
+  .gallery-wrap {
+    position: relative;
+    /* No `isolation: isolate` here: it would create a stacking context and
+       trap the lightbox (position:fixed, z-index:100) behind the page Header,
+       which also has z-index:100. The ambient glow's mix-blend-mode still
+       composites cleanly against the flat page bg without the isolation. */
+  }
+
+  /* Ambient sun presence — a soft warm radial sits at the same horizontal
+     fraction used by the JS virtual-light (LIGHT_X_FRAC = 30%). Screen-blended
+     at low opacity so it warms the page bg without washing out either theme.
+     Pointer-events off, behind the viewport — zero interactivity cost. */
+  .gallery-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        ellipse 42% 95% at 30% 50%,
+        rgba(255, 222, 168, 0.14),
+        rgba(255, 204, 148, 0.05) 38%,
+        transparent 68%
+      );
+    mix-blend-mode: screen;
+  }
+  :root.dark .gallery-wrap::before {
+    background:
+      radial-gradient(
+        ellipse 42% 95% at 30% 50%,
+        rgba(255, 212, 156, 0.09),
+        rgba(255, 186, 116, 0.035) 38%,
+        transparent 68%
+      );
+  }
+
+  /* ── Scrollable viewport ── */
+  .gallery-viewport {
+    position: relative;
+    z-index: 1;                               /* above the ambient glow */
+    width: 100%;
+    /* Reserve ~3 rows of space so the page layout is stable while the track
+       fades in. Scaled down on narrow screens to match the smaller row height. */
+    min-height: 520px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;                    /* Firefox */
+  }
+  @media (max-width: 780px) {
+    .gallery-viewport { min-height: 430px; }
+  }
+  @media (max-width: 520px) {
+    .gallery-viewport { min-height: 350px; }
+  }
+  .gallery-viewport::-webkit-scrollbar {
+    display: none;                            /* Safari / Chrome */
+  }
+
+  /* Soft edge fades hint at more content (masked on the viewport itself). */
+  .gallery-viewport::before,
+  .gallery-viewport::after {
+    content: "";
+    position: sticky;
+    top: 0;
+    height: 100%;
+    width: 56px;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 220ms ease-out;
+  }
+  .gallery-viewport::before {
+    left: 0;
+    float: left;
+    margin-right: -56px;
+    background: linear-gradient(to right, var(--bg), transparent);
+    opacity: var(--fade-left, 0);
+  }
+  .gallery-viewport::after {
+    right: 0;
+    float: right;
+    margin-left: -56px;
+    background: linear-gradient(to left, var(--bg), transparent);
+    opacity: var(--fade-right, 1);
+  }
+
+  /* Narrower fades on touch-primary devices. */
+  @media (hover: none) {
+    .gallery-viewport::before,
+    .gallery-viewport::after { width: 28px; }
+    .gallery-viewport::before { margin-right: -28px; }
+    .gallery-viewport::after  { margin-left:  -28px; }
+  }
+
+  /* ── Track (the thing that actually scrolls) ── */
+  .gallery-track {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;                                /* row gap — slightly tighter than tile gap
+                                                 to visually compensate for the downward
+                                                 shadow below each tile */
+    width: max-content;                       /* grow beyond viewport */
+    padding: 8px 0;                           /* room for tilt + hover lift */
+  }
+
+  /* Hide the track until JS has placed tiles into their carousel rows. The
+     script runs inline right after the markup and lays out synchronously, so
+     this is only in effect for the brief moment between HTML parse and script
+     execution — prevents any flash of unarranged tiles. */
+  .gallery-track {
+    transition: opacity 200ms ease-out;
+  }
+  .gallery-viewport[data-state="loading"] .gallery-track {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gallery-track-row {
+    display: flex;
+    gap: 14px;                                /* tile gap (horizontal) */
+    flex-shrink: 0;
+  }
+
+  /* ── Tile (polaroid-style matte applied to every tile) ─────────────────
+     Custom properties drive per-tile lighting:
+       --shine-x : 8…92 (%)   — peak of the photo-area specular, driven by JS
+       --shine-a : 0.22…1    — per-tile intensity (falls off with distance from
+                               the virtual light). All highlight layers multiply
+                               their alpha by this so faraway tiles truly dim out
+                               instead of just having the band shifted off-centre.
+       --light-x : 8…92 (%)  — horizontal position of the directional glow on the
+                               paper matte (chin + border), tracks --shine-x.
+  */
+  .gallery-tile {
+    --shine-x: 50%;
+    --shine-a: 0.55;
+    --light-x: 50%;
+    flex: 0 0 auto;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    /* Cream photo-paper matte. The radial adds a subtle warm lift where the
+       virtual light catches the paper directly (mainly chin + borders) — the
+       specular pass below handles the photo area. Opacity modulated by shine-a
+       so distant polaroids read as correctly darker on the paper too. */
+    background:
+      radial-gradient(
+        ellipse 140% 140% at var(--light-x) 25%,
+        rgba(255, 244, 210, calc(var(--shine-a) * 0.45)),
+        rgba(255, 238, 196, calc(var(--shine-a) * 0.16)) 35%,
+        rgba(255, 230, 180, 0) 65%
+      ),
+      #f8f1e1;
+    padding: 5px 5px 18px 5px;
+    border-radius: 3px;
+    overflow: hidden;
+    contain: layout paint;                     /* scope repaint to this tile */
+    /* Warmer, deeper drop shadow — reads more like paper on surface. */
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 10px 22px -10px rgba(30, 20, 10, 0.32),
+      0 22px 48px -20px rgba(30, 20, 10, 0.22);
+    transform: rotate(var(--tilt, 0deg)) scale(var(--scale, 1));
+    transition:
+      transform 320ms cubic-bezier(.16, 1, .3, 1),
+      box-shadow 260ms ease-out,
+      z-index 0s 260ms;
+    will-change: transform;
+  }
+  :root.dark .gallery-tile {
+    background:
+      radial-gradient(
+        ellipse 140% 140% at var(--light-x) 25%,
+        rgba(255, 226, 176, calc(var(--shine-a) * 0.34)),
+        rgba(255, 218, 160, calc(var(--shine-a) * 0.12)) 35%,
+        rgba(255, 210, 150, 0) 65%
+      ),
+      #2a241c;
+  }
+
+  .gallery-tile img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 1px;
   }
 
-  .gallery-nav {
+  /* ── Specular pass: photo-area only (inset matches polaroid padding) ───
+     Five layered backgrounds, declared top→bottom in the `background` list:
+       1. warm chromatic fringe — amber dispersion on the *leading* edge of
+                                  the sweep; reads as plastic-film iridescence.
+       2. cool chromatic fringe — bluish dispersion on the *trailing* edge.
+       3. warm bloom      — elliptical radial centred on the sweep peak; gives
+                            the highlight an actual soft core with falloff
+                            instead of a hard gradient band.
+       4. anisotropic sweep — the core specular band. Soft shoulders, warm
+                              white core. Alpha scales with shine-a so faraway
+                              tiles dim correctly.
+       5. paper grain     — static SVG noise tile at 12% alpha. The pseudo's
+                            mix-blend-mode: screen lifts the image below by
+                            the layer's luminance, so grain adds a uniform,
+                            very subtle film-grain wash across the photo —
+                            the defining polaroid texture, not just shine-only
+                            sparkle.
+     All layers composite additively onto the image via mix-blend-mode: screen.
+
+     filter: url(#polaroid-gloss) applies a static feTurbulence+feDisplacement
+     ONLY to this pseudo-element — the <img> below is never filtered, so image
+     fidelity is untouched. feTurbulence's seed is fixed, so the map is cached;
+     only the small tile-sized region re-rasterises as --shine-x moves. */
+  .gallery-tile::before {
+    content: "";
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
+    inset: 5px 5px 18px 5px;                  /* photo region only */
+    border-radius: 1px;
+    background:
+      linear-gradient(
+        118deg,
+        transparent calc(var(--shine-x) - 12%),
+        rgba(255, 172, 94,  calc(var(--shine-a) * 0.22)) calc(var(--shine-x) - 4%),
+        rgba(255, 172, 94,  0) calc(var(--shine-x) + 2%)
+      ),
+      linear-gradient(
+        118deg,
+        rgba(130, 176, 255, 0) calc(var(--shine-x) + 2%),
+        rgba(130, 176, 255, calc(var(--shine-a) * 0.14)) calc(var(--shine-x) + 9%),
+        transparent calc(var(--shine-x) + 18%)
+      ),
+      radial-gradient(
+        ellipse 58% 135% at var(--shine-x) 50%,
+        rgba(255, 239, 198, calc(var(--shine-a) * 0.26)),
+        rgba(255, 222, 172, 0) 58%
+      ),
+      linear-gradient(
+        118deg,
+        transparent 0%,
+        transparent calc(var(--shine-x) - 28%),
+        rgba(255, 250, 225, calc(var(--shine-a) * 0.06)) calc(var(--shine-x) - 16%),
+        rgba(255, 246, 216, calc(var(--shine-a) * 0.16)) calc(var(--shine-x) - 6%),
+        rgba(255, 252, 236, calc(var(--shine-a) * 0.34)) var(--shine-x),
+        rgba(255, 246, 216, calc(var(--shine-a) * 0.16)) calc(var(--shine-x) + 6%),
+        rgba(255, 232, 192, calc(var(--shine-a) * 0.07)) calc(var(--shine-x) + 16%),
+        transparent calc(var(--shine-x) + 28%),
+        transparent 100%
+      ),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.7' numOctaves='2' stitchTiles='stitch' seed='17'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.95 0 0 0 0 0.84 0 0 0 0.12 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+    background-size: auto, auto, auto, auto, 240px 240px;
+    background-blend-mode: screen, screen, screen, screen, normal;
+    mix-blend-mode: screen;
+    filter: url(#polaroid-gloss);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Heavy SVG filter is the one thing that can hurt perf at scale. Skip it
+     where the benefit is smallest / the cost is largest:
+       – reduced-motion users (accessibility + no shimmer)
+       – narrow viewports (small tiles, warble barely readable, weaker GPUs)
+     The five-layer gradient stack still renders — the warble is the only
+     thing that goes away. */
+  @media (max-width: 520px) {
+    .gallery-tile::before { filter: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-tile::before { filter: none; }
+  }
+
+  /* Hairline inner ring on the matte edge — just enough to define it. */
+  .gallery-tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+    pointer-events: none;
+  }
+  :root.dark .gallery-tile::after {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .gallery-tile:hover,
+  .gallery-tile:focus-visible {
+    /* De-tilt, lift, keep the per-tile scale so heights don't jump. */
+    transform: rotate(0deg) translateY(-6px) scale(var(--scale, 1));
+    box-shadow:
+      0 6px 14px rgba(0, 0, 0, 0.15),
+      0 24px 52px -16px rgba(30, 20, 10, 0.45);
+    z-index: 2;
+    transition:
+      transform 280ms cubic-bezier(.16, 1, .3, 1),
+      box-shadow 260ms ease-out,
+      z-index 0s;
+  }
+  .gallery-tile:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  /* ── Lightbox ── */
+  .gallery-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 260ms ease-out;
+  }
+  .gallery-lightbox[data-open="true"] {
+    pointer-events: auto;
+    opacity: 1;
+  }
+  .gallery-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+  }
+  .gallery-lightbox-figure {
+    position: relative;
+    margin: 0;
+    max-width: 92vw;
+    max-height: 86vh;
+    z-index: 1;
+    transform: scale(0.96);
+    opacity: 0;
+    transition:
+      transform 320ms cubic-bezier(.16, 1, .3, 1),
+      opacity 220ms ease-out;
+  }
+  .gallery-lightbox[data-open="true"] .gallery-lightbox-figure {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .gallery-lightbox-figure img {
+    max-width: 92vw;
+    max-height: 86vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.55);
+  }
+
+  .gallery-lightbox-nav,
+  .gallery-lightbox-close {
+    position: absolute;
+    z-index: 2;
     width: 44px;
     height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--card-bg) 85%, transparent);
-    color: var(--text);
-    border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
-    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
     cursor: pointer;
-    transition: transform 180ms ease-out, background 180ms ease-out, border-color 180ms ease-out;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 180ms ease-out, border-color 180ms ease-out, transform 180ms ease-out;
   }
-  .gallery-nav:hover {
-    background: color-mix(in srgb, var(--color-accent) 20%, var(--card-bg));
-    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
-    transform: translateY(-50%) scale(1.06);
+  .gallery-lightbox-nav:hover,
+  .gallery-lightbox-close:hover {
+    background: color-mix(in srgb, var(--color-accent) 60%, rgba(0, 0, 0, 0.45));
+    border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
   }
-  .gallery-nav:focus-visible {
+  .gallery-lightbox-nav:focus-visible,
+  .gallery-lightbox-close:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
-  .gallery-prev { left: 12px; }
-  .gallery-next { right: 12px; }
+  .gallery-lightbox-prev { left: 16px; top: 50%; transform: translateY(-50%); }
+  .gallery-lightbox-next { right: 16px; top: 50%; transform: translateY(-50%); }
+  .gallery-lightbox-prev:hover { transform: translateY(-50%) scale(1.06); }
+  .gallery-lightbox-next:hover { transform: translateY(-50%) scale(1.06); }
+  .gallery-lightbox-close { top: 16px; right: 16px; }
+  .gallery-lightbox-close:hover { transform: scale(1.06); }
 
-  @media (min-width: 1024px) {
-    .gallery-prev { left: -20px; }
-    .gallery-next { right: -20px; }
-    .gallery-nav {
-      width: 52px;
-      height: 52px;
-    }
-  }
-
-  .gallery-counter {
+  .gallery-lightbox-counter {
     position: absolute;
     top: 16px;
-    right: 16px;
-    z-index: 5;
-    display: inline-flex;
-    gap: 4px;
-    align-items: center;
+    left: 16px;
+    z-index: 2;
     padding: 6px 12px;
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, black 55%, transparent);
+    background: rgba(0, 0, 0, 0.45);
     color: #fff;
     font-size: 0.8rem;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.02em;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     pointer-events: none;
   }
-  .gallery-counter-sep {
-    opacity: 0.5;
-  }
 
-  .gallery-thumbs {
-    margin-top: 16px;
-    width: 100%;
-  }
-  .gallery-thumbs .swiper-wrapper {
-    align-items: stretch;
-  }
-  .gallery-thumbs .swiper-slide {
-    width: 88px;
-    height: 60px;
-    flex-shrink: 0;
-  }
-
-  @media (min-width: 640px) {
-    .gallery-thumbs .swiper-slide {
-      width: 104px;
-      height: 70px;
-    }
-  }
   @media (min-width: 1024px) {
-    .gallery-thumbs .swiper-slide {
-      width: 128px;
-      height: 84px;
+    .gallery-lightbox-nav,
+    .gallery-lightbox-close {
+      width: 52px;
+      height: 52px;
     }
-    .gallery-thumbs {
-      margin-top: 24px;
-    }
+    .gallery-lightbox-prev { left: 28px; }
+    .gallery-lightbox-next { right: 28px; }
   }
 
-  .gallery-thumb {
-    display: block;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border: 2px solid transparent;
-    border-radius: var(--radius-lg);
-    background: var(--card-bg);
-    overflow: hidden;
-    cursor: pointer;
-    opacity: 0.55;
-    transform: translateY(0);
-    transition:
-      opacity 220ms ease-out,
-      border-color 220ms ease-out,
-      transform 220ms ease-out;
-  }
-  .gallery-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .gallery-thumb:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-  }
-  .gallery-thumb:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-  .swiper-slide-thumb-active .gallery-thumb {
-    opacity: 1;
-    border-color: var(--color-accent);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--color-accent) 60%, transparent);
-  }
-
-  @media (max-width: 639px) {
-    .gallery-main {
-      aspect-ratio: 4 / 5;
-      max-height: 75vh;
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-tile,
+    .gallery-lightbox,
+    .gallery-lightbox-figure {
+      transition: none !important;
+    }
+    .gallery-tile {
+      transform: none !important;
     }
   }
 </style>
 
-<script>
-  import Swiper from 'swiper';
-  import { Navigation, Thumbs, Keyboard, A11y } from 'swiper/modules';
-  import 'swiper/css';
-  import 'swiper/css/thumbs';
+<script is:inline>
+  (function () {
+    const viewport = document.getElementById('gallery-viewport');
+    const track = document.getElementById('gallery-track');
+    if (!viewport || !track) return;
+    const tiles = Array.from(track.querySelectorAll('[data-tile]'));
+    if (!tiles.length) return;
+    const imgs = tiles.map((t) => t.querySelector('img'));
 
-  const mainEl = document.querySelector('.gallery-main');
-  const thumbsEl = document.querySelector('.gallery-thumbs');
-  if (mainEl && thumbsEl) {
-    const thumbs = new Swiper(thumbsEl, {
-      modules: [Thumbs, A11y],
-      spaceBetween: 8,
-      slidesPerView: 'auto',
-      watchSlidesProgress: true,
-      freeMode: true,
-      centerInsufficientSlides: true,
+    const NUM_ROWS = 3;
+
+    // ── Deterministic per-tile variations (scrapbook feel, stable per index) ──
+    function hash01(i, seed) {
+      const h = Math.sin(i * 12.9898 + seed) * 43758.5453;
+      return h - Math.floor(h);                         // 0 … 1
+    }
+    function tiltFor(i)  { return (hash01(i, 78.233) - 0.5) * 6; }   // -3°  …  +3°
+    function scaleFor(i) { return 0.96 + hash01(i, 34.128) * 0.07; } // 0.96 … 1.03
+
+    function applyVariants(tile, i) {
+      tile.style.setProperty('--tilt',  tiltFor(i)  + 'deg');
+      tile.style.setProperty('--scale', scaleFor(i));
+    }
+    tiles.forEach(applyVariants);
+
+    // Seed aspect ratios from data-ratio when available (build-time fetch
+    // pipes the API's dimensions through). Falls back to 4:3 until the image
+    // loads and measureAll() overwrites with the real naturalWidth/Height.
+    const ratios = tiles.map((t) => {
+      const attr = t.getAttribute('data-ratio');
+      const r = attr ? parseFloat(attr) : NaN;
+      return Number.isFinite(r) && r > 0 ? r : 4 / 3;
     });
 
-    const main = new Swiper(mainEl, {
-      modules: [Navigation, Thumbs, Keyboard, A11y],
-      spaceBetween: 16,
-      slidesPerView: 1,
-      centeredSlides: true,
-      speed: 420,
-      keyboard: { enabled: true, onlyInViewport: true },
-      grabCursor: true,
-      navigation: {
-        prevEl: '.gallery-prev',
-        nextEl: '.gallery-next',
-      },
-      thumbs: { swiper: thumbs },
-      breakpoints: {
-        640: { slidesPerView: 1.15, spaceBetween: 20 },
-        1024: { slidesPerView: 1.25, spaceBetween: 28 },
-      },
-    });
-
-    const current = document.querySelector('.gallery-counter-current');
-    if (current) {
-      main.on('slideChange', () => {
-        current.textContent = String(main.realIndex + 1);
+    function imageReady(img) {
+      return new Promise((resolve) => {
+        if (img.complete && img.naturalWidth > 0) return resolve(true);
+        const done = () => resolve(true);
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
       });
     }
-  }
+    function measureAll() {
+      imgs.forEach((img, i) => {
+        if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+          ratios[i] = img.naturalWidth / img.naturalHeight;
+        }
+      });
+    }
+
+    // ── Pick a target row height ──
+    // Smaller than before so three rows fit comfortably and photos feel
+    // like hand-held prints rather than display pieces.
+    function pickTargetHeight(viewportW) {
+      if (viewportW < 520)  return 130;
+      if (viewportW < 780)  return 160;
+      if (viewportW < 1100) return 185;
+      if (viewportW < 1500) return 210;
+      return 235;
+    }
+
+    // Render-order permutation: interleave portraits (ratio < 1) and
+    // landscapes (ratio >= 1) so that no two portraits sit next to each
+    // other when possible. Greedy alternating: prefer switching category
+    // from the last placement; when forced to repeat, pick from the larger
+    // remaining stack.
+    function computeOrder() {
+      const n = tiles.length;
+      const portraits  = [];
+      const landscapes = [];
+      for (let i = 0; i < n; i++) {
+        (ratios[i] < 1 ? portraits : landscapes).push(i);
+      }
+      const order = [];
+      let last = null;     // 'P' | 'L' | null
+      let pi = 0, li = 0;
+      while (pi < portraits.length || li < landscapes.length) {
+        const pLeft = portraits.length  - pi;
+        const lLeft = landscapes.length - li;
+        let pickPortrait;
+        if      (last === 'L' && pLeft > 0) pickPortrait = true;
+        else if (last === 'P' && lLeft > 0) pickPortrait = false;
+        else                                pickPortrait = pLeft > lLeft;
+        if (pickPortrait) { order.push(portraits[pi++]);  last = 'P'; }
+        else              { order.push(landscapes[li++]); last = 'L'; }
+      }
+      return order;
+    }
+
+    // Partition a sequence (given as an ordered list of source indices) into
+    // `numRows` rows by minimizing the maximum row aspect-ratio sum. Since
+    // row width ∝ sum of ratios at a fixed row height, minimizing the max
+    // gives rows of roughly equal length.
+    //
+    // Classic k-contiguous-partition DP:
+    //   dp[r][i] = min over k<i of max(dp[r-1][k], cum[i]-cum[k])
+    function partitionIntoRows(numRows, order) {
+      const n = order.length;
+      if (numRows <= 1 || n <= 1) {
+        const only = order.slice();
+        const pad  = Array.from({ length: Math.max(0, numRows - 1) }, () => []);
+        return [only, ...pad];
+      }
+      if (n <= numRows) {
+        return Array.from({ length: numRows }, (_, r) => r < n ? [order[r]] : []);
+      }
+
+      const cum = [0];
+      for (let i = 0; i < n; i++) cum.push(cum[i] + ratios[order[i]]);
+
+      const dp    = Array.from({ length: numRows + 1 }, () => new Array(n + 1).fill(Infinity));
+      const split = Array.from({ length: numRows + 1 }, () => new Array(n + 1).fill(0));
+      for (let i = 0; i <= n; i++) dp[1][i] = cum[i];
+
+      for (let r = 2; r <= numRows; r++) {
+        for (let i = r; i <= n; i++) {
+          let best = Infinity, bestK = r - 1;
+          for (let k = r - 1; k < i; k++) {
+            const candidate = Math.max(dp[r - 1][k], cum[i] - cum[k]);
+            if (candidate < best) { best = candidate; bestK = k; }
+          }
+          dp[r][i]    = best;
+          split[r][i] = bestK;
+        }
+      }
+
+      // Reconstruct the split indices [0, k1, k2, ..., n].
+      const cuts = [n];
+      let cr = numRows, ci = n;
+      while (cr > 1) {
+        const k = split[cr][ci];
+        cuts.unshift(k);
+        cr--;
+        ci = k;
+      }
+      cuts.unshift(0);
+
+      const rows = [];
+      for (let r = 0; r < numRows; r++) {
+        const start = cuts[r], end = cuts[r + 1];
+        const idxs = [];
+        for (let i = start; i < end; i++) idxs.push(order[i]);
+        rows.push(idxs);
+      }
+      return rows;
+    }
+
+    // Safety net: if the partition happened to place two portraits adjacent
+    // inside a row (can happen when one row has many portraits), swap one
+    // with the nearest landscape in the same row.
+    function repairRow(row) {
+      for (let i = 1; i < row.length; i++) {
+        if (ratios[row[i]] < 1 && ratios[row[i - 1]] < 1) {
+          // Look for a landscape to swap with, trying nearest positions first.
+          for (let d = 1; d < row.length; d++) {
+            const a = i + d, b = i - d - 1;
+            if (a < row.length && ratios[row[a]] >= 1 &&
+                (a === 0 || ratios[row[a - 1]] < 1) &&
+                (a === row.length - 1 || ratios[row[a + 1]] < 1 || a + 1 !== i)) {
+              [row[i], row[a]] = [row[a], row[i]];
+              break;
+            }
+            if (b >= 0 && ratios[row[b]] >= 1) {
+              [row[i], row[b]] = [row[b], row[i]];
+              break;
+            }
+          }
+        }
+      }
+      return row;
+    }
+
+    // Row container refs (created lazily on first layout).
+    const rowEls = [];
+    function ensureRows(count) {
+      while (rowEls.length < count) {
+        const row = document.createElement('div');
+        row.className = 'gallery-track-row';
+        rowEls.push(row);
+        track.appendChild(row);
+      }
+      while (rowEls.length > count) {
+        const row = rowEls.pop();
+        row.remove();
+      }
+    }
+
+    function layout() {
+      const viewportW = viewport.clientWidth;
+      if (!viewportW) return;
+
+      const targetH = pickTargetHeight(viewportW);
+      const order = computeOrder();
+      const rows = partitionIntoRows(NUM_ROWS, order).map(repairRow);
+
+      // Size each tile: width scales by its aspect ratio, height is fixed.
+      tiles.forEach((tile, i) => {
+        tile.style.width  = Math.round(ratios[i] * targetH) + 'px';
+        tile.style.height = targetH + 'px';
+      });
+
+      // Clear any previous layout (including clones from earlier passes).
+      ensureRows(NUM_ROWS);
+      rowEls.forEach((rowEl) => {
+        Array.from(rowEl.children).forEach((child) => {
+          if (child.hasAttribute('aria-hidden')) child.remove();
+        });
+      });
+
+      // Move source tiles into their target rows (appendChild moves rather than copies).
+      rows.forEach((rowIdxs, ri) => {
+        rowIdxs.forEach((i) => rowEls[ri].appendChild(tiles[i]));
+      });
+
+      // Clone each row for seamless infinite-loop scrolling. Clones inherit
+      // inline width/height/tilt via cloneNode. Click handlers use event
+      // delegation on the row, so clones are clickable without per-element
+      // listeners.
+      rowEls.forEach((rowEl) => {
+        const sources = Array.from(rowEl.children);
+        sources.forEach((orig) => {
+          const clone = orig.cloneNode(true);
+          clone.setAttribute('aria-hidden', 'true');
+          clone.setAttribute('tabindex', '-1');
+          rowEl.appendChild(clone);
+        });
+      });
+
+      // Start the drift from a tiny offset so the left fade isn't empty.
+      viewport.scrollLeft = 0;
+
+      // Cache each tile's horizontal center inside the track for the shine loop.
+      recomputeShineCache();
+    }
+
+    // ── Virtual light source + shine tracking ──
+    // A fixed virtual light sits at 30% across the viewport. Each tile's shine
+    // band slides along the photo based on where the tile is relative to the
+    // light in screen space, so the highlight appears pinned in world space
+    // while the tiles scroll past it.
+    //
+    // Three CSS vars are written per tile, all consumed by gradients that
+    // composite in one pass:
+    //   --shine-x : 8…92 (%) — specular peak position along the sweep band
+    //   --shine-a : 0.22…1  — intensity (gaussian falloff by distance from light)
+    //   --light-x : 8…92 (%) — directional matte glow position (tracks shine-x)
+    //
+    // Offscreen tiles are culled in the loop (no DOM writes), which drops the
+    // per-frame work from ~116 tiles to the ~16 actually visible on desktop.
+    const LIGHT_X_FRAC     = 0.3;        // light horizontal position (0=left, 1=right)
+    const SHINE_GAIN       = 80;         // screen-dx → shine-x gain (%)
+    const SHINE_EPS        = 0.3;        // skip --shine-x writes under this ∆ (%)
+    const SHINE_A_EPS      = 0.01;       // skip --shine-a writes under this ∆
+    const INTENSITY_WIDTH  = 1.25;       // gaussian σ in viewport widths
+    const CULL_MARGIN_PX   = 220;        // keep updating tiles this far off-edge
+    const SHINE_A_MIN      = 0.22;                 // darkest a tile ever dims to
+    const SHINE_A_SPAN     = 1 - SHINE_A_MIN;       // precomputed range
+
+    let tileCenters = [];                // [{ el, centerInTrack }]
+    // Per-element last written state — WeakMap so clones GC'd on re-layout.
+    const lastShine = new WeakMap();
+
+    function recomputeShineCache() {
+      const trackRect = track.getBoundingClientRect();
+      const all = track.querySelectorAll('[data-tile]');
+      tileCenters = Array.from(all).map((el) => {
+        const r = el.getBoundingClientRect();
+        return { el, centerInTrack: r.left + r.width / 2 - trackRect.left };
+      });
+    }
+
+    function updateShine() {
+      if (!tileCenters.length) return;
+      const vpRect       = viewport.getBoundingClientRect();
+      const vpW          = vpRect.width || 1;
+      const trackScreenX = vpRect.left - viewport.scrollLeft;
+      const lightScreenX = vpRect.left + vpW * LIGHT_X_FRAC;
+      const cullLeft     = vpRect.left  - CULL_MARGIN_PX;
+      const cullRight    = vpRect.right + CULL_MARGIN_PX;
+      // Precompute gaussian denominator once per frame (avoid 116 divisions).
+      const sigma = vpW * INTENSITY_WIDTH;
+      const invTwoSigmaSq = 1 / (2 * sigma * sigma);
+
+      for (let i = 0; i < tileCenters.length; i++) {
+        const entry = tileCenters[i];
+        const tileScreenX = trackScreenX + entry.centerInTrack;
+        // Cull offscreen tiles — no DOM reads, no writes. Biggest win: on desktop
+        // ~100 of 116 tiles are offscreen at any moment; this skips them entirely.
+        if (tileScreenX < cullLeft || tileScreenX > cullRight) continue;
+
+        const dx = lightScreenX - tileScreenX;
+        // Shine position: positive dx ⇒ light is to the right of tile ⇒ band right-of-centre.
+        let shineX = 50 + (dx / vpW) * SHINE_GAIN;
+        if (shineX < 8)  shineX = 8;
+        else if (shineX > 92) shineX = 92;
+
+        // Intensity: gaussian falloff with distance from light — tiles near the
+        // light catch a bright, hot specular; tiles at the edges fade to ambient.
+        const intensity = Math.exp(-(dx * dx) * invTwoSigmaSq);
+        const shineA = SHINE_A_MIN + intensity * SHINE_A_SPAN;
+
+        const last = lastShine.get(entry.el);
+        if (last !== undefined
+            && Math.abs(last.x - shineX) < SHINE_EPS
+            && Math.abs(last.a - shineA) < SHINE_A_EPS) continue;
+
+        // Reuse the stored object to avoid a per-update allocation.
+        if (last === undefined) {
+          lastShine.set(entry.el, { x: shineX, a: shineA });
+        } else {
+          last.x = shineX;
+          last.a = shineA;
+        }
+
+        const s = entry.el.style;
+        const xStr = shineX.toFixed(1) + '%';
+        s.setProperty('--shine-x', xStr);
+        s.setProperty('--shine-a', shineA.toFixed(3));
+        s.setProperty('--light-x', xStr);
+      }
+    }
+
+    // ── Autoscroll ──
+    //   no mouse over it:  slow rightward ambient drift
+    //   mouse over it:     velocity is a linear function of cursor x-position
+    //                      (far-left ⇒ full reverse, center ⇒ stop,
+    //                       far-right ⇒ full forward), with a small dead
+    //                      zone around the middle to avoid jitter.
+    //   touch / drag:      pause while interacting (lets native swipe own it)
+    //   lightbox open:     pause
+    const DEFAULT_DRIFT   = 0.55;   // px/frame ambient, ≈ 33 px/sec at 60fps
+    const HOVER_MAX_SPEED = 7;      // px/frame at the far left/right edge
+    const DEAD_ZONE       = 0.1;    // ±10% of half-width counts as "middle" → stop
+
+    let isPointerDown = false;
+    let hoverVel = null;            // non-null only while mouse is inside the viewport
+    let touchCooldownEnd = 0;       // timestamp until which ambient drift stays paused
+                                    // after a touch (lets native iOS momentum finish)
+
+    function computeVel() {
+      if (box && box.dataset.open === 'true') return 0;
+      if (isPointerDown) return 0;
+      if (performance.now() < touchCooldownEnd) return 0;
+      if (hoverVel !== null) return hoverVel;
+      return DEFAULT_DRIFT;
+    }
+
+    // Seamless wrap: with clones appended, scrollWidth == 2 * original track width.
+    // When we pass the half-way mark, jump back by that amount — the content
+    // at the new position is identical to the old, so the viewer sees no seam.
+    function wrapScroll() {
+      const halfW = viewport.scrollWidth / 2;
+      if (!halfW) return;
+      if (viewport.scrollLeft >= halfW) viewport.scrollLeft -= halfW;
+      else if (viewport.scrollLeft < 0)  viewport.scrollLeft += halfW;
+    }
+
+    let rafId = null;
+    function tick() {
+      if (viewport.dataset.state === 'ready') {
+        const v = computeVel();
+        if (v !== 0) {
+          viewport.scrollLeft += v;
+          wrapScroll();                  // only wrap while we're actively drifting —
+                                         // writing scrollLeft during native momentum
+                                         // scroll breaks it on iOS
+        }
+        updateShine();                   // keep shine aligned with the fixed light
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+    tick();
+
+    // Continuous position-based velocity — mouse ONLY. Touch devices get
+    // native swipe (overflow-x: auto handles it); we don't want touch-synthesized
+    // pointer events to steer the drift.
+    viewport.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const rect = viewport.getBoundingClientRect();
+      // Normalized x around the center: −1 at left edge, 0 at middle, +1 at right.
+      const norm = ((e.clientX - rect.left) - rect.width / 2) / (rect.width / 2);
+      const abs = Math.abs(norm);
+      if (abs < DEAD_ZONE) {
+        hoverVel = 0;
+      } else {
+        // Remap [DEAD_ZONE … 1] → [0 … 1] so velocity grows smoothly from the
+        // edge of the dead zone (no jump from 0 to some small speed).
+        const mag = (abs - DEAD_ZONE) / (1 - DEAD_ZONE);
+        hoverVel = Math.sign(norm) * mag * HOVER_MAX_SPEED;
+      }
+    });
+    viewport.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      hoverVel = null;
+    });
+
+    // Pause during active drag/swipe. For touch, also extend a short cooldown
+    // after release so native iOS momentum can play out before drift resumes.
+    viewport.addEventListener('pointerdown', () => { isPointerDown = true; });
+    function releasePointer(e) {
+      isPointerDown = false;
+      if (e && e.pointerType && e.pointerType !== 'mouse') {
+        touchCooldownEnd = performance.now() + 1500;   // 1.5s momentum grace
+        hoverVel = null;                                // clear any stale mouse state
+      }
+    }
+    window.addEventListener('pointerup',     releasePointer);
+    window.addEventListener('pointercancel', releasePointer);
+
+    // ── Kick off ──
+    // Lay out immediately with the aspect ratios we already have (seeded from
+    // data-ratio on build-time tiles; 4:3 default on the hardcoded 8). This
+    // shows the carousel on first paint — no grid-flash while images load.
+    viewport.dataset.state = 'ready';
+    layout();
+
+    // As images actually arrive, re-measure (naturalWidth/Height is the
+    // source of truth) and re-layout for pixel-accurate widths.
+    Promise.all(imgs.map(imageReady)).then(() => {
+      measureAll();
+      layout();
+    });
+
+    let resizeT;
+    function scheduleLayout() {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        if (viewport.dataset.state === 'ready') layout();
+      }, 80);
+    }
+    window.addEventListener('resize', scheduleLayout);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(scheduleLayout).observe(viewport);
+    }
+
+    // ── Piwigo: pull random public photos at runtime ──
+    // On each visit, ask the Piwigo API for a batch of random images across
+    // all (public) albums and append them to the collage. If the request
+    // fails (CORS, offline, server down, API method disabled), the hardcoded
+    // set still renders and nothing else happens.
+    const PIWIGO_API = 'https://piwigo.darkishlocket10.me/ws.php'
+      + '?format=json&method=pwg.categories.getImages'
+      + '&recursive=true&per_page=30&order=random';
+
+    function createTile(photo, index) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'gallery-tile';
+      btn.setAttribute('data-tile', '');
+      btn.setAttribute('data-index', String(index));
+      btn.setAttribute('role', 'listitem');
+      btn.setAttribute('aria-label', 'Open ' + (photo.alt || 'photo'));
+      applyVariants(btn, index);
+
+      const img = document.createElement('img');
+      img.src = photo.src;
+      img.alt = photo.alt || 'Photograph';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      btn.appendChild(img);
+
+      return { tile: btn, img: img };
+    }
+
+    // Piwigo's API returns a `derivatives` map with pre-sized image URLs and
+    // dimensions. Prefer mid-sized derivatives for the collage (faster than
+    // the full file) and fall back through the size ladder.
+    function extractPiwigoPhoto(raw) {
+      const d = raw.derivatives || {};
+      const pick = d.large || d.medium || d.xlarge || d.small || d.xxlarge;
+      const src = (pick && pick.url) || raw.element_url;
+      if (!src) return null;
+      const w = (pick && pick.width)  || raw.width;
+      const h = (pick && pick.height) || raw.height;
+      return {
+        src: src,
+        alt: raw.name || raw.file || 'Photograph',
+        ratio: (w && h) ? w / h : null,
+      };
+    }
+
+    async function loadPiwigoExtras() {
+      let data;
+      try {
+        const res = await fetch(PIWIGO_API, { credentials: 'omit' });
+        if (!res.ok) return;
+        data = await res.json();
+      } catch (_) {
+        return;                                             // CORS / offline / blocked
+      }
+      if (!data || data.stat !== 'ok') return;
+      const apiImages = (data.result && data.result.images) || [];
+      if (!apiImages.length) return;
+
+      // Dedupe against photos already on the page (hardcoded set + build-time batch).
+      const existingSrcs = new Set(imgs.map((i) => i && i.src).filter(Boolean));
+      const photos = apiImages
+        .map(extractPiwigoPhoto)
+        .filter((p) => p && !existingSrcs.has(p.src));
+      if (!photos.length) return;
+
+      // Add each new photo as a tile. API-provided ratios let us lay them out
+      // roughly right on the first pass; we re-measure + re-layout once the
+      // actual image bytes arrive for pixel-accurate sizes.
+      const newImgs = [];
+      photos.forEach((p) => {
+        const idx = tiles.length;
+        const { tile, img } = createTile(p, idx);
+        tiles.push(tile);
+        imgs.push(img);
+        ratios.push(p.ratio || 4 / 3);
+        track.appendChild(tile);                            // layout() will move it into a row
+        newImgs.push(img);
+      });
+
+      if (viewport.dataset.state === 'ready') layout();     // first pass, approximate
+
+      await Promise.all(newImgs.map(imageReady));
+      measureAll();
+      if (viewport.dataset.state === 'ready') layout();     // second pass, exact
+    }
+
+    loadPiwigoExtras();                                     // fires in parallel, doesn't block
+
+    // ── Lightbox ──
+    const box = document.querySelector('[data-lightbox]');
+    if (!box) return;
+    const boxImg = box.querySelector('[data-lightbox-img]');
+    const counter = box.querySelector('.gallery-lightbox-counter');
+    let current = 0;
+    let lastFocused = null;
+
+    function openAt(i) {
+      current = ((i % tiles.length) + tiles.length) % tiles.length;
+      boxImg.src = imgs[current].src;
+      boxImg.alt = imgs[current].alt;
+      counter.textContent = (current + 1) + ' / ' + tiles.length;
+      box.dataset.open = 'true';
+      box.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      if (box.dataset.open !== 'true') return;
+      box.dataset.open = 'false';
+      box.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    }
+    function next() { openAt(current + 1); }
+    function prev() { openAt(current - 1); }
+
+    // Event delegation on the track itself — catches clicks on originals AND
+    // clones regardless of which row they currently live in. (Delegating on
+    // rowEls would race the layout pass, since rowEls is populated inside
+    // layout() which runs asynchronously.)
+    track.addEventListener('click', (e) => {
+      const tile = e.target.closest('[data-tile]');
+      if (!tile || !track.contains(tile)) return;
+      const i = parseInt(tile.getAttribute('data-index'), 10);
+      if (Number.isNaN(i)) return;
+      // When returning focus, prefer the source tile so Tab order stays sane.
+      lastFocused = tiles[i] || tile;
+      openAt(i);
+    });
+    box.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
+    box.querySelector('[data-prev]').addEventListener('click', prev);
+    box.querySelector('[data-next]').addEventListener('click', next);
+
+    document.addEventListener('keydown', (e) => {
+      if (box.dataset.open !== 'true') return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') prev();
+      else if (e.key === 'ArrowRight') next();
+    });
+  })();
 </script>

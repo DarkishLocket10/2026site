@@ -34,13 +34,13 @@ allPosts.sort(
 
 
 
-<div class="mx-auto max-w-7xl px-6 py-6
+<div class="mx-auto max-w-7xl px-6 py-10
   opacity-0 -translate-x-6
   transition-all duration-700 ease-out
   motion-reduce:opacity-100 motion-reduce:translate-y-0
   "
     data-fade>
-<h2 class="text-2xl font-semibold mb-6">My recent blog posts</h2>
+<h2 class="text-4xl font-semibold mb-6">My recent blog posts</h2>
 
 <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     {allPosts.slice(0, 4).map(post => <BlogPostCard post={post} />)}

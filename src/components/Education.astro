@@ -17,15 +17,15 @@ type EducationItem = {
 const {items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
 ---
 
-<section id="education" class="mx-auto max-w-7xl px-6 pt-0 pb-6
+<section id="education" class="mx-auto max-w-7xl px-6 pt-4 pb-10
   opacity-0 -translate-x-6
   transition-all duration-700 ease-out
   motion-reduce:opacity-100 motion-reduce:translate-y-0
   "
     data-fade>
-  <h2 class="text-2xl font-semibold mb-6">Education</h2>
+  <h2 class="text-4xl font-semibold mb-6">Education</h2>
 
-  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
     {items.map(({ years, institution, details }) => (
       <div class="relative pl-8">
         {/* angled purple bar */}
@@ -49,13 +49,6 @@ const {items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
     ))}
    
   <style>
-
-
-h2 {
-  font-size: clamp(2.2rem, 5vw, 2.25rem);
-  margin-top: 0;
-}
-
 
 h4 {
   font-size: clamp(.9rem, calc(.7rem + 1vw), 1rem);
