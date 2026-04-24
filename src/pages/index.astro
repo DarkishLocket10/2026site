@@ -6,6 +6,7 @@ import ProfessionalExperience from "../components/ProfessionalExperience.astro";
 import Work from "../components/Work.astro";
 import Photography from "../components/Photography.astro";
 import Gallery from "../components/gallery.astro";
+import TopAlbums from "../components/TopAlbums.astro";
 import BlogDisplay from '../components/BlogDisplay.astro';
 
 const educationItems = [
@@ -45,6 +46,29 @@ const workItems = [
     `,
     icons: ['simple-icons:php', 'simple-icons:javascript', 'simple-icons:mysql', 'simple-icons:python', 'simple-icons:powerbi'],
   },
+
+{
+  imageSrc: '/mainphotos/uhubs.png',
+  link: 'https://uhubs.co.uk',
+  altText: 'uHubs',
+  visitLabel: 'Visit uHubs',
+  summary: [
+    'Analytical dashboards with modern statistical methods',
+    'AI-driven automation accelerating internal workflows',
+    'Full-stack TypeScript + SQL database architecture',
+    'Vercel deploys orchestrated with n8n workflows',
+  ],
+  label: `☑️ Architecting analytical dashboards that apply modern statistical methods to turn raw sales data into decision-grade insight
+
+☑️ Embedding AI across internal workflows to automate repetitive processes and accelerate the team's output
+
+☑️ Full-stack engineering across TypeScript-first UI work and SQL database design, migrations, and query optimisation
+
+☑️ Shipping on Vercel and orchestrating multi-service automation with n8n for reliable end-to-end pipelines
+
+☑️ Delivering in an Agile cadence, scoping and launching cutting-edge AI-powered products end-to-end alongside product and design`,
+  icons: ['simple-icons:typescript', 'simple-icons:postgresql', 'simple-icons:vercel', 'simple-icons:n8n', 'simple-icons:openai'],
+},
 
     {
   imageSrc:   '/mainphotos/triage.png',
@@ -117,29 +141,6 @@ icons: ['simple-icons:csharp', 'simple-icons:dotnet', 'simple-icons:docker', 'si
   icons: ['simple-icons:rust'],
 },
 
-{
-  imageSrc: '/mainphotos/uhubs.png',
-  link: 'https://uhubs.co.uk',
-  altText: 'uHubs',
-  visitLabel: 'Visit uHubs',
-  summary: [
-    'Analytical dashboards with modern statistical methods',
-    'AI-driven automation accelerating internal workflows',
-    'Full-stack TypeScript + SQL database architecture',
-    'Vercel deploys orchestrated with n8n workflows',
-  ],
-  label: `☑️ Architecting analytical dashboards that apply modern statistical methods to turn raw sales data into decision-grade insight
-
-☑️ Embedding AI across internal workflows to automate repetitive processes and accelerate the team's output
-
-☑️ Full-stack engineering across TypeScript-first UI work and SQL database design, migrations, and query optimisation
-
-☑️ Shipping on Vercel and orchestrating multi-service automation with n8n for reliable end-to-end pipelines
-
-☑️ Delivering in an Agile cadence, scoping and launching cutting-edge AI-powered products end-to-end alongside product and design`,
-  icons: ['simple-icons:typescript', 'simple-icons:postgresql', 'simple-icons:vercel', 'simple-icons:n8n', 'simple-icons:openai'],
-},
-
 ];
 
 ---
@@ -182,6 +183,8 @@ icons: ['simple-icons:csharp', 'simple-icons:dotnet', 'simple-icons:docker', 'si
   />
 
   <Gallery />
+
+  <TopAlbums />
 
 
 </Layout>

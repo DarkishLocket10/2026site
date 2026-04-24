@@ -1,0 +1,181 @@
+---
+import topAlbumsData from '../data/top-albums.json';
+
+type Album = {
+  rank: number;
+  name: string;
+  artist: string;
+  playcount: number;
+  url: string;
+  image: string | null;
+  imageSource: string | null;
+};
+
+type TopAlbumsData = {
+  user: string;
+  period: string;
+  updatedAt: string | null;
+  albums: Album[];
+};
+
+const data = topAlbumsData as TopAlbumsData;
+const albums = data.albums ?? [];
+const hasData = albums.length > 0;
+
+const updatedLabel = data.updatedAt
+  ? new Date(data.updatedAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
+
+const lastFmProfile = `https://www.last.fm/user/${data.user}`;
+---
+
+<section id="top-albums" class="w-full py-6 overflow-x-clip">
+  <div class="mx-auto w-full max-w-screen-2xl px-6 md:px-8 xl:px-12 2xl:px-16">
+    <div
+      class="
+        mb-6
+        opacity-0 translate-x-6
+        transition-all duration-700 ease-out delay-0
+        motion-reduce:opacity-100 motion-reduce:translate-x-0
+      "
+      data-fade
+    >
+      <h2 class="text-4xl font-semibold">🎧 Top albums of the year</h2>
+      {updatedLabel ? (
+        <p class="mt-2 text-sm" style="color: var(--color-text-soft);">
+          Pulled from
+          <a
+            href={lastFmProfile}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline hover:opacity-80"
+          >Last.fm</a>
+          · refreshed {updatedLabel}
+        </p>
+      ) : (
+        <p class="mt-2 text-sm" style="color: var(--color-text-soft);">
+          Fresh list lands every December 3rd · pulled from
+          <a
+            href={lastFmProfile}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline hover:opacity-80"
+          >Last.fm</a>.
+        </p>
+      )}
+    </div>
+
+    {hasData && (
+      <div
+        class="
+          grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5
+          opacity-0 translate-x-6
+          transition-all duration-700 ease-out delay-100
+          motion-reduce:opacity-100 motion-reduce:translate-x-0
+        "
+        data-fade
+      >
+        {albums.map((album) => {
+          const fallbackUrl = `https://www.last.fm/music/${encodeURIComponent(album.artist)}/${encodeURIComponent(album.name)}`;
+          return (
+            <a
+              href={album.url || fallbackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="album-card group flex flex-col gap-2 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              aria-label={`${album.name} by ${album.artist} — ${album.playcount} plays — open on Last.fm`}
+            >
+              <div class="album-art relative aspect-square overflow-hidden rounded-xl border border-current/10 shadow-sm">
+                {album.image ? (
+                  <img
+                    src={album.image}
+                    alt={`${album.name} by ${album.artist}`}
+                    loading="lazy"
+                    class="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div class="album-fallback flex h-full w-full items-center justify-center p-3 text-center">
+                    <span class="text-xs font-semibold opacity-80 line-clamp-3">
+                      {album.artist} — {album.name}
+                    </span>
+                  </div>
+                )}
+                <span class="rank-badge">#{album.rank}</span>
+              </div>
+              <div class="px-1">
+                <p class="album-title text-sm font-semibold leading-tight">{album.name}</p>
+                <p class="album-artist mt-0.5 text-xs leading-tight opacity-70">{album.artist}</p>
+                {album.playcount > 0 && (
+                  <p class="mt-1 text-[11px] opacity-60">
+                    {album.playcount.toLocaleString()} {album.playcount === 1 ? 'play' : 'plays'}
+                  </p>
+                )}
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .album-card {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 200ms ease-out;
+  }
+  .album-card:hover .album-art {
+    transform: translateY(-4px);
+    box-shadow:
+      0 10px 24px -10px rgba(0, 0, 0, 0.45),
+      0 6px 14px -8px color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+  .album-art {
+    transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+    background: var(--card-bg);
+  }
+
+  .album-fallback {
+    background: color-mix(in srgb, var(--color-accent) 18%, var(--card-bg));
+  }
+
+  .rank-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 0.5rem;
+    border-radius: 9999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  }
+
+  .album-title,
+  .album-artist {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .album-title { -webkit-line-clamp: 2; }
+  .album-artist { -webkit-line-clamp: 1; }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

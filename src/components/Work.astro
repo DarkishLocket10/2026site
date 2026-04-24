@@ -38,8 +38,8 @@ function visitMeta(item: WorkItem) {
 }
 ---
 
-<section id="work" class="w-full py-10 overflow-x-clip">
-  <div class="mx-auto w-full max-w-7xl px-6">
+<section id="work" class="w-full py-6 overflow-x-clip">
+  <div class="mx-auto w-full max-w-screen-2xl px-6">
     <h2
       class="
         text-4xl font-semibold mb-6
@@ -95,7 +95,7 @@ function visitMeta(item: WorkItem) {
                     )}
 
                     <div class="image-panel flex-shrink-0 p-3">
-                      <div class="w-full aspect-[32/10.1] overflow-hidden rounded-lg border-b-2 border-accent/40">
+                      <div class="w-full aspect-[32/13] overflow-hidden rounded-lg border-b-2 border-accent/40">
                         <img
                           src={imageSrc}
                           alt={altText}
@@ -232,7 +232,7 @@ function visitMeta(item: WorkItem) {
 
   .work-swiper {
     width: 100%;
-    max-width: 320px;
+    max-width: 368px;
     aspect-ratio: 5 / 8.2;
   }
   @media (min-width: 1024px) {
@@ -246,7 +246,7 @@ function visitMeta(item: WorkItem) {
       overflow: visible !important;
     }
     .work-swiper .swiper-slide {
-      width: 290px;
+      width: 334px;
       height: auto;
       flex-shrink: 0;
     }
@@ -256,6 +256,42 @@ function visitMeta(item: WorkItem) {
     }
     .work-swiper .swiper-wrapper {
       align-items: stretch;
+    }
+    /* Scale card typography/padding ≈1.15× to match the bumped card size */
+    .work-swiper .swiper-slide .card-frame .title-row {
+      padding-left: 1.15rem;
+      padding-right: 1.15rem;
+      padding-top: 1.15rem;
+    }
+    .work-swiper .swiper-slide .card-frame .title-row p {
+      font-size: 1.15rem;
+    }
+    .work-swiper .swiper-slide .card-frame .title-row [data-astro-cid] ,
+    .work-swiper .swiper-slide .card-frame .title-row svg {
+      width: 21px !important;
+      height: 21px !important;
+    }
+    .work-swiper .swiper-slide .card-frame .image-panel {
+      padding: 0.875rem;
+    }
+    .work-swiper .swiper-slide .card-frame .summary {
+      padding-left: 1.15rem;
+      padding-right: 1.15rem;
+      padding-bottom: 0.875rem;
+      font-size: 1rem;
+    }
+    .work-swiper .swiper-slide .card-frame .visit-wrap {
+      padding-left: 0.875rem;
+      padding-right: 0.875rem;
+      padding-bottom: 0.875rem;
+    }
+    .work-swiper .swiper-slide .card-frame .visit-wrap a {
+      padding: 0.6rem 0.875rem;
+      font-size: 1rem;
+    }
+    .work-swiper .swiper-slide .card-frame .visit-wrap a svg {
+      width: 23px;
+      height: 23px;
     }
   }
 
@@ -832,14 +868,113 @@ function visitMeta(item: WorkItem) {
       wrap.classList.toggle('no-scroll', total <= perView);
     };
 
+    // Edge-hover auto-scroll: when the cursor lingers near the left/right edge
+    // of the carousel on desktop, gently pan the slides toward that edge so
+    // peeked cards can be explored without clicking nav buttons. The
+    // activation band extends BEYOND the wrap horizontally (up to viewport
+    // edges) so the scroll keeps going if the mouse drifts past the cards.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let edgeHoverCleanup = null;
+    const setupEdgeHover = (swiper) => {
+      if (!wrap || prefersReducedMotion) return () => {};
+      const EDGE_SIZE = 140;     // px band inside the wrap where speed ramps 0→MAX
+      const MAX_SPEED = 3.2;     // px per frame inside the band (≈192 px/s @60fps)
+      const OVERSHOOT_SPEED = 5.0; // px per frame when mouse is past the wrap edge
+      const OVERSHOOT_RAMP = 180; // past-edge distance (px) to hit OVERSHOOT_SPEED cap
+      const EASE_POW = 1.9;
+      const V_PADDING = 24;      // vertical slack above/below wrap to stay active
+
+      let mouseX = null;          // relative to wrap left
+      let mouseYOk = false;       // mouse is inside wrap's Y range (+ padding)
+      let rect = null;
+      let rafId = null;
+      let isDragging = false;
+
+      const recalcRect = () => { rect = wrap.getBoundingClientRect(); };
+
+      const onMove = (e) => {
+        if (!rect) recalcRect();
+        mouseX = e.clientX - rect.left;
+        mouseYOk = e.clientY >= rect.top - V_PADDING && e.clientY <= rect.bottom + V_PADDING;
+        if (rafId == null) rafId = requestAnimationFrame(step);
+      };
+      const onDocLeave = () => {
+        // Mouse left the document entirely — stop.
+        mouseX = null;
+        mouseYOk = false;
+      };
+      const onDragStart = () => { isDragging = true; };
+      const onDragEnd = () => { isDragging = false; };
+
+      const step = () => {
+        rafId = requestAnimationFrame(step);
+        if (mouseX == null || !rect || isDragging || !mouseYOk) return;
+        const w = rect.width;
+        let speed = 0;
+        if (mouseX < 0) {
+          // Past the LEFT edge: accelerate toward OVERSHOOT cap.
+          const over = Math.min(1, -mouseX / OVERSHOOT_RAMP);
+          speed = MAX_SPEED + (OVERSHOOT_SPEED - MAX_SPEED) * over;
+        } else if (mouseX < EDGE_SIZE) {
+          // Inside left band: ramp 0 → MAX with easing.
+          const t = 1 - mouseX / EDGE_SIZE;
+          speed = Math.pow(t, EASE_POW) * MAX_SPEED;
+        } else if (mouseX > w) {
+          // Past the RIGHT edge.
+          const over = Math.min(1, (mouseX - w) / OVERSHOOT_RAMP);
+          speed = -(MAX_SPEED + (OVERSHOOT_SPEED - MAX_SPEED) * over);
+        } else if (mouseX > w - EDGE_SIZE) {
+          // Inside right band.
+          const t = (mouseX - (w - EDGE_SIZE)) / EDGE_SIZE;
+          speed = -Math.pow(t, EASE_POW) * MAX_SPEED;
+        }
+        if (speed === 0) return;
+        const minT = swiper.minTranslate();
+        const maxT = swiper.maxTranslate();
+        const current = swiper.translate;
+        const next = Math.max(maxT, Math.min(minT, current + speed));
+        if (next !== current) {
+          swiper.setTranslate(next);
+          swiper.updateProgress();
+          swiper.updateSlidesClasses();
+        }
+      };
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseleave', onDocLeave);
+      window.addEventListener('blur', onDocLeave);
+      window.addEventListener('resize', recalcRect);
+      window.addEventListener('scroll', recalcRect, { passive: true });
+      swiper.on('touchStart', onDragStart);
+      swiper.on('touchEnd', onDragEnd);
+      swiper.on('sliderFirstMove', onDragStart);
+
+      return () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseleave', onDocLeave);
+        window.removeEventListener('blur', onDocLeave);
+        window.removeEventListener('resize', recalcRect);
+        window.removeEventListener('scroll', recalcRect);
+        swiper.off('touchStart', onDragStart);
+        swiper.off('touchEnd', onDragEnd);
+        swiper.off('sliderFirstMove', onDragStart);
+        if (rafId != null) cancelAnimationFrame(rafId);
+        rafId = null;
+      };
+    };
+
     const init = () => {
       const isDesktop = mq.matches;
       if (instance && currentDesktop === isDesktop) return;
+      if (edgeHoverCleanup) { edgeHoverCleanup(); edgeHoverCleanup = null; }
       if (instance) instance.destroy(true, true);
       instance = new Swiper(el, isDesktop ? desktopConfig : mobileConfig);
       currentDesktop = isDesktop;
       instance.on('init resize update', updateNavVisibility);
       updateNavVisibility();
+      if (isDesktop) {
+        edgeHoverCleanup = setupEdgeHover(instance);
+      }
     };
 
     init();
