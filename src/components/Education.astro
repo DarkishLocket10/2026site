@@ -12,12 +12,14 @@ type EducationItem = {
   years: string;
   institution: string;
   details: string;
+  crest?: string;
+  crestAlt?: string;
 };
 
 const {items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
 ---
 
-<section id="education" class="mx-auto w-full max-w-screen-2xl px-6 md:px-8 xl:px-12 2xl:px-16 py-6
+<section id="education" class="mx-auto w-full max-w-screen-2xl px-6 md:px-8 xl:px-12 2xl:px-16 pt-0 pb-6
   opacity-0 -translate-x-6
   transition-all duration-700 ease-out
   motion-reduce:opacity-100 motion-reduce:translate-y-0
@@ -26,17 +28,17 @@ const {items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
   <h2 class="text-4xl font-semibold mb-6">Education</h2>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-    {items.map(({ years, institution, details }) => (
-      <div class="relative pl-8">
-        {/* angled purple bar */}
-        <div
-          class="absolute inset-y-0 left-0 w-4 bg-accent transform -skew-x-12"
-
-          
-        ></div>
-
-        {/* content sits above the bar */}
-        <div class="relative z-10">
+    {items.map(({ years, institution, details, crest, crestAlt }) => (
+      <div class="flex items-start gap-5">
+        {crest && (
+          <img
+            src={crest}
+            alt={crestAlt ?? `${institution} crest`}
+            loading="lazy"
+            class="education-crest w-20 h-20 md:w-24 md:h-24 object-contain shrink-0"
+          />
+        )}
+        <div class="flex-1 min-w-0">
           <span class="text-sm ">{years}</span>
           <h3 class="!mt-2 !text-3xl font-semibold ">
             {institution}

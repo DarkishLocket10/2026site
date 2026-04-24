@@ -32,7 +32,7 @@ p:last-child {
 }
 .dark {
   --bg:   #282c34;
-  --text: #f3f4f6;
+  --text: #dfdfdf;
 }
 
 /* 1) Make html/body full height and zero margin */
@@ -42,7 +42,7 @@ body {
   margin: 0;
   background-color: var(--bg);   /* unify backgrounds */
   color:            var(--text);
-  font-family: "inter", sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* 2) Turn body into a flex column */

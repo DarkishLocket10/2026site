@@ -66,8 +66,8 @@ const { title, subtitle, description, image, alt } = Astro.props;
     flex flex-wrap
     items-center
     justify-center
-    gap-x-5 gap-y-4
-    lg:gap-x-6
+    gap-x-4 gap-y-4
+    lg:gap-x-5
     opacity-0 -translate-x-6
     transition-all duration-700 ease-out
     delay-300
@@ -81,6 +81,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
     { name: 'simple-icons:x',         href: 'https://twitter.com/yashnilaypatel',     label: 'X'         },
     { name: 'simple-icons:instagram', href: 'https://instagram.com/yash_patel14',     label: 'Instagram' },
     { name: 'simple-icons:trakt',     href: 'https://trakt.tv/users/darkishlocket10', label: 'Trakt'     },
+    { name: 'simple-icons:lastdotfm', href: 'https://www.last.fm/user/DarkishLocket10',label: 'Last.fm'  },
     { name: 'simple-icons:youtube',   href: 'https://www.youtube.com/@yashmakesfilms',label: 'YouTube'   },
     { name: 'simple-icons:goodreads', href: 'https://www.goodreads.com/darkishlocket10',label: 'Goodreads'},
   ].map(({ name, href, label }) => (
@@ -91,7 +92,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
       aria-label={label}
       class="text-current hover:opacity-80 transition-opacity"
     >
-      <Icon name={name} size={32} />
+      <Icon name={name} size={40} />
     </a>
   ))}
 
@@ -101,9 +102,9 @@ const { title, subtitle, description, image, alt } = Astro.props;
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Email me"
-    class="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent/10 transition-colors"
+    class="flex items-center gap-2 px-5 py-2.5 border rounded-lg hover:bg-accent/10 transition-colors text-base"
   >
-    <Icon name="simple-icons:maildotru" size={24} />
+    <Icon name="simple-icons:maildotru" size={28} />
     <span class="font-medium">Contact</span>
   </a>
 </div>
@@ -113,7 +114,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
   <!-- 📸 IMAGE – right column -->
 <figure data-tilt
   class="
-    mt-10 md:mt-0 relative md:h-full
+    mt-10 md:mt-0 relative
     opacity-0 translate-x-6
     transition-all duration-700 ease-out
     motion-reduce:opacity-100 motion-reduce:translate-y-0
@@ -127,8 +128,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
     src={image}
     alt={alt}
     loading="lazy"
-    class="w-full rounded-3xl object-cover
-           md:absolute md:-inset-y-10 md:right-0 md:w-auto md:h-[calc(100%+5rem)] md:object-contain
+    class="w-full aspect-[4/3] rounded-3xl object-cover
            transition-transform duration-200 ease-out
            will-change-transform"
   />

@@ -38,8 +38,8 @@ function visitMeta(item: WorkItem) {
 }
 ---
 
-<section id="work" class="w-full py-6 overflow-x-clip">
-  <div class="mx-auto w-full max-w-screen-2xl px-6">
+<section id="work" class="w-full py-6">
+  <div class="mx-auto w-full max-w-screen-2xl px-6 md:px-8 xl:px-12 2xl:px-16">
     <h2
       class="
         text-4xl font-semibold mb-6
@@ -54,7 +54,7 @@ function visitMeta(item: WorkItem) {
 
     <div
       class="
-        work-carousel-wrap relative py-4
+        work-carousel-wrap relative py-4 overflow-x-clip
         opacity-0 translate-x-6
         transition-all duration-700 ease-out delay-100
         motion-reduce:opacity-100 motion-reduce:translate-x-0
@@ -95,7 +95,7 @@ function visitMeta(item: WorkItem) {
                     )}
 
                     <div class="image-panel flex-shrink-0 p-3">
-                      <div class="w-full aspect-[32/13] overflow-hidden rounded-lg border-b-2 border-accent/40">
+                      <div class="w-full aspect-[32/10.1] overflow-hidden rounded-lg border-b-2 border-accent/40">
                         <img
                           src={imageSrc}
                           alt={altText}
@@ -232,7 +232,7 @@ function visitMeta(item: WorkItem) {
 
   .work-swiper {
     width: 100%;
-    max-width: 368px;
+    max-width: 330px;
     aspect-ratio: 5 / 8.2;
   }
   @media (min-width: 1024px) {
@@ -246,7 +246,7 @@ function visitMeta(item: WorkItem) {
       overflow: visible !important;
     }
     .work-swiper .swiper-slide {
-      width: 334px;
+      width: 298px;
       height: auto;
       flex-shrink: 0;
     }
@@ -257,41 +257,23 @@ function visitMeta(item: WorkItem) {
     .work-swiper .swiper-wrapper {
       align-items: stretch;
     }
-    /* Scale card typography/padding ≈1.15× to match the bumped card size */
-    .work-swiper .swiper-slide .card-frame .title-row {
-      padding-left: 1.15rem;
-      padding-right: 1.15rem;
-      padding-top: 1.15rem;
-    }
+    /* Tone down text + icons in the smaller cards so nothing feels cramped. */
     .work-swiper .swiper-slide .card-frame .title-row p {
-      font-size: 1.15rem;
+      font-size: 0.9rem;
     }
-    .work-swiper .swiper-slide .card-frame .title-row [data-astro-cid] ,
     .work-swiper .swiper-slide .card-frame .title-row svg {
-      width: 21px !important;
-      height: 21px !important;
-    }
-    .work-swiper .swiper-slide .card-frame .image-panel {
-      padding: 0.875rem;
+      width: 16px !important;
+      height: 16px !important;
     }
     .work-swiper .swiper-slide .card-frame .summary {
-      padding-left: 1.15rem;
-      padding-right: 1.15rem;
-      padding-bottom: 0.875rem;
-      font-size: 1rem;
-    }
-    .work-swiper .swiper-slide .card-frame .visit-wrap {
-      padding-left: 0.875rem;
-      padding-right: 0.875rem;
-      padding-bottom: 0.875rem;
+      font-size: 0.8125rem;
     }
     .work-swiper .swiper-slide .card-frame .visit-wrap a {
-      padding: 0.6rem 0.875rem;
-      font-size: 1rem;
+      font-size: 0.8125rem;
     }
     .work-swiper .swiper-slide .card-frame .visit-wrap a svg {
-      width: 23px;
-      height: 23px;
+      width: 18px;
+      height: 18px;
     }
   }
 
@@ -341,7 +323,10 @@ function visitMeta(item: WorkItem) {
         scale(var(--scale, 1));
       transform-origin: var(--rot-origin, center center);
       transform-style: preserve-3d;
-      transition: transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      /* No transform transition: Swiper already interpolates translate each
+         frame and our `setTranslate` hook updates the CSS vars in lockstep,
+         so an extra CSS transition just adds lag that causes the card to
+         briefly clip at the wrap edge when catching up mid-animation. */
       will-change: transform;
       height: 100%;
       backface-visibility: hidden;
@@ -719,7 +704,10 @@ function visitMeta(item: WorkItem) {
           : 1;
       }
       const fullyBound = Math.max(0, perView - 1);
-      const fadeLength = 1.25;
+      // Short fade length so the 3D tuck reads dramatically even when a slide
+      // is only slightly past the fully-visible band (which is common with
+      // narrower cards where more slides fit on screen at once).
+      const fadeLength = 0.55;
 
       this.slides.forEach((slide) => {
         const P = slide.progress;
