@@ -1,6 +1,285 @@
 ---
-import MySwiper from '../components/MySwiper.jsx';
+const photos = [
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/01/20250301202330-2d6bec2d-la.jpg', alt: 'Photograph 1' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/29/20250329031845-add54cca-la.jpg', alt: 'Photograph 2' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/02/19/20250219181031-65d3f3e1-la.jpg', alt: 'Photograph 3' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/02/18/20250218213833-079c74d3-la.jpg', alt: 'Photograph 4' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/11/20250611191605-5bc508af-xl.jpg', alt: 'Photograph 5' },
+  { src: 'https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/27/20250627033333-24c50efd-xl.jpg', alt: 'Photograph 6' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627034917-c78eec00-xl.jpg', alt: 'Photograph 7' },
+  { src: 'https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/27/20250627035358-4d8c66cc-xl.jpg', alt: 'Photograph 8' },
+];
 ---
-<div class="max-w-6xl mx-auto px-4">
-<MySwiper client:load />
-</div>
+
+<section class="gallery-wrap mx-auto w-full max-w-7xl px-6 py-6 overflow-x-clip">
+  <div class="gallery-stage relative">
+    <div class="gallery-main swiper">
+      <div class="swiper-wrapper">
+        {photos.map((p) => (
+          <div class="swiper-slide">
+            <figure class="gallery-figure">
+              <img src={p.src} alt={p.alt} loading="lazy" decoding="async" />
+            </figure>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button type="button" class="gallery-nav gallery-prev" aria-label="Previous photo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="gallery-nav gallery-next" aria-label="Next photo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <div class="gallery-counter" aria-hidden="true">
+      <span class="gallery-counter-current">1</span>
+      <span class="gallery-counter-sep">/</span>
+      <span class="gallery-counter-total">{photos.length}</span>
+    </div>
+  </div>
+
+  <div class="gallery-thumbs swiper" aria-label="Photo thumbnails">
+    <div class="swiper-wrapper">
+      {photos.map((p) => (
+        <div class="swiper-slide">
+          <button type="button" class="gallery-thumb" aria-label={`Go to ${p.alt}`}>
+            <img src={p.src} alt="" loading="lazy" decoding="async" />
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-wrap {
+    --gallery-radius: var(--radius-2xl);
+  }
+
+  .gallery-stage {
+    position: relative;
+  }
+
+  .gallery-main {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    max-height: 72vh;
+    border-radius: var(--gallery-radius);
+    overflow: visible;
+  }
+
+  .gallery-main .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 260ms ease-out, transform 260ms ease-out;
+  }
+  .gallery-main .swiper-slide:not(.swiper-slide-active) {
+    opacity: 0.35;
+  }
+
+  .gallery-figure {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: var(--gallery-radius);
+    overflow: hidden;
+    background: var(--card-bg);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 30px 60px -24px rgba(0, 0, 0, 0.55);
+  }
+
+  .gallery-figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--card-bg) 85%, transparent);
+    color: var(--text);
+    border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: transform 180ms ease-out, background 180ms ease-out, border-color 180ms ease-out;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .gallery-nav:hover {
+    background: color-mix(in srgb, var(--color-accent) 20%, var(--card-bg));
+    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    transform: translateY(-50%) scale(1.06);
+  }
+  .gallery-nav:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .gallery-prev { left: 12px; }
+  .gallery-next { right: 12px; }
+
+  @media (min-width: 1024px) {
+    .gallery-prev { left: -20px; }
+    .gallery-next { right: -20px; }
+    .gallery-nav {
+      width: 52px;
+      height: 52px;
+    }
+  }
+
+  .gallery-counter {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 5;
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, black 55%, transparent);
+    color: #fff;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    pointer-events: none;
+  }
+  .gallery-counter-sep {
+    opacity: 0.5;
+  }
+
+  .gallery-thumbs {
+    margin-top: 16px;
+    width: 100%;
+  }
+  .gallery-thumbs .swiper-wrapper {
+    align-items: stretch;
+  }
+  .gallery-thumbs .swiper-slide {
+    width: 88px;
+    height: 60px;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 640px) {
+    .gallery-thumbs .swiper-slide {
+      width: 104px;
+      height: 70px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .gallery-thumbs .swiper-slide {
+      width: 128px;
+      height: 84px;
+    }
+    .gallery-thumbs {
+      margin-top: 24px;
+    }
+  }
+
+  .gallery-thumb {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.55;
+    transform: translateY(0);
+    transition:
+      opacity 220ms ease-out,
+      border-color 220ms ease-out,
+      transform 220ms ease-out;
+  }
+  .gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .gallery-thumb:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+  .gallery-thumb:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .swiper-slide-thumb-active .gallery-thumb {
+    opacity: 1;
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--color-accent) 60%, transparent);
+  }
+
+  @media (max-width: 639px) {
+    .gallery-main {
+      aspect-ratio: 4 / 5;
+      max-height: 75vh;
+    }
+  }
+</style>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation, Thumbs, Keyboard, A11y } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/thumbs';
+
+  const mainEl = document.querySelector('.gallery-main');
+  const thumbsEl = document.querySelector('.gallery-thumbs');
+  if (mainEl && thumbsEl) {
+    const thumbs = new Swiper(thumbsEl, {
+      modules: [Thumbs, A11y],
+      spaceBetween: 8,
+      slidesPerView: 'auto',
+      watchSlidesProgress: true,
+      freeMode: true,
+      centerInsufficientSlides: true,
+    });
+
+    const main = new Swiper(mainEl, {
+      modules: [Navigation, Thumbs, Keyboard, A11y],
+      spaceBetween: 16,
+      slidesPerView: 1,
+      centeredSlides: true,
+      speed: 420,
+      keyboard: { enabled: true, onlyInViewport: true },
+      grabCursor: true,
+      navigation: {
+        prevEl: '.gallery-prev',
+        nextEl: '.gallery-next',
+      },
+      thumbs: { swiper: thumbs },
+      breakpoints: {
+        640: { slidesPerView: 1.15, spaceBetween: 20 },
+        1024: { slidesPerView: 1.25, spaceBetween: 28 },
+      },
+    });
+
+    const current = document.querySelector('.gallery-counter-current');
+    if (current) {
+      main.on('slideChange', () => {
+        current.textContent = String(main.realIndex + 1);
+      });
+    }
+  }
+</script>

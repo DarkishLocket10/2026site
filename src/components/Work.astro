@@ -60,7 +60,7 @@ function visitMeta(item: WorkItem) {
     "
     data-fade
   >
-    <div class="work-swiper swiper mx-auto" style="max-width: 320px; aspect-ratio: 5 / 8.2;">
+    <div class="work-swiper swiper mx-auto">
       <div class="swiper-wrapper">
         {items.map((item) => {
           const { imageSrc, link, altText, label, summary = [], icons = [] } = item;
@@ -195,9 +195,7 @@ function visitMeta(item: WorkItem) {
   .card-frame {
     --glow-x: 0;
     --glow-y: 0;
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 8%, transparent) 0%, transparent 40%),
-      var(--modal-surface, #ffffff);
+    background: var(--card-bg);
     transition: transform 200ms ease-out, box-shadow 150ms ease-out;
   }
   .swiper-slide-active .work-card:hover .card-frame,
@@ -223,6 +221,23 @@ function visitMeta(item: WorkItem) {
     background: var(--color-accent);
   }
 
+  .work-swiper {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 5 / 8.2;
+  }
+  @media (min-width: 1024px) {
+    .work-swiper {
+      max-width: 1200px;
+      aspect-ratio: auto;
+      height: 580px;
+    }
+    .work-swiper .swiper-slide {
+      width: 340px;
+      height: 100%;
+    }
+  }
+
   .work-carousel-wrap .swiper-slide .card-frame {
     transition: filter 180ms ease-out, box-shadow 180ms ease-out, transform 200ms ease-out;
   }
@@ -237,6 +252,15 @@ function visitMeta(item: WorkItem) {
   }
   .work-carousel-wrap .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next) .card-frame {
     filter: brightness(0.65) saturate(0.8);
+  }
+
+  @media (min-width: 1024px) {
+    .work-carousel-wrap .swiper-slide:not(.swiper-slide-active) .card-frame {
+      filter: brightness(0.88) saturate(0.92);
+    }
+    .work-carousel-wrap .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next):not(.swiper-slide-prev) .card-frame {
+      filter: brightness(0.72) saturate(0.85);
+    }
   }
 
   .work-carousel-wrap .swiper-slide {
@@ -275,20 +299,12 @@ function visitMeta(item: WorkItem) {
       opacity 240ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .work-modal .modal-card {
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 5%, transparent) 0%, transparent 30%),
-      var(--modal-surface, #ffffff);
+    background: var(--card-bg);
     box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.05) inset,
-      0 0 0 1px color-mix(in srgb, var(--color-accent) 12%, transparent),
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 10%, transparent),
       0 30px 60px -20px rgba(0, 0, 0, 0.5),
-      0 10px 30px -10px color-mix(in srgb, var(--color-accent) 25%, transparent);
-  }
-  :root {
-    --modal-surface: #ffffff;
-  }
-  :root.dark {
-    --modal-surface: #171717;
+      0 10px 30px -10px color-mix(in srgb, var(--color-accent) 20%, transparent);
   }
   .work-modal[data-open="true"] .work-modal-content {
     transform: scale(1);
@@ -457,20 +473,17 @@ function visitMeta(item: WorkItem) {
 
 <script>
   import Swiper from 'swiper';
-  import { EffectCards, Navigation, Pagination, Keyboard, A11y } from 'swiper/modules';
+  import { EffectCards, EffectCoverflow, Navigation, Pagination, Keyboard, A11y } from 'swiper/modules';
   import 'swiper/css';
   import 'swiper/css/effect-cards';
+  import 'swiper/css/effect-coverflow';
 
   const el = document.querySelector('.work-swiper');
   if (el) {
-    new Swiper(el, {
-      modules: [EffectCards, Navigation, Pagination, Keyboard, A11y],
-      effect: 'cards',
-      cardsEffect: {
-        perSlideRotate: 4,
-        perSlideOffset: 14,
-        slideShadows: true,
-      },
+    const mq = window.matchMedia('(min-width: 1024px)');
+
+    const baseConfig = {
+      modules: [EffectCards, EffectCoverflow, Navigation, Pagination, Keyboard, A11y],
       grabCursor: true,
       loop: false,
       keyboard: { enabled: true },
@@ -478,16 +491,53 @@ function visitMeta(item: WorkItem) {
       touchAngle: 30,
       touchStartPreventDefault: false,
       preventInteractionOnTransition: true,
-      navigation: {
-        prevEl: '.work-nav-prev',
-        nextEl: '.work-nav-next',
-      },
+      navigation: { prevEl: '.work-nav-prev', nextEl: '.work-nav-next' },
       pagination: {
         el: '.work-pagination',
         clickable: true,
         bulletClass: 'swiper-pagination-bullet',
         bulletActiveClass: 'swiper-pagination-bullet-active',
       },
-    });
+    };
+
+    const mobileConfig = {
+      ...baseConfig,
+      effect: 'cards',
+      cardsEffect: {
+        perSlideRotate: 4,
+        perSlideOffset: 14,
+        slideShadows: true,
+      },
+    };
+
+    const desktopConfig = {
+      ...baseConfig,
+      effect: 'coverflow',
+      slidesPerView: 'auto',
+      centeredSlides: true,
+      spaceBetween: 48,
+      coverflowEffect: {
+        rotate: 24,
+        stretch: 40,
+        depth: 260,
+        modifier: 1,
+        scale: 0.9,
+        slideShadows: false,
+      },
+    };
+
+    let instance = null;
+    let currentDesktop = null;
+
+    const init = () => {
+      const isDesktop = mq.matches;
+      if (instance && currentDesktop === isDesktop) return;
+      if (instance) instance.destroy(true, true);
+      instance = new Swiper(el, isDesktop ? desktopConfig : mobileConfig);
+      currentDesktop = isDesktop;
+    };
+
+    init();
+    mq.addEventListener('change', init);
   }
 </script>
