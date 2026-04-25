@@ -134,25 +134,27 @@ const { title, subtitle, description, image, alt } = Astro.props;
   />
 
   <script is:inline>
-    const fig   = /** @type {HTMLElement} */ (document.currentScript.parentElement);
-    const img   = fig.querySelector('#parallax-img');
-    const range = 12;                  // max degrees of tilt
+    (function () {
+      const fig   = /** @type {HTMLElement} */ (document.currentScript.parentElement);
+      const img   = fig.querySelector('#parallax-img');
+      const range = 12;                  // max degrees of tilt
 
-    function handleMove(e) {
-      const rect = fig.getBoundingClientRect();
-      const x    = e.clientX - rect.left - rect.width  / 2; // center origin
-      const y    = e.clientY - rect.top  - rect.height / 2;
-      const rx   = (-y / (rect.height / 1.25)) * range;        // invert for natural tilt
-      const ry   = ( x / (rect.width  / 1.25)) * range;
-      img.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(1.05)`;
-    }
+      function handleMove(e) {
+        const rect = fig.getBoundingClientRect();
+        const x    = e.clientX - rect.left - rect.width  / 2; // center origin
+        const y    = e.clientY - rect.top  - rect.height / 2;
+        const rx   = (-y / (rect.height / 1.25)) * range;        // invert for natural tilt
+        const ry   = ( x / (rect.width  / 1.25)) * range;
+        img.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(1.05)`;
+      }
 
-    function reset() {
-      img.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
-    }
+      function reset() {
+        img.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+      }
 
-    fig.addEventListener('mousemove', handleMove);
-    fig.addEventListener('mouseleave', reset);
+      fig.addEventListener('mousemove', handleMove);
+      fig.addEventListener('mouseleave', reset);
+    })();
   </script>
 </figure>
 </section>

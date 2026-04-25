@@ -1150,30 +1150,72 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
       return 235;
     }
 
-    // Render-order permutation: interleave portraits (ratio < 1) and
-    // landscapes (ratio >= 1) so that no two portraits sit next to each
-    // other when possible. Greedy alternating: prefer switching category
-    // from the last placement; when forced to repeat, pick from the larger
-    // remaining stack.
+    // ── Stratified Mosaic ordering ─────────────────────────────────────
+    // The contiguous-partition DP below is provably optimal for row-width
+    // balance GIVEN a fixed input order. So all the "puzzle piece" quality
+    // — orientation balance per row, varied widths, no walls of identical
+    // tiles — has to be encoded in the order itself.
+    //
+    // The earlier two-bucket alternating scheme failed because once one
+    // bucket exhausted, the rest of the order was a homogeneous tail —
+    // and that tail fell entirely inside the last row, giving us a wall
+    // of landscapes there.
+    //
+    // The fix is a Bresenham-equidistributed schedule over five aspect
+    // buckets (tall / portrait / square / landscape / wide). At each
+    // output slot we pick the bucket whose cumulative target most exceeds
+    // its placed count. Discrepancy theorem: any contiguous window of
+    // length W contains floor(C_b·W/n) or ceil(C_b·W/n) items of bucket b
+    // — never more. So the DP partition gets each bucket distributed to
+    // ±1 across rows, which is the information-theoretic minimum.
+    function bucketOf(r) {
+      if (r < 0.7)   return 0;          // tall
+      if (r < 0.95)  return 1;          // portrait
+      if (r <= 1.05) return 2;          // square
+      if (r <= 1.5)  return 3;          // landscape
+      return 4;                          // wide
+    }
+    const NUM_BUCKETS = 5;
+
     function computeOrder() {
       const n = tiles.length;
-      const portraits  = [];
-      const landscapes = [];
-      for (let i = 0; i < n; i++) {
-        (ratios[i] < 1 ? portraits : landscapes).push(i);
+      if (n === 0) return [];
+
+      // Group indices by bucket, then weave each bucket's items in
+      // [min, max, 2nd-min, 2nd-max, …] order so consecutive same-bucket
+      // emissions differ in width — within-bucket variation amplifies the
+      // visual rhythm even before cross-bucket interleaving.
+      const buckets = Array.from({ length: NUM_BUCKETS }, () => []);
+      for (let i = 0; i < n; i++) buckets[bucketOf(ratios[i])].push(i);
+      for (let b = 0; b < NUM_BUCKETS; b++) {
+        const sorted = buckets[b].slice().sort((a, c) => ratios[a] - ratios[c]);
+        const woven  = [];
+        for (let lo = 0, hi = sorted.length - 1; lo <= hi; ) {
+          woven.push(sorted[lo++]);
+          if (lo <= hi) woven.push(sorted[hi--]);
+        }
+        buckets[b] = woven;
       }
-      const order = [];
-      let last = null;     // 'P' | 'L' | null
-      let pi = 0, li = 0;
-      while (pi < portraits.length || li < landscapes.length) {
-        const pLeft = portraits.length  - pi;
-        const lLeft = landscapes.length - li;
-        let pickPortrait;
-        if      (last === 'L' && pLeft > 0) pickPortrait = true;
-        else if (last === 'P' && lLeft > 0) pickPortrait = false;
-        else                                pickPortrait = pLeft > lLeft;
-        if (pickPortrait) { order.push(portraits[pi++]);  last = 'P'; }
-        else              { order.push(landscapes[li++]); last = 'L'; }
+
+      // Bresenham-style scheduling. At each output slot p, pick the
+      // bucket b with the largest deficit = (p+1)·count_b/n − placed_b.
+      // Equivalent to "round-robin proportional to bucket size, with
+      // accumulated error that always sums to zero" — guarantees the
+      // ±1 discrepancy bound.
+      const counts = buckets.map((b) => b.length);
+      const placed = new Array(NUM_BUCKETS).fill(0);
+      const order  = [];
+      for (let p = 0; p < n; p++) {
+        let bestB = -1, bestDef = -Infinity;
+        for (let b = 0; b < NUM_BUCKETS; b++) {
+          if (placed[b] >= counts[b]) continue;
+          const def = (p + 1) * counts[b] / n - placed[b];
+          // Strict > with tiny epsilon: ties go to the lower-index bucket,
+          // which is deterministic across re-layouts (the DP is order-
+          // sensitive, so determinism keeps row contents stable on resize).
+          if (def > bestDef + 1e-9) { bestDef = def; bestB = b; }
+        }
+        order.push(buckets[bestB][placed[bestB]++]);
       }
       return order;
     }
@@ -1236,25 +1278,53 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
       return rows;
     }
 
-    // Safety net: if the partition happened to place two portraits adjacent
-    // inside a row (can happen when one row has many portraits), swap one
-    // with the nearest landscape in the same row.
+    // Per-row rhythm 2-opt. The Bresenham order already gives each row a
+    // balanced bucket mix; this pass minimises adjacent-same-bucket pairs
+    // within the row, which is the visible "puzzle" rhythm. Cost is the
+    // count of adjacent same-bucket pairs (zero is the floor when the row
+    // has at least two distinct buckets and no bucket dominates by >½).
+    //
+    // Greedy hill-climb: scan adjacent same-bucket pairs left-to-right;
+    // for each, find the closest swap partner (any tile of a different
+    // bucket whose move would not create a new same-bucket adjacency at
+    // its destination) and swap. Repeat until a full pass makes no swaps.
+    // Converges in O(rowSize²) steps in practice.
     function repairRow(row) {
-      for (let i = 1; i < row.length; i++) {
-        if (ratios[row[i]] < 1 && ratios[row[i - 1]] < 1) {
-          // Look for a landscape to swap with, trying nearest positions first.
+      const bk = (idx) => bucketOf(ratios[idx]);
+      const sameAt = (i) => i > 0 && i < row.length && bk(row[i]) === bk(row[i - 1]);
+      // True iff inserting a tile of bucket `b` at position p would not
+      // produce same-bucket neighbours on either side (treating the
+      // displaced tile at p as removed).
+      const fitsAt = (b, p) => {
+        const left  = p > 0              ? bk(row[p - 1]) : -1;
+        const right = p < row.length - 1 ? bk(row[p + 1]) : -1;
+        return left !== b && right !== b;
+      };
+      let changed = true;
+      let guard = row.length * row.length; // hard ceiling to avoid pathological loops
+      while (changed && guard-- > 0) {
+        changed = false;
+        for (let i = 1; i < row.length; i++) {
+          if (!sameAt(i)) continue;
+          const targetBucket = bk(row[i]);
+          // Search outward from i for a swap partner whose bucket differs
+          // from targetBucket AND who would slot cleanly into position i,
+          // AND whose departure doesn't create a new collision at j.
+          let bestJ = -1, bestDist = Infinity;
           for (let d = 1; d < row.length; d++) {
-            const a = i + d, b = i - d - 1;
-            if (a < row.length && ratios[row[a]] >= 1 &&
-                (a === 0 || ratios[row[a - 1]] < 1) &&
-                (a === row.length - 1 || ratios[row[a + 1]] < 1 || a + 1 !== i)) {
-              [row[i], row[a]] = [row[a], row[i]];
-              break;
+            for (const j of [i + d, i - d]) {
+              if (j < 0 || j >= row.length || j === i) continue;
+              const jb = bk(row[j]);
+              if (jb === targetBucket) continue;
+              if (!fitsAt(jb, i)) continue;          // jb at i must not collide
+              if (!fitsAt(targetBucket, j)) continue; // moved tile must fit at j
+              if (d < bestDist) { bestDist = d; bestJ = j; }
             }
-            if (b >= 0 && ratios[row[b]] >= 1) {
-              [row[i], row[b]] = [row[b], row[i]];
-              break;
-            }
+            if (bestJ !== -1) break;
+          }
+          if (bestJ !== -1) {
+            const tmp = row[i]; row[i] = row[bestJ]; row[bestJ] = tmp;
+            changed = true;
           }
         }
       }

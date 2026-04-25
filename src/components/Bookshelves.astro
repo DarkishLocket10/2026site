@@ -1349,6 +1349,11 @@ const shelves: Shelf[] = [
       // the curated accent hex baked into the spine's data-attribute
       // when CORS blocks pixel reads (Last.fm CDN serves with proper
       // CORS headers, but a custom-hosted cover URL may not).
+      // Hosts known to omit Access-Control-Allow-Origin: setting
+      // crossOrigin='anonymous' on those triggers a noisy CORS error in
+      // the console even though we already handle the SecurityError
+      // silently. Short-circuit them to the curated accent fallback.
+      const NO_CORS_HOSTS = new Set(['a.ltrbxd.com']);
       const coverCase = panel && panel.querySelector('.cover-case');
       const colorCache = new Map();
       function setSpineColor(color) {
@@ -1358,6 +1363,13 @@ const shelves: Shelf[] = [
       function sampleAverageColor(src) {
         if (!src) return Promise.resolve(null);
         if (colorCache.has(src)) return Promise.resolve(colorCache.get(src));
+        try {
+          const host = new URL(src, location.href).host;
+          if (NO_CORS_HOSTS.has(host)) {
+            colorCache.set(src, null);
+            return Promise.resolve(null);
+          }
+        } catch (_) { /* malformed URL — fall through to probe */ }
         return new Promise((resolve) => {
           const probe = new Image();
           probe.crossOrigin = 'anonymous';
