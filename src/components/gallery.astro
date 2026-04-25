@@ -746,12 +746,19 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
        – reduced-motion users (accessibility + no shimmer)
        – narrow viewports (small tiles, warble barely readable, weaker GPUs)
      The gradient stack still renders — the warble is the only thing that
-     goes away. */
+     goes away.
+     Also drop the `will-change: filter` + translateZ promotion on these
+     tiers: with no filter to rasterise, the per-tile compositor layer is
+     pure VRAM cost (216 tiles × promoted ::before = 200+ layers on phones,
+     which is what makes the page feel hitchy long before any frame work
+     starts). */
   @media (max-width: 520px) {
-    .gallery-tile::before { filter: none; }
+    .gallery-tile::before { filter: none; will-change: auto; transform: none; }
+    .gallery-tile         { will-change: auto; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .gallery-tile::before { filter: none; }
+    .gallery-tile::before { filter: none; will-change: auto; transform: none; }
+    .gallery-tile         { will-change: auto; }
   }
 
   /* ── Grain pass: photo-area only, deliberately unfiltered. ────────────
@@ -1437,6 +1444,55 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
     const SHINE_A_MIN      = 0.22;                 // darkest a tile ever dims to
     const SHINE_A_SPAN     = 1 - SHINE_A_MIN;       // precomputed range
 
+    // ── Device perf tier ─────────────────────────────────────────────────
+    // The shimmer band is a six-layer gradient stack on every tile, driven
+    // by per-frame CSS-prop updates. On desktop GPUs that's free; on a phone
+    // it's the dominant cost in the frame and the irregular cadence is what
+    // reads as "shimmer jumping and lagging".
+    //
+    // Three tiers:
+    //   skipShine — phones and reduced-motion users. The CSS already drops
+    //               the SVG filter at <520px and for reduced-motion, so the
+    //               props were repainting nearly-identical pixels every
+    //               frame. Static is the right answer.
+    //   halfRate  — coarse-pointer wider screens (tablets). Run shine at
+    //               30 fps target so the per-frame budget halves.
+    //   full      — desktop / fine pointer. Original behaviour.
+    const mqReduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const mqCoarse = matchMedia('(hover: none)');
+    const mqNarrow = matchMedia('(max-width: 520px)');
+    let skipShine   = mqReduce.matches || mqNarrow.matches;
+    let shineEveryN = (!skipShine && mqCoarse.matches) ? 2 : 1;
+    function refreshTier() {
+      skipShine   = mqReduce.matches || mqNarrow.matches;
+      shineEveryN = (!skipShine && mqCoarse.matches) ? 2 : 1;
+    }
+    [mqReduce, mqCoarse, mqNarrow].forEach((mq) => {
+      // addEventListener is the modern API; older Safari only had addListener.
+      // Both produce the same callback signature for our purposes.
+      if (mq.addEventListener) mq.addEventListener('change', refreshTier);
+      else if (mq.addListener) mq.addListener(refreshTier);
+    });
+
+    // Pause the RAF when the carousel scrolls offscreen. Saves all per-frame
+    // work (autoscroll write, layout-forcing reads, shine prop writes) when
+    // the user is anywhere else on the page. Combined with the browser's
+    // native rAF-suspension on hidden tabs, the loop only spins while the
+    // carousel is actually visible.
+    let inView = true;
+    if (typeof IntersectionObserver !== 'undefined') {
+      const visIO = new IntersectionObserver((entries) => {
+        inView = entries[0].isIntersecting;
+      }, { threshold: 0, rootMargin: '200px' });
+      visIO.observe(viewport);
+    }
+
+    // scrollWidth changes only when layout reshuffles tiles. Reading it every
+    // frame inside wrapScroll() forces a synchronous layout flush; cached
+    // value avoids that cost. recomputeShineCache (which runs at the end of
+    // every layout()) updates it.
+    let cachedHalfScrollW = 0;
+
     let tileCenters = [];                // [{ el, centerInTrack }]
     // Per-element last written state — WeakMap so clones GC'd on re-layout.
     const lastShine = new WeakMap();
@@ -1452,6 +1508,9 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
         const phase = parseFloat(el.style.getPropertyValue('--shimmer-phase') || '0');
         return { el, centerInTrack: r.left + r.width / 2 - trackRect.left, phase };
       });
+      // Refresh cached half-width here — layout() is the only thing that can
+      // change scrollWidth, and it always finishes by calling this function.
+      cachedHalfScrollW = viewport.scrollWidth / 2;
     }
 
     // ── Smart preloader for off-screen tiles ──
@@ -1591,26 +1650,38 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
     // Seamless wrap: with clones appended, scrollWidth == 2 * original track width.
     // When we pass the half-way mark, jump back by that amount — the content
     // at the new position is identical to the old, so the viewer sees no seam.
+    // Reads cachedHalfScrollW (refreshed by recomputeShineCache on each
+    // layout) instead of querying scrollWidth per frame, which would force a
+    // synchronous layout flush.
     function wrapScroll() {
-      const halfW = viewport.scrollWidth / 2;
-      if (!halfW) return;
-      if (viewport.scrollLeft >= halfW) viewport.scrollLeft -= halfW;
-      else if (viewport.scrollLeft < 0)  viewport.scrollLeft += halfW;
+      if (!cachedHalfScrollW) return;
+      if (viewport.scrollLeft >= cachedHalfScrollW) viewport.scrollLeft -= cachedHalfScrollW;
+      else if (viewport.scrollLeft < 0)             viewport.scrollLeft += cachedHalfScrollW;
     }
 
     let rafId = null;
+    let frameCount = 0;
     function tick() {
-      if (viewport.dataset.state === 'ready') {
-        const v = computeVel();
-        if (v !== 0) {
-          viewport.scrollLeft += v;
-          wrapScroll();                  // only wrap while we're actively drifting —
+      rafId = requestAnimationFrame(tick);
+      // Cheap exits before any layout-touching work. inView is updated by an
+      // IntersectionObserver, so it costs nothing here; viewport.dataset is a
+      // string read with no layout impact.
+      if (!inView) return;
+      if (viewport.dataset.state !== 'ready') return;
+
+      const v = computeVel();
+      if (v !== 0) {
+        viewport.scrollLeft += v;
+        wrapScroll();                    // only wrap while we're actively drifting —
                                          // writing scrollLeft during native momentum
                                          // scroll breaks it on iOS
-        }
-        updateShine();                   // keep shine aligned with the fixed light
       }
-      rafId = requestAnimationFrame(tick);
+      // Tier-based throttling. Phones / reduced-motion: skipShine = true and
+      // the loop becomes pure autoscroll, no per-tile work. Tablets: every
+      // other frame. Desktop: every frame.
+      if (!skipShine && (++frameCount % shineEveryN === 0)) {
+        updateShine();
+      }
     }
     tick();
 
