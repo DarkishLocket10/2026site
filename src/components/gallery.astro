@@ -1,6 +1,10 @@
 ---
-// Hand-picked fallback set — renders even if the Piwigo build-time fetch fails
-// (e.g. the build server can't reach Piwigo, the API is disabled, etc.).
+// Hand-picked fallback set — kept in the codebase as a safety net for code
+// archaeology / quick toggle, but NOT currently rendered. The carousel now
+// pulls everything live from Piwigo (build-time random batch + runtime
+// random batch), so visitors see a fresh selection each visit instead of
+// the same eight hand-picks. To restore them, append `...hardcodedPhotos`
+// back into the `photos` array below — the URL shapes are still valid.
 const hardcodedPhotos = [
   { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/01/20250301202330-2d6bec2d-la.jpg', alt: 'Photograph 1' },
   { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/29/20250329031845-add54cca-la.jpg', alt: 'Photograph 2' },
@@ -20,6 +24,43 @@ const PIWIGO_BUILD_API =
   + '?format=json&method=pwg.categories.getImages'
   + '&recursive=true&per_page=100&order=random';
 
+// Two-tier derivative selection.
+//
+//   tileSrc — what the collage tile loads. Tile renders at 130–235 px tall
+//             (× ratio for width), which is 130–700 CSS px wide. At
+//             retina DPR 2–3 the actual pixel demand is ~260–2100. The
+//             `medium` derivative (~792 px wide) is the sweet spot:
+//             crisp at every carousel size, ~30 % less data than `large`.
+//             Falls back through the size ladder if `medium` is absent.
+//
+//   fullSrc — what the lightbox loads when a tile is clicked. The lightbox
+//             fills the viewport, so we want at least 1200–1920 px wide.
+//             `xlarge` (~1224 px) is preferred; `xxlarge` (~1656 px) wins
+//             if available; original (`element_url`) is the last resort
+//             since it's typically 4–8 MB and overkill for an in-browser
+//             viewer.
+function pickPiwigoSources(raw) {
+  const d = raw.derivatives || {};
+  const tilePick = d.medium || d.large || d.xlarge || d.small || d.xxlarge;
+  const fullPick = d.xlarge || d.xxlarge || d.large  || d.medium;
+  const tileSrc  = (tilePick && tilePick.url) || raw.element_url;
+  const fullSrc  = (fullPick && fullPick.url) || raw.element_url || tileSrc;
+  if (!tileSrc) return null;
+  // Dimensions come from the tile derivative — that's what reserves the
+  // layout and seeds the row-packing DP. The full derivative shares the
+  // aspect ratio (Piwigo derivatives are uniform crops), so the lightbox
+  // doesn't need its own width/height.
+  const w = (tilePick && tilePick.width)  || raw.width;
+  const h = (tilePick && tilePick.height) || raw.height;
+  return {
+    src: tileSrc,
+    fullSrc,
+    alt: raw.name || raw.file || 'Photograph',
+    width:  w || null,
+    height: h || null,
+  };
+}
+
 async function fetchPiwigoAtBuild() {
   try {
     const res = await fetch(PIWIGO_BUILD_API, { signal: AbortSignal.timeout(8000) });
@@ -27,22 +68,7 @@ async function fetchPiwigoAtBuild() {
     const data = await res.json();
     if (!data || data.stat !== 'ok') return [];
     const apiImages = (data.result && data.result.images) || [];
-    return apiImages
-      .map((raw) => {
-        const d = raw.derivatives || {};
-        const pick = d.large || d.medium || d.xlarge || d.small || d.xxlarge;
-        const src = (pick && pick.url) || raw.element_url;
-        if (!src) return null;
-        const w = (pick && pick.width)  || raw.width;
-        const h = (pick && pick.height) || raw.height;
-        return {
-          src,
-          alt: raw.name || raw.file || 'Photograph',
-          width:  w || null,
-          height: h || null,
-        };
-      })
-      .filter(Boolean);
+    return apiImages.map(pickPiwigoSources).filter(Boolean);
   } catch (err) {
     console.warn('[gallery] Piwigo build-time fetch failed:', err?.message || err);
     return [];
@@ -50,7 +76,9 @@ async function fetchPiwigoAtBuild() {
 }
 
 const piwigoPhotos = await fetchPiwigoAtBuild();
-const photos = [...hardcodedPhotos, ...piwigoPhotos];
+// Carousel content is now 100 % live-from-Piwigo. The hardcoded fallback
+// stays defined above for emergency restoration but doesn't render here.
+const photos = piwigoPhotos;
 ---
 
 <section class="gallery-wrap w-full py-6 overflow-x-clip">
@@ -168,6 +196,7 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
             data-tile
             data-index={i}
             data-ratio={ratio}
+            data-full={p.fullSrc || p.src}
             role="listitem"
             aria-label={`Open ${p.alt}`}
           >
@@ -1176,6 +1205,14 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
     // — never more. So the DP partition gets each bucket distributed to
     // ±1 across rows, which is the information-theoretic minimum.
     function bucketOf(r) {
+      // Defensive: NaN / non-finite / non-positive ratios fall through every
+      // numeric comparison (NaN < anything === false) and end up in bucket 4
+      // (wide), corrupting both the partition AND the per-tile width
+      // calculation downstream (Math.round(NaN * H) = NaN → "NaNpx" inline
+      // style, which the browser treats as "auto" and the tile collapses
+      // to the natural img dimensions). Coerce to 1.0 (square) so a single
+      // bad ratio can never poison the layout.
+      if (!Number.isFinite(r) || r <= 0) return 2;
       if (r < 0.7)   return 0;          // tall
       if (r < 0.95)  return 1;          // portrait
       if (r <= 1.05) return 2;          // square
@@ -1353,9 +1390,24 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
       }
     }
 
+    // Re-entrancy guard. layout() is sync, but it is reachable from many
+    // call sites (initial kick, image-load Promise.all, Piwigo first/second
+    // pass, ResizeObserver, window resize) and a slow ResizeObserver tick
+    // can fire mid-flight if a synchronous DOM write inside layout itself
+    // changes the viewport's box (the cleanup pass that removes clones
+    // briefly shrinks scrollWidth). Without a guard, a re-entrant call
+    // can leave half the tiles unrelocated — exactly the "tiles spread
+    // out with huge gaps and missing polaroid look" pattern.
+    let layoutInProgress = false;
     function layout() {
+      if (layoutInProgress) return;
       const viewportW = viewport.clientWidth;
       if (!viewportW) return;
+      layoutInProgress = true;
+      try { layoutImpl(viewportW); }
+      finally { layoutInProgress = false; }
+    }
+    function layoutImpl(viewportW) {
 
       // Preserve scroll position across re-layouts. Without this, any
       // re-layout (image-load Promise.all, ResizeObserver from scrollbar
@@ -1372,8 +1424,12 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
       const rows = partitionIntoRows(NUM_ROWS, order).map(repairRow);
 
       // Size each tile: width scales by its aspect ratio, height is fixed.
+      // Coerce non-finite / non-positive ratios to 1.0 here too — defence in
+      // depth; bucketOf already handles them, but the inline width has its
+      // own multiplication path and a single NaN poisons the tile.
       tiles.forEach((tile, i) => {
-        tile.style.width  = Math.round(ratios[i] * targetH) + 'px';
+        const r = (Number.isFinite(ratios[i]) && ratios[i] > 0) ? ratios[i] : 1;
+        tile.style.width  = Math.round(r * targetH) + 'px';
         tile.style.height = targetH + 'px';
       });
 
@@ -1474,15 +1530,21 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
       else if (mq.addListener) mq.addListener(refreshTier);
     });
 
-    // Pause the RAF when the carousel scrolls offscreen. Saves all per-frame
-    // work (autoscroll write, layout-forcing reads, shine prop writes) when
-    // the user is anywhere else on the page. Combined with the browser's
-    // native rAF-suspension on hidden tabs, the loop only spins while the
-    // carousel is actually visible.
+    // Pause the EXPENSIVE work (per-tile shine prop writes) when the carousel
+    // is offscreen. Drift itself stays alive — it's a single scrollLeft += v
+    // per frame, costs nothing, and de-coupling means an IO that gets stuck
+    // (iOS Safari coalesces multiple intersection changes into a single
+    // callback, so a stale entries[0] can leave inView wrongly false even
+    // when the element is on screen) can never freeze the carousel.
     let inView = true;
     if (typeof IntersectionObserver !== 'undefined') {
       const visIO = new IntersectionObserver((entries) => {
-        inView = entries[0].isIntersecting;
+        // Use the LAST entry, not entries[0]. iOS Safari sometimes batches
+        // multiple intersection transitions into a single callback; the
+        // first entry is the oldest (often a stale "not intersecting" from
+        // before the element became visible) and only the last reflects
+        // the current state.
+        inView = entries[entries.length - 1].isIntersecting;
       }, { threshold: 0, rootMargin: '200px' });
       visIO.observe(viewport);
     }
@@ -1652,23 +1714,34 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
     // at the new position is identical to the old, so the viewer sees no seam.
     // Reads cachedHalfScrollW (refreshed by recomputeShineCache on each
     // layout) instead of querying scrollWidth per frame, which would force a
-    // synchronous layout flush.
+    // synchronous layout flush. Defensive fallback: if the cache is zero
+    // (e.g. layout has been called but scrollWidth was 0 mid-paint), do a
+    // one-off live read so drift can't run away to infinity. Without this,
+    // a stale cached zero would leave wrapScroll a no-op forever and drift
+    // would silently carry scrollLeft past the duplicated content into
+    // empty overflow — exactly the "carousel stops moving" symptom.
     function wrapScroll() {
-      if (!cachedHalfScrollW) return;
-      if (viewport.scrollLeft >= cachedHalfScrollW) viewport.scrollLeft -= cachedHalfScrollW;
-      else if (viewport.scrollLeft < 0)             viewport.scrollLeft += cachedHalfScrollW;
+      let halfW = cachedHalfScrollW;
+      if (!halfW) {
+        halfW = viewport.scrollWidth / 2;
+        if (!halfW) return;
+        cachedHalfScrollW = halfW;
+      }
+      if (viewport.scrollLeft >= halfW) viewport.scrollLeft -= halfW;
+      else if (viewport.scrollLeft < 0) viewport.scrollLeft += halfW;
     }
 
     let rafId = null;
     let frameCount = 0;
     function tick() {
       rafId = requestAnimationFrame(tick);
-      // Cheap exits before any layout-touching work. inView is updated by an
-      // IntersectionObserver, so it costs nothing here; viewport.dataset is a
-      // string read with no layout impact.
-      if (!inView) return;
       if (viewport.dataset.state !== 'ready') return;
 
+      // Drift is independent of `inView`. It's a single scrollLeft write
+      // per frame — essentially free — and decoupling it from the IO state
+      // means a stuck IO callback (which we have seen on iOS Safari with
+      // batched entries) can't freeze the carousel. The carousel always
+      // moves; only the per-tile shine update is gated by visibility.
       const v = computeVel();
       if (v !== 0) {
         viewport.scrollLeft += v;
@@ -1676,9 +1749,12 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
                                          // writing scrollLeft during native momentum
                                          // scroll breaks it on iOS
       }
-      // Tier-based throttling. Phones / reduced-motion: skipShine = true and
-      // the loop becomes pure autoscroll, no per-tile work. Tablets: every
-      // other frame. Desktop: every frame.
+
+      // Tier-based throttling for the EXPENSIVE update. inView gates this
+      // separately: when offscreen, we skip the per-tile prop writes (the
+      // dominant cost in the frame). Phones / reduced-motion: skipShine
+      // forces the gate closed; tablets: every other frame; desktop: every.
+      if (!inView) return;
       if (!skipShine && (++frameCount % shineEveryN === 0)) {
         updateShine();
       }
@@ -1866,6 +1942,10 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
       btn.className = 'gallery-tile';
       btn.setAttribute('data-tile', '');
       btn.setAttribute('data-index', String(index));
+      // data-full carries the lightbox-resolution URL. The tile's <img>
+      // loads photo.src (medium); openAt reads data-full and only then
+      // pays the bandwidth for the larger version.
+      btn.setAttribute('data-full', photo.fullSrc || photo.src);
       btn.setAttribute('role', 'listitem');
       btn.setAttribute('aria-label', 'Open ' + (photo.alt || 'photo'));
       applyVariants(btn, index);
@@ -1894,17 +1974,24 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
     }
 
     // Piwigo's API returns a `derivatives` map with pre-sized image URLs and
-    // dimensions. Prefer mid-sized derivatives for the collage (faster than
-    // the full file) and fall back through the size ladder.
+    // dimensions. We pick TWO different sizes per photo:
+    //   tileSrc — `medium` (~792 px) for the collage tile. Crisp at every
+    //             carousel size on retina, ~30 % less data than `large`.
+    //   fullSrc — `xlarge` / `xxlarge` for the lightbox. Sharper at fullscreen
+    //             than the previous single-pick that reused the tile URL.
+    // Mirrors the build-time pickPiwigoSources(); kept in sync there.
     function extractPiwigoPhoto(raw) {
       const d = raw.derivatives || {};
-      const pick = d.large || d.medium || d.xlarge || d.small || d.xxlarge;
-      const src = (pick && pick.url) || raw.element_url;
-      if (!src) return null;
-      const w = (pick && pick.width)  || raw.width;
-      const h = (pick && pick.height) || raw.height;
+      const tilePick = d.medium || d.large || d.xlarge || d.small || d.xxlarge;
+      const fullPick = d.xlarge || d.xxlarge || d.large  || d.medium;
+      const tileSrc  = (tilePick && tilePick.url) || raw.element_url;
+      const fullSrc  = (fullPick && fullPick.url) || raw.element_url || tileSrc;
+      if (!tileSrc) return null;
+      const w = (tilePick && tilePick.width)  || raw.width;
+      const h = (tilePick && tilePick.height) || raw.height;
       return {
-        src: src,
+        src: tileSrc,
+        fullSrc,
         alt: raw.name || raw.file || 'Photograph',
         ratio: (w && h) ? w / h : null,
       };
@@ -1963,15 +2050,16 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
 
     function openAt(i) {
       current = ((i % tiles.length) + tiles.length) % tiles.length;
-      // Race guard: a tile can be clicked in the split-second between
-      // entering the lazy IO's horizontal margin and the IO callback firing
-      // to swap data-src → src. In that window, imgs[current].src is still
-      // the 1×1 placeholder — opening the lightbox on it would show a
-      // blank rectangle. data-src holds the real URL until the swap, so
-      // prefer it when present.
+      // The tile button carries `data-full` — the lightbox-resolution URL
+      // (xlarge/xxlarge), separate from the medium-resolution URL the
+      // collage tile loaded. Falls back to the tile's <img> src/data-src
+      // if data-full is missing for any reason (defensive: handles tiles
+      // built from older HTML cached by a service worker, etc.).
+      const tile  = tiles[current];
       const srcImg = imgs[current];
-      const realSrc = (srcImg.dataset && srcImg.dataset.src) || srcImg.src;
-      boxImg.src = realSrc;
+      const fullSrc = (tile && tile.getAttribute('data-full')) || null;
+      const tileSrc = (srcImg.dataset && srcImg.dataset.src) || srcImg.src;
+      boxImg.src = fullSrc || tileSrc;
       boxImg.alt = srcImg.alt;
       counter.textContent = (current + 1) + ' / ' + tiles.length;
       box.dataset.open = 'true';

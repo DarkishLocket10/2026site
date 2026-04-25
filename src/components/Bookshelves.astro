@@ -1483,6 +1483,32 @@ const shelves: Shelf[] = [
         sp.addEventListener('focus',        () => apply(sp));
       });
 
+      /* Warm the HTTP cache for every cover + logo URL once, after the
+         page is idle. Without this, hovering a spine for the first time
+         triggers a fresh network fetch for that cover (coverImage.src =
+         src above), which is visible as lag on slow connections.
+         Subsequent hovers of the same item are already served from
+         cache by the browser — this just front-loads the first hit so
+         every hover feels instant from the start of the session.
+         Low fetchPriority + idle scheduling keeps it from competing
+         with anything on the critical path. */
+      const preloadIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
+      preloadIdle(() => {
+        const seen = new Set();
+        spines.forEach((sp) => {
+          const { image, logo } = sp.dataset;
+          [image, logo].forEach((url) => {
+            if (!url || seen.has(url)) return;
+            seen.add(url);
+            const img = new Image();
+            img.decoding = 'async';
+            img.referrerPolicy = 'no-referrer';
+            if ('fetchPriority' in img) img.fetchPriority = 'low';
+            img.src = url;
+          });
+        });
+      });
+
       /* Mouse-parallax tilt on the cover case.
          When the cursor is over the cover-preview panel area, normalise
          its position to [-1, 1] from the panel center and write those
