@@ -6,18 +6,23 @@ import ProfessionalExperience from "../components/ProfessionalExperience.astro";
 import Work from "../components/Work.astro";
 import Photography from "../components/Photography.astro";
 import Gallery from "../components/gallery.astro";
+import Bookshelves from "../components/Bookshelves.astro";
 import BlogDisplay from '../components/BlogDisplay.astro';
 
 const educationItems = [
   {
-    years: '‎ 🎓2020–2025',
+    years: '2020–2025',
     institution: "Queen's University",
     details: 'Bachelor of Computing (Honours), Specialization in Software Design',
+    crest: '/crests/queens.svg',
+    crestAlt: "Queen's University crest",
   },
   {
-    years: '‎ 🎓2016–2020',
+    years: '2016–2020',
     institution: 'Korah Collegiate & Vocational School',
     details: 'High School Diploma, Academic Stream',
+    crest: '/crests/korah.png',
+    crestAlt: 'Korah Collegiate & Vocational School crest',
   },
 ];
 
@@ -26,6 +31,13 @@ const workItems = [
     imageSrc: '/mainphotos/bruce.png',
     link: 'https://www.brucepower.com',
     altText: 'Internship',
+    visitLabel: 'Visit Bruce Power',
+    summary: [
+      'Overhauled supplier scorecard platform (PHP/JS/SQL)',
+      'Automated reporting, cut prep time 40%',
+      'Managed Tier 1 & 2 supplier assessments',
+      'Built ML forecasts for supply-chain ops',
+    ],
     label: `☑️ Led full‑stack development (PHP, JavaScript, SQL) to completely overhaul the supplier scorecard platform
 
 ☑️ Utilized Agile methodology to rapidly respond to client needs and consistently deliver on or ahead of schedule
@@ -39,10 +51,39 @@ const workItems = [
     icons: ['simple-icons:php', 'simple-icons:javascript', 'simple-icons:mysql', 'simple-icons:python', 'simple-icons:powerbi'],
   },
 
+{
+  imageSrc: '/mainphotos/uhubs.png',
+  link: 'https://uhubs.co.uk',
+  altText: 'Uhubs',
+  visitLabel: 'Visit Uhubs',
+  summary: [
+    'Analytical dashboards with modern statistical methods',
+    'AI-driven automation accelerating internal workflows',
+    'Full-stack TypeScript + SQL database architecture',
+    'Vercel deploys orchestrated with n8n workflows',
+  ],
+  label: `☑️ Architecting analytical dashboards that apply modern statistical methods to turn raw sales data into decision-grade insight
+
+☑️ Embedding AI across internal workflows to automate repetitive processes and accelerate the team's output
+
+☑️ Full-stack engineering across TypeScript-first UI work and SQL database design, migrations, and query optimisation
+
+☑️ Shipping on Vercel and orchestrating multi-service automation with n8n for reliable end-to-end pipelines
+
+☑️ Delivering in an Agile cadence, scoping and launching cutting-edge AI-powered products end-to-end alongside product and design`,
+  icons: ['simple-icons:typescript', 'simple-icons:postgresql', 'simple-icons:vercel', 'simple-icons:n8n'],
+},
+
     {
   imageSrc:   '/mainphotos/triage.png',
     link:        'https://github.com/DarkishLocket10/phototriage_cpp',
     altText:     'CullPix',
+    summary: [
+      'C++/Qt tool for fast photo triage',
+      'Portable, lightweight, cross-platform',
+      'Snappy file browser + preview window',
+      'Supports JPEG, PNG, and RAW',
+    ],
     label: `☑️ Developed a C++ tool to speed up photo organization, shortening the triage process for large datasets and albums
     
 ☑️ Incredibly lightweight (it's portable!) and fast with a focus on performance and efficiency
@@ -64,11 +105,17 @@ icons: ['simple-icons:cplusplus', 'simple-icons:cmake', 'simple-icons:qt'],
   imageSrc:   '/mainphotos/devops.png',
     link:        'https://github.com/DarkishLocket10/devops-guard',
     altText:     'DevOps Guard',
+    summary: [
+      '.NET service tracking work items end-to-end',
+      'Surfaces DevOps KPIs with CSV export',
+      'Lightweight Chart.js dashboard',
+      'One-command Docker Compose (API + SQL Server)',
+    ],
     label: `☑️ Developed a .NET web service that tracks work items end-to-end (CRUD) with filters, paging, sorting, and validation via FluentValidation
 
 ☑️ Surfaces DevOps KPIs (backlog health %, SLA breach %, overdue count, simple risk), with history and CSV export
 
-☑️ Ships a lightweight static dashboard (no Node) at /dashboard powered by Chart.js + fetch
+☑️ Ships a lightweight static dashboard (no Node) powered by Chart.js + fetch
 
 ☑️ Ingests CI/ops events (build_failed, incident_opened, deploy_succeeded, coverage_dropped) to auto-update status/priority/labels
 
@@ -80,6 +127,12 @@ icons: ['simple-icons:csharp', 'simple-icons:dotnet', 'simple-icons:docker', 'si
   imageSrc: '/mainphotos/nowplaying.png',
   link: 'https://github.com/DarkishLocket10/nowplaying-widget',
   altText: 'Now Playing',
+  summary: [
+    'Lightweight "Now Playing" widget in Rust',
+    'Live album art, title, artist, progress',
+    'Custom theme + layout engine',
+    'Under 60 MB RAM, zero-setup',
+  ],
   label: `☑️ Built a lightweight "Now Playing" widget purely using Rust
 
 ☑️ Streams live track info in a compact UI with album art, title, artist, and progress bar
@@ -122,7 +175,7 @@ icons: ['simple-icons:csharp', 'simple-icons:dotnet', 'simple-icons:docker', 'si
 
 <BlogDisplay />
 
-
+  <Bookshelves />
 
 
   <Photography
@@ -133,9 +186,7 @@ icons: ['simple-icons:csharp', 'simple-icons:dotnet', 'simple-icons:docker', 'si
     alt="Yash standing in the middle of a city street"
   />
 
-  <div class="mt-12">
-    <Gallery />
-  </div>
-  
-  
+  <Gallery />
+
+
 </Layout>

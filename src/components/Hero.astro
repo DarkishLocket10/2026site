@@ -15,9 +15,9 @@ const { title, subtitle, description, image, alt } = Astro.props;
 
 <section
   id="hero"
-  class="mx-auto max-w-7xl px-6 py-6 
-         md:grid md:grid-cols-2 md:gap-12 
-         items-center"
+  class="mx-auto w-full max-w-screen-2xl px-6 md:px-8 xl:px-12 2xl:px-16 py-6
+         md:grid md:grid-cols-2 md:gap-12
+         md:items-center"
 >
   <!-- ✨ TEXT – left column -->
 <div class="space-y-6">
@@ -36,10 +36,10 @@ const { title, subtitle, description, image, alt } = Astro.props;
 
   <h2
     class="
-      text-4xl font-semibold 
+      text-4xl font-semibold
       opacity-0 -translate-x-6
       transition-all duration-700 ease-out
-      delay-100                       <!-- 0.1 s later -->
+      delay-100
       motion-reduce:opacity-100 motion-reduce:translate-x-0
     "
     data-fade
@@ -49,10 +49,10 @@ const { title, subtitle, description, image, alt } = Astro.props;
 
 <p
   class="
-    text-lg  
+    text-lg
     opacity-0 -translate-x-6
     transition-all duration-700 ease-out
-    delay-200                       <!-- 0.2 s later -->
+    delay-200
     motion-reduce:opacity-100 motion-reduce:translate-x-0
   "
   data-fade
@@ -62,14 +62,15 @@ const { title, subtitle, description, image, alt } = Astro.props;
 <!-- SOCIAL ICON LINKS -->
 <div
   class="
-    mt-8
+    mt-6
     flex flex-wrap
-    sm:flex-nowrap
     items-center
     justify-center
-    gap-x-6 gap-y-4
+    gap-x-4 gap-y-4
+    lg:gap-x-5
     opacity-0 -translate-x-6
     transition-all duration-700 ease-out
+    delay-300
     motion-reduce:opacity-100 motion-reduce:translate-x-0
   "
   data-fade
@@ -80,6 +81,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
     { name: 'simple-icons:x',         href: 'https://twitter.com/yashnilaypatel',     label: 'X'         },
     { name: 'simple-icons:instagram', href: 'https://instagram.com/yash_patel14',     label: 'Instagram' },
     { name: 'simple-icons:trakt',     href: 'https://trakt.tv/users/darkishlocket10', label: 'Trakt'     },
+    { name: 'simple-icons:lastdotfm', href: 'https://www.last.fm/user/DarkishLocket10',label: 'Last.fm'  },
     { name: 'simple-icons:youtube',   href: 'https://www.youtube.com/@yashmakesfilms',label: 'YouTube'   },
     { name: 'simple-icons:goodreads', href: 'https://www.goodreads.com/darkishlocket10',label: 'Goodreads'},
   ].map(({ name, href, label }) => (
@@ -90,7 +92,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
       aria-label={label}
       class="text-current hover:opacity-80 transition-opacity"
     >
-      <Icon name={name} size={38} />
+      <Icon name={name} size={40} />
     </a>
   ))}
 
@@ -100,9 +102,9 @@ const { title, subtitle, description, image, alt } = Astro.props;
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Email me"
-    class="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-[#9C84EE]/10 transition-colors"
+    class="flex items-center gap-2 px-5 py-2.5 border rounded-lg hover:bg-accent/10 transition-colors text-base"
   >
-    <Icon name="simple-icons:maildotru" size={24} />
+    <Icon name="simple-icons:maildotru" size={28} />
     <span class="font-medium">Contact</span>
   </a>
 </div>
@@ -113,11 +115,11 @@ const { title, subtitle, description, image, alt } = Astro.props;
 <figure data-tilt
   class="
     mt-10 md:mt-0 relative
-    opacity-0 translate-x-6         
+    opacity-0 translate-x-6
     transition-all duration-700 ease-out
     motion-reduce:opacity-100 motion-reduce:translate-y-0
   "
-  data-fade                          
+  data-fade
   style="perspective: 1200px"
 >
 
@@ -126,7 +128,7 @@ const { title, subtitle, description, image, alt } = Astro.props;
     src={image}
     alt={alt}
     loading="lazy"
-    class="w-full rounded-3xl object-cover
+    class="w-full aspect-[4/3] rounded-3xl object-cover
            transition-transform duration-200 ease-out
            will-change-transform"
   />

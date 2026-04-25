@@ -76,10 +76,9 @@ const displayDate = dateObj.toLocaleDateString(undefined, {
 
 <style>
 .card {
-  --radius: 16px;
   position: relative;
   background: var(--card-bg, #fff);
-  border-radius: var(--radius);
+  border-radius: var(--radius-2xl);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -162,7 +161,7 @@ const displayDate = dateObj.toLocaleDateString(undefined, {
   font-weight: 600;
   background: var(--card-tag-bg);
   padding: .15rem .05rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   letter-spacing: .5px;
   color: var(--card-tag-text);
 }
@@ -172,7 +171,7 @@ const displayDate = dateObj.toLocaleDateString(undefined, {
   font-weight: 600;
   background: var(--card-tag-bg);
   padding: .4rem .65rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   letter-spacing: .5px;
   color: var(--card-tag-text);
   text-decoration: none;

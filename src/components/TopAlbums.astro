@@ -1,0 +1,476 @@
+---
+import topAlbumsData from '../data/top-albums.json';
+
+type Album = {
+  rank: number;
+  name: string;
+  artist: string;
+  playcount: number;
+  url: string;
+  image: string | null;
+  imageSource: string | null;
+};
+
+type TopAlbumsData = {
+  user: string;
+  period: string;
+  updatedAt: string | null;
+  albums: Album[];
+};
+
+const data = topAlbumsData as TopAlbumsData;
+const albums = data.albums ?? [];
+const hasData = albums.length > 0;
+const initial = albums[0];
+---
+
+<section id="listening" class="w-full py-4">
+  <div class="mx-auto w-full max-w-3xl px-6">
+    {hasData && initial && (
+      <div
+        class="
+          cascade-wrap
+          opacity-0 translate-y-4
+          transition-all duration-700 ease-out delay-100
+          motion-reduce:opacity-100 motion-reduce:translate-y-0
+        "
+        data-fade
+      >
+        <div
+          class="vinyl-cascade"
+          role="listbox"
+          aria-label="Top albums"
+          tabindex="0"
+          style={`--count: ${albums.length}; --active: 0;`}
+        >
+          <button class="nav nav-prev" data-prev type="button" aria-label="Previous album">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+
+          <div class="stage">
+            <div class="floor" aria-hidden="true"></div>
+            {albums.map((album, i) => (
+              <a
+                class="case"
+                href={album.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={`--i: ${i};`}
+                data-index={i}
+                data-name={album.name}
+                data-artist={album.artist}
+                data-plays={album.playcount}
+                data-url={album.url}
+                role="option"
+                title={`${album.name} — ${album.artist}`}
+                aria-label={`#${album.rank} ${album.name} by ${album.artist}, ${album.playcount} plays. Open on Last.fm.`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+              >
+                {album.image ? (
+                  <img class="cover" src={album.image} alt="" loading="lazy" />
+                ) : (
+                  <div class="cover cover-fallback" aria-hidden="true"></div>
+                )}
+                <div class="edge-shade" aria-hidden="true"></div>
+                <div class="sheen" aria-hidden="true"></div>
+              </a>
+            ))}
+          </div>
+
+          <button class="nav nav-next" data-next type="button" aria-label="Next album">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+
+        <div class="now-playing" aria-live="polite">
+          <a
+            class="np-link"
+            data-listen
+            href={initial.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="np-title" data-np-title>{initial.name}</span>
+            <span class="np-sep">·</span>
+            <span class="np-artist" data-np-artist>{initial.artist}</span>
+            <span class="np-sep">·</span>
+            <span class="np-plays" data-np-plays>{initial.playcount.toLocaleString()} {initial.playcount === 1 ? 'play' : 'plays'}</span>
+          </a>
+        </div>
+
+        <div class="dots" role="tablist" aria-label="Jump to album">
+          {albums.map((_, i) => (
+            <button
+              class="dot"
+              type="button"
+              role="tab"
+              data-dot={i}
+              data-active={i === 0 ? 'true' : 'false'}
+              aria-label={`Jump to album ${i + 1}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+            ></button>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .cascade-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .vinyl-cascade {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.35rem;
+    outline: none;
+  }
+
+  /* Nav buttons — small, understated */
+  .nav {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.55;
+    transition: all 160ms ease;
+    z-index: 200;
+  }
+  .nav:hover,
+  .nav:focus-visible {
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: var(--color-accent);
+    opacity: 1;
+    outline: none;
+  }
+  .nav:active { transform: scale(0.94); }
+
+  /* Stage */
+  .stage {
+    position: relative;
+    height: 220px;
+    perspective: 1300px;
+    perspective-origin: 50% 48%;
+    transform-style: preserve-3d;
+    overflow: hidden;
+    border-radius: 14px;
+  }
+
+  .floor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 40%;
+    background:
+      radial-gradient(ellipse 45% 90% at 50% 0%,
+        color-mix(in srgb, var(--color-accent) 7%, transparent) 0%,
+        transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Vinyl case */
+  .case {
+    --offset: calc(var(--i) - var(--active));
+    --abs: max(var(--offset), calc(var(--offset) * -1));
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    color: inherit;
+    background: #0e0e0e;
+
+    transform-style: preserve-3d;
+    transform:
+      translateX(clamp(-340px, calc(var(--offset) * 102px), 340px))
+      translateZ(clamp(-220px, calc(var(--abs) * -64px), 0px))
+      rotateY(clamp(-58deg, calc(var(--offset) * -44deg), 58deg));
+
+    transition:
+      transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 360ms ease,
+      opacity 360ms ease,
+      box-shadow 340ms ease;
+
+    opacity: clamp(0, calc(1 - var(--abs) * 0.16), 1);
+    z-index: calc(100 - var(--abs));
+    filter: brightness(0.74) saturate(0.85);
+
+    box-shadow:
+      0 14px 26px -10px rgba(0, 0, 0, 0.55),
+      0 4px 10px -3px rgba(0, 0, 0, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  .case[aria-selected="true"] {
+    filter: brightness(1) saturate(1);
+    box-shadow:
+      0 22px 36px -12px rgba(0, 0, 0, 0.65),
+      0 10px 20px -6px color-mix(in srgb, var(--color-accent) 38%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 28%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .case:hover { filter: brightness(0.92); }
+  .case[aria-selected="true"]:hover { filter: brightness(1.05); }
+
+  .case:focus-visible {
+    box-shadow:
+      0 14px 26px -10px rgba(0, 0, 0, 0.55),
+      0 0 0 2px var(--color-accent);
+  }
+
+  .case .cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    display: block;
+  }
+
+  .case .cover-fallback {
+    background: linear-gradient(135deg,
+      color-mix(in srgb, var(--color-accent) 50%, #333) 0%,
+      #0a0a0a 100%);
+  }
+
+  .case .edge-shade {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow:
+      inset 2px 0 3px -1px rgba(0, 0, 0, 0.5),
+      inset -2px 0 3px -1px rgba(0, 0, 0, 0.35),
+      inset 0 1px 1px rgba(255, 255, 255, 0.06),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .case .sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.0) 32%,
+      rgba(0, 0, 0, 0.0) 66%,
+      rgba(0, 0, 0, 0.22) 100%);
+  }
+
+  @media (max-width: 640px) {
+    .stage { height: 180px; }
+    .case {
+      width: 118px;
+      height: 118px;
+      margin: -59px 0 0 -59px;
+      transform:
+        translateX(clamp(-240px, calc(var(--offset) * 80px), 240px))
+        translateZ(clamp(-180px, calc(var(--abs) * -52px), 0px))
+        rotateY(clamp(-55deg, calc(var(--offset) * -42deg), 55deg));
+    }
+    .nav { width: 26px; height: 26px; }
+  }
+
+  /* Now playing — compact text-only inline */
+  .now-playing {
+    text-align: center;
+    min-height: 20px;
+    max-width: 520px;
+    padding: 0 0.5rem;
+  }
+
+  .np-link {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 4px 6px;
+    font-size: 13px;
+    line-height: 1.3;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 220ms ease, color 160ms ease;
+  }
+  .np-link:hover {
+    color: var(--color-accent);
+  }
+
+  .np-title {
+    font-weight: 700;
+  }
+
+  .np-artist {
+    opacity: 0.78;
+  }
+
+  .np-plays {
+    opacity: 0.5;
+    font-size: 12px;
+  }
+
+  .np-sep {
+    opacity: 0.35;
+  }
+
+  /* Dots — tiny, minimal */
+  .dots {
+    display: flex;
+    gap: 5px;
+    margin-top: 0.15rem;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 22%, transparent);
+    cursor: pointer;
+    transition: all 220ms ease;
+  }
+  .dot:hover { background: color-mix(in srgb, var(--color-accent) 70%, transparent); }
+  .dot[data-active="true"] {
+    width: 16px;
+    background: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case { transition: opacity 200ms ease, filter 200ms ease; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const carousel = document.querySelector('.vinyl-cascade');
+    if (!carousel) return;
+    const cases = Array.from(carousel.querySelectorAll('.case'));
+    if (!cases.length) return;
+
+    const prevBtn = carousel.querySelector('[data-prev]');
+    const nextBtn = carousel.querySelector('[data-next]');
+    const dots = Array.from(document.querySelectorAll('[data-dot]'));
+    const titleEl = document.querySelector('[data-np-title]');
+    const artistEl = document.querySelector('[data-np-artist]');
+    const playsEl = document.querySelector('[data-np-plays]');
+    const listenEl = document.querySelector('[data-listen]');
+
+    let active = 0;
+    let fadeTimer = null;
+
+    function setActive(i, viaClick) {
+      const n = cases.length;
+      i = ((i % n) + n) % n;
+      if (i === active && !viaClick) return;
+      active = i;
+      carousel.style.setProperty('--active', String(i));
+
+      cases.forEach((el, idx) => {
+        el.setAttribute('aria-selected', idx === i ? 'true' : 'false');
+      });
+      dots.forEach((el, idx) => {
+        const on = idx === i;
+        el.dataset.active = on ? 'true' : 'false';
+        el.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+
+      const c = cases[i];
+      const { name, artist, plays, url } = c.dataset;
+
+      const textEls = [titleEl, artistEl, playsEl].filter(Boolean);
+      textEls.forEach((el) => (el.style.opacity = '0.35'));
+      if (fadeTimer) clearTimeout(fadeTimer);
+      fadeTimer = setTimeout(() => {
+        if (titleEl) titleEl.textContent = name || '';
+        if (artistEl) artistEl.textContent = artist || '';
+        if (playsEl) {
+          const num = Number(plays || 0);
+          playsEl.textContent = `${num.toLocaleString()} ${num === 1 ? 'play' : 'plays'}`;
+        }
+        textEls.forEach((el) => (el.style.opacity = ''));
+      }, 110);
+
+      if (listenEl && url) listenEl.href = url;
+    }
+
+    cases.forEach((el, i) => {
+      el.addEventListener('click', (e) => {
+        if (i !== active) {
+          e.preventDefault();
+          setActive(i, true);
+          el.focus({ preventScroll: true });
+        }
+      });
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => setActive(active - 1, true));
+    if (nextBtn) nextBtn.addEventListener('click', () => setActive(active + 1, true));
+
+    dots.forEach((el, i) => {
+      el.addEventListener('click', () => setActive(i, true));
+    });
+
+    carousel.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); setActive(active - 1, true); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); setActive(active + 1, true); }
+      else if (e.key === 'Home') { e.preventDefault(); setActive(0, true); }
+      else if (e.key === 'End') { e.preventDefault(); setActive(cases.length - 1, true); }
+    });
+
+    let tStartX = 0, tStartY = 0, tActive = false;
+    carousel.addEventListener('touchstart', (e) => {
+      tStartX = e.touches[0].clientX;
+      tStartY = e.touches[0].clientY;
+      tActive = true;
+    }, { passive: true });
+    carousel.addEventListener('touchend', (e) => {
+      if (!tActive) return;
+      tActive = false;
+      const dx = e.changedTouches[0].clientX - tStartX;
+      const dy = e.changedTouches[0].clientY - tStartY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        setActive(dx > 0 ? active - 1 : active + 1, true);
+      }
+    });
+
+    let wheelLock = 0;
+    carousel.addEventListener('wheel', (e) => {
+      const now = Date.now();
+      if (now - wheelLock < 300) return;
+      const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      if (!horizontal && !e.shiftKey) return;
+      const delta = horizontal ? e.deltaX : e.deltaY;
+      if (Math.abs(delta) < 12) return;
+      e.preventDefault();
+      setActive(active + (delta > 0 ? 1 : -1), true);
+      wheelLock = now;
+    }, { passive: false });
+  })();
+</script>

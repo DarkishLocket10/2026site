@@ -32,7 +32,7 @@ p:last-child {
 }
 .dark {
   --bg:   #282c34;
-  --text: #f3f4f6;
+  --text: #dfdfdf;
 }
 
 /* 1) Make html/body full height and zero margin */
@@ -42,7 +42,7 @@ body {
   margin: 0;
   background-color: var(--bg);   /* unify backgrounds */
   color:            var(--text);
-  font-family: "inter", sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* 2) Turn body into a flex column */
@@ -67,7 +67,7 @@ main {
 }
 
 .post__content figure img {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-soft);
   max-width: 100%;
   display: block;
@@ -98,7 +98,7 @@ td {
 }
 
 thead {
-  background-color: #eec2ff1c;
+  background-color: color-mix(in srgb, var(--color-accent) 11%, transparent);
   font-weight: bold;
 }
 
@@ -106,7 +106,7 @@ pre {
   background: var(--code-bg); /* full-width background */
   color: var(--code-text);
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-lg);
   overflow-x: auto;
 }
 
@@ -126,7 +126,7 @@ span code {
   font-weight: 500;
   background: color-mix(in srgb, var(--bg) 85%, black); /* slightly darker than bg */
   padding: 0.15em 0.3em;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
 }
 
 
@@ -203,7 +203,7 @@ ul, ol {
   height: 8px;            /* horizontal scrollbar height */
 }
 :where(pre)::-webkit-scrollbar-thumb {
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: color-mix(in oklab, currentColor 30%, transparent);
 }
 

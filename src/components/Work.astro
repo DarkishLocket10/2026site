@@ -1,15 +1,15 @@
 ---
-
 import { Icon } from 'astro-icon/components';
 
-
-
 type WorkItem = {
-  imageSrc: string;
-  link:     string;
-  altText:  string;
-  label:    string;
-  icons?:   string[]; // e.g., ["mdi:language-csharp", "logos:php", "logos:javascript"]
+  imageSrc:       string;
+  link:           string;
+  altText:        string;
+  label:          string;
+  summary?:       string[];
+  icons?:         string[];
+  visitLabel?:    string;
+  visitIconName?: string;
 };
 
 interface Props {
@@ -18,97 +18,959 @@ interface Props {
 }
 
 const { title = 'Work', items = [] }: Props = Astro.props;
+
+function visitMeta(item: WorkItem) {
+  if (item.visitLabel || item.visitIconName) {
+    return {
+      iconName: item.visitIconName ?? null,
+      label: item.visitLabel ?? 'Visit site',
+    };
+  }
+  if (/github\.com/i.test(item.link)) {
+    return { iconName: 'simple-icons:github', label: 'Open project in GitHub' };
+  }
+  try {
+    const host = new URL(item.link).hostname.replace(/^www\./, '');
+    return { iconName: null as string | null, label: `Visit ${host}` };
+  } catch {
+    return { iconName: null as string | null, label: 'Visit site' };
+  }
+}
 ---
 
-<section id="work" class="mx-auto max-w-7xl px-6 py-5">
-  <!-- Heading -->
-  <h2
-    class="
-      text-4xl font-semibold
-      opacity-0 translate-x-6
-      transition-all duration-700 ease-out delay-300
-      motion-reduce:opacity-100 motion-reduce:translate-x-0
-    "
-    data-fade
-  >
-    {title}
-  </h2>
+<section id="work" class="w-full py-0">
+  <div class="mx-auto w-full max-w-screen-2xl px-6 md:px-8 xl:px-12 2xl:px-16">
+    <h2
+      class="
+        text-4xl font-semibold mb-6
+        opacity-0 translate-x-6
+        transition-all duration-700 ease-out delay-0
+        motion-reduce:opacity-100 motion-reduce:translate-x-0
+      "
+      data-fade
+    >
+      {title}
+    </h2>
 
-  <!-- Grid of cards -->
-  <div
-    class="
-      grid gap-6
-      grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4
-      opacity-0 translate-x-6
-      transition-all duration-700 ease-out delay-300
-      motion-reduce:opacity-100 motion-reduce:translate-x-0
-    "
-    data-fade
-  >
-    {items.map(({ imageSrc, link, altText, label, icons = [] }) => (
-      <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={label}
-        class="block"
-        data-tilt
-        style="perspective: 800px;"
-      >
-        <div
-          class="
-            tilt-content
-            flex flex-col h-full overflow-hidden rounded-lg
-            bg-current/5
-            border border-gray-200 dark:border-gray-700
-            shadow-sm
-            transition-transform transition-shadow duration-400 ease-out
-            hover:scale-105
-          "
-          style="aspect-ratio:5/8.2;"
-        >
-          
-        
-        
-      {altText && (
-        <div class="px-4 pt-2">
-          <div class="flex items-center justify-between gap-3">
-            <p class="!mt-2 text-[1rem] italic text-current/80 text-left truncate leading-[1.2]">
+    <div
+      class="
+        work-carousel-wrap relative pt-2 pb-0 overflow-x-clip
+        -mx-3 md:-mx-4 xl:-mx-5 px-3 md:px-4 xl:px-5
+        opacity-0 translate-x-6
+        transition-all duration-700 ease-out delay-100
+        motion-reduce:opacity-100 motion-reduce:translate-x-0
+      "
+      data-fade
+    >
+    <div class="work-swiper swiper mx-auto">
+      <div class="swiper-wrapper">
+        {items.map((item) => {
+          const { imageSrc, link, altText, label, summary = [], icons = [] } = item;
+          const visit = visitMeta(item);
+          return (
+            <div class="swiper-slide">
+              <article class="work-card block h-full">
+                <div class="tilt-content card-frame flex flex-col h-full overflow-hidden rounded-xl">
+                  <button
+                    type="button"
+                    class="card-main flex-1 flex flex-col min-h-0 text-left w-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    data-work-open
+                    data-label={label}
+                    aria-label={`View details for ${altText}`}
+                  >
+                    {altText && (
+                      <div class="title-row px-4 pt-4 pb-1">
+                        <div class="flex items-center justify-between gap-3">
+                          <p class="!my-0 text-[1rem] italic text-current/80 text-left truncate leading-[1.2]">
+                            {altText}
+                          </p>
+                          {Array.isArray(icons) && icons.length > 0 && (
+                            <div class="flex shrink-0 items-center gap-2">
+                              {icons.slice(0, 5).map((icon) => (
+                                <Icon name={icon} width="18" height="18" class="opacity-70" title={icon} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-              {altText}
-            </p>
+                    <div class="image-panel flex-shrink-0 p-3">
+                      <div class="w-full aspect-[32/10.1] overflow-hidden rounded-lg border-b-2 border-accent/40">
+                        <img
+                          src={imageSrc}
+                          alt={altText}
+                          loading="lazy"
+                          class="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
 
-            {Array.isArray(icons) && icons.length > 0 && (
-              <div class="flex shrink-0 items-center gap-2">
-                {icons.slice(0, 5).map((icon, i) => (
-                  <Icon name={icon} width="20" height="20" class="opacity-80" title={icon} />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                    <ul class="summary px-4 pb-3 text-sm space-y-2 text-current/90">
+                      {summary.slice(0, 5).map((s) => (
+                        <li class="flex gap-2">
+                          <span class="text-accent shrink-0 mt-[1px] leading-tight" aria-hidden="true">›</span>
+                          <span class="leading-snug">{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
 
-
-    <div class="flex-shrink-0 p-4">
-      <div class="w-full aspect-[32/10.1] overflow-hidden rounded-lg border-b-4 border-current/20">
-        <img
-          src={imageSrc}
-          alt={altText}
-          loading="lazy"
-          class="w-full h-full object-cover" 
-        />
+                  <div class="visit-wrap mt-auto px-3 pb-3">
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center gap-2 px-3 py-2 border border-current/15 rounded-lg hover:bg-accent/10 hover:border-accent/50 transition-colors text-sm"
+                    >
+                      {visit.iconName ? (
+                        <Icon name={visit.iconName} size={20} />
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                      )}
+                      <span class="font-medium">{visit.label}</span>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          );
+        })}
       </div>
     </div>
 
+    <div class="mt-1 flex items-center justify-center gap-4">
+      <button
+        type="button"
+        class="work-nav-prev sr-only w-10 h-10 flex items-center justify-center rounded-full border border-current/15 hover:bg-accent/10 hover:border-accent/50 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+        aria-label="Previous project"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
 
-          <div class="mt-[3px] px-4 text-left flex-1 overflow-y-auto scrollbar">
-            <p class="text-sm font-medium text-current whitespace-pre-wrap">
-              {label}
-            </p>
-          </div>
+      <div class="work-pagination work-pager-mobile flex items-center gap-2" style="position: static; width: auto;"></div>
+
+      <div class="work-progress-bar work-pager-desktop" aria-hidden="true">
+        <div class="work-progress-track">
+          <div class="work-progress-fill"></div>
         </div>
-      </a>
-    ))}
+      </div>
+
+      <button
+        type="button"
+        class="work-nav-next sr-only w-10 h-10 flex items-center justify-center rounded-full border border-current/15 hover:bg-accent/10 hover:border-accent/50 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+        aria-label="Next project"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+  </div>
+
+  <div
+    id="work-modal"
+    class="work-modal fixed inset-0 z-50 flex items-center justify-center p-4"
+    data-open="false"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+  >
+    <div class="work-backdrop absolute inset-0 bg-black/45" data-backdrop></div>
+
+    <div class="work-modal-content relative z-10 w-full max-w-xl">
+      <div class="modal-card flex flex-col max-h-[90vh] rounded-3xl overflow-hidden">
+        <div class="modal-scroll flex-1 overflow-y-auto">
+          <div data-modal-title-row></div>
+          <div data-modal-image></div>
+          <div data-modal-label></div>
+        </div>
+
+        <div data-modal-visit></div>
+      </div>
+
+      <button
+        type="button"
+        class="absolute -top-3 -right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 ring-1 ring-black/5 dark:ring-white/10 shadow-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        data-close
+        aria-label="Close details"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
   </div>
 </section>
+
+<style>
+  .card-frame {
+    --glow-x: 0;
+    --glow-y: 0;
+    background: var(--card-bg);
+    position: relative;
+    transition: transform 200ms ease-out, box-shadow 150ms ease-out;
+  }
+  .swiper-slide-active .work-card:hover .card-frame,
+  .work-card:not(.swiper-slide .work-card):hover .card-frame {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 15%, transparent),
+      calc(var(--glow-x) * -10px) calc(var(--glow-y) * -10px + 4px) 26px -6px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .work-carousel-wrap .swiper-pagination-bullet {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    opacity: 0.25;
+    cursor: pointer;
+    transition: width 220ms ease-out, opacity 220ms ease-out, background-color 220ms ease-out;
+  }
+  .work-carousel-wrap .swiper-pagination-bullet-active {
+    width: 24px;
+    opacity: 1;
+    background: var(--color-accent);
+  }
+
+  .work-swiper {
+    width: 100%;
+    max-width: 330px;
+    aspect-ratio: 5 / 8.2;
+  }
+  @media (min-width: 1024px) {
+    .work-swiper {
+      max-width: 100%;
+      aspect-ratio: auto;
+      height: auto;
+      padding: 8px 0 16px;
+      /* Let peek cards spill past the swiper's bounds into the section's
+         margins; section's overflow-x-clip stops them at viewport edge. */
+      overflow: visible !important;
+    }
+    .work-swiper .swiper-slide {
+      width: 298px;
+      height: auto;
+      flex-shrink: 0;
+    }
+    .work-swiper .swiper-slide > .work-card {
+      aspect-ratio: 5 / 8.2;
+      height: auto;
+    }
+    .work-swiper .swiper-wrapper {
+      align-items: stretch;
+    }
+    /* Tone down text + icons in the smaller cards so nothing feels cramped. */
+    .work-swiper .swiper-slide .card-frame .title-row p {
+      font-size: 0.9rem;
+    }
+    .work-swiper .swiper-slide .card-frame .title-row svg {
+      width: 16px !important;
+      height: 16px !important;
+    }
+    .work-swiper .swiper-slide .card-frame .summary {
+      font-size: 0.8125rem;
+    }
+    .work-swiper .swiper-slide .card-frame .visit-wrap a {
+      font-size: 0.8125rem;
+    }
+    .work-swiper .swiper-slide .card-frame .visit-wrap a svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .work-carousel-wrap .swiper-slide .card-frame {
+    transition: filter 180ms ease-out, box-shadow 180ms ease-out, transform 200ms ease-out;
+  }
+  .work-carousel-wrap .swiper-slide-active .card-frame {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 10px 28px -10px rgba(0, 0, 0, 0.55),
+      0 4px 14px -6px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+  @media (max-width: 1023px) {
+    .work-carousel-wrap .swiper-slide:not(.swiper-slide-active) .card-frame {
+      filter: brightness(0.78) saturate(0.88);
+    }
+    .work-carousel-wrap .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next) .card-frame {
+      filter: brightness(0.65) saturate(0.8);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    /* Resting shadow + highlight on every card */
+    .work-carousel-wrap .swiper-slide .card-frame {
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.04) inset,
+        0 14px 28px -18px rgba(0, 0, 0, 0.55);
+    }
+
+    /* 3D stage so our custom per-card rotations have real perspective */
+    .work-swiper {
+      perspective: 1250px;
+      perspective-origin: 50% 60%;
+    }
+    /* JS sets --rot-y, --tz, --t on each slide (progress-based 0→1).
+       Rotation and depth live on an inner wrapper so Swiper's own
+       horizontal positioning transform stays untouched. */
+    .work-swiper .swiper-slide {
+      transition: opacity 160ms linear;
+      will-change: opacity;
+      transform-style: preserve-3d;
+    }
+    .work-swiper .swiper-slide .work-card {
+      transform:
+        translate3d(var(--shuffle-x, 0), 0, var(--tz, 0))
+        rotateY(var(--rot-y, 0deg))
+        scale(var(--scale, 1));
+      transform-origin: var(--rot-origin, center center);
+      transform-style: preserve-3d;
+      /* No transform transition: Swiper already interpolates translate each
+         frame and our `setTranslate` hook updates the CSS vars in lockstep,
+         so an extra CSS transition just adds lag that causes the card to
+         briefly clip at the wrap edge when catching up mid-animation. */
+      will-change: transform;
+      height: 100%;
+      backface-visibility: hidden;
+      position: relative;
+    }
+    /* Edge-darkening overlay: the outer (receded) face catches less light,
+       inner (hinge) edge stays clear. Tight falloff so it reads as a focus
+       ramp — sharp near center, heavy at the outer edge — not a uniform fog. */
+    .work-swiper .swiper-slide .card-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(
+        var(--edge-angle, 90deg),
+        rgba(0, 0, 0, 0.82) 0%,
+        rgba(0, 0, 0, 0.52) 18%,
+        rgba(0, 0, 0, 0.18) 46%,
+        rgba(0, 0, 0, 0) 72%
+      );
+      opacity: var(--t, 0);
+      transition: opacity 140ms linear;
+      z-index: 2;
+    }
+    /* Soft highlight on the inner/hinge edge: light catches the near face of
+       the rotated panel. The highlight is tight and warm so it reads as a
+       focus/rim light, not a big wash. */
+    .work-swiper .swiper-slide .card-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(
+        calc(var(--edge-angle, 90deg) + 180deg),
+        rgba(255, 255, 255, 0.18) 0%,
+        rgba(255, 255, 255, 0.04) 10%,
+        rgba(255, 255, 255, 0) 18%
+      );
+      opacity: calc(var(--t, 0) * 0.9);
+      transition: opacity 140ms linear;
+      z-index: 3;
+    }
+    .work-swiper .swiper-slide .card-frame {
+      transition:
+        filter 180ms linear,
+        box-shadow 220ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      /* Shadow ramps with --t: deeper + lower as cards recede */
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.04) inset,
+        0 calc(10px + var(--t, 0) * 22px) calc(22px + var(--t, 0) * 28px)
+          calc(-14px - var(--t, 0) * 4px)
+          rgba(0, 0, 0, calc(0.42 + var(--t, 0) * 0.32));
+    }
+
+    /* Hover lift on fully-flat cards (no motion conflict with rotation) */
+    @media (hover: hover) and (min-width: 1024px) {
+      .work-swiper .swiper-slide[data-flat] .card-frame {
+        will-change: transform, box-shadow;
+      }
+      .work-swiper .swiper-slide[data-flat] .work-card:hover .card-frame,
+      .work-swiper .swiper-slide[data-flat] .work-card:focus-within .card-frame {
+        transform: translateY(-6px);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.06) inset,
+          0 22px 40px -18px rgba(0, 0, 0, 0.55),
+          0 10px 22px -12px color-mix(in srgb, var(--color-accent) 45%, transparent);
+      }
+    }
+  }
+
+  /* Hide nav + pagination when all slides fit and carousel can't move */
+  .work-carousel-wrap.no-scroll > div:last-child {
+    display: none;
+  }
+
+  /* Desktop gets the sliding progress bar, mobile keeps bullets */
+  .work-pager-desktop { display: none; }
+  @media (min-width: 1024px) {
+    .work-pager-mobile { display: none; }
+    .work-pager-desktop { display: flex; }
+  }
+
+  .work-progress-bar {
+    position: relative;
+    width: 200px;
+    height: 10px;
+    align-items: center;
+  }
+  .work-progress-track {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background: color-mix(in srgb, currentColor 14%, transparent);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .work-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: calc(var(--pos, 0) * 100%);
+    background: color-mix(in srgb, var(--color-accent) 85%, transparent);
+    border-radius: var(--radius-pill);
+    transition: width 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: width;
+  }
+
+  .work-carousel-wrap .swiper-slide {
+    border-radius: var(--radius-xl);
+  }
+  .work-carousel-wrap .swiper-slide:not(.swiper-slide-active) {
+    cursor: pointer;
+  }
+
+  .work-modal {
+    pointer-events: none;
+  }
+  .work-modal[data-open="true"] {
+    pointer-events: auto;
+  }
+  .work-modal .work-backdrop {
+    opacity: 0;
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+    will-change: backdrop-filter, opacity;
+    transition:
+      opacity 380ms ease-out,
+      backdrop-filter 420ms linear,
+      -webkit-backdrop-filter 420ms linear;
+  }
+  .work-modal[data-open="true"] .work-backdrop {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .work-modal .work-modal-content {
+    transform: scale(0.94);
+    opacity: 0;
+    transition:
+      transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .work-modal .modal-card {
+    background: var(--card-bg);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 10%, transparent),
+      0 30px 60px -20px rgba(0, 0, 0, 0.5),
+      0 10px 30px -10px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+  .work-modal[data-open="true"] .work-modal-content {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  /* Enlarged-card overrides for cloned compact-card bits */
+  .work-modal-content .title-row {
+    padding: 1.5rem 1.75rem 0.5rem 1.75rem;
+  }
+  .work-modal-content .title-row p {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+  .work-modal-content .title-row svg {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .work-modal-content .image-panel {
+    padding: 0.5rem 1.75rem 0.5rem 1.75rem;
+  }
+  .work-modal-content .image-panel > div {
+    border-bottom-width: 3px;
+  }
+
+  .work-modal-content .modal-label {
+    padding: 1rem 1.75rem 1.25rem 1.75rem;
+    font-size: 0.95rem;
+    color: rgb(from currentColor r g b / 0.9);
+  }
+  .work-modal-content .modal-label :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .work-modal-content .modal-label :global(li) {
+    display: flex;
+    gap: 0.75rem;
+    line-height: 1.5;
+  }
+  .work-modal-content .modal-label :global(li > span:first-child) {
+    color: var(--color-accent);
+    flex-shrink: 0;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .work-modal-content .visit-wrap {
+    padding: 1rem 1.5rem 1.25rem 1.5rem;
+    margin-top: 0;
+  }
+  .work-modal-content .visit-wrap a {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border-radius: var(--radius-xl);
+  }
+  .work-modal-content .visit-wrap svg {
+    width: 22px;
+    height: 22px;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const modal = document.getElementById('work-modal');
+    if (!modal) return;
+
+    const titleRowSlot = modal.querySelector('[data-modal-title-row]');
+    const imageSlot    = modal.querySelector('[data-modal-image]');
+    const labelSlot    = modal.querySelector('[data-modal-label]');
+    const visitSlot    = modal.querySelector('[data-modal-visit]');
+    const backdrop     = modal.querySelector('[data-backdrop]');
+    const closeBtn     = modal.querySelector('[data-close]');
+
+    let lastFocused = null;
+
+    function openFrom(article) {
+      lastFocused = document.activeElement;
+
+      const titleRow = article.querySelector('.title-row');
+      const imagePanel = article.querySelector('.image-panel');
+      const visitWrap = article.querySelector('.visit-wrap');
+      const btn = article.querySelector('[data-work-open]');
+      const fullLabel = btn ? btn.getAttribute('data-label') || '' : '';
+
+      titleRowSlot.innerHTML = '';
+      if (titleRow) titleRowSlot.appendChild(titleRow.cloneNode(true));
+
+      imageSlot.innerHTML = '';
+      if (imagePanel) imageSlot.appendChild(imagePanel.cloneNode(true));
+
+      labelSlot.className = 'modal-label';
+      labelSlot.innerHTML = '';
+      if (fullLabel.indexOf('\u2611') !== -1) {
+        const lines = fullLabel
+          .split('\u2611\uFE0F')
+          .map(function (s) { return s.trim(); })
+          .filter(Boolean);
+        const ul = document.createElement('ul');
+        lines.forEach(function (line) {
+          const li = document.createElement('li');
+          const marker = document.createElement('span');
+          marker.textContent = '\u203A';
+          marker.setAttribute('aria-hidden', 'true');
+          const text = document.createElement('span');
+          text.textContent = line;
+          li.appendChild(marker);
+          li.appendChild(text);
+          ul.appendChild(li);
+        });
+        labelSlot.appendChild(ul);
+      } else {
+        const p = document.createElement('p');
+        p.style.whiteSpace = 'pre-wrap';
+        p.textContent = fullLabel;
+        labelSlot.appendChild(p);
+      }
+
+      visitSlot.innerHTML = '';
+      if (visitWrap) visitSlot.appendChild(visitWrap.cloneNode(true));
+
+      modal.dataset.open = 'true';
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => closeBtn.focus());
+    }
+
+    function close() {
+      if (modal.dataset.open !== 'true') return;
+      modal.dataset.open = 'false';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus({ preventScroll: true });
+        if (typeof lastFocused.blur === 'function') {
+          setTimeout(() => lastFocused.blur(), 0);
+        }
+      }
+    }
+
+    document.querySelectorAll('.work-card').forEach((article) => {
+      const btn = article.querySelector('[data-work-open]');
+      if (!btn) return;
+      btn.addEventListener('click', (e) => {
+        const slide = article.closest('.swiper-slide');
+        const allVisible = window.matchMedia('(min-width: 1024px)').matches;
+        if (!allVisible && slide && !slide.classList.contains('swiper-slide-active')) return;
+        e.stopPropagation();
+        openFrom(article);
+      });
+    });
+
+    backdrop.addEventListener('click', close);
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+  })();
+</script>
+
+<script>
+  import Swiper from 'swiper';
+  import { EffectCards, Navigation, Pagination, Keyboard, Mousewheel, FreeMode, A11y } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/effect-cards';
+  import 'swiper/css/free-mode';
+
+  const el = document.querySelector('.work-swiper');
+  if (el) {
+    const mq = window.matchMedia('(min-width: 1024px)');
+
+    const baseConfig = {
+      modules: [EffectCards, Navigation, Pagination, Keyboard, Mousewheel, FreeMode, A11y],
+      grabCursor: true,
+      loop: false,
+      keyboard: { enabled: true },
+      threshold: 12,
+      touchAngle: 30,
+      touchStartPreventDefault: false,
+      preventInteractionOnTransition: true,
+      navigation: { prevEl: '.work-nav-prev', nextEl: '.work-nav-next' },
+      pagination: {
+        el: '.work-pagination',
+        clickable: true,
+        bulletClass: 'swiper-pagination-bullet',
+        bulletActiveClass: 'swiper-pagination-bullet-active',
+      },
+    };
+
+    const mobileConfig = {
+      ...baseConfig,
+      effect: 'cards',
+      cardsEffect: {
+        perSlideRotate: 4,
+        perSlideOffset: 14,
+        slideShadows: true,
+      },
+    };
+
+    // Smooth S-curve: 0 → 1 with eased acceleration/deceleration
+    const smoothstep = (t) => {
+      const c = Math.max(0, Math.min(1, t));
+      return c * c * (3 - 2 * c);
+    };
+
+    const updateSlidePresentation = function () {
+      // Compute effective perView from actual measurements so this works
+      // whether slidesPerView is numeric or 'auto'.
+      let perView = Number(this.params.slidesPerView);
+      if (!isFinite(perView) || perView <= 0) {
+        const first = this.slides && this.slides[0];
+        const gap = this.params.spaceBetween || 0;
+        perView = first && first.offsetWidth
+          ? this.width / (first.offsetWidth + gap)
+          : 1;
+      }
+      const fullyBound = Math.max(0, perView - 1);
+      // Short fade length so the 3D tuck reads dramatically even when a slide
+      // is only slightly past the fully-visible band (which is common with
+      // narrower cards where more slides fit on screen at once).
+      const fadeLength = 0.55;
+
+      this.slides.forEach((slide) => {
+        const P = slide.progress;
+
+        // How far past the fully-visible band this slide is (0 if inside).
+        let edgeDist = 0;
+        let dir = 0;
+        if (P > 0) {
+          // Exiting the LEFT edge (we're dragging it off-screen left)
+          edgeDist = P;
+          dir = +1;
+        } else if (P < -fullyBound) {
+          // Exiting the RIGHT edge
+          edgeDist = -P - fullyBound;
+          dir = -1;
+        }
+
+        const t = smoothstep(edgeDist / fadeLength);
+
+        // Keep slide opacity at 1 so the ::after darkening gradient paints
+        // at full strength against the card (otherwise the outer edge reads
+        // washed out). Filter brightness handles the uniform dimming.
+        const opacity    = 1;
+        const brightness = 1 - t * 0.32;
+        const saturate   = 1 - t * 0.22;
+        // Moderate rotation — enough to sell the 3D tuck, not so much that
+        // rasterization looks blurry or the far edge overshoots.
+        const rotY       = dir * t * 34;
+        const tz         = -t * 120;
+        const scale      = 1 - t * 0.05;
+        // Pull the receding card back toward center so it reads like it's
+        // tucked behind the flat neighbor (stack-shuffle look) rather than
+        // sliding off on its own track. dir = +1 is a card that has passed
+        // the active band to the LEFT → pull RIGHT (positive translateX) so
+        // it slips behind the left-most flat card. dir = -1 mirrors on the
+        // right → pull LEFT (negative translateX).
+        const shuffleX   = dir * t * 135;
+
+        // Hinge on the inner edge (nearest the main band). Pivot only
+        // engages once there's real rotation so in-band cards stay centered.
+        const origin = t <= 0.001
+          ? 'center center'
+          : dir > 0 ? 'right center' : 'left center';
+
+        // Edge-darkening gradient: simulates the outer (receded) face of the
+        // card catching less light than the inner (hinge) edge. Direction
+        // flips with dir so the shadow is always on the FAR edge.
+        const edgeAngle = dir > 0 ? '90deg' : dir < 0 ? '270deg' : '90deg';
+
+        slide.style.opacity = opacity.toFixed(3);
+        slide.style.setProperty('--rot-y', `${rotY.toFixed(2)}deg`);
+        slide.style.setProperty('--tz', `${tz.toFixed(1)}px`);
+        slide.style.setProperty('--scale', scale.toFixed(3));
+        slide.style.setProperty('--shuffle-x', `${shuffleX.toFixed(1)}px`);
+        slide.style.setProperty('--rot-origin', origin);
+        slide.style.setProperty('--t', t.toFixed(3));
+        slide.style.setProperty('--edge-angle', edgeAngle);
+        // Tilted cards sit behind the flat (active-band) cards, like they're
+        // tucked in a stack. Flat cards claim the foreground. Among receded
+        // cards, deeper ones get lower z-index so DOM order on the right side
+        // doesn't push the furthest card visually in front of its neighbour.
+        slide.style.zIndex = t < 0.02
+          ? '10'
+          : String(Math.max(1, Math.round((1 - t) * 8) + 1));
+        // Let CSS use data-flat to enable hover affordances only when flat
+        if (t < 0.02) {
+          slide.setAttribute('data-flat', '');
+        } else {
+          slide.removeAttribute('data-flat');
+        }
+        const frame = slide.querySelector('.card-frame');
+        if (frame) {
+          // NOTE: no blur() here — blur forces CSS-pixel rasterization of the
+          // 3D layer which looks low-res at HiDPI. The receded look is carried
+          // by opacity + the ::after darkening gradient instead.
+          frame.style.filter = `brightness(${brightness.toFixed(3)}) saturate(${saturate.toFixed(3)})`;
+        }
+      });
+    };
+
+    const progressBar = document.querySelector('.work-progress-bar');
+    const updateProgressBar = function () {
+      if (!progressBar) return;
+      const pos = Math.max(0, Math.min(1, this.progress));
+      progressBar.style.setProperty('--pos', pos.toFixed(4));
+    };
+
+    const onInit = function () {
+      updateSlidePresentation.call(this);
+      updateProgressBar.call(this);
+    };
+    const onTick = function () {
+      updateSlidePresentation.call(this);
+      updateProgressBar.call(this);
+    };
+
+    const desktopConfig = {
+      ...baseConfig,
+      // Fixed card width (set in CSS) → card count scales with viewport.
+      // Consistent smaller size across all desktop sizes.
+      slidesPerView: 'auto',
+      spaceBetween: 20,
+      centeredSlides: false,
+      watchSlidesProgress: true,
+      // Drag leaves the carousel wherever the user releases — no snap-back.
+      // Arrow buttons still call slideNext/slidePrev which snap normally.
+      freeMode: {
+        enabled: true,
+        sticky: false,
+        momentum: true,
+        momentumRatio: 0.7,
+        momentumBounce: false,
+      },
+      // Pagination pointed elsewhere so the desktop bullet row stays empty;
+      // our custom progress bar is the desktop indicator.
+      pagination: {
+        el: '.work-pagination',
+        clickable: true,
+        bulletClass: 'swiper-pagination-bullet',
+        bulletActiveClass: 'swiper-pagination-bullet-active',
+      },
+      mousewheel: {
+        forceToAxis: true,
+        releaseOnEdges: true,
+        sensitivity: 0.6,
+      },
+      on: {
+        init: onInit,
+        progress: onTick,
+        setTranslate: onTick,
+        resize: onTick,
+      },
+    };
+
+    let instance = null;
+    let currentDesktop = null;
+    const wrap = document.querySelector('.work-carousel-wrap');
+
+    const updateNavVisibility = () => {
+      if (!instance || !wrap) return;
+      let perView = Number(instance.params.slidesPerView);
+      if (!isFinite(perView) || perView <= 0) {
+        const first = instance.slides && instance.slides[0];
+        const gap = instance.params.spaceBetween || 0;
+        perView = first && first.offsetWidth
+          ? instance.width / (first.offsetWidth + gap)
+          : 1;
+      }
+      const total = instance.slides.length;
+      wrap.classList.toggle('no-scroll', total <= perView);
+    };
+
+    // Edge-hover auto-scroll: when the cursor lingers near the left/right edge
+    // of the carousel on desktop, gently pan the slides toward that edge so
+    // peeked cards can be explored without clicking nav buttons. The
+    // activation band extends BEYOND the wrap horizontally (up to viewport
+    // edges) so the scroll keeps going if the mouse drifts past the cards.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let edgeHoverCleanup = null;
+    const setupEdgeHover = (swiper) => {
+      if (!wrap || prefersReducedMotion) return () => {};
+      const EDGE_SIZE = 220;     // px band inside the wrap where speed ramps 0→MAX
+      const MAX_SPEED = 3.2;     // px per frame inside the band (≈192 px/s @60fps)
+      const OVERSHOOT_SPEED = 5.0; // px per frame when mouse is past the wrap edge
+      const OVERSHOOT_RAMP = 180; // past-edge distance (px) to hit OVERSHOOT_SPEED cap
+      const EASE_POW = 1.3;
+      const V_PADDING = 24;      // vertical slack above/below wrap to stay active
+
+      let mouseX = null;          // relative to wrap left
+      let mouseYOk = false;       // mouse is inside wrap's Y range (+ padding)
+      let rect = null;
+      let rafId = null;
+      let isDragging = false;
+
+      const recalcRect = () => { rect = wrap.getBoundingClientRect(); };
+
+      const onMove = (e) => {
+        if (!rect) recalcRect();
+        mouseX = e.clientX - rect.left;
+        mouseYOk = e.clientY >= rect.top - V_PADDING && e.clientY <= rect.bottom + V_PADDING;
+        if (rafId == null) rafId = requestAnimationFrame(step);
+      };
+      const onDocLeave = () => {
+        // Mouse left the document entirely — stop.
+        mouseX = null;
+        mouseYOk = false;
+      };
+      const onDragStart = () => { isDragging = true; };
+      const onDragEnd = () => { isDragging = false; };
+
+      const step = () => {
+        rafId = requestAnimationFrame(step);
+        if (mouseX == null || !rect || isDragging || !mouseYOk) return;
+        const w = rect.width;
+        let speed = 0;
+        if (mouseX < 0) {
+          // Past the LEFT edge: accelerate toward OVERSHOOT cap.
+          const over = Math.min(1, -mouseX / OVERSHOOT_RAMP);
+          speed = MAX_SPEED + (OVERSHOOT_SPEED - MAX_SPEED) * over;
+        } else if (mouseX < EDGE_SIZE) {
+          // Inside left band: ramp 0 → MAX with easing.
+          const t = 1 - mouseX / EDGE_SIZE;
+          speed = Math.pow(t, EASE_POW) * MAX_SPEED;
+        } else if (mouseX > w) {
+          // Past the RIGHT edge.
+          const over = Math.min(1, (mouseX - w) / OVERSHOOT_RAMP);
+          speed = -(MAX_SPEED + (OVERSHOOT_SPEED - MAX_SPEED) * over);
+        } else if (mouseX > w - EDGE_SIZE) {
+          // Inside right band.
+          const t = (mouseX - (w - EDGE_SIZE)) / EDGE_SIZE;
+          speed = -Math.pow(t, EASE_POW) * MAX_SPEED;
+        }
+        if (speed === 0) return;
+        const minT = swiper.minTranslate();
+        const maxT = swiper.maxTranslate();
+        const current = swiper.translate;
+        const next = Math.max(maxT, Math.min(minT, current + speed));
+        if (next !== current) {
+          swiper.setTranslate(next);
+          swiper.updateProgress();
+          swiper.updateSlidesClasses();
+        }
+      };
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseleave', onDocLeave);
+      window.addEventListener('blur', onDocLeave);
+      window.addEventListener('resize', recalcRect);
+      window.addEventListener('scroll', recalcRect, { passive: true });
+      swiper.on('touchStart', onDragStart);
+      swiper.on('touchEnd', onDragEnd);
+      swiper.on('sliderFirstMove', onDragStart);
+
+      return () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseleave', onDocLeave);
+        window.removeEventListener('blur', onDocLeave);
+        window.removeEventListener('resize', recalcRect);
+        window.removeEventListener('scroll', recalcRect);
+        swiper.off('touchStart', onDragStart);
+        swiper.off('touchEnd', onDragEnd);
+        swiper.off('sliderFirstMove', onDragStart);
+        if (rafId != null) cancelAnimationFrame(rafId);
+        rafId = null;
+      };
+    };
+
+    const init = () => {
+      const isDesktop = mq.matches;
+      if (instance && currentDesktop === isDesktop) return;
+      if (edgeHoverCleanup) { edgeHoverCleanup(); edgeHoverCleanup = null; }
+      if (instance) instance.destroy(true, true);
+      instance = new Swiper(el, isDesktop ? desktopConfig : mobileConfig);
+      currentDesktop = isDesktop;
+      instance.on('init resize update', updateNavVisibility);
+      updateNavVisibility();
+      if (isDesktop) {
+        edgeHoverCleanup = setupEdgeHover(instance);
+      }
+    };
+
+    init();
+    mq.addEventListener('change', init);
+  }
+</script>

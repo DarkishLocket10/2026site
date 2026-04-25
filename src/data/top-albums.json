@@ -1,0 +1,97 @@
+{
+  "user": "DarkishLocket10",
+  "period": "12month",
+  "updatedAt": "2026-04-24T08:52:44.585Z",
+  "albums": [
+    {
+      "rank": 1,
+      "name": "So Close to What",
+      "artist": "Tate McRae",
+      "playcount": 467,
+      "url": "https://www.last.fm/music/Tate+McRae/So+Close+to+What",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/2c927d26b092260dee2e79d4864c1de7.png",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 2,
+      "name": "Octane",
+      "artist": "Don Toliver",
+      "playcount": 450,
+      "url": "https://www.last.fm/music/Don+Toliver/Octane",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/cffb9ec7efa495db5b9e60d78d0f47ec.jpg",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 3,
+      "name": "Because the Internet",
+      "artist": "Childish Gambino",
+      "playcount": 291,
+      "url": "https://www.last.fm/music/Childish+Gambino/Because+the+Internet",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/0f636525495f1458c7c55f238eb8e27d.jpg",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 4,
+      "name": "Breach",
+      "artist": "twenty one pilots",
+      "playcount": 216,
+      "url": "https://www.last.fm/music/twenty+one+pilots/Breach",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/f8696c18cbd8b4aa77a8c9cf75e589c3.png",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 5,
+      "name": "Sincerely,",
+      "artist": "Kali Uchis",
+      "playcount": 185,
+      "url": "https://www.last.fm/music/Kali+Uchis/Sincerely,",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/a9c06b22a517a2bd393469a8d3782531.png",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 6,
+      "name": "Bando Stone and The New World",
+      "artist": "Childish Gambino",
+      "playcount": 174,
+      "url": "https://www.last.fm/music/Childish+Gambino/Bando+Stone+and+The+New+World",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/15618ed4b85e2c9ba4d89eee1d488405.jpg",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 7,
+      "name": "Trench",
+      "artist": "Twenty One Pilots",
+      "playcount": 159,
+      "url": "https://www.last.fm/music/Twenty+One+Pilots/Trench",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/9efc2181a3c5643cde2441c79451d1bc.jpg",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 8,
+      "name": "LUX",
+      "artist": "ROSALÍA",
+      "playcount": 156,
+      "url": "https://www.last.fm/music/ROSAL%C3%8DA/LUX",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/0e6bf07983158660ec4e00cae318ba83.jpg",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 9,
+      "name": "Camp",
+      "artist": "Childish Gambino",
+      "playcount": 155,
+      "url": "https://www.last.fm/music/Childish+Gambino/Camp",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/d2c51831aa2b59b93c7e56b29efbbcf6.png",
+      "imageSource": "lastfm"
+    },
+    {
+      "rank": 10,
+      "name": "\"Awaken, My Love!\"",
+      "artist": "Childish Gambino",
+      "playcount": 129,
+      "url": "https://www.last.fm/music/Childish+Gambino/%22Awaken,+My+Love!%22",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/d4f6f6f537a28b6b15f793515b95452b.png",
+      "imageSource": "lastfm"
+    }
+  ]
+}

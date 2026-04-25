@@ -1,6 +1,1882 @@
 ---
-import MySwiper from '../components/MySwiper.jsx';
+// Hand-picked fallback set — renders even if the Piwigo build-time fetch fails
+// (e.g. the build server can't reach Piwigo, the API is disabled, etc.).
+const hardcodedPhotos = [
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/01/20250301202330-2d6bec2d-la.jpg', alt: 'Photograph 1' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/03/29/20250329031845-add54cca-la.jpg', alt: 'Photograph 2' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/02/19/20250219181031-65d3f3e1-la.jpg', alt: 'Photograph 3' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/02/18/20250218213833-079c74d3-la.jpg', alt: 'Photograph 4' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/11/20250611191605-5bc508af-xl.jpg', alt: 'Photograph 5' },
+  { src: 'https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/27/20250627033333-24c50efd-xl.jpg', alt: 'Photograph 6' },
+  { src: 'https://piwigo.darkishlocket10.me/_data/i/upload/2025/06/27/20250627034917-c78eec00-xl.jpg', alt: 'Photograph 7' },
+  { src: 'https://piwigo.darkishlocket10.me/i.php?/upload/2025/06/27/20250627035358-4d8c66cc-xl.jpg', alt: 'Photograph 8' },
+];
+
+// Build-time fetch: runs once per `astro build` on the build server (no CORS
+// there since it's server-side), gets a random batch, and bakes the URLs
+// straight into the HTML. This is the guaranteed-to-work path.
+const PIWIGO_BUILD_API =
+  'https://piwigo.darkishlocket10.me/ws.php'
+  + '?format=json&method=pwg.categories.getImages'
+  + '&recursive=true&per_page=100&order=random';
+
+async function fetchPiwigoAtBuild() {
+  try {
+    const res = await fetch(PIWIGO_BUILD_API, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data || data.stat !== 'ok') return [];
+    const apiImages = (data.result && data.result.images) || [];
+    return apiImages
+      .map((raw) => {
+        const d = raw.derivatives || {};
+        const pick = d.large || d.medium || d.xlarge || d.small || d.xxlarge;
+        const src = (pick && pick.url) || raw.element_url;
+        if (!src) return null;
+        const w = (pick && pick.width)  || raw.width;
+        const h = (pick && pick.height) || raw.height;
+        return {
+          src,
+          alt: raw.name || raw.file || 'Photograph',
+          width:  w || null,
+          height: h || null,
+        };
+      })
+      .filter(Boolean);
+  } catch (err) {
+    console.warn('[gallery] Piwigo build-time fetch failed:', err?.message || err);
+    return [];
+  }
+}
+
+const piwigoPhotos = await fetchPiwigoAtBuild();
+const photos = [...hardcodedPhotos, ...piwigoPhotos];
 ---
-<div class="max-w-6xl mx-auto px-4">
-<MySwiper client:load />
-</div>
+
+<section class="gallery-wrap w-full py-6 overflow-x-clip">
+  {/* Eight filter variants — each tile picks one deterministically via hash, so
+     no two adjacent polaroids share the same gloss bowing pattern. Each variant
+     combines a unique turbulence seed, anisotropic baseFrequency (scratches
+     vs. bowing), and displacement scale. Filter region is padded generously
+     (−12%/124%) so the displacement never pulls transparent pixels into the
+     visible tile edge — this was the source of the dark top/bottom bands on
+     the previous single-filter build.
+
+     Character sheet:
+       0 — gentle oblique bow            (broad, soft)
+       1 — horizontal ripple             (scratches across)
+       2 — strong diagonal bow           (dramatic curve)
+       3 — vertical fiber streaks        (polaroid paper fibre)
+       4 — fine abraded surface scratches
+       5 — medium mixed chaos
+       6 — heavy bow + caustic suggestion (strong scale, low freq)
+       7 — subtle fine ripple            (aged-gloss shimmer)
+
+     All filters are STATIC (no animated seed) — the GPU rasterises each
+     turbulence primitive once and caches; only the moving gradient source
+     forces per-frame re-evaluation over the small tile-sized region. */}
+  <svg class="polaroid-filter-defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      {/* Filter regions are locked to 0%-100%. An expanded region would let the
+         filter paint beyond the ::before's box, leaking displaced highlight
+         pixels into the cream polaroid matte above/below the photo area —
+         that was the "odd tops and bottoms" the user spotted. With a tight
+         region, displacement still warps pixels WITHIN the box; pixels pulled
+         from outside the box resolve to the transparent default, which cleanly
+         lets the image's true edge show through unchanged.
+
+         Scales are intentionally varied (5…12). Higher-scale filters create
+         visible bowing; lower-scale ones create fine surface scratches. The
+         mix is what makes each polaroid look like a unique physical object. */}
+      {/* Per-tile filter variants — aggressive displacement (18-28). This is
+         the "living surface" look the user specifically asked to keep: the
+         scratch lines bow, the specular sweep warbles with real momentum,
+         and you can clearly see the gloss coat breathing. The per-tile seed
+         + baseFrequency variation is what makes every polaroid look like a
+         different physical object — identical scale values would be fine;
+         the variation is in the noise field shape, not its amplitude. */}
+      <filter id="polaroid-gloss-0" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="3" seed="7"  stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="22" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="polaroid-gloss-1" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.024 0.010" numOctaves="3" seed="13" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="polaroid-gloss-2" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.014 0.019" numOctaves="3" seed="23" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="polaroid-gloss-3" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.011 0.025" numOctaves="3" seed="31" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="20" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="polaroid-gloss-4" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.030 0.014" numOctaves="3" seed="41" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="polaroid-gloss-5" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.016 0.015" numOctaves="3" seed="53" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="24" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="polaroid-gloss-6" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.010 0.009" numOctaves="3" seed="67" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="28" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="polaroid-gloss-7" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.021 0.018" numOctaves="3" seed="79" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="20" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+
+      {/* Aggressive hover filter — retained in the defs for availability,
+         even though the previous consumer (the cursor-pool crossed bands)
+         is now hidden. Keeping it means a future "extra kick on hover"
+         experiment can be reintroduced without rebuilding the filter. */}
+      <filter id="polaroid-gloss-hover" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.022 0.026" numOctaves="3" seed="97" stitchTiles="stitch" result="t"/>
+        <feDisplacementMap in="SourceGraphic" in2="t" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  {/* Loading strategy:
+       i <  12            : src set + loading="eager" + fetchpriority="high"
+                            — initial paint priority, browser ranks these first
+                            when the HTTP/2 connection opens.
+       i <  24            : src set + loading="eager"
+                            — still above-the-fold for most viewports (3 rows
+                            × ~5 visible cells = 15 visible, 24 gives ~1.5
+                            viewports of immediate availability).
+       i >= 24            : NO src at render — only `data-src`. A tiny inline
+                            SVG is the visible placeholder so no broken-image
+                            icons show and width/height still reserves layout.
+                            The IntersectionObserver set up in JS (see
+                            setupLazyLoader) swaps data-src → src when the
+                            tile enters a 2500px horizontal margin around
+                            the scroll viewport — ~75s of autodrift look-ahead
+                            at 33 px/s, so the image has finished loading well
+                            before it's visible. */}
+  <div class="gallery-viewport" id="gallery-viewport" data-state="loading" aria-label="Photo carousel">
+    <div class="gallery-track" id="gallery-track" role="list">
+      {photos.map((p, i) => {
+        const ratio = p.width && p.height ? (p.width / p.height).toFixed(4) : undefined;
+        const eager = i < 24;
+        return (
+          <button
+            type="button"
+            class="gallery-tile"
+            data-tile
+            data-index={i}
+            data-ratio={ratio}
+            role="listitem"
+            aria-label={`Open ${p.alt}`}
+          >
+            <img
+              src={eager ? p.src : "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201%201'%2F%3E"}
+              data-src={eager ? undefined : p.src}
+              alt={p.alt}
+              loading={eager ? 'eager' : 'lazy'}
+              fetchpriority={i < 12 ? 'high' : undefined}
+              decoding="async"
+              width={p.width || undefined}
+              height={p.height || undefined}
+            />
+            <span class="gallery-tile-cursor" aria-hidden="true"></span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+
+  <div
+    class="gallery-lightbox"
+    data-lightbox
+    data-open="false"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Photo viewer"
+  >
+    <div class="gallery-lightbox-backdrop" data-close></div>
+    <figure class="gallery-lightbox-figure">
+      <img data-lightbox-img src="" alt="" />
+    </figure>
+    <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" data-prev aria-label="Previous photo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="gallery-lightbox-nav gallery-lightbox-next" data-next aria-label="Next photo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <button type="button" class="gallery-lightbox-close" data-close aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <div class="gallery-lightbox-counter" aria-hidden="true">1 / {photos.length}</div>
+  </div>
+</section>
+
+<style>
+  /* Inline SVG used only to define the filter — never rendered. */
+  .polaroid-filter-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* ── Wrap: hosts the ambient "sun" glow behind the carousel ─────────── */
+  .gallery-wrap {
+    position: relative;
+    /* No `isolation: isolate` here: it would create a stacking context and
+       trap the lightbox (position:fixed, z-index:100) behind the page Header,
+       which also has z-index:100. The ambient glow's mix-blend-mode still
+       composites cleanly against the flat page bg without the isolation. */
+  }
+
+  /* Ambient sun presence — a soft warm radial sits at the same horizontal
+     fraction used by the JS virtual-light (LIGHT_X_FRAC = 30%). Screen-blended
+     at low opacity so it warms the page bg without washing out either theme.
+     Pointer-events off, behind the viewport — zero interactivity cost. */
+  .gallery-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        ellipse 42% 95% at 30% 50%,
+        rgba(255, 222, 168, 0.14),
+        rgba(255, 204, 148, 0.05) 38%,
+        transparent 68%
+      );
+    mix-blend-mode: screen;
+  }
+  :root.dark .gallery-wrap::before {
+    background:
+      radial-gradient(
+        ellipse 42% 95% at 30% 50%,
+        rgba(255, 212, 156, 0.09),
+        rgba(255, 186, 116, 0.035) 38%,
+        transparent 68%
+      );
+  }
+
+  /* ── Scrollable viewport ── */
+  .gallery-viewport {
+    position: relative;
+    z-index: 1;                               /* above the ambient glow */
+    width: 100%;
+    /* Reserve ~3 rows of space so the page layout is stable while the track
+       fades in. Scaled down on narrow screens to match the smaller row height. */
+    min-height: 520px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;                    /* Firefox */
+  }
+  @media (max-width: 780px) {
+    .gallery-viewport { min-height: 430px; }
+  }
+  @media (max-width: 520px) {
+    .gallery-viewport { min-height: 350px; }
+  }
+  .gallery-viewport::-webkit-scrollbar {
+    display: none;                            /* Safari / Chrome */
+  }
+
+  /* Soft edge fades hint at more content (masked on the viewport itself). */
+  .gallery-viewport::before,
+  .gallery-viewport::after {
+    content: "";
+    position: sticky;
+    top: 0;
+    height: 100%;
+    width: 56px;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 220ms ease-out;
+  }
+  .gallery-viewport::before {
+    left: 0;
+    float: left;
+    margin-right: -56px;
+    background: linear-gradient(to right, var(--bg), transparent);
+    opacity: var(--fade-left, 0);
+  }
+  .gallery-viewport::after {
+    right: 0;
+    float: right;
+    margin-left: -56px;
+    background: linear-gradient(to left, var(--bg), transparent);
+    opacity: var(--fade-right, 1);
+  }
+
+  /* Narrower fades on touch-primary devices. */
+  @media (hover: none) {
+    .gallery-viewport::before,
+    .gallery-viewport::after { width: 28px; }
+    .gallery-viewport::before { margin-right: -28px; }
+    .gallery-viewport::after  { margin-left:  -28px; }
+  }
+
+  /* ── Track (the thing that actually scrolls) ── */
+  .gallery-track {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;                                /* row gap — slightly tighter than tile gap
+                                                 to visually compensate for the downward
+                                                 shadow below each tile */
+    width: max-content;                       /* grow beyond viewport */
+    /* Bottom padding must exceed the tile's drop-shadow radius (~48px) so the
+       viewport's overflow-y: hidden doesn't clip the shadow into a hard line.
+       Top padding leaves room for tilt/hover lift and the ambient highlight. */
+    padding: 18px 0 56px 0;
+  }
+
+  /* Hide the track until JS has placed tiles into their carousel rows. The
+     script runs inline right after the markup and lays out synchronously, so
+     this is only in effect for the brief moment between HTML parse and script
+     execution — prevents any flash of unarranged tiles. */
+  .gallery-track {
+    transition: opacity 200ms ease-out;
+  }
+  .gallery-viewport[data-state="loading"] .gallery-track {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gallery-track-row {
+    display: flex;
+    gap: 14px;                                /* tile gap (horizontal) */
+    flex-shrink: 0;
+  }
+
+  /* Typed custom prop. Registering via @property does three things we need:
+       1. Makes --effective-tilt animatable (CSS can transition its <angle>
+          value, so the hover counter-rotation tracks the tile's rotation).
+       2. Gives it a well-defined initial value so the `calc(... - var(...))`
+          angle math never NaNs on a fresh clone.
+       3. Locks the syntax so invalid values get rejected at parse time. */
+  @property --effective-tilt {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  /* Note: --cursor-pressure was previously a typed @property so it could
+     drive rgba alpha and opacity transitions. Chromium doesn't substitute
+     typed custom properties into rgba alpha channels or other properties'
+     var() at paint time (verified empirically), so the cursor pool now
+     fades via a direct `opacity` transition on the .gallery-tile-cursor
+     element instead — the typed property isn't needed. */
+
+  /* Cursor-driven parallax angles. Typed as <angle> so the CSS transition
+     can interpolate them smoothly — without the @property registration,
+     custom-property value changes would snap with no transition support.
+     These are written every pointermove by JS (see updateCursor) and are
+     consumed inside the tile's transform on :hover. At rest both are 0deg,
+     which makes the rotateX / rotateY terms identity so the transform
+     collapses to the 2D resting form. */
+  @property --cursor-tilt-x {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @property --cursor-tilt-y {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  /* ── Tile (polaroid-style matte applied to every tile) ─────────────────
+     Custom properties drive per-tile lighting & procedural variation:
+       --tilt           : −3…+3 (deg) — base resting rotation, set once by JS
+       --effective-tilt : angle       — live rotation used by the transform and
+                                         the gradient angle. Equal to --tilt at
+                                         rest, 0deg on hover. The gradient uses
+                                         calc(118deg − var(--effective-tilt)) so
+                                         the sun appears to shine from a single
+                                         world-fixed direction even as the
+                                         polaroid lifts and straightens.
+       --shine-x        : 8…92 (%)    — peak of the photo-area specular,
+                                         driven by JS every visible frame.
+       --shine-a        : 0.22…1      — per-tile intensity (gaussian falloff
+                                         from the virtual light).
+       --light-x        : 8…92 (%)    — directional glow on the paper matte.
+       --gloss-strength : 0.75…1.05   — per-tile randomised gloss multiplier.
+                                         Some polaroids are glossier than
+                                         others (film age, laminate wear).
+       --gloss-filter   : url()       — points at one of 8 SVG filter variants,
+                                         picked deterministically by hash(i) so
+                                         no two adjacent tiles share a bowing
+                                         pattern.
+  */
+  .gallery-tile {
+    --shine-x: 50%;
+    --shine-a: 0.55;
+    --light-x: 50%;
+    --gloss-strength: 1;
+    --gloss-filter: url(#polaroid-gloss-0);
+    --effective-tilt: var(--tilt, 0deg);
+    /* ── Per-tile surface model ─────────────────────────────────────────
+       Every polaroid gets its own BRDF-inspired material profile so no two
+       surfaces reflect identically. JS derives these from a hash per index
+       and writes them once in applyVariants; the gradients below read them
+       via calc() so the whole highlight stack self-tunes per tile.
+
+         --angle-jitter   : ±6deg added to the 118° sweep. Breaks the
+                            "every streak parallel" feel cited by the user.
+         --sweep-span     : 20…48% — half-width of the specular lobe. Low
+                            values = narrow/mirror (glossy). High = wide
+                            diffuse (matte). A rough surface spreads the
+                            specular lobe; CSS models this with softer,
+                            wider gradient stops.
+         --peak-a         : 0.10…0.30 — centre alpha. Matte surfaces
+                            return less energy per angle, so lower peak.
+                            Glossy returns more, so higher peak.
+         --bloom-a        : 0.08…0.26 — bloom alpha, follows --peak-a.
+         --bloom-span     : 45…95% — bloom radius, follows --sweep-span.
+         --has-shine      : 0 or 1 — ~12% of tiles get 0 and don't show a
+                            specular lobe at all. Real surface lots have
+                            varied finishes; a handful of tiles reading as
+                            dead-matte paper reinforces the rest.
+         --scratch-a-mul  : 0 or 1 — scratch A only exists on ~28% of tiles.
+         --scratch-b-mul  : 0 or 1 — scratch B on ~12%. Most polaroids have
+                            zero or one scratch, not two.
+    */
+    --angle-jitter: 0deg;
+    --sweep-span: 30%;
+    --peak-a: 0.22;
+    --bloom-a: 0.18;
+    --bloom-span: 58%;
+    --has-shine: 1;
+    --scratch-a-mul: 0;
+    --scratch-b-mul: 0;
+    --shimmer-phase: 0;
+    /* Cursor-driven parallax tilt, snapped back to 0 on pointerleave so
+       the tile relaxes to its 2D resting pose. Kept here (alongside the
+       @property declarations above) so they cascade through clones. */
+    --cursor-tilt-x: 0deg;
+    --cursor-tilt-y: 0deg;
+    /* Cursor-driven specular — last pointer position on this tile.
+       Retained for potential future per-tile cursor effects; no current
+       consumer since the cursor-pool element is hidden and parallax
+       drives the hover interaction. */
+    --cursor-x: 50%;
+    --cursor-y: 50%;
+    /* Default grain: JS overrides --grain-tex / --grain-size / --grain-offset
+       per tile so no two adjacent polaroids share the same noise offset. */
+    --grain-tex:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='2' stitchTiles='stitch' seed='11'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.96 0 0 0 0 0.86 0 0 0 0.10 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+    flex: 0 0 auto;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    /* Cream photo-paper matte + Fresnel edge sheen + directional matte glow.
+       Layer 1 (Fresnel): an elliptical radial darkening the centre and
+         brightening the corners — real glossy cards catch more light at
+         grazing angles near edges. Subtle; mostly visible on the paper
+         border/chin because the image covers the inner area.
+       Layer 2 (matte directional glow): the existing warm lift where the
+         virtual light catches the paper directly (chin + borders).
+       Layer 3 (base colour): #f8f1e1 cream paper. */
+    background:
+      radial-gradient(
+        ellipse 105% 110% at 50% 50%,
+        transparent 62%,
+        rgba(255, 248, 224, calc(var(--shine-a) * 0.10)) 90%,
+        rgba(255, 248, 224, calc(var(--shine-a) * 0.22)) 100%
+      ),
+      radial-gradient(
+        ellipse 140% 140% at var(--light-x) 25%,
+        rgba(255, 244, 210, calc(var(--shine-a) * 0.42)),
+        rgba(255, 238, 196, calc(var(--shine-a) * 0.16)) 35%,
+        rgba(255, 230, 180, 0) 65%
+      ),
+      #f8f1e1;
+    padding: 5px 5px 18px 5px;
+    border-radius: 3px;
+    overflow: hidden;
+    contain: layout paint;                     /* scope repaint to this tile */
+    /* Warmer, deeper drop shadow + hairline inner ring on the matte edge.
+       The inner ring used to live on ::after, but ::after now carries the
+       paper grain (crisp, unfiltered) while ::before carries the highlight
+       layers (filtered). Rolling the ring into the tile's box-shadow stack
+       keeps both pseudo-elements free for their respective jobs. */
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 10px 22px -10px rgba(30, 20, 10, 0.32),
+      0 22px 48px -20px rgba(30, 20, 10, 0.22);
+    /* Resting transform: perspective is always in the chain so that the
+       rotateX / rotateY terms (identity at rest, since --cursor-tilt-x/y
+       default to 0deg) collapse cleanly. Keeping perspective in the resting
+       transform also avoids a 2D→3D jump at the start of the :hover
+       transition — the browser can interpolate a single pre-composed 3D
+       matrix smoothly instead of reparameterising mid-animation. */
+    transform:
+      perspective(1200px)
+      rotateX(var(--cursor-tilt-y))
+      rotateY(var(--cursor-tilt-x))
+      rotate(var(--effective-tilt))
+      scale(var(--scale, 1));
+    /* --effective-tilt is typed via @property so the gradient angle stays
+       world-fixed across the lift-and-straighten animation. Cursor-tilt is
+       typed too (see @property blocks above) with a short transition so
+       pointer motion feels responsive without jittery frame-by-frame
+       cursor reads dominating the look. */
+    transition:
+      transform 320ms cubic-bezier(.16, 1, .3, 1),
+      --effective-tilt 320ms cubic-bezier(.16, 1, .3, 1),
+      --cursor-tilt-x 140ms cubic-bezier(.2, .7, .3, 1),
+      --cursor-tilt-y 140ms cubic-bezier(.2, .7, .3, 1),
+      box-shadow 260ms ease-out,
+      z-index 0s 260ms;
+    will-change: transform;
+  }
+  :root.dark .gallery-tile {
+    /* Dark-mode chins (the 18px bottom padding + 5px side matte) were
+       reading as a warm yellow glow. The same warm gradients that add
+       subtle edge-lift on a cream #f8f1e1 paper look like tinted ambient
+       light when they land on #2a241c — the high-value warm RGBA adds
+       directly to the dark base and reads as glow.
+       Fix is geometric, not alpha-only: shrink both ellipses vertically
+       so neither reaches the chin band (y ≈ 91% → 100%).
+         Fresnel: 105% 110% @ 50/50 → 105% 75% @ 50/50
+                  (vertical radius 55% → 37.5%; 100%-stop now at y=87.5%)
+         Lamp:    140% 140% @ X/25% → 140% 90% @ X/25%
+                  (vertical radius 70% → 45%; reach ends at y=70%)
+       Peak alphas are nudged down one notch so even the photo area reads
+       as ambient tint rather than as a light source. */
+    background:
+      radial-gradient(
+        ellipse 105% 75% at 50% 50%,
+        transparent 62%,
+        rgba(255, 230, 180, calc(var(--shine-a) * 0.06)) 90%,
+        rgba(255, 230, 180, calc(var(--shine-a) * 0.14)) 100%
+      ),
+      radial-gradient(
+        ellipse 140% 90% at var(--light-x) 25%,
+        rgba(255, 226, 176, calc(var(--shine-a) * 0.22)),
+        rgba(255, 218, 160, calc(var(--shine-a) * 0.08)) 35%,
+        rgba(255, 210, 150, 0) 65%
+      ),
+      #2a241c;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 10px 22px -10px rgba(30, 20, 10, 0.32),
+      0 22px 48px -20px rgba(30, 20, 10, 0.22);
+  }
+
+  .gallery-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 1px;
+  }
+
+  /* ── Specular pass: photo-area only (inset matches polaroid padding) ───
+     Six layers, declared top→bottom in the `background` list:
+       1. warm chromatic fringe — amber dispersion on the leading edge of the
+                                  sweep; reads as plastic-film iridescence.
+       2. cool chromatic fringe — bluish dispersion on the trailing edge.
+       3. warm bloom      — elliptical radial centred on the sweep peak;
+                            gives the highlight an actual soft core.
+       4. scratch A       — hairline linear-gradient at a per-tile random
+                            angle + position. Base alpha is low (faint
+                            abrasion) and rises with --shine-a so the scratch
+                            *glints* brighter when the sun sweeps over it.
+       5. scratch B       — second scratch at a different angle/pos, slightly
+                            dimmer than A so the two don't compete.
+       6. anisotropic sweep — the core specular band. Warm white core. Alpha
+                              scales w/ shine-a × gloss-strength.
+     All layers composite onto the image via mix-blend-mode: screen.
+
+     filter: var(--gloss-filter) — one of 8 static feTurbulence+Displacement
+     variants, chosen per-tile so every polaroid bows and scratches uniquely.
+     Crucially, the filter warps the SCRATCH gradients too: a straight line
+     on a bowed piece of plastic film bends into a subtle S-curve, which is
+     exactly what a real scratch on a real polaroid does. The image below
+     is never filtered, so photo fidelity stays untouched.
+
+     Gradient angles for the sweep/fringes are counter-rotated against
+     --effective-tilt; scratch angles don't need the counter-rotation
+     because scratches are physical features of the polaroid paper and SHOULD
+     rotate with the tile. When hovered straight, --effective-tilt animates
+     to 0 and scratch lines stay in place relative to the paper. */
+  .gallery-tile::before {
+    content: "";
+    position: absolute;
+    inset: 5px 5px 18px 5px;                  /* photo region only */
+    border-radius: 1px;
+    /* Per-tile bowing-aware angle: 118° global sun direction, counter-rotated
+       against the tile's --effective-tilt to stay world-fixed, plus a small
+       --angle-jitter that models each polaroid's slightly different surface
+       normal (real physical films are never perfectly flat). */
+    background:
+      linear-gradient(
+        calc(118deg - var(--effective-tilt) + var(--angle-jitter)),
+        transparent calc(var(--shine-x) - calc(var(--sweep-span) * 0.5)),
+        rgba(255, 168, 86,  calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * 0.32))
+          calc(var(--shine-x) - calc(var(--sweep-span) * 0.14)),
+        rgba(255, 196, 120, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * 0.16))
+          calc(var(--shine-x) - calc(var(--sweep-span) * 0.05)),
+        rgba(255, 172, 94,  0) calc(var(--shine-x) + calc(var(--sweep-span) * 0.08))
+      ),
+      linear-gradient(
+        calc(118deg - var(--effective-tilt) + var(--angle-jitter)),
+        rgba(130, 176, 255, 0) calc(var(--shine-x) + calc(var(--sweep-span) * 0.04)),
+        rgba(152, 196, 255, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * 0.14))
+          calc(var(--shine-x) + calc(var(--sweep-span) * 0.16)),
+        rgba(130, 176, 255, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * 0.22))
+          calc(var(--shine-x) + calc(var(--sweep-span) * 0.34)),
+        transparent calc(var(--shine-x) + calc(var(--sweep-span) * 0.66))
+      ),
+      /* Vertical extent capped at 64% (not the previous 2.2× multiplier) so
+         the bloom's non-zero alpha region stays well inside the ::before's
+         top/bottom edges. When the displacement filter runs, it can still
+         find valid source pixels at the edges instead of pulling transparent
+         from outside the filter region — that was what caused the "ripped-up"
+         dark bits at photo tops/bottoms. */
+      radial-gradient(
+        ellipse var(--bloom-span) 64% at var(--shine-x) 50%,
+        rgba(255, 239, 198, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--bloom-a))),
+        rgba(255, 222, 172, 0) 60%
+      ),
+      linear-gradient(
+        var(--scratch-a-angle, 14deg),
+        transparent calc(var(--scratch-a-pos, 42%) - 0.5%),
+        rgba(255, 248, 224, calc(var(--scratch-a-mul) * (0.04 + var(--shine-a) * var(--gloss-strength) * 0.22)))
+          var(--scratch-a-pos, 42%),
+        transparent calc(var(--scratch-a-pos, 42%) + 0.5%)
+      ),
+      linear-gradient(
+        var(--scratch-b-angle, -28deg),
+        transparent calc(var(--scratch-b-pos, 67%) - 0.4%),
+        rgba(255, 244, 220, calc(var(--scratch-b-mul) * (0.03 + var(--shine-a) * var(--gloss-strength) * 0.18)))
+          var(--scratch-b-pos, 67%),
+        transparent calc(var(--scratch-b-pos, 67%) + 0.4%)
+      ),
+      linear-gradient(
+        calc(118deg - var(--effective-tilt) + var(--angle-jitter)),
+        transparent 0%,
+        transparent calc(var(--shine-x) - var(--sweep-span)),
+        rgba(255, 250, 225, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--peak-a) * 0.18))
+          calc(var(--shine-x) - calc(var(--sweep-span) * 0.55)),
+        rgba(255, 246, 216, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--peak-a) * 0.55))
+          calc(var(--shine-x) - calc(var(--sweep-span) * 0.2)),
+        rgba(255, 252, 236, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--peak-a)))
+          var(--shine-x),
+        rgba(255, 246, 216, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--peak-a) * 0.55))
+          calc(var(--shine-x) + calc(var(--sweep-span) * 0.2)),
+        rgba(255, 232, 192, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--peak-a) * 0.22))
+          calc(var(--shine-x) + calc(var(--sweep-span) * 0.55)),
+        transparent calc(var(--shine-x) + var(--sweep-span)),
+        transparent 100%
+      );
+    background-blend-mode: screen, screen, screen, screen, screen, screen;
+    /* Default blend is screen; [data-surface="matte"] overrides to soft-light
+       below so matte-finish tiles attenuate their specular over bright image
+       regions and read as scattered (not mirror-like). */
+    mix-blend-mode: screen;
+    filter: var(--gloss-filter);
+    pointer-events: none;
+    z-index: 2;
+    /* Edge feather — two crossed linear-gradient masks intersected. Kept
+       deliberately small (3px / 2px) because at the wider values used
+       earlier the feather itself became visible as a blank border around
+       every photo — the shimmer cut off before the edge instead of
+       running into it. The displacement filter can still pull transparent
+       pixels from outside its region at the extremes, but average
+       displacement is ~scale/4 and only a tiny tail exceeds this; a 3px
+       feather absorbs that tail without being wide enough to read as a
+       gap. If "torn" dark bits re-appear at edges on very-high-scale
+       variants, lift these values by 1-2px rather than by an order of
+       magnitude. */
+    mask-image:
+      linear-gradient(to right,  transparent 0, #000 3px, #000 calc(100% - 3px), transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 2px, #000 calc(100% - 2px), transparent 100%);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+    /* Promote to its own compositor layer so filter rasterisation stays
+       stable across frames as the gradient slides past the static turbulence
+       map. `will-change: filter` is the modern hint; `translateZ(0)` is the
+       belt-and-braces back-up — together they keep the warble smooth on
+       browsers whose compositor is more conservative about promoting filter
+       elements. No visual effect, pure compositor hint. */
+    will-change: filter;
+    transform: translateZ(0);
+  }
+
+  /* Matte tiles use soft-light on top of the image: the blend inherently
+     attenuates where the image is bright (a real matte surface scatters
+     incoming light rather than reflecting it), and emphasises where the
+     image is dark (where you'd actually see diffuse highlight). */
+  .gallery-tile[data-surface="matte"]::before {
+    mix-blend-mode: soft-light;
+  }
+
+  /* Note on hover: earlier versions swapped ::before's filter to a hover-
+     specific one on :hover. That caused the whole specular pattern to jump
+     to a different seed/frequency as the cursor crossed the tile border —
+     the user called this "straightens out when the cursor leaves". The
+     swap has been removed. The per-tile filter now stays put always; hover
+     adds *new things on top* (the cursor pool, the tile lift) without
+     disturbing the main specular. No more cross-boundary pattern jump. */
+
+  /* Cursor-pool element — retained in the markup for compatibility with
+     existing templates/clones, but visually suppressed. Earlier iterations
+     drew a crossed-band distortion at the cursor and chewed it through an
+     aggressive SVG filter; the user found the result reads as "lightning"
+     rather than a polaroid surface. The cursor interaction is now pure
+     3D parallax on the tile (rotateX / rotateY driven by pointer position)
+     — see .gallery-tile:hover below. */
+  .gallery-tile-cursor {
+    display: none;
+  }
+
+  /* Heavy SVG filter is the one thing that can hurt perf at scale. Skip it
+     where the benefit is smallest / the cost is largest:
+       – reduced-motion users (accessibility + no shimmer)
+       – narrow viewports (small tiles, warble barely readable, weaker GPUs)
+     The gradient stack still renders — the warble is the only thing that
+     goes away. */
+  @media (max-width: 520px) {
+    .gallery-tile::before { filter: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-tile::before { filter: none; }
+  }
+
+  /* ── Grain pass: photo-area only, deliberately unfiltered. ────────────
+     Each tile picks one of three grain data URLs via --grain-tex (set by
+     JS from hash(i)), with randomised size + offset so adjacent tiles never
+     show the same stitched seam.
+
+     mix-blend-mode: overlay reads grain as modulation on the photo —
+     darker pixels stay mostly unchanged, brighter pixels get textured
+     variance. No filter here: an earlier build put grain on ::before and
+     the displacement warped it into streaks that obscured the image. Keeping
+     grain crisp and scratches filtered on ::before separates "fine film
+     texture" from "visible surface damage" cleanly. */
+  .gallery-tile::after {
+    content: "";
+    position: absolute;
+    inset: 5px 5px 18px 5px;                  /* photo region only */
+    border-radius: 1px;
+    background-image: var(--grain-tex);
+    background-size: var(--grain-size, 220px 220px);
+    background-position: var(--grain-offset, 0 0);
+    mix-blend-mode: overlay;
+    opacity: calc(var(--gloss-strength) * 0.38);
+    pointer-events: none;
+    z-index: 1;                                /* below ::before highlight */
+  }
+
+  .gallery-tile:hover,
+  .gallery-tile:focus-visible {
+    /* Hover pose: de-tilt the resting 2D rotation, lift slightly, and keep
+       the rotateX / rotateY terms reading from --cursor-tilt-y / --cursor-tilt-x.
+       As the user moves the cursor across the tile, JS updates those typed
+       custom props every pointermove, and the @property transition makes
+       them smoothly track — producing a subtle parallax tilt.
+       The specular stack (::before) lives inside the tile, so as the tile
+       rotates in 3D the specular warps in perspective accordingly; the
+       individual shimmer and distortion visibly shift with the parallax
+       without any extra logic. */
+    --effective-tilt: 0deg;
+    transform:
+      perspective(1200px)
+      rotateX(var(--cursor-tilt-y))
+      rotateY(var(--cursor-tilt-x))
+      translateY(-6px)
+      scale(var(--scale, 1));
+    box-shadow:
+      0 6px 14px rgba(0, 0, 0, 0.15),
+      0 24px 52px -16px rgba(30, 20, 10, 0.45);
+    z-index: 2;
+    transition:
+      transform 280ms cubic-bezier(.16, 1, .3, 1),
+      --effective-tilt 280ms cubic-bezier(.16, 1, .3, 1),
+      --cursor-tilt-x 140ms cubic-bezier(.2, .7, .3, 1),
+      --cursor-tilt-y 140ms cubic-bezier(.2, .7, .3, 1),
+      box-shadow 260ms ease-out,
+      z-index 0s;
+  }
+
+  /* Pressed state: JS flips [data-pressed] on pointerdown. The tile takes
+     a small depressing dip (translateY +2px vs hover, plus a tiny scale
+     compression). Deliberately subtle — the card stays rigid, only the
+     pose shifts; parallax rotateX/Y still track the cursor. */
+  .gallery-tile[data-pressed] {
+    transform:
+      perspective(1200px)
+      rotateX(var(--cursor-tilt-y))
+      rotateY(var(--cursor-tilt-x))
+      translateY(-4px)
+      scale(calc(var(--scale, 1) * 0.995));
+    transition:
+      transform 140ms cubic-bezier(.2, .7, .3, 1),
+      --cursor-tilt-x 140ms cubic-bezier(.2, .7, .3, 1),
+      --cursor-tilt-y 140ms cubic-bezier(.2, .7, .3, 1),
+      box-shadow 160ms ease-out;
+  }
+  .gallery-tile:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  /* ── Lightbox ── */
+  .gallery-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 260ms ease-out;
+  }
+  .gallery-lightbox[data-open="true"] {
+    pointer-events: auto;
+    opacity: 1;
+  }
+  .gallery-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+  }
+  .gallery-lightbox-figure {
+    position: relative;
+    margin: 0;
+    max-width: 92vw;
+    max-height: 86vh;
+    z-index: 1;
+    transform: scale(0.96);
+    opacity: 0;
+    transition:
+      transform 320ms cubic-bezier(.16, 1, .3, 1),
+      opacity 220ms ease-out;
+  }
+  .gallery-lightbox[data-open="true"] .gallery-lightbox-figure {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .gallery-lightbox-figure img {
+    max-width: 92vw;
+    max-height: 86vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.55);
+  }
+
+  .gallery-lightbox-nav,
+  .gallery-lightbox-close {
+    position: absolute;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 180ms ease-out, border-color 180ms ease-out, transform 180ms ease-out;
+  }
+  .gallery-lightbox-nav:hover,
+  .gallery-lightbox-close:hover {
+    background: color-mix(in srgb, var(--color-accent) 60%, rgba(0, 0, 0, 0.45));
+    border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
+  }
+  .gallery-lightbox-nav:focus-visible,
+  .gallery-lightbox-close:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .gallery-lightbox-prev { left: 16px; top: 50%; transform: translateY(-50%); }
+  .gallery-lightbox-next { right: 16px; top: 50%; transform: translateY(-50%); }
+  .gallery-lightbox-prev:hover { transform: translateY(-50%) scale(1.06); }
+  .gallery-lightbox-next:hover { transform: translateY(-50%) scale(1.06); }
+  .gallery-lightbox-close { top: 16px; right: 16px; }
+  .gallery-lightbox-close:hover { transform: scale(1.06); }
+
+  .gallery-lightbox-counter {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-lightbox-nav,
+    .gallery-lightbox-close {
+      width: 52px;
+      height: 52px;
+    }
+    .gallery-lightbox-prev { left: 28px; }
+    .gallery-lightbox-next { right: 28px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-tile,
+    .gallery-lightbox,
+    .gallery-lightbox-figure {
+      transition: none !important;
+    }
+    .gallery-tile {
+      transform: none !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const viewport = document.getElementById('gallery-viewport');
+    const track = document.getElementById('gallery-track');
+    if (!viewport || !track) return;
+    const tiles = Array.from(track.querySelectorAll('[data-tile]'));
+    if (!tiles.length) return;
+    const imgs = tiles.map((t) => t.querySelector('img'));
+
+    const NUM_ROWS = 3;
+
+    // ── Deterministic per-tile variations (scrapbook feel, stable per index) ──
+    function hash01(i, seed) {
+      const h = Math.sin(i * 12.9898 + seed) * 43758.5453;
+      return h - Math.floor(h);                         // 0 … 1
+    }
+    function tiltFor(i)  { return (hash01(i, 78.233) - 0.5) * 6; }   // -3°  …  +3°
+    function scaleFor(i) { return 0.96 + hash01(i, 34.128) * 0.07; } // 0.96 … 1.03
+    // Procedural gloss character, stable per tile index.
+    //   glossFilterFor — picks one of 8 bow/scratch SVG filter variants.
+    //   strengthFor    — per-tile multiplier on gloss alphas. Range 0.75…1.05.
+    //   roughnessFor   — core surface descriptor. 0 = mirror-polished plastic
+    //                    (polaroid straight from the pack), 1 = dead matte
+    //                    (paper-backed, no laminate, or heavily worn).
+    //                    Distribution is shifted to favour middling values —
+    //                    pure mirrors and pure matte are rarer in reality.
+    //   angleJitterFor — ±6° deviation from the 118° world sun angle,
+    //                    modelling per-tile surface normal variation.
+    //   hasShineFor    — ~88% of tiles get a specular; ~12% don't. A handful
+    //                    of dead-matte polaroids in the carousel breaks up
+    //                    the "every photo has the same diagonal streak" feel.
+    //   hasScratchA/B  — low probabilities (0.28 / 0.12) so scratches are
+    //                    the exception, not the rule. Most polaroids are
+    //                    pristine; a quarter have a single scratch.
+    function glossFilterFor(i)  { return Math.floor(hash01(i, 95.311) * 8); }
+    function strengthFor(i)     { return 0.75 + hash01(i, 51.479) * 0.30; }
+    function roughnessFor(i)    {
+      // Beta-ish distribution via product of two uniforms — concentrates mass
+      // in the middle (most tiles semi-gloss), thins the tails.
+      const a = hash01(i, 11.729);
+      const b = hash01(i, 88.217);
+      return Math.min(1, a * 0.55 + b * 0.55);
+    }
+    function angleJitterFor(i)  { return (hash01(i, 61.187) - 0.5) * 12; }  // ±6°
+    function hasShineFor(i)     { return hash01(i, 38.601) < 0.88 ? 1 : 0; }
+    function hasScratchAFor(i)  { return hash01(i, 71.803) < 0.28 ? 1 : 0; }
+    function hasScratchBFor(i)  { return hash01(i, 24.909) < 0.12 ? 1 : 0; }
+
+    // Three static grain data URLs with different seeds + tints. Stored once
+    // at module scope so applyVariants just indexes into the table — no repeated
+    // string building, and the browser caches each unique URL.
+    const GRAIN_TEXTURES = [
+      "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.6'  numOctaves='2' stitchTiles='stitch' seed='11'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.96 0 0 0 0 0.86 0 0 0 0.10 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>\")",
+      "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.9'  numOctaves='2' stitchTiles='stitch' seed='29'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.93 0 0 0 0 0.80 0 0 0 0.11 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>\")",
+      "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='2.3'  numOctaves='3' stitchTiles='stitch' seed='47'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.97 0 0 0 0 0.88 0 0 0 0.09 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>\")",
+    ];
+    function grainTexFor(i)    { return GRAIN_TEXTURES[Math.floor(hash01(i, 19.347) * GRAIN_TEXTURES.length)]; }
+    function grainSizeFor(i)   { return (180 + Math.floor(hash01(i, 62.901) * 120)) + 'px'; }      // 180–300 px
+    function grainOffsetFor(i) {
+      // Randomise both axes so adjacent tiles don't show the same stitched seam.
+      const ox = Math.floor(hash01(i, 83.773) * 200);
+      const oy = Math.floor(hash01(i, 44.291) * 200);
+      return ox + 'px ' + oy + 'px';
+    }
+    // Two hairline scratches per tile, at unique angles + positions. The
+    // position is biased to avoid the centre fifth of the tile (40–60%
+    // along the gradient axis) because that's where the subject of the
+    // photo typically sits; scratches through a face or focal point read
+    // as damage. The remaining uniform range splits into two 20%-wide
+    // bands: [20, 40] (near-edge on one side) and [60, 80] (near-edge on
+    // the other). A fresh uniform hash picks the band so neither side is
+    // over-represented, and the scratch angles stay fully random — a
+    // steep scratch at position 30% can still glance past the centre, but
+    // it'll only clip the edge of the subject rather than slice straight
+    // through it.
+    function scratchAAngle(i) { return (hash01(i, 72.185) * 160 - 80).toFixed(1) + 'deg'; }   // -80°…+80°
+    function scratchAPos(i) {
+      const h = hash01(i, 16.933);
+      const pos = h < 0.5 ? (20 + h * 40) : (60 + (h - 0.5) * 40);
+      return pos.toFixed(1) + '%';
+    }
+    function scratchBAngle(i) { return (hash01(i, 27.446) * 160 - 80).toFixed(1) + 'deg'; }
+    function scratchBPos(i) {
+      const h = hash01(i, 91.715);
+      const pos = h < 0.5 ? (20 + h * 40) : (60 + (h - 0.5) * 40);
+      return pos.toFixed(1) + '%';
+    }
+
+    function applyVariants(tile, i) {
+      const s = tile.style;
+      s.setProperty('--tilt',  tiltFor(i)  + 'deg');
+      s.setProperty('--scale', scaleFor(i).toFixed(3));
+      s.setProperty('--gloss-filter', 'url(#polaroid-gloss-' + glossFilterFor(i) + ')');
+      s.setProperty('--gloss-strength', strengthFor(i).toFixed(3));
+      s.setProperty('--grain-tex', grainTexFor(i));
+      s.setProperty('--grain-size', grainSizeFor(i));
+      s.setProperty('--grain-offset', grainOffsetFor(i));
+
+      const hasA = hasScratchAFor(i);
+      const hasB = hasScratchBFor(i);
+      s.setProperty('--scratch-a-mul', hasA);
+      s.setProperty('--scratch-b-mul', hasB);
+      if (hasA) {
+        s.setProperty('--scratch-a-angle', scratchAAngle(i));
+        s.setProperty('--scratch-a-pos',   scratchAPos(i));
+      }
+      if (hasB) {
+        s.setProperty('--scratch-b-angle', scratchBAngle(i));
+        s.setProperty('--scratch-b-pos',   scratchBPos(i));
+      }
+
+      // Surface model: roughness drives sweep width + peak alpha + bloom, plus
+      // a discrete `data-surface` bucket that selects the mix-blend-mode.
+      //   rough < 0.25 → glossy   → narrow + bright + screen   (mirror-like)
+      //   rough < 0.65 → semi     → medium     + screen        (standard laminate)
+      //   rough ≥ 0.65 → matte    → wide + dim + soft-light    (diffuse)
+      const rough = roughnessFor(i);
+      const surface = rough < 0.25 ? 'glossy' : rough < 0.65 ? 'semi' : 'matte';
+      tile.setAttribute('data-surface', surface);
+
+      // Continuous interpolation between glossy and matte. Curve values pick
+      // "what makes sense": matte tiles spread their specular lobe wide (real
+      // rough surfaces scatter more angles), lower the peak (energy conserved
+      // over a wider area), and grow the bloom accordingly.
+      //
+      // The alpha caps (peakA max 0.17, bloomA max 0.15) act as the specular
+      // intensity clamp — peak specular can never lift the image's midtones
+      // past ~17% luminance, so faces and subject areas stay readable even
+      // in the brightest-possible case (closest tile to light × glossiest
+      // surface × fully active shine-a). Matte tiles are dimmer again;
+      // combined with mix-blend-mode: soft-light on matte, they reflect
+      // subtly without fogging.
+      const sweepSpan = (20 + rough * 28).toFixed(1) + '%';   // 20 … 48 %
+      const peakA     = (0.17 - rough * 0.10).toFixed(3);      // 0.17 … 0.07
+      const bloomA    = (0.15 - rough * 0.10).toFixed(3);      // 0.15 … 0.05
+      const bloomSpan = (45 + rough * 50).toFixed(1) + '%';    // 45 … 95 %
+      s.setProperty('--sweep-span', sweepSpan);
+      s.setProperty('--peak-a',     peakA);
+      s.setProperty('--bloom-a',    bloomA);
+      s.setProperty('--bloom-span', bloomSpan);
+      s.setProperty('--angle-jitter', angleJitterFor(i).toFixed(1) + 'deg');
+      s.setProperty('--has-shine',    hasShineFor(i));
+      // Shimmer phase offset — a per-tile horizontal shift applied to shine-x.
+      // Without this, all tiles at the same screen-x show the same highlight
+      // position, which reads as one big screen-space light bar passing over.
+      // A ±8% phase breaks the lockstep without destroying the world-fixed
+      // sun illusion: every card still reacts to the same light, but each has
+      // a slightly different "waviness" in when its peak lines up.
+      s.setProperty('--shimmer-phase', ((hash01(i, 99.773) - 0.5) * 16).toFixed(2));
+    }
+    tiles.forEach(applyVariants);
+
+    // Seed aspect ratios from data-ratio when available (build-time fetch
+    // pipes the API's dimensions through). Falls back to 4:3 until the image
+    // loads and measureAll() overwrites with the real naturalWidth/Height.
+    const ratios = tiles.map((t) => {
+      const attr = t.getAttribute('data-ratio');
+      const r = attr ? parseFloat(attr) : NaN;
+      return Number.isFinite(r) && r > 0 ? r : 4 / 3;
+    });
+
+    function imageReady(img) {
+      return new Promise((resolve) => {
+        if (img.complete && img.naturalWidth > 0) return resolve(true);
+        const done = () => resolve(true);
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      });
+    }
+    function measureAll() {
+      imgs.forEach((img, i) => {
+        // Skip imgs still showing the 1x1 SVG placeholder (data-src present
+        // means the real URL hasn't been swapped in yet). Measuring them
+        // would clobber the correct API-provided ratio in ratios[i] with 1:1
+        // and break the row-packing DP.
+        if (img && img.dataset && img.dataset.src) return;
+        if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+          ratios[i] = img.naturalWidth / img.naturalHeight;
+        }
+      });
+    }
+
+    // ── Pick a target row height ──
+    // Smaller than before so three rows fit comfortably and photos feel
+    // like hand-held prints rather than display pieces.
+    function pickTargetHeight(viewportW) {
+      if (viewportW < 520)  return 130;
+      if (viewportW < 780)  return 160;
+      if (viewportW < 1100) return 185;
+      if (viewportW < 1500) return 210;
+      return 235;
+    }
+
+    // Render-order permutation: interleave portraits (ratio < 1) and
+    // landscapes (ratio >= 1) so that no two portraits sit next to each
+    // other when possible. Greedy alternating: prefer switching category
+    // from the last placement; when forced to repeat, pick from the larger
+    // remaining stack.
+    function computeOrder() {
+      const n = tiles.length;
+      const portraits  = [];
+      const landscapes = [];
+      for (let i = 0; i < n; i++) {
+        (ratios[i] < 1 ? portraits : landscapes).push(i);
+      }
+      const order = [];
+      let last = null;     // 'P' | 'L' | null
+      let pi = 0, li = 0;
+      while (pi < portraits.length || li < landscapes.length) {
+        const pLeft = portraits.length  - pi;
+        const lLeft = landscapes.length - li;
+        let pickPortrait;
+        if      (last === 'L' && pLeft > 0) pickPortrait = true;
+        else if (last === 'P' && lLeft > 0) pickPortrait = false;
+        else                                pickPortrait = pLeft > lLeft;
+        if (pickPortrait) { order.push(portraits[pi++]);  last = 'P'; }
+        else              { order.push(landscapes[li++]); last = 'L'; }
+      }
+      return order;
+    }
+
+    // Partition a sequence (given as an ordered list of source indices) into
+    // `numRows` rows by minimizing the maximum row aspect-ratio sum. Since
+    // row width ∝ sum of ratios at a fixed row height, minimizing the max
+    // gives rows of roughly equal length.
+    //
+    // Classic k-contiguous-partition DP:
+    //   dp[r][i] = min over k<i of max(dp[r-1][k], cum[i]-cum[k])
+    function partitionIntoRows(numRows, order) {
+      const n = order.length;
+      if (numRows <= 1 || n <= 1) {
+        const only = order.slice();
+        const pad  = Array.from({ length: Math.max(0, numRows - 1) }, () => []);
+        return [only, ...pad];
+      }
+      if (n <= numRows) {
+        return Array.from({ length: numRows }, (_, r) => r < n ? [order[r]] : []);
+      }
+
+      const cum = [0];
+      for (let i = 0; i < n; i++) cum.push(cum[i] + ratios[order[i]]);
+
+      const dp    = Array.from({ length: numRows + 1 }, () => new Array(n + 1).fill(Infinity));
+      const split = Array.from({ length: numRows + 1 }, () => new Array(n + 1).fill(0));
+      for (let i = 0; i <= n; i++) dp[1][i] = cum[i];
+
+      for (let r = 2; r <= numRows; r++) {
+        for (let i = r; i <= n; i++) {
+          let best = Infinity, bestK = r - 1;
+          for (let k = r - 1; k < i; k++) {
+            const candidate = Math.max(dp[r - 1][k], cum[i] - cum[k]);
+            if (candidate < best) { best = candidate; bestK = k; }
+          }
+          dp[r][i]    = best;
+          split[r][i] = bestK;
+        }
+      }
+
+      // Reconstruct the split indices [0, k1, k2, ..., n].
+      const cuts = [n];
+      let cr = numRows, ci = n;
+      while (cr > 1) {
+        const k = split[cr][ci];
+        cuts.unshift(k);
+        cr--;
+        ci = k;
+      }
+      cuts.unshift(0);
+
+      const rows = [];
+      for (let r = 0; r < numRows; r++) {
+        const start = cuts[r], end = cuts[r + 1];
+        const idxs = [];
+        for (let i = start; i < end; i++) idxs.push(order[i]);
+        rows.push(idxs);
+      }
+      return rows;
+    }
+
+    // Safety net: if the partition happened to place two portraits adjacent
+    // inside a row (can happen when one row has many portraits), swap one
+    // with the nearest landscape in the same row.
+    function repairRow(row) {
+      for (let i = 1; i < row.length; i++) {
+        if (ratios[row[i]] < 1 && ratios[row[i - 1]] < 1) {
+          // Look for a landscape to swap with, trying nearest positions first.
+          for (let d = 1; d < row.length; d++) {
+            const a = i + d, b = i - d - 1;
+            if (a < row.length && ratios[row[a]] >= 1 &&
+                (a === 0 || ratios[row[a - 1]] < 1) &&
+                (a === row.length - 1 || ratios[row[a + 1]] < 1 || a + 1 !== i)) {
+              [row[i], row[a]] = [row[a], row[i]];
+              break;
+            }
+            if (b >= 0 && ratios[row[b]] >= 1) {
+              [row[i], row[b]] = [row[b], row[i]];
+              break;
+            }
+          }
+        }
+      }
+      return row;
+    }
+
+    // Row container refs (created lazily on first layout).
+    const rowEls = [];
+    function ensureRows(count) {
+      while (rowEls.length < count) {
+        const row = document.createElement('div');
+        row.className = 'gallery-track-row';
+        rowEls.push(row);
+        track.appendChild(row);
+      }
+      while (rowEls.length > count) {
+        const row = rowEls.pop();
+        row.remove();
+      }
+    }
+
+    function layout() {
+      const viewportW = viewport.clientWidth;
+      if (!viewportW) return;
+
+      // Preserve scroll position across re-layouts. Without this, any
+      // re-layout (image-load Promise.all, ResizeObserver from scrollbar
+      // toggling when the lightbox opens `overflow: hidden` on the body,
+      // orientation change, window resize) would call scrollLeft = 0 below
+      // and teleport the carousel back to the start. The row-packing DP
+      // is deterministic given the same ratios, so scrollWidth is stable
+      // across passes and the restored value refers to roughly the same
+      // content; wrapScroll on the next frame clamps any small drift.
+      const prevScroll = viewport.scrollLeft;
+
+      const targetH = pickTargetHeight(viewportW);
+      const order = computeOrder();
+      const rows = partitionIntoRows(NUM_ROWS, order).map(repairRow);
+
+      // Size each tile: width scales by its aspect ratio, height is fixed.
+      tiles.forEach((tile, i) => {
+        tile.style.width  = Math.round(ratios[i] * targetH) + 'px';
+        tile.style.height = targetH + 'px';
+      });
+
+      // Clear any previous layout (including clones from earlier passes).
+      ensureRows(NUM_ROWS);
+      rowEls.forEach((rowEl) => {
+        Array.from(rowEl.children).forEach((child) => {
+          if (child.hasAttribute('aria-hidden')) child.remove();
+        });
+      });
+
+      // Move source tiles into their target rows (appendChild moves rather than copies).
+      rows.forEach((rowIdxs, ri) => {
+        rowIdxs.forEach((i) => rowEls[ri].appendChild(tiles[i]));
+      });
+
+      // Clone each row for seamless infinite-loop scrolling. Clones inherit
+      // inline width/height/tilt via cloneNode. Click handlers use event
+      // delegation on the row, so clones are clickable without per-element
+      // listeners.
+      rowEls.forEach((rowEl) => {
+        const sources = Array.from(rowEl.children);
+        sources.forEach((orig) => {
+          const clone = orig.cloneNode(true);
+          clone.setAttribute('aria-hidden', 'true');
+          clone.setAttribute('tabindex', '-1');
+          rowEl.appendChild(clone);
+        });
+      });
+
+      // Restore scroll position captured at the top of layout(). If this
+      // is the first layout, prevScroll is 0 so the carousel opens at the
+      // left. On subsequent layouts, the user's current position survives.
+      viewport.scrollLeft = prevScroll;
+
+      // Cache each tile's horizontal center inside the track for the shine loop.
+      recomputeShineCache();
+
+      // Observe any new data-src imgs (clones pick up data-src via
+      // cloneNode(true); new Piwigo tiles added at runtime arrive here too).
+      // Idempotent: IO silently no-ops on re-observed elements.
+      setupLazyLoader();
+    }
+
+    // ── Virtual light source + shine tracking ──
+    // A fixed virtual light sits at 30% across the viewport. Each tile's shine
+    // band slides along the photo based on where the tile is relative to the
+    // light in screen space, so the highlight appears pinned in world space
+    // while the tiles scroll past it.
+    //
+    // Three CSS vars are written per tile, all consumed by gradients that
+    // composite in one pass:
+    //   --shine-x : 8…92 (%) — specular peak position along the sweep band
+    //   --shine-a : 0.22…1  — intensity (gaussian falloff by distance from light)
+    //   --light-x : 8…92 (%) — directional matte glow position (tracks shine-x)
+    //
+    // Offscreen tiles are culled in the loop (no DOM writes), which drops the
+    // per-frame work from ~116 tiles to the ~16 actually visible on desktop.
+    const LIGHT_X_FRAC     = 0.3;        // light horizontal position (0=left, 1=right)
+    const SHINE_GAIN       = 80;         // screen-dx → shine-x gain (%)
+    // Tight EPS values so sub-pixel shine motion makes it to the DOM.
+    // Earlier 0.3% ≈ 0.6px steps on a 200px tile; visible as discrete jumps
+    // to a careful viewer. 0.08% ≈ 0.16px (sub-pixel) reads as continuous.
+    const SHINE_EPS        = 0.08;       // skip --shine-x writes under this ∆ (%)
+    const SHINE_A_EPS      = 0.004;      // skip --shine-a writes under this ∆
+    const INTENSITY_WIDTH  = 1.25;       // gaussian σ in viewport widths
+    const CULL_MARGIN_PX   = 220;        // keep updating tiles this far off-edge
+    const SHINE_A_MIN      = 0.22;                 // darkest a tile ever dims to
+    const SHINE_A_SPAN     = 1 - SHINE_A_MIN;       // precomputed range
+
+    let tileCenters = [];                // [{ el, centerInTrack }]
+    // Per-element last written state — WeakMap so clones GC'd on re-layout.
+    const lastShine = new WeakMap();
+
+    function recomputeShineCache() {
+      const trackRect = track.getBoundingClientRect();
+      const all = track.querySelectorAll('[data-tile]');
+      // Cache the per-tile shimmer phase alongside centerInTrack so the hot
+      // loop never reads inline styles. The value is set once in applyVariants;
+      // parsing it here incurs one parseFloat per layout, not per frame.
+      tileCenters = Array.from(all).map((el) => {
+        const r = el.getBoundingClientRect();
+        const phase = parseFloat(el.style.getPropertyValue('--shimmer-phase') || '0');
+        return { el, centerInTrack: r.left + r.width / 2 - trackRect.left, phase };
+      });
+    }
+
+    // ── Smart preloader for off-screen tiles ──
+    // Tiles at index >= 24 render with a `data-src` attribute instead of a
+    // real src (see the `eager` branch in the template). This observer swaps
+    // data-src → src when a tile enters a 2500px horizontal margin around
+    // the viewport — about 75s of autodrift look-ahead at 33 px/s, which is
+    // well clear of typical image decode+load latency so the photo is ready
+    // before it's visible.
+    //
+    // Why not rely on native loading="lazy"? The threshold is browser-
+    // specific: Chrome expands it generously (≈ 1250-2500px depending on
+    // connection), but Firefox and Safari use a much tighter margin and
+    // would leave visible blanks during fast drag/scroll. A single explicit
+    // IntersectionObserver gives deterministic behaviour in every engine.
+    //
+    // `root: viewport` is essential — the scroll container is the element
+    // that moves, not the page — and the observer is cheap to re-run on
+    // each layout pass because it dedupes observations internally.
+    let lazyIO = null;
+    function setupLazyLoader() {
+      if (typeof IntersectionObserver === 'undefined') {
+        // Ancient browser: eagerly promote everything and move on. The
+        // user preferred "load more" over "load perfectly"; a rare fallback
+        // firing a burst of fetches is better than invisible tiles.
+        track.querySelectorAll('img[data-src]').forEach((img) => {
+          img.src = img.dataset.src;
+          delete img.dataset.src;
+        });
+        return;
+      }
+      if (!lazyIO) {
+        lazyIO = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const img = entry.target;
+            const src = img.dataset.src;
+            if (src) {
+              img.src = src;
+              delete img.dataset.src;
+            }
+            lazyIO.unobserve(img);
+          }
+        }, {
+          root: viewport,
+          rootMargin: '0px 2500px 0px 2500px',
+        });
+      }
+      track.querySelectorAll('img[data-src]').forEach((img) => lazyIO.observe(img));
+    }
+
+    function updateShine() {
+      if (!tileCenters.length) return;
+      const vpRect       = viewport.getBoundingClientRect();
+      const vpW          = vpRect.width || 1;
+      const trackScreenX = vpRect.left - viewport.scrollLeft;
+      const lightScreenX = vpRect.left + vpW * LIGHT_X_FRAC;
+      const cullLeft     = vpRect.left  - CULL_MARGIN_PX;
+      const cullRight    = vpRect.right + CULL_MARGIN_PX;
+      // Precompute gaussian denominator once per frame (avoid 116 divisions).
+      const sigma = vpW * INTENSITY_WIDTH;
+      const invTwoSigmaSq = 1 / (2 * sigma * sigma);
+
+      for (let i = 0; i < tileCenters.length; i++) {
+        const entry = tileCenters[i];
+        const tileScreenX = trackScreenX + entry.centerInTrack;
+        // Cull offscreen tiles — no DOM reads, no writes. Biggest win: on desktop
+        // ~100 of 116 tiles are offscreen at any moment; this skips them entirely.
+        if (tileScreenX < cullLeft || tileScreenX > cullRight) continue;
+        // Hovered tile gets its --shine-x / --shine-a from the cursor writer;
+        // skipping here avoids both writers competing on the same property.
+        // When unhover happens, hoveredTile becomes null and the next frame
+        // resumes writing light-driven shine here.
+        if (entry.el === hoveredTile) continue;
+
+        const dx = lightScreenX - tileScreenX;
+        // Shine position: positive dx ⇒ light is to the right of tile ⇒ band right-of-centre.
+        // The per-tile phase offset desynchronises tiles horizontally so they
+        // never all line up with their peak shine at once — the reflections
+        // read as card-local surface responses, not a screen-wide light bar.
+        let shineX = 50 + (dx / vpW) * SHINE_GAIN + entry.phase;
+        if (shineX < 8)  shineX = 8;
+        else if (shineX > 92) shineX = 92;
+
+        // Intensity: gaussian falloff with distance from light — tiles near the
+        // light catch a bright, hot specular; tiles at the edges fade to ambient.
+        const intensity = Math.exp(-(dx * dx) * invTwoSigmaSq);
+        const shineA = SHINE_A_MIN + intensity * SHINE_A_SPAN;
+
+        const last = lastShine.get(entry.el);
+        if (last !== undefined
+            && Math.abs(last.x - shineX) < SHINE_EPS
+            && Math.abs(last.a - shineA) < SHINE_A_EPS) continue;
+
+        // Reuse the stored object to avoid a per-update allocation.
+        if (last === undefined) {
+          lastShine.set(entry.el, { x: shineX, a: shineA });
+        } else {
+          last.x = shineX;
+          last.a = shineA;
+        }
+
+        const s = entry.el.style;
+        // 2 decimals for sub-pixel shine precision; matches the tightened EPS.
+        const xStr = shineX.toFixed(2) + '%';
+        s.setProperty('--shine-x', xStr);
+        s.setProperty('--shine-a', shineA.toFixed(3));
+        s.setProperty('--light-x', xStr);
+      }
+    }
+
+    // ── Autoscroll ──
+    //   no mouse over it:  slow rightward ambient drift
+    //   mouse over it:     velocity is a linear function of cursor x-position
+    //                      (far-left ⇒ full reverse, center ⇒ stop,
+    //                       far-right ⇒ full forward), with a small dead
+    //                      zone around the middle to avoid jitter.
+    //   touch / drag:      pause while interacting (lets native swipe own it)
+    //   lightbox open:     pause
+    const DEFAULT_DRIFT   = 0.55;   // px/frame ambient, ≈ 33 px/sec at 60fps
+    const HOVER_MAX_SPEED = 7;      // px/frame at the far left/right edge
+    const DEAD_ZONE       = 0.1;    // ±10% of half-width counts as "middle" → stop
+
+    let isPointerDown = false;
+    let hoverVel = null;            // non-null only while mouse is inside the viewport
+    let touchCooldownEnd = 0;       // timestamp until which ambient drift stays paused
+                                    // after a touch (lets native iOS momentum finish)
+
+    function computeVel() {
+      if (box && box.dataset.open === 'true') return 0;
+      if (isPointerDown) return 0;
+      if (performance.now() < touchCooldownEnd) return 0;
+      if (hoverVel !== null) return hoverVel;
+      return DEFAULT_DRIFT;
+    }
+
+    // Seamless wrap: with clones appended, scrollWidth == 2 * original track width.
+    // When we pass the half-way mark, jump back by that amount — the content
+    // at the new position is identical to the old, so the viewer sees no seam.
+    function wrapScroll() {
+      const halfW = viewport.scrollWidth / 2;
+      if (!halfW) return;
+      if (viewport.scrollLeft >= halfW) viewport.scrollLeft -= halfW;
+      else if (viewport.scrollLeft < 0)  viewport.scrollLeft += halfW;
+    }
+
+    let rafId = null;
+    function tick() {
+      if (viewport.dataset.state === 'ready') {
+        const v = computeVel();
+        if (v !== 0) {
+          viewport.scrollLeft += v;
+          wrapScroll();                  // only wrap while we're actively drifting —
+                                         // writing scrollLeft during native momentum
+                                         // scroll breaks it on iOS
+        }
+        updateShine();                   // keep shine aligned with the fixed light
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+    tick();
+
+    // Continuous position-based velocity — mouse ONLY. Touch devices get
+    // native swipe (overflow-x: auto handles it); we don't want touch-synthesized
+    // pointer events to steer the drift.
+    viewport.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const rect = viewport.getBoundingClientRect();
+      // Normalized x around the center: −1 at left edge, 0 at middle, +1 at right.
+      const norm = ((e.clientX - rect.left) - rect.width / 2) / (rect.width / 2);
+      const abs = Math.abs(norm);
+      if (abs < DEAD_ZONE) {
+        hoverVel = 0;
+      } else {
+        // Remap [DEAD_ZONE … 1] → [0 … 1] so velocity grows smoothly from the
+        // edge of the dead zone (no jump from 0 to some small speed).
+        const mag = (abs - DEAD_ZONE) / (1 - DEAD_ZONE);
+        hoverVel = Math.sign(norm) * mag * HOVER_MAX_SPEED;
+      }
+    });
+    viewport.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      hoverVel = null;
+    });
+
+    // Pause during active drag/swipe. For touch, also extend a short cooldown
+    // after release so native iOS momentum can play out before drift resumes.
+    viewport.addEventListener('pointerdown', () => { isPointerDown = true; });
+    function releasePointer(e) {
+      isPointerDown = false;
+      if (e && e.pointerType && e.pointerType !== 'mouse') {
+        touchCooldownEnd = performance.now() + 1500;   // 1.5s momentum grace
+        hoverVel = null;                                // clear any stale mouse state
+      }
+    }
+    window.addEventListener('pointerup',     releasePointer);
+    window.addEventListener('pointercancel', releasePointer);
+
+    // ── Cursor-driven specular deformation ─────────────────────────────
+    // Track-level delegation so we don't carry 116 listeners. The only tile
+    // we care about is the one under the cursor; we write --cursor-x / -y on
+    // that tile and let the CSS radial-gradient specular hot-spot react.
+    //
+    // --cursor-pressure is raised by :hover (small) and pressed attribute
+    // (stronger) in CSS via @property transitions — zero JS work for the
+    // pressure value itself; we just flip the attribute on pointerdown.
+    //
+    // We only mutate the tile that's actually under the cursor, and only
+    // when pointerType is 'mouse' — touch users don't have a hover phase
+    // and the deformation would fight their scroll gesture otherwise.
+    // Peak parallax magnitude at the tile's corners. Kept intentionally
+    // small — a real polaroid you're looking down at wouldn't rotate
+    // dramatically in your hand; the goal is enough to see the shimmer
+    // shift in perspective, not to fling the card around.
+    const PARALLAX_MAX_DEG = 7;
+
+    function resetTilt(tile) {
+      if (!tile) return;
+      const s = tile.style;
+      s.setProperty('--cursor-tilt-x', '0deg');
+      s.setProperty('--cursor-tilt-y', '0deg');
+    }
+
+    let hoveredTile = null;
+    function updateCursor(e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      const tile = e.target.closest && e.target.closest('[data-tile]');
+      if (tile !== hoveredTile) {
+        // Clean up the previous tile: drop pressure state, relax the
+        // parallax rotation back to flat via the @property transition.
+        if (hoveredTile) {
+          hoveredTile.removeAttribute('data-pressed');
+          resetTilt(hoveredTile);
+        }
+        hoveredTile = tile;
+      }
+      if (!tile) return;
+      const r = tile.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width)  * 100;
+      const y = ((e.clientY - r.top)  / r.height) * 100;
+      const s = tile.style;
+      s.setProperty('--cursor-x', x.toFixed(1) + '%');
+      s.setProperty('--cursor-y', y.toFixed(1) + '%');
+
+      // Parallax convention: the tile tilts AS IF the viewer is shifting
+      // their gaze to where the cursor is, so whichever edge is closest
+      // to the cursor comes toward the viewer.
+      //   Cursor right   → nx > 0 → rotateY(+nx·MAX)   → right edge forward
+      //   Cursor top     → ny < 0 → rotateX(+ny·MAX)   → top edge forward
+      // rotateX is positive-ny in CSS's coordinate system because CSS Y
+      // grows downward while the rotateX axis direction has +Y going into
+      // +Z (away from viewer) for a positive rotation — so to bring the
+      // top (negative screen-y-relative-to-centre) *toward* the viewer we
+      // want rotateX to be negative when ny is positive, which is exactly
+      // `ny * MAX` with a top-of-tile ny < 0.
+      const nx = (x - 50) / 50;           // −1 … +1 across width
+      const ny = (y - 50) / 50;           // −1 … +1 across height
+      s.setProperty('--cursor-tilt-x', (nx * PARALLAX_MAX_DEG).toFixed(2) + 'deg');
+      s.setProperty('--cursor-tilt-y', (ny * PARALLAX_MAX_DEG).toFixed(2) + 'deg');
+
+      // Specular peak tracks the cursor so the shimmer visibly slides as
+      // the viewer parallaxes — rotating the tile alone only produces a
+      // few-pixel foreshortening shift at ±7° tilt, which isn't enough
+      // to feel like the highlight is moving. Anchoring --shine-x to the
+      // cursor makes the bright band follow the gaze direction, and pins
+      // the intensity at its peak while hovered. updateShine ignores the
+      // hovered tile (see the `entry.el === hoveredTile` skip below) so
+      // the two writers don't fight.
+      s.setProperty('--shine-x', x.toFixed(2) + '%');
+      s.setProperty('--light-x', x.toFixed(2) + '%');
+      s.setProperty('--shine-a', '1');
+    }
+    track.addEventListener('pointermove', updateCursor);
+    // When the pointer leaves the track entirely, relax whichever tile was
+    // last under the cursor. Without this, the tile keeps its last tilt
+    // until :hover ends — visually the rotateX/Y disappears with the
+    // transform transition, but the typed properties stay "hot" and the
+    // next hover would snap the new tile to old values for one frame.
+    track.addEventListener('pointerleave', () => {
+      if (hoveredTile) {
+        hoveredTile.removeAttribute('data-pressed');
+        resetTilt(hoveredTile);
+        hoveredTile = null;
+      }
+    });
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      const tile = e.target.closest && e.target.closest('[data-tile]');
+      if (tile) tile.setAttribute('data-pressed', '');
+    });
+    function clearPressed() {
+      if (hoveredTile) hoveredTile.removeAttribute('data-pressed');
+      document.querySelectorAll('.gallery-tile[data-pressed]').forEach((t) => t.removeAttribute('data-pressed'));
+    }
+    window.addEventListener('pointerup',     clearPressed);
+    window.addEventListener('pointercancel', clearPressed);
+
+    // ── Kick off ──
+    // Lay out immediately with the aspect ratios we already have (seeded from
+    // data-ratio on build-time tiles; 4:3 default on the hardcoded 8). This
+    // shows the carousel on first paint — no grid-flash while images load.
+    viewport.dataset.state = 'ready';
+    layout();
+
+    // As images actually arrive, re-measure (naturalWidth/Height is the
+    // source of truth) and re-layout for pixel-accurate widths.
+    Promise.all(imgs.map(imageReady)).then(() => {
+      measureAll();
+      layout();
+    });
+
+    let resizeT;
+    function scheduleLayout() {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        if (viewport.dataset.state === 'ready') layout();
+      }, 80);
+    }
+    window.addEventListener('resize', scheduleLayout);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(scheduleLayout).observe(viewport);
+    }
+
+    // ── Piwigo: pull random public photos at runtime ──
+    // On each visit, ask the Piwigo API for a batch of random images across
+    // all (public) albums and append them to the collage. If the request
+    // fails (CORS, offline, server down, API method disabled), the hardcoded
+    // set still renders and nothing else happens.
+    const PIWIGO_API = 'https://piwigo.darkishlocket10.me/ws.php'
+      + '?format=json&method=pwg.categories.getImages'
+      + '&recursive=true&per_page=100&order=random';
+
+    // 1x1 transparent SVG — the placeholder for data-src tiles. Reserves
+    // layout (width/height still applied) and shows nothing visible; no
+    // broken-image icon either, because it IS a valid image.
+    const BLANK_SRC = "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201%201'%2F%3E";
+
+    function createTile(photo, index) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'gallery-tile';
+      btn.setAttribute('data-tile', '');
+      btn.setAttribute('data-index', String(index));
+      btn.setAttribute('role', 'listitem');
+      btn.setAttribute('aria-label', 'Open ' + (photo.alt || 'photo'));
+      applyVariants(btn, index);
+
+      const img = document.createElement('img');
+      // Runtime-added tiles are always off-screen when they arrive — they
+      // tack onto the end of the track — so they're always lazy. Use the
+      // same data-src pattern the template uses for i >= 24 so the lazy
+      // IO sees them consistently.
+      img.src = BLANK_SRC;
+      img.dataset.src = photo.src;
+      img.alt = photo.alt || 'Photograph';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      btn.appendChild(img);
+
+      // Cursor-pool element. Must be a real DOM node (not a pseudo) because
+      // its alpha needs to transition via `opacity`; see the .gallery-tile-cursor
+      // style block for the why.
+      const cursor = document.createElement('span');
+      cursor.className = 'gallery-tile-cursor';
+      cursor.setAttribute('aria-hidden', 'true');
+      btn.appendChild(cursor);
+
+      return { tile: btn, img: img };
+    }
+
+    // Piwigo's API returns a `derivatives` map with pre-sized image URLs and
+    // dimensions. Prefer mid-sized derivatives for the collage (faster than
+    // the full file) and fall back through the size ladder.
+    function extractPiwigoPhoto(raw) {
+      const d = raw.derivatives || {};
+      const pick = d.large || d.medium || d.xlarge || d.small || d.xxlarge;
+      const src = (pick && pick.url) || raw.element_url;
+      if (!src) return null;
+      const w = (pick && pick.width)  || raw.width;
+      const h = (pick && pick.height) || raw.height;
+      return {
+        src: src,
+        alt: raw.name || raw.file || 'Photograph',
+        ratio: (w && h) ? w / h : null,
+      };
+    }
+
+    async function loadPiwigoExtras() {
+      let data;
+      try {
+        const res = await fetch(PIWIGO_API, { credentials: 'omit' });
+        if (!res.ok) return;
+        data = await res.json();
+      } catch (_) {
+        return;                                             // CORS / offline / blocked
+      }
+      if (!data || data.stat !== 'ok') return;
+      const apiImages = (data.result && data.result.images) || [];
+      if (!apiImages.length) return;
+
+      // Dedupe against photos already on the page (hardcoded set + build-time batch).
+      const existingSrcs = new Set(imgs.map((i) => i && i.src).filter(Boolean));
+      const photos = apiImages
+        .map(extractPiwigoPhoto)
+        .filter((p) => p && !existingSrcs.has(p.src));
+      if (!photos.length) return;
+
+      // Add each new photo as a tile. API-provided ratios let us lay them out
+      // roughly right on the first pass; we re-measure + re-layout once the
+      // actual image bytes arrive for pixel-accurate sizes.
+      const newImgs = [];
+      photos.forEach((p) => {
+        const idx = tiles.length;
+        const { tile, img } = createTile(p, idx);
+        tiles.push(tile);
+        imgs.push(img);
+        ratios.push(p.ratio || 4 / 3);
+        track.appendChild(tile);                            // layout() will move it into a row
+        newImgs.push(img);
+      });
+
+      if (viewport.dataset.state === 'ready') layout();     // first pass, approximate
+
+      await Promise.all(newImgs.map(imageReady));
+      measureAll();
+      if (viewport.dataset.state === 'ready') layout();     // second pass, exact
+    }
+
+    loadPiwigoExtras();                                     // fires in parallel, doesn't block
+
+    // ── Lightbox ──
+    const box = document.querySelector('[data-lightbox]');
+    if (!box) return;
+    const boxImg = box.querySelector('[data-lightbox-img]');
+    const counter = box.querySelector('.gallery-lightbox-counter');
+    let current = 0;
+    let lastFocused = null;
+
+    function openAt(i) {
+      current = ((i % tiles.length) + tiles.length) % tiles.length;
+      // Race guard: a tile can be clicked in the split-second between
+      // entering the lazy IO's horizontal margin and the IO callback firing
+      // to swap data-src → src. In that window, imgs[current].src is still
+      // the 1×1 placeholder — opening the lightbox on it would show a
+      // blank rectangle. data-src holds the real URL until the swap, so
+      // prefer it when present.
+      const srcImg = imgs[current];
+      const realSrc = (srcImg.dataset && srcImg.dataset.src) || srcImg.src;
+      boxImg.src = realSrc;
+      boxImg.alt = srcImg.alt;
+      counter.textContent = (current + 1) + ' / ' + tiles.length;
+      box.dataset.open = 'true';
+      box.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      if (box.dataset.open !== 'true') return;
+      box.dataset.open = 'false';
+      box.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      // preventScroll: the restored focus target is often a clone, or an
+      // original tile that has drifted out of the current scroll window.
+      // A plain focus() would have the browser scroll the viewport to
+      // bring it back into view, tugging the carousel to a random spot.
+      // Accessibility still satisfied — focus IS restored — but without
+      // the unwanted scroll side-effect.
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus({ preventScroll: true });
+      }
+    }
+    function next() { openAt(current + 1); }
+    function prev() { openAt(current - 1); }
+
+    // Event delegation on the track itself — catches clicks on originals AND
+    // clones regardless of which row they currently live in. (Delegating on
+    // rowEls would race the layout pass, since rowEls is populated inside
+    // layout() which runs asynchronously.)
+    track.addEventListener('click', (e) => {
+      const tile = e.target.closest('[data-tile]');
+      if (!tile || !track.contains(tile)) return;
+      const i = parseInt(tile.getAttribute('data-index'), 10);
+      if (Number.isNaN(i)) return;
+      // When returning focus, prefer the source tile so Tab order stays sane.
+      lastFocused = tiles[i] || tile;
+      openAt(i);
+    });
+    box.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
+    box.querySelector('[data-prev]').addEventListener('click', prev);
+    box.querySelector('[data-next]').addEventListener('click', next);
+
+    document.addEventListener('keydown', (e) => {
+      if (box.dataset.open !== 'true') return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') prev();
+      else if (e.key === 'ArrowRight') next();
+    });
+  })();
+</script>

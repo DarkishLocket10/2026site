@@ -1,0 +1,97 @@
+{
+  "updatedAt": "2026-04-24",
+  "source": "hand-curated",
+  "note": "Edit this list to reflect your actual top 10. Each accent is the cartridge's plastic colour; image is the cover URL (Wikipedia/Wikimedia URLs work, or your own hosted assets in /public/covers/).",
+  "items": [
+    {
+      "rank": 1,
+      "title": "The Last of Us",
+      "creator": "Naughty Dog",
+      "sub": "2013",
+      "url": "https://www.playstation.com/en-us/games/the-last-of-us/",
+      "accent": "#6a3a2a",
+      "image": "https://upload.wikimedia.org/wikipedia/en/4/46/Video_Game_Cover_-_The_Last_of_Us.jpg"
+    },
+    {
+      "rank": 2,
+      "title": "Majora's Mask",
+      "creator": "Nintendo",
+      "sub": "2000",
+      "url": "https://www.zelda.com/majoras-mask-3d/",
+      "accent": "#6a3a8a",
+      "image": "https://upload.wikimedia.org/wikipedia/en/6/60/The_Legend_of_Zelda_-_Majora%27s_Mask_Box_Art.jpg"
+    },
+    {
+      "rank": 3,
+      "title": "Infamous: Second Son",
+      "creator": "Sucker Punch",
+      "sub": "2014",
+      "url": "https://www.playstation.com/en-us/games/infamous-second-son/",
+      "accent": "#d44419",
+      "image": "https://upload.wikimedia.org/wikipedia/en/3/34/Infamous_second_son_boxart.jpg"
+    },
+    {
+      "rank": 4,
+      "title": "Uncharted 3",
+      "creator": "Naughty Dog",
+      "sub": "2011",
+      "url": "https://www.playstation.com/en-us/games/uncharted-the-nathan-drake-collection/",
+      "accent": "#c2884a",
+      "image": "https://upload.wikimedia.org/wikipedia/en/0/02/Uncharted_3_Boxart.jpg"
+    },
+    {
+      "rank": 5,
+      "title": "Ghost of Tsushima",
+      "creator": "Sucker Punch",
+      "sub": "2020",
+      "url": "https://www.playstation.com/en-us/games/ghost-of-tsushima/",
+      "accent": "#c4475a",
+      "image": "https://upload.wikimedia.org/wikipedia/en/b/b6/Ghost_of_Tsushima.jpg"
+    },
+    {
+      "rank": 6,
+      "title": "Minecraft",
+      "creator": "Mojang",
+      "sub": "2011",
+      "url": "https://www.minecraft.net/",
+      "accent": "#3a7a3a",
+      "image": null
+    },
+    {
+      "rank": 7,
+      "title": "The Last of Us Part II",
+      "creator": "Naughty Dog",
+      "sub": "2020",
+      "url": "https://www.playstation.com/en-us/games/the-last-of-us-part-ii/",
+      "accent": "#3a4a3a",
+      "image": "https://upload.wikimedia.org/wikipedia/en/4/4f/TLOU_P2_Box_Art_2.png"
+    },
+    {
+      "rank": 8,
+      "title": "Death Stranding",
+      "creator": "Kojima Productions",
+      "sub": "2019",
+      "url": "https://www.kojimaproductions.jp/en/death_stranding",
+      "accent": "#bcc4cc",
+      "image": "https://upload.wikimedia.org/wikipedia/en/2/22/Death_Stranding.jpg"
+    },
+    {
+      "rank": 9,
+      "title": "Pikmin 3",
+      "creator": "Nintendo",
+      "sub": "2013",
+      "url": "https://www.nintendo.com/us/store/products/pikmin-3-deluxe-switch/",
+      "accent": "#5a8a3a",
+      "image": "https://upload.wikimedia.org/wikipedia/en/5/53/Pikmin_3_box_artwork.png"
+    },
+    {
+      "rank": 10,
+      "title": "Super Mario Galaxy 2",
+      "creator": "Nintendo",
+      "sub": "2010",
+      "url": "https://www.nintendo.com/us/store/products/super-mario-galaxy-2-wii/",
+      "accent": "#d4a83a",
+      "image": "https://upload.wikimedia.org/wikipedia/en/6/65/Super_Mario_Galaxy_2_Box_Art.jpg"
+    }
+  ]
+}

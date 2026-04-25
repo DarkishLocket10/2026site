@@ -1,0 +1,117 @@
+{
+  "updatedAt": "2026-04-24",
+  "source": "hand-curated",
+  "note": "Edit this list to reflect your actual top 10 albums. The `image` field accepts any URL — Last.fm CDN URLs (lastfm.freetls.fastly.net) work directly, or you can drop your own assets into /public/covers/ and reference them as e.g. \"/covers/album.jpg\". Leave null for the typographic fallback. The Bookshelves component reads from this file, NOT top-albums.json (that one is overwritten by the Last.fm GitHub Action and would clobber any manual edits).",
+  "items": [
+    {
+      "rank": 1,
+      "title": "Because the Internet",
+      "creator": "Childish Gambino",
+      "sub": "2013",
+      "url": "https://www.last.fm/music/Childish+Gambino/Because+the+Internet",
+      "accent": "#7a4520",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/0f636525495f1458c7c55f238eb8e27d.jpg",
+      "logo": "/artists/childish-gambino.png",
+      "mbid": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e"
+    },
+    {
+      "rank": 2,
+      "title": "To Love in the 21st Century",
+      "creator": "Lyn Lapid",
+      "sub": "2024",
+      "url": "https://www.last.fm/music/Lyn+Lapid/To+Love+in+the+21st+Century",
+      "accent": "#c46a8a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/500x500/1731d465dba624576feec939fb729400.jpg",
+      "logo": "/artists/lyn-lapid.png",
+      "mbid": "b7c4e773-9c24-448e-996c-e6fc8cc9fc03"
+    },
+    {
+      "rank": 3,
+      "title": "Good Faith",
+      "creator": "Madeon",
+      "sub": "2019",
+      "url": "https://www.last.fm/music/Madeon/Good+Faith",
+      "accent": "#d68a2a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/ar0/1b57eaca10c20599af4ce04412c04948.jpg",
+      "logo": "/artists/madeon.png",
+      "mbid": "fa1de503-aba7-41fa-a1ed-371b3e87a717"
+    },
+    {
+      "rank": 4,
+      "title": "Trench",
+      "creator": "Twenty One Pilots",
+      "sub": "2018",
+      "url": "https://www.last.fm/music/Twenty+One+Pilots/Trench",
+      "accent": "#3a8a4a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/9efc2181a3c5643cde2441c79451d1bc.jpg",
+      "logo": "/artists/twenty-one-pilots.png",
+      "mbid": "a6c6897a-7415-4f8d-b5a5-3a5e05f3be67"
+    },
+    {
+      "rank": 5,
+      "title": "So Close to What",
+      "creator": "Tate McRae",
+      "sub": "2025",
+      "url": "https://www.last.fm/music/Tate+McRae/So+Close+to+What",
+      "accent": "#1a3a6a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/2c927d26b092260dee2e79d4864c1de7.png",
+      "logo": "/artists/tate-mcrae.png",
+      "mbid": "f9133869-f87c-459c-9aa7-2f176cda7e06"
+    },
+    {
+      "rank": 6,
+      "title": "Octane",
+      "creator": "Don Toliver",
+      "sub": "2024",
+      "url": "https://www.last.fm/music/Don+Toliver/Octane",
+      "accent": "#2a2018",
+      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/cffb9ec7efa495db5b9e60d78d0f47ec.jpg",
+      "logo": "/artists/don-toliver.png",
+      "mbid": "a0723a3c-4135-438e-85c5-012712144ede"
+    },
+    {
+      "rank": 7,
+      "title": "Imaginal Disk",
+      "creator": "Magdalena Bay",
+      "sub": "2024",
+      "url": "https://www.last.fm/music/Magdalena+Bay/Imaginal+Disk",
+      "accent": "#5a2a8a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/500x500/52fa1790a044da2c763db863bcf0e389.jpg",
+      "logo": "/artists/magdalena-bay.png",
+      "mbid": "68c261d5-48c8-4ea9-9466-9fc908dc79bb"
+    },
+    {
+      "rank": 8,
+      "title": "Death Stranding: Timefall",
+      "creator": "Various Artists",
+      "sub": "2019",
+      "url": "https://www.last.fm/music/Various+Artists/Death+Stranding%3A+Timefall",
+      "accent": "#2a4a5a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/ar0/3085bc1ed2ce1a000e1d4665cf2323a2.jpg",
+      "logo": "/artists/death-stranding.png",
+      "mbid": "89ad4ac3-39f7-470e-963a-56509c546377"
+    },
+    {
+      "rank": 9,
+      "title": "Submarine",
+      "creator": "The Marías",
+      "sub": "2024",
+      "url": "https://www.last.fm/music/The+Mar%C3%ADas/Submarine",
+      "accent": "#3a5a4a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/500x500/ff18c3c08f0e1c85d62eeee24d1154e9.jpg",
+      "logo": "/artists/the-marias.png",
+      "mbid": "7a3970c9-ecd8-4eee-a267-4d8c77d97ff3"
+    },
+    {
+      "rank": 10,
+      "title": "Big Ideas",
+      "creator": "Remi Wolf",
+      "sub": "2024",
+      "url": "https://www.last.fm/music/Remi+Wolf/Big+Ideas",
+      "accent": "#d63a4a",
+      "image": "https://lastfm.freetls.fastly.net/i/u/500x500/e1daaf2ef6e34b7b462367f250994801.jpg",
+      "logo": "/artists/remi-wolf.png",
+      "mbid": "afb6cc6d-a060-4f5e-bc3a-00d4b6832e41"
+    }
+  ]
+}

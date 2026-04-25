@@ -1,0 +1,97 @@
+{
+  "updatedAt": "2026-04-24",
+  "source": "hand-curated",
+  "note": "Edit this list to reflect your actual top 10. Each accent is the spine's plastic colour; image is the cover URL (Letterboxd CDN URLs at a.ltrbxd.com or your own hosted assets).",
+  "items": [
+    {
+      "rank": 1,
+      "title": "Baby Driver",
+      "creator": "Edgar Wright",
+      "sub": "2017",
+      "url": "https://letterboxd.com/film/baby-driver/",
+      "accent": "#c2381a",
+      "image": "https://a.ltrbxd.com/resized/film-poster/2/6/8/9/5/0/268950-baby-driver-0-230-0-345-crop.jpg?v=61304ddfc8"
+    },
+    {
+      "rank": 2,
+      "title": "Everything Everywhere All at Once",
+      "creator": "Daniels",
+      "sub": "2022",
+      "url": "https://letterboxd.com/film/everything-everywhere-all-at-once/",
+      "accent": "#c54a8a",
+      "image": "https://a.ltrbxd.com/resized/film-poster/4/7/4/4/7/4/474474-everything-everywhere-all-at-once-0-230-0-345-crop.jpg?v=281f1a041e"
+    },
+    {
+      "rank": 3,
+      "title": "Black Swan",
+      "creator": "Darren Aronofsky",
+      "sub": "2010",
+      "url": "https://letterboxd.com/film/black-swan/",
+      "accent": "#1a0e10",
+      "image": "https://a.ltrbxd.com/resized/sm/upload/yt/ae/iz/kj/bIjkE9Og0nulRycj144sCcQcsZ6-0-230-0-345-crop.jpg?v=a571e4c644"
+    },
+    {
+      "rank": 4,
+      "title": "Back to the Future",
+      "creator": "Robert Zemeckis",
+      "sub": "1985",
+      "url": "https://letterboxd.com/film/back-to-the-future/",
+      "accent": "#d97a1c",
+      "image": "https://a.ltrbxd.com/resized/film-poster/5/1/9/4/5/51945-back-to-the-future-0-230-0-345-crop.jpg?v=b818c8ce28"
+    },
+    {
+      "rank": 5,
+      "title": "Guava Island",
+      "creator": "Hiro Murai",
+      "sub": "2019",
+      "url": "https://letterboxd.com/film/guava-island/",
+      "accent": "#d8576a",
+      "image": "https://a.ltrbxd.com/resized/film-poster/4/7/2/2/9/8/472298-guava-island-0-230-0-345-crop.jpg?v=4f1dce4d63"
+    },
+    {
+      "rank": 6,
+      "title": "Blade Runner",
+      "creator": "Ridley Scott",
+      "sub": "1982",
+      "url": "https://letterboxd.com/film/blade-runner/",
+      "accent": "#1a2e58",
+      "image": "https://a.ltrbxd.com/resized/sm/upload/85/io/38/dz/vfzE3pjE5G7G7kcZWrA3fnbZo7V-0-230-0-345-crop.jpg?v=0d5de70f0d"
+    },
+    {
+      "rank": 7,
+      "title": "The Shawshank Redemption",
+      "creator": "Frank Darabont",
+      "sub": "1994",
+      "url": "https://letterboxd.com/film/the-shawshank-redemption/",
+      "accent": "#3a4a5a",
+      "image": "https://a.ltrbxd.com/resized/sm/upload/7l/hn/46/uz/zGINvGjdlO6TJRu9wESQvWlOKVT-0-230-0-345-crop.jpg?v=8736d1c395"
+    },
+    {
+      "rank": 8,
+      "title": "Your Name.",
+      "creator": "Makoto Shinkai",
+      "sub": "2016",
+      "url": "https://letterboxd.com/film/your-name/",
+      "accent": "#2a8ac8",
+      "image": "https://a.ltrbxd.com/resized/sm/upload/md/ku/l7/m5/xq1Ugd62d23K2knRUx6xxuALTZB-0-230-0-345-crop.jpg?v=443be7928f"
+    },
+    {
+      "rank": 9,
+      "title": "Civil War",
+      "creator": "Alex Garland",
+      "sub": "2024",
+      "url": "https://letterboxd.com/film/civil-war-2024/",
+      "accent": "#4a5a3a",
+      "image": "https://a.ltrbxd.com/resized/film-poster/8/3/4/6/5/6/834656-civil-war-0-230-0-345-crop.jpg?v=aefec33dbe"
+    },
+    {
+      "rank": 10,
+      "title": "A Real Pain",
+      "creator": "Jesse Eisenberg",
+      "sub": "2024",
+      "url": "https://letterboxd.com/film/a-real-pain/",
+      "accent": "#5a6a7a",
+      "image": "https://a.ltrbxd.com/resized/film-poster/9/1/3/2/5/8/913258-a-real-pain-0-230-0-345-crop.jpg?v=893a943872"
+    }
+  ]
+}
