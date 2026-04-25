@@ -539,17 +539,30 @@ const photos = [...hardcodedPhotos, ...piwigoPhotos];
     will-change: transform;
   }
   :root.dark .gallery-tile {
+    /* Dark-mode chins (the 18px bottom padding + 5px side matte) were
+       reading as a warm yellow glow. The same warm gradients that add
+       subtle edge-lift on a cream #f8f1e1 paper look like tinted ambient
+       light when they land on #2a241c — the high-value warm RGBA adds
+       directly to the dark base and reads as glow.
+       Fix is geometric, not alpha-only: shrink both ellipses vertically
+       so neither reaches the chin band (y ≈ 91% → 100%).
+         Fresnel: 105% 110% @ 50/50 → 105% 75% @ 50/50
+                  (vertical radius 55% → 37.5%; 100%-stop now at y=87.5%)
+         Lamp:    140% 140% @ X/25% → 140% 90% @ X/25%
+                  (vertical radius 70% → 45%; reach ends at y=70%)
+       Peak alphas are nudged down one notch so even the photo area reads
+       as ambient tint rather than as a light source. */
     background:
       radial-gradient(
-        ellipse 105% 110% at 50% 50%,
+        ellipse 105% 75% at 50% 50%,
         transparent 62%,
-        rgba(255, 230, 180, calc(var(--shine-a) * 0.08)) 90%,
-        rgba(255, 230, 180, calc(var(--shine-a) * 0.18)) 100%
+        rgba(255, 230, 180, calc(var(--shine-a) * 0.06)) 90%,
+        rgba(255, 230, 180, calc(var(--shine-a) * 0.14)) 100%
       ),
       radial-gradient(
-        ellipse 140% 140% at var(--light-x) 25%,
-        rgba(255, 226, 176, calc(var(--shine-a) * 0.32)),
-        rgba(255, 218, 160, calc(var(--shine-a) * 0.12)) 35%,
+        ellipse 140% 90% at var(--light-x) 25%,
+        rgba(255, 226, 176, calc(var(--shine-a) * 0.22)),
+        rgba(255, 218, 160, calc(var(--shine-a) * 0.08)) 35%,
         rgba(255, 210, 150, 0) 65%
       ),
       #2a241c;

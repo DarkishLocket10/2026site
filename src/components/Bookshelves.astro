@@ -1,0 +1,1544 @@
+---
+/*
+  Three bookshelves side-by-side — Music / Film / Games. Each shelf is a
+  tight row of 10 spines, standing edge-out like real books. The shelf
+  itself is a thin wooden board; the spines tilt toward the viewer via a
+  subtle perspective + rotateX, and each spine has a media-specific
+  plastic/cartridge material:
+    – Music  : CD jewel case — cream/white plastic with dark vertical title,
+               faint silver plastic gutters either side.
+    – Film   : Blu-ray case  — dark plastic with the signature blue header
+               band and small "BLU-RAY" wordmark.
+    – Games  : Cartridge     — chunky coloured plastic with a white label band
+               that carries the title, subtle top bevel and casted shadow.
+
+  Data shapes:
+    – Music feeds from ../data/top-music.json (hand-curated). top-albums.json
+      is still updated periodically by the Last.fm GitHub Action and used
+      elsewhere, but this shelf intentionally reads from a separate file so
+      the curated top-10 can't be overwritten by an automated scrobble fetch.
+    – Film and Games feed from two hand-curated JSONs in ../data/ — the user
+      edits those files directly; no API involved.
+
+  On hover / focus / touch the spine tips forward and the info panel below
+  each shelf swaps in that item's title + creator + sub. Defaults to #1 of
+  each shelf on first paint, and stays sticky on the last interacted item.
+*/
+import topMusicData  from '../data/top-music.json';
+import topMoviesData from '../data/top-movies.json';
+import topGamesData  from '../data/top-games.json';
+
+type ShelfItem = {
+  rank: number;
+  title: string;
+  creator: string;
+  sub: string;
+  url: string;
+  image: string | null;
+  accent: string;
+  /* Optional URL/path to a TRANSPARENT-PNG of the artist's wordmark or
+     band logo. When present, the CD jewel case's spine slot renders the
+     logo (rotated to read top-to-bottom) instead of staying as a plain
+     colour fill. fanart.tv's "hdmusiclogo" assets are ideal — give it a
+     MusicBrainz artist ID and it returns the band's stylised name as a
+     transparent PNG. Drop files into /public/artists/<slug>.png or use
+     a remote URL. Leave undefined to fall back to the plain colour. */
+  logo?: string | null;
+};
+
+type Shelf = {
+  id: 'music' | 'film' | 'games';
+  label: string;
+  empty: string;
+  items: ShelfItem[];
+};
+
+// All three shelves now share a uniform JSON shape ({ items: [...] }), so
+// the load is a single line each.
+const musicItems: ShelfItem[]  = ((topMusicData  as any).items ?? []).slice(0, 10);
+const movieItems: ShelfItem[]  = ((topMoviesData as any).items ?? []).slice(0, 10);
+const gameItems: ShelfItem[]   = ((topGamesData  as any).items ?? []).slice(0, 10);
+
+const shelves: Shelf[] = [
+  { id: 'music', label: 'Music', empty: 'No albums yet.', items: musicItems },
+  { id: 'film',  label: 'Film',  empty: 'Add your top films in top-movies.json.', items: movieItems },
+  { id: 'games', label: 'Games', empty: 'Add your top games in top-games.json.',  items: gameItems  },
+];
+---
+
+<section id="bookshelves" class="w-full py-6">
+  <div
+    class="
+      bookshelves-root mx-auto w-full max-w-6xl px-6
+      opacity-0 translate-y-4
+      transition-all duration-700 ease-out delay-100
+      motion-reduce:opacity-100 motion-reduce:translate-y-0
+    "
+    data-fade
+  >
+    <div class="shelves-grid">
+      {shelves.map((shelf) => (
+        <div class="shelf-col" data-kind={shelf.id}>
+          <div class="shelf-head">
+            <span class="shelf-label">{shelf.label}</span>
+          </div>
+
+          {shelf.items.length === 0 ? (
+            <div class="shelf-empty">{shelf.empty}</div>
+          ) : (
+            <>
+              <div class="shelf-scene">
+                <div class="shelf-inner">
+                  <div class="shelf-items" role="list" aria-label={`${shelf.label} top ten`}>
+                    {shelf.items.map((it, i) => (
+                      <a
+                        class="spine"
+                        role="listitem"
+                        href={it.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-spine
+                        data-idx={i}
+                        data-title={it.title}
+                        data-creator={it.creator}
+                        data-sub={it.sub}
+                        data-rank={it.rank}
+                        data-image={it.image ?? ''}
+                        data-accent={it.accent}
+                        data-logo={it.logo ?? ''}
+                        style={`--accent: ${it.accent};`}
+                        aria-label={`#${it.rank} ${it.title} — ${it.creator}`}
+                        title={`${it.title} — ${it.creator}`}
+                      >
+                        {/* Music shelf only: artist wordmark printed
+                            vertically on the spine. Replaces the title text
+                            when present, just like a real CD jewel case
+                            spine where the band/artist logo is the primary
+                            identifier. Falls back to the typographic title
+                            for items without a logo asset. */}
+                        {shelf.id === 'music' && it.logo && (
+                          <img
+                            class="spine-logo"
+                            src={it.logo}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            aria-hidden="true"
+                          />
+                        )}
+                        {/* Thin printed title that runs down the spine. The
+                            writing-mode flip is what produces the bottom-to-top
+                            reading order used on real physical spines. */}
+                        <span class="spine-text">{it.title}</span>
+                        {/* Media-specific decorative faces drawn as children
+                            so the per-kind CSS can position/style them without
+                            touching the link's own box. */}
+                        <span class="spine-top" aria-hidden="true"></span>
+                        <span class="spine-gutter spine-gutter--l" aria-hidden="true"></span>
+                        <span class="spine-gutter spine-gutter--r" aria-hidden="true"></span>
+                        <span class="spine-shine" aria-hidden="true"></span>
+                      </a>
+                    ))}
+                  </div>
+                  <div class="shelf-board" aria-hidden="true"></div>
+                </div>
+                {/* Cover preview panel — sits in the empty space to the right
+                    of the spine row, on the same shelf board, and acts as a
+                    "now showing" display. Defaults to item #1 of the shelf;
+                    swaps content (image + typographic fallback + meta) on
+                    spine hover/focus via the JS at the bottom of the file.
+                    The panel is OUTSIDE shelf-inner deliberately — it stays
+                    flat-facing the viewer while the spines tilt back, so it
+                    reads as a piece of art being held up for inspection. */}
+                <div class="shelf-cover-panel" data-cover-panel>
+                  <div class="cover-case" data-cover-case>
+                    {/* Real-asset slot — rendered when the active item has an
+                        image URL. Falls back to display:none when src is
+                        empty so the typographic fallback shows through. */}
+                    <img
+                      class="cover-image"
+                      data-cover-image
+                      src={shelf.items[0].image || ''}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    {/* Spine logo — only rendered on the music kind. Sits on
+                        top of the spine-colour rectangle, rotated to read
+                        vertically along the case spine. JS swaps src per
+                        active item; falls back to display:none when no logo
+                        is present so the spine just shows the colour fill. */}
+                    {shelf.id === 'music' && (
+                      <img
+                        class="cover-spine-logo"
+                        data-cover-spine-logo
+                        src={shelf.items[0].logo || ''}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {/* Typographic fallback — drawn beneath the image, only
+                        visible when no image is set. Per-media styling
+                        ([data-kind]) gives it the right material look. */}
+                    <div class="cover-fallback" data-cover-fallback>
+                      <span class="cover-band cover-band--top" aria-hidden="true"></span>
+                      <span class="cover-body">
+                        <span class="cover-title" data-cover-title>{shelf.items[0].title}</span>
+                        <span class="cover-creator" data-cover-creator>{shelf.items[0].creator}</span>
+                      </span>
+                      <span class="cover-band cover-band--bottom">
+                        <span class="cover-meta" data-cover-meta>{shelf.items[0].sub}</span>
+                        <span class="cover-rank" data-cover-rank>#{shelf.items[0].rank}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="shelf-info" aria-live="polite" data-info>
+                <div class="info-rank" data-info-rank>#{shelf.items[0].rank}</div>
+                <div class="info-text">
+                  <div class="info-title" data-info-title>{shelf.items[0].title}</div>
+                  <div class="info-sub">
+                    <span data-info-creator>{shelf.items[0].creator}</span>
+                    {shelf.items[0].sub && (
+                      <>
+                        <span class="info-sep">·</span>
+                        <span data-info-sub>{shelf.items[0].sub}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ── Container / grid ─────────────────────────────────────────────── */
+  .bookshelves-root {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .shelves-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem 1.5rem;
+  }
+  @media (min-width: 780px) {
+    .shelves-grid {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: start;
+    }
+  }
+
+  .shelf-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;                 /* allow 1fr columns to shrink */
+    gap: 0.5rem;
+  }
+
+  .shelf-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 2px;
+  }
+  .shelf-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.82;
+  }
+  .shelf-count {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    opacity: 0.45;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── 3D shelf scene ──────────────────────────────────────────────── */
+  /* perspective-origin is pulled upward so the viewer seems to look
+     slightly down at the shelf — same geometry you'd get standing in
+     front of a real bookshelf that's a little below eye level. The
+     scene also reserves room on the right via padding-right for the
+     cover-preview panel that sits absolutely positioned in that slot
+     (see .shelf-cover-panel below). */
+  .shelf-scene {
+    position: relative;
+    perspective: 1400px;
+    perspective-origin: 50% 8%;
+    padding-right: 165px;          /* cover panel width (180) - overlap into spine area */
+    min-height: 220px;             /* ensure the absolutely-positioned panel
+                                       has a parent tall enough not to clip */
+  }
+  @media (max-width: 480px) {
+    /* On phones the column is narrow enough that the cover takes most of
+       the row width; drop perspective padding and stack the panel below
+       the spine row instead. */
+    .shelf-scene { padding-right: 0; }
+  }
+
+  /* The inner container carries the tilt. Anything inside (the spine row
+     + the board beneath) rotates together, which means the shelf reads
+     as a single physical object. */
+  .shelf-inner {
+    transform-style: preserve-3d;
+    transform: rotateX(7deg);
+    transform-origin: 50% 100%;
+    padding-top: 18px;            /* headroom so the hovered spine's lift
+                                     doesn't get clipped at the top */
+  }
+
+  /* Row of spines. Items touch each other like books packed on a shelf.
+     gap: 0 keeps the contacting feel; 0.5px would introduce visible gaps
+     which read as a rack rather than a shelf. */
+  .shelf-items {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 0;
+    height: 170px;
+    padding: 0 8px;
+    transform-style: preserve-3d;
+  }
+
+  /* Wooden board under the spines. A simple three-stop gradient reads as
+     a lit edge + shaded underside; the outer box-shadow adds the floor
+     shadow that the whole shelf casts. */
+  .shelf-board {
+    position: relative;
+    height: 13px;
+    margin: 0 -4px;
+    border-radius: 2px;
+    background:
+      linear-gradient(180deg,
+        #6b4a2b 0%,
+        #4a3120 45%,
+        #2f1e11 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+      0 6px 14px -4px rgba(0, 0, 0, 0.55),
+      0 18px 28px -12px rgba(0, 0, 0, 0.45);
+  }
+  :root.dark .shelf-board {
+    background:
+      linear-gradient(180deg,
+        #3d2a1a 0%,
+        #2a1b10 45%,
+        #1a110a 100%);
+  }
+
+  /* ── Spine (shared baseline, media-specific overrides below) ─────── */
+  /* All spines are links, so keyboard focus-visible handles the a11y
+     highlight without extra JS. */
+  .spine {
+    position: relative;
+    flex: 0 0 auto;
+    width: 18px;
+    height: 170px;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transform-origin: 50% 100%;
+    transition:
+      transform 240ms cubic-bezier(.2, .7, .3, 1),
+      filter 240ms ease,
+      z-index 0s 240ms,
+      box-shadow 240ms ease;
+    will-change: transform;
+  }
+
+  /* A tiny rotation on *every other* spine breaks the "perfectly packed"
+     feel; real shelves have subtle tilt where a book leans against its
+     neighbour. nth-child variants used below. */
+  .spine:nth-child(3n)   { transform: rotateZ(0.6deg); }
+  .spine:nth-child(5n+2) { transform: rotateZ(-0.5deg); }
+
+  /* Hover / focus: the spine itself stays mostly in place — its position
+     acts as a visual anchor for the cover that unfolds above it (see
+     .cover-face below). A 2px lift + brightness bump is enough to tell
+     the user "this one's selected" without competing with the cover
+     reveal. z-index is bumped high so the cover-face (z-index:50 inside)
+     can overlap neighbouring spines. */
+  .spine:hover,
+  .spine:focus-visible,
+  .spine[data-active="true"] {
+    transform: translateY(-2px);
+    z-index: 60;
+    filter: brightness(1.08);
+    transition:
+      transform 220ms cubic-bezier(.2, .7, .3, 1),
+      filter 220ms ease,
+      z-index 0s;
+  }
+  .spine:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent, #e7a03a) 65%, transparent);
+  }
+
+  /* Printed title running down the spine. writing-mode: vertical-rl +
+     rotate(180) gives bottom-to-top reading, which is the default on
+     music and film; games override to top-to-bottom to match cartridge
+     labels that typically read downward. */
+  .spine-text {
+    position: absolute;
+    inset: 7px 0 7px 0;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: right;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 1px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* Decorative faces */
+  .spine-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.35), transparent);
+    pointer-events: none;
+  }
+  .spine-gutter {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    pointer-events: none;
+  }
+  .spine-gutter--l { left: 0;  background: rgba(0, 0, 0, 0.28); }
+  .spine-gutter--r { right: 0; background: rgba(0, 0, 0, 0.22); }
+
+  .spine-shine {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 35%;
+    width: 1px;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.35) 18%,
+      rgba(255, 255, 255, 0.12) 60%,
+      transparent 100%);
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  /* ── Cover-preview panel (right side of each shelf) ──────────────
+     A "now showing" display in the empty space to the right of the
+     spine row. Doesn't overlap the spines — instead it's positioned in
+     the padding-right reserved by .shelf-scene. Always visible (defaults
+     to item #1), and JS swaps its image + text on spine hover/focus.
+     Anatomy:
+       .shelf-cover-panel : positioning + entrance animation; absolute
+                             so it floats over the shelf-board floor at
+                             the right edge.
+       .cover-case        : the outer "case body" — plastic colour, edge,
+                             shadow. Per-kind (music/film/games) styling
+                             gives it the right material look.
+       .cover-image       : real bitmap when the active item provides an
+                             image URL. Sits on top, opaque, hides the
+                             typographic fallback. display:none when no
+                             image available.
+       .cover-fallback    : typographic cover layout — title + creator +
+                             meta + rank. Acts as a graceful default
+                             when no image URL is set in the data file.
+     Cross-fade on swap is handled in JS by briefly knocking opacity
+     down before content updates. */
+  .shelf-cover-panel {
+    position: absolute;
+    right: 4px;
+    bottom: 6px;                  /* sits just above the shelf board */
+    width: 180px;                 /* widened bounding box so each kind can
+                                     pick its own aspect inside */
+    height: 200px;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 220ms ease;
+    display: flex;
+    align-items: flex-end;        /* anchor the case to the shelf board */
+    justify-content: flex-end;
+    /* Perspective gives the inner case real depth when its PS2-style
+       3D float animation rotates it on the X/Y axes. Without this the
+       rotations would just shear the case flat. */
+    perspective: 700px;
+    perspective-origin: 50% 80%;
+    /* Shadow is on .cover-case so border-radius is honoured. */
+  }
+  .cover-case {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow:
+      0 14px 22px -8px rgba(0, 0, 0, 0.55),
+      0 5px 10px -3px rgba(0, 0, 0, 0.42);
+    transform-origin: 50% 100%;
+    transform-style: preserve-3d;
+    /* PS2 boot-screen-style float: subtle 3D drift + vertical bob. The
+       case rotates lazily through ~6° on each axis while bobbing 3px up
+       and down, with shadow strength ramping in time so it reads as
+       physical hover rather than a sliding decal. The animation is
+       always-on and runs at a deliberately uneven period (5.7s) so
+       neighbouring shelves never sync up — the asynchrony is what made
+       the original PS2 cubes feel like independent floating objects. */
+    animation: ps2-float-case 5.7s cubic-bezier(.45, 0, .55, 1) infinite;
+    will-change: transform;
+  }
+  /* Stagger each kind so the three shelves don't bob in lockstep. */
+  [data-kind="music"] .cover-case { animation-delay: 0s; }
+  [data-kind="film"]  .cover-case { animation-delay: -1.9s; animation-duration: 6.3s; }
+  /* Games uses a separate keyframe set that omits box-shadow — the
+     cartridge has transparent padding around its silhouette, so a
+     rectangular box-shadow would render a phantom rectangle behind the
+     transparent area. The drop-shadow filter on .cover-case::after
+     follows the actual cart outline instead. */
+  [data-kind="games"] .cover-case {
+    animation-name: ps2-float-case-games;
+    animation-delay: -3.4s;
+    animation-duration: 5.1s;
+    box-shadow: none;
+  }
+
+  @keyframes ps2-float-case {
+    0%   { transform: rotateY(-3deg) rotateX(1deg)  translateY(0);
+           box-shadow: 0 8px 14px -6px rgba(0,0,0,.6),
+                       0 3px 6px -2px rgba(0,0,0,.4); }
+    25%  { transform: rotateY(-1deg) rotateX(-1deg) translateY(-2px);
+           box-shadow: 0 12px 18px -6px rgba(0,0,0,.55),
+                       0 5px 10px -3px rgba(0,0,0,.38); }
+    50%  { transform: rotateY(2deg)  rotateX(1.5deg) translateY(-3px);
+           box-shadow: 0 16px 24px -6px rgba(0,0,0,.5),
+                       0 7px 14px -3px rgba(0,0,0,.36); }
+    75%  { transform: rotateY(1deg)  rotateX(-0.5deg) translateY(-1px);
+           box-shadow: 0 10px 16px -6px rgba(0,0,0,.55),
+                       0 4px 8px -3px rgba(0,0,0,.4); }
+    100% { transform: rotateY(-3deg) rotateX(1deg)  translateY(0);
+           box-shadow: 0 8px 14px -6px rgba(0,0,0,.6),
+                       0 3px 6px -2px rgba(0,0,0,.4); }
+  }
+
+  /* Games variant: same float motion, no box-shadow. The cartridge has
+     transparent padding around it, so a rectangular box-shadow would
+     produce a phantom rectangle behind empty space. The shape-aware
+     drop-shadow on .cover-case::after handles depth for the actual
+     cartridge silhouette. */
+  @keyframes ps2-float-case-games {
+    0%   { transform: rotateY(-3deg) rotateX(1deg)  translateY(0); }
+    25%  { transform: rotateY(-1deg) rotateX(-1deg) translateY(-2px); }
+    50%  { transform: rotateY(2deg)  rotateX(1.5deg) translateY(-3px); }
+    75%  { transform: rotateY(1deg)  rotateX(-0.5deg) translateY(-1px); }
+    100% { transform: rotateY(-3deg) rotateX(1deg)  translateY(0); }
+  }
+
+  /* Hover: kill the float animation entirely (so its keyframe transform
+     stops fighting our inline transform) and use mouse-tracked tilt
+     vars to give the case a real-time 3D parallax. The JS at the
+     bottom of the component sets --tilt-x / --tilt-y in the range
+     [-1, 1] based on cursor position over the case. */
+  .cover-case--tilting {
+    animation: none;
+    transform:
+      rotateY(calc(var(--tilt-x, 0) * 16deg))
+      rotateX(calc(var(--tilt-y, 0) * -12deg))
+      translateY(-4px)
+      translateZ(8px);
+    transition: transform 80ms ease-out, box-shadow 200ms ease;
+    box-shadow:
+      0 22px 32px -8px rgba(0, 0, 0, .55),
+      0 10px 18px -4px rgba(0, 0, 0, .42);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cover-case { animation: none; transform: rotateY(-2deg); }
+  }
+  .cover-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 2;
+    transition: opacity 220ms ease;
+  }
+  .cover-image:not([src]),
+  .cover-image[src=""] {
+    display: none;
+  }
+  /* Typographic fallback layout (visible when no .cover-image src). */
+  .cover-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    padding: 10px 9px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .cover-band {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+  .cover-band--top {
+    height: 6px;
+    margin: -10px -9px 8px;
+  }
+  .cover-band--bottom {
+    margin: auto -9px -10px;
+    padding: 5px 9px;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+  .cover-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .cover-title {
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.005em;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  .cover-creator {
+    font-size: 10px;
+    line-height: 1.2;
+    font-style: italic;
+    opacity: 0.78;
+    overflow-wrap: anywhere;
+  }
+  .cover-meta { font-variant-numeric: tabular-nums; }
+  .cover-rank { opacity: 0.55; font-weight: 700; }
+
+  /* Per-kind case styling — different materials, layouts, and overlay
+     decorations. The image (when set) is positioned per-kind inside the
+     case's "label area" instead of filling the full case so the
+     surrounding plastic / header bands are part of the silhouette.
+     Overlay decorations (plastic rim, blue Blu-ray header, cartridge
+     side bands, etc.) are drawn over the image using stacked pseudo-
+     elements + box-shadows so they read as physical structure. */
+
+  /* Music CD: a real jewel case is mostly the album art behind clear
+     plastic, with a thin printed paper insert visible behind. We
+     reproduce the look with:
+       - the cover image filling the case (album art behind the plastic),
+       - an inner shadow ring (.cover-case::after) that simulates the
+         plastic case lip pressing into the cover edges,
+       - a vertical hairline near the left edge (.cover-case::before)
+         that suggests the spine slot of a jewel case,
+       - a subtle diagonal sheen overlay on the top-right (the .cover-shine
+         pseudo on the case container). */
+  /* ════════════════════════════════════════════════════════════════════
+     PER-KIND CASE GEOMETRY
+     ────────────────────────────────────────────────────────────────────
+     Each shelf gets its own physical-media silhouette. Aspect ratios
+     are chosen to match a real-world dimension reading: a CD jewel
+     case is nearly square; a Blu-ray case is a tall portrait; an NES
+     cartridge is a chunky almost-square body with a label sticker on
+     top half and connector ridges on the bottom. The cover image
+     always lives INSIDE the case's "art region" — never bleeds onto
+     the case body, never collides with decorative wordmarks.
+     ════════════════════════════════════════════════════════════════════ */
+
+  /* Music — CD jewel case.
+     Uses the downloaded transparent-PNG asset (cd-jewel-case.png) as a
+     plastic overlay LAYERED ON TOP of the album art. The album art sits
+     flush at z-index 2 (behind the case), and the PNG with its
+     translucent plastic edges + visible hinges sits at z-index 5 on top.
+     The PNG is 680×624 (~1.09:1) so we match that ratio in the case
+     dimensions to preserve the asset's geometry. */
+  [data-kind="music"] .cover-case {
+    width: 175px;
+    height: 160px;             /* matches PNG aspect 680/624 ≈ 1.09:1 */
+    /* Spine-color rectangle is INSET from the case bounds so it never
+       reaches the very top/bottom/left edges (a real jewel case has
+       plastic rim there, not paper insert). Achieved with a single
+       background-image painted at offset (2px, 4px) with a constrained
+       size — 12px wide × (case height − 8px) tall. */
+    background-color: transparent;
+    background-image: linear-gradient(
+      var(--spine-color, #2a2a2a),
+      var(--spine-color, #2a2a2a)
+    );
+    background-position: 2px 4px;
+    /* 9px wide → ends at x=11, album art starts at x=14, leaving a
+       ~3px gap so the spine colour and the album cover read as
+       distinct physical layers. */
+    background-size: 9px calc(100% - 8px);
+    background-repeat: no-repeat;
+    border-radius: 0;
+    overflow: visible;
+    transition: background-image 320ms ease;
+  }
+  /* Spine logo — artist wordmark/band-name PNG rendered along the
+     spine-colour rectangle. The wordmark image is naturally horizontal
+     (e.g. "CHILDISH GAMBINO" 400×155) and we want it to run vertically
+     along a 9×116 spine slot. CSS approach:
+       1. Lay the image out horizontally at its natural orientation,
+          sized so its WIDTH = the spine's long axis (case height − 8)
+          and its HEIGHT = the spine's short axis (9px).
+       2. Rotate the whole element 90° clockwise around its top-left
+          corner, then translate so the rotated bounding box lands in
+          the spine slot at (left:2, top:4).
+     End result: the wordmark reads top-to-bottom along the spine, with
+     `object-fit: contain` keeping the lettering proportional. */
+  [data-kind="music"] .cover-spine-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 8px);   /* the spine's long axis after rotation */
+    height: 9px;               /* the spine's short axis after rotation */
+    object-fit: contain;
+    object-position: center;
+    z-index: 4;
+    pointer-events: none;
+    /* translate(11px, 4px) puts the post-rotation top-left edge at
+       (2, 4) in the case's coord space. The rotation of 90° clockwise
+       (transform-origin: 0 0) flips the image's width-axis into the
+       vertical direction so the wordmark reads top→bottom. */
+    transform-origin: 0 0;
+    transform: translate(11px, 4px) rotate(90deg);
+    /* Subtle drop-shadow so the print reads against the spine colour. */
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+    transition: opacity 220ms ease;
+  }
+  [data-kind="music"] .cover-spine-logo:not([src]),
+  [data-kind="music"] .cover-spine-logo[src=""] {
+    display: none;
+  }
+
+  /* Album art sits BEHIND the plastic overlay, inset from the left so
+     the PNG's spine-slot area (≈10% of the asset width) stays clear of
+     the album art. The spine slot itself remains transparent — it
+     picks up whatever's behind the case. */
+  [data-kind="music"] .cover-image {
+    top: 3px;
+    left: 14px;
+    right: auto;
+    bottom: auto;
+    width: calc(100% - 18px);
+    height: calc(100% - 6px);
+    border-radius: 1px;
+    object-fit: cover;
+    z-index: 2;
+  }
+  /* Window-reflection shine on the album art.
+     Two stacked radial gradients simulate light bouncing off the glossy
+     jewel-case plastic:
+       1. A SHARP specular core — narrow ellipse, high alpha. Reads as
+          the bright reflection of a window pane on the polished surface.
+       2. A DIFFUSE scattered halo — broader, low alpha. Models the
+          subsurface scattering that a real plastic jewel case produces
+          around the primary highlight. Without this, the core looks
+          like a sticker; with it, the case feels like real plastic.
+     Both highlights are positioned OPPOSITE to the parallax tilt vector
+     — that's how real specular reflections behave: when you tilt a
+     glossy surface, the bright spot appears to slide the OTHER way as
+     the surface presents a different angle to the fixed light source.
+     mix-blend-mode: screen so white pixels add brightness to whatever
+     album art is underneath without colour-distorting it. */
+  [data-kind="music"] .cover-case::before {
+    content: "";
+    position: absolute;
+    inset: 3px 4px 3px 14px;
+    border-radius: 1px;
+    background:
+      /* Sharp specular core (the window pane reflection itself) */
+      radial-gradient(
+        ellipse 16% 48% at
+          calc(38% - var(--tilt-x, 0) * 26%)
+          calc(34% - var(--tilt-y, 0) * 22%),
+        rgba(255, 255, 255, 0.55) 0%,
+        rgba(255, 255, 255, 0.22) 30%,
+        rgba(255, 255, 255, 0.06) 60%,
+        rgba(255, 255, 255, 0) 85%
+      ),
+      /* Diffuse scattered halo (subsurface light bleed) */
+      radial-gradient(
+        ellipse 65% 60% at
+          calc(42% - var(--tilt-x, 0) * 20%)
+          calc(38% - var(--tilt-y, 0) * 16%),
+        rgba(255, 255, 255, 0.14) 0%,
+        rgba(255, 255, 255, 0.05) 40%,
+        rgba(255, 255, 255, 0) 75%
+      ),
+      /* Faint top-edge sheen (plastic catches light along its rim) */
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.16) 0%,
+        rgba(255, 255, 255, 0) 18%
+      );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.55;
+    transition: opacity 220ms ease;
+  }
+  /* Plastic case overlay using the downloaded PNG asset. Stretched to
+     the full case bounds, blocking pointer events so the album art's
+     hover tilt isn't intercepted by the overlay. */
+  [data-kind="music"] .cover-case::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/cases/cd-jewel-case.png") center / 100% 100% no-repeat;
+    z-index: 5;
+    pointer-events: none;
+    /* The PNG is mostly black-on-white from its source; we use blend
+       modes so the dark plastic edges punch through to the album art
+       without hiding it. */
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+  }
+  /* Bright-mode (light theme) doesn't need the multiply trick — the PNG
+     reads naturally on a light shelf. */
+  :root:not(.dark) [data-kind="music"] .cover-case::after {
+    mix-blend-mode: normal;
+    opacity: 0.92;
+  }
+  /* Typographic fallback (when no image URL) — paper insert behind the
+     plastic. */
+  [data-kind="music"] .cover-fallback {
+    background: linear-gradient(180deg, #f5efe1 0%, #e8e0c8 100%);
+    color: #1a1408;
+    margin: 4px 6px 4px 4px;
+    border-radius: 2px;
+  }
+  [data-kind="music"] .cover-band--top { background: var(--accent); }
+  [data-kind="music"] .cover-band--bottom {
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(26, 20, 8, 0.7);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     Film — Blu-ray case.
+     Uses the downloaded transparent-PNG asset (blu-ray-case.png) as a
+     plastic overlay on top of the poster. Asset is 600×766 (≈0.783:1
+     portrait), so we match that ratio in the case. The poster fills
+     the inner art region, leaving the blue plastic frame + Blu-ray
+     Disc wordmark visible from the asset itself. */
+  [data-kind="film"] .cover-case {
+    width: 142px;
+    height: 181px;             /* matches PNG aspect 600/766 ≈ 0.783:1 */
+    background: #0a0a0a;       /* matte black tray behind the poster */
+    border-radius: 4px;
+  }
+  /* Poster sits BEHIND the plastic overlay. Inset matches the asset's
+     measured art window — left/right ~2%, top ~10% (blue header band),
+     bottom ~3% (bottom rim).
+     object-fit: contain preserves the full theatrical poster (which is
+     2:3 / 0.667 aspect, taller than the slot's 0.86) instead of
+     cropping the top and bottom. The matte black tray (cover-case
+     background) shows on the left/right of the centered poster — same
+     visual effect as a real Blu-ray case where a theatrical poster
+     was used as the cover insert. */
+  [data-kind="film"] .cover-image {
+    top: 18px;
+    left: 3px;
+    right: auto;
+    bottom: auto;
+    width: calc(100% - 6px);   /* leaves ~3px of plastic on each side */
+    height: calc(100% - 23px); /* leaves room for the top band + bottom rim */
+    z-index: 2;
+    border-radius: 1px;
+    object-fit: contain;
+    object-position: center;
+  }
+  /* Subtle moving shine on the poster — same currentColor trick as the
+     CD case, ramps with --tilt-y from the parallax script. */
+  [data-kind="film"] .cover-case::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 3px;
+    width: calc(100% - 6px);
+    height: calc(100% - 23px);
+    border-radius: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, calc(0.24 + var(--tilt-y, 0) * 0.18)) 0%,
+      rgba(255, 255, 255, 0.04) 28%,
+      rgba(255, 255, 255, 0) 50%
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.6;
+    transition: opacity 220ms ease;
+  }
+  /* Plastic Blu-ray case overlay — the downloaded PNG. Stretched to
+     full case bounds, on top of the poster. */
+  [data-kind="film"] .cover-case::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/cases/blu-ray-case.png") center / 100% 100% no-repeat;
+    z-index: 5;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
+  }
+  [data-kind="film"] .cover-fallback {
+    color: #f4f7fb;
+    top: 18px;
+    left: 3px;
+    width: calc(100% - 6px);
+    height: calc(100% - 23px);
+    inset: auto;
+    background: #0a0a0a;
+    border-radius: 1px;
+    padding: 8px 6px;
+    z-index: 1;
+  }
+  [data-kind="film"] .cover-band--top {
+    height: 0;
+    margin: 0 0 0;
+    background: transparent;
+  }
+  [data-kind="film"] .cover-title {
+    font-family: Georgia, "Times New Roman", serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  }
+  [data-kind="film"] .cover-creator { color: rgba(255, 255, 255, 0.78); }
+  [data-kind="film"] .cover-band--bottom {
+    color: rgba(255, 255, 255, 0.78);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    padding-top: 5px;
+    margin: 6px 0 0;
+  }
+
+  /* ──────────────────────────────────────────────────────────────────
+     Games — NES cartridge.
+     Uses the downloaded transparent-PNG asset (nes-cartridge.png) as
+     the cartridge silhouette overlay. Asset is 522×600 (≈0.87:1
+     portrait) with a BLACK label area on the right ~52% × top ~55% of
+     the image. The cover art is positioned to sit EXACTLY inside that
+     black inset so it reads as the printed game label on a real cart.
+     Measured from the asset:
+       black-region left   ≈ 39%
+       black-region right  ≈ 9%
+       black-region top    ≈ 7%
+       black-region bottom ≈ 37.5% */
+  [data-kind="games"] .cover-case {
+    width: 168px;
+    height: 182px;             /* matches PNG aspect 1936/2092 ≈ 0.925:1 */
+    background: transparent;   /* the PNG provides all the silhouette;
+                                   no CSS body needed underneath */
+    border-radius: 0;
+  }
+  /* Cover art sits ON TOP of the cartridge like a real paper sticker on
+     the label recess. The new asset is a photograph of bare plastic with
+     no sticker drawn in, so we layer the art at z-index 6 (above the
+     cartridge silhouette at z-index 5). Percentages measured by edge
+     detection on the asset (luminance gradient peaks across many rows):
+       label left   ≈ 41% (highlight peak at x=785/1936, votes=84)
+       label right  ≈ 80% (shadow trough at x=1552/1936, lum 54 vs 70)
+       label top    ≈  9% (highlight peak at y=183/2092, votes=11)
+       label bottom ≈ 65% (highlight peak at y=1367/2092, lum 152, votes=145)
+     Aspect 39% / 57% ≈ 0.68 (portrait, taller than wide — matches the
+     photographed cartridge's actual recess proportions). */
+  [data-kind="games"] .cover-image {
+    top: 9%;
+    left: 41%;
+    right: auto;
+    bottom: auto;
+    width: 39%;                /* label spans ~41%–80% horizontally */
+    height: 56%;               /* label spans ~9%–65% vertically */
+    border-radius: 1px;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.45),
+      0 1px 2px rgba(0, 0, 0, 0.35);
+    z-index: 6;
+    object-fit: cover;
+  }
+  /* Subtle moving shine on the label area — same parallax-driven
+     diagonal as the other two cases. */
+  [data-kind="games"] .cover-case::before {
+    content: "";
+    position: absolute;
+    top: 9%;
+    left: 41%;
+    width: 39%;
+    height: 56%;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, calc(0.22 + var(--tilt-y, 0) * 0.16)) 0%,
+      rgba(255, 255, 255, 0.04) 30%,
+      rgba(255, 255, 255, 0) 55%
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 7;                /* above the cover-image sticker */
+    opacity: 0.55;
+    transition: opacity 220ms ease;
+  }
+  /* The actual cartridge silhouette (PNG asset) on top, filling the
+     entire case bounds. Two stacked drop-shadows give it real depth and
+     follow the silhouette's alpha — no rectangular halo around the
+     transparent padding of the asset. */
+  [data-kind="games"] .cover-case::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/cases/nes-cartridge.png") center / 100% 100% no-repeat;
+    z-index: 5;
+    pointer-events: none;
+    filter:
+      drop-shadow(0 8px 12px rgba(0, 0, 0, 0.50))
+      drop-shadow(0 3px 5px rgba(0, 0, 0, 0.38));
+  }
+  /* Typographic fallback sits in the same black-label inset; rendered
+     on a cream sticker behind the cover image. */
+  [data-kind="games"] .cover-fallback {
+    top: 9%;
+    left: 41%;
+    width: 39%;
+    height: 56%;
+    inset: auto;
+    background: linear-gradient(180deg, #f6efe2 0%, #e9e0cc 100%);
+    color: #1a1208;
+    border-radius: 1px;
+    padding: 6px 6px 8px;
+    z-index: 6;                /* on top of cartridge silhouette */
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.18),
+      0 1px 0 rgba(0, 0, 0, 0.3);
+  }
+  [data-kind="games"] .cover-band--top {
+    height: 0;
+    margin: 0;
+    background: transparent;
+    display: none;             /* no wordmark — real carts don't have one */
+  }
+  [data-kind="games"] .cover-body {
+    color: #1a1208;
+    padding: 0;
+    background: transparent;
+  }
+  [data-kind="games"] .cover-title { font-weight: 900; }
+  [data-kind="games"] .cover-creator { color: rgba(26, 18, 8, 0.65); }
+  [data-kind="games"] .cover-band--bottom {
+    margin: auto 0 0;
+    padding: 0;
+    color: rgba(26, 18, 8, 0.65);
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    padding-top: 4px;
+    text-shadow: none;
+  }
+
+  /* ── Media-specific spine styling ────────────────────────────────── */
+
+  /* Music — CD jewel case.
+     Spine geometry mirrors a real CD jewel case: ~10mm × 142mm gives a
+     ~1:14 aspect ratio. We render at 12px × 170px (1:14.2). The body
+     uses the per-item accent colour so each spine reads as the album's
+     own paper insert behind the clear plastic, with subtle plastic-edge
+     highlights along the gutters. The artist's wordmark logo is printed
+     vertically along the spine — when present it replaces the
+     typographic title (see .spine-logo + :has() rule below). */
+  [data-kind="music"] .spine {
+    width: 12px;
+    background:
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--accent) 88%, white 12%) 0%,
+        var(--accent) 32%,
+        color-mix(in srgb, var(--accent) 82%, black 18%) 100%);
+    border-radius: 1.5px 1.5px 0 0;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      inset -0.5px 0 0 rgba(0, 0, 0, 0.40),
+      inset 0.5px 0 0 rgba(255, 255, 255, 0.18),
+      0 3px 5px rgba(0, 0, 0, 0.4);
+  }
+  [data-kind="music"] .spine-text {
+    color: #fff;
+    font-size: 8.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  }
+  /* Artist wordmark logo printed vertically along the spine. Mirrors
+     the same 90°-rotation trick used on the active cover-case spine —
+     wordmark is naturally horizontal, we rotate it so it reads
+     top-to-bottom along the spine's long axis. Sized for the 12×170
+     spine: 154px long axis (=spine height − 16 padding), 9px short
+     axis (=spine width − 3). */
+  [data-kind="music"] .spine-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 154px;
+    height: 9px;
+    max-width: none;             /* override Tailwind's img max-width: 100% */
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
+    transform-origin: 0 0;
+    transform: translate(10.5px, 8px) rotate(90deg);
+    filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.45));
+    z-index: 2;
+  }
+  /* Hide the typographic title when a wordmark logo is rendered — only
+     one identifier on the spine at a time. */
+  [data-kind="music"] .spine:has(.spine-logo) .spine-text {
+    display: none;
+  }
+  [data-kind="music"] .spine-gutter--l {
+    background: rgba(0, 0, 0, 0.32);
+    width: 1px;
+  }
+  [data-kind="music"] .spine-gutter--r {
+    background: rgba(0, 0, 0, 0.18);
+    width: 1px;
+  }
+  [data-kind="music"] .spine-shine {
+    left: 28%;
+    opacity: 0.32;
+  }
+
+  /* Film — Blu-ray case.
+     Dark charcoal body with the canonical blue header band and the
+     "BLU-RAY" wordmark rendered in .spine-top via a generated gradient +
+     micro-label (see ::before). */
+  [data-kind="film"] .spine {
+    background:
+      linear-gradient(180deg,
+        #1a4ac8 0%, #1a4ac8 11%,
+        #0c1116 13%, #0c1116 100%);
+    border-radius: 1.5px 1.5px 0 0;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset -1px 0 0 rgba(0, 0, 0, 0.45),
+      inset 1px 0 0 rgba(255, 255, 255, 0.1),
+      0 3px 5px rgba(0, 0, 0, 0.45);
+  }
+  [data-kind="film"] .spine-text {
+    color: #e9eef5;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.55);
+    /* start below the blue header band */
+    inset: 26px 0 7px 0;
+  }
+  /* The blue header stripe on a real Blu-ray case carries the tiny
+     "BLU-RAY" wordmark. Drawn here as a single-character indicator
+     centered on the header — too small to read at 14px spine width, but
+     gives the case its unmistakable silhouette. */
+  [data-kind="film"] .spine::before {
+    content: "▸";
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 6px;
+    color: rgba(255, 255, 255, 0.9);
+    z-index: 2;
+    pointer-events: none;
+  }
+  [data-kind="film"] .spine-gutter--l {
+    background: color-mix(in srgb, var(--accent) 40%, rgba(0,0,0,0.3));
+  }
+  [data-kind="film"] .spine-shine {
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.22) 20%,
+      rgba(255, 255, 255, 0.06) 70%,
+      transparent 100%);
+  }
+
+  /* Games — cartridge.
+     Chunkier (16px) coloured plastic with a white label band carrying
+     the title. Cartridges read downward, so the text is rotated the
+     opposite way from spines above — closer to a real sticker orientation. */
+  [data-kind="games"] .spine {
+    width: 20px;
+    background:
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--accent) 120%, #000) 0%,
+        var(--accent) 28%,
+        color-mix(in srgb, var(--accent) 72%, #000) 100%);
+    border-radius: 2px 2px 0 0;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset -1px 0 1px rgba(0, 0, 0, 0.35),
+      inset 1px 0 1px rgba(255, 255, 255, 0.15),
+      0 4px 6px rgba(0, 0, 0, 0.5);
+  }
+  /* White sticker label covers the middle ~70% of the cartridge. Title
+     text sits inside the label, rotated the OTHER direction so it reads
+     top-to-bottom like a real sticker. */
+  [data-kind="games"] .spine::after {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 2px;
+    right: 2px;
+    height: 130px;
+    background: linear-gradient(180deg, #f6efe2 0%, #e9e0cc 100%);
+    border-radius: 1px;
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.08),
+      inset 0 1px 1px rgba(0, 0, 0, 0.12);
+  }
+  [data-kind="games"] .spine-text {
+    inset: 18px 0 26px 0;
+    z-index: 1;
+    writing-mode: vertical-rl;
+    transform: rotate(0deg);        /* top-to-bottom reading */
+    text-align: left;
+    color: #1a1208;
+    text-shadow: none;
+    font-size: 9px;
+    padding: 0 3px;
+  }
+  [data-kind="games"] .spine-shine {
+    left: 30%;
+    opacity: 0.35;
+  }
+
+  /* ── Info panel under each shelf ─────────────────────────────────── */
+  .shelf-info {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    min-height: 36px;
+    padding: 0 2px;
+    border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+    padding-top: 0.45rem;
+  }
+  .info-rank {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    opacity: 0.4;
+    font-variant-numeric: tabular-nums;
+    min-width: 22px;
+  }
+  .info-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 1px;
+  }
+  .info-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 180ms ease;
+  }
+  .info-sub {
+    font-size: 11px;
+    line-height: 1.2;
+    opacity: 0.65;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 180ms ease;
+  }
+  .info-sep { opacity: 0.4; margin: 0 0.3rem; }
+
+  .shelf-empty {
+    padding: 1rem 0.5rem;
+    font-size: 12px;
+    opacity: 0.55;
+    font-style: italic;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spine,
+    .spine:hover,
+    .spine:focus-visible,
+    .spine[data-active="true"] {
+      transition: filter 200ms ease;
+      transform: none;
+    }
+    .shelf-inner { transform: none; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const shelves = document.querySelectorAll('.shelf-col');
+    shelves.forEach((col) => {
+      const spines    = col.querySelectorAll('[data-spine]');
+      if (!spines.length) return;
+
+      // Bottom-of-shelf info strip (kept for accessible text + extra detail).
+      const info      = col.querySelector('[data-info]');
+      const infoTitle   = info && info.querySelector('[data-info-title]');
+      const infoCreator = info && info.querySelector('[data-info-creator]');
+      const infoSub     = info && info.querySelector('[data-info-sub]');
+      const infoRank    = info && info.querySelector('[data-info-rank]');
+
+      // Right-side cover preview panel.
+      const panel       = col.querySelector('[data-cover-panel]');
+      const coverImage  = panel && panel.querySelector('[data-cover-image]');
+      const coverTitle  = panel && panel.querySelector('[data-cover-title]');
+      const coverCreator= panel && panel.querySelector('[data-cover-creator]');
+      const coverMeta   = panel && panel.querySelector('[data-cover-meta]');
+      const coverRank   = panel && panel.querySelector('[data-cover-rank]');
+      const coverFallback = panel && panel.querySelector('[data-cover-fallback]');
+      const coverSpineLogo = panel && panel.querySelector('[data-cover-spine-logo]');
+
+      // Quick lookup helper — toggles the <img> AND the typographic
+      // fallback's visibility based on whether the active item provides
+      // an image URL. Hiding the fallback matters for cases (like the
+      // CD jewel) where the album art is inset to expose a spine slot:
+      // if the fallback stays rendered, its cream paper-insert gradient
+      // peeks through that gap.
+      function setCoverImage(src, alt) {
+        if (!coverImage) return;
+        if (src) {
+          coverImage.src = src;
+          coverImage.alt = alt || '';
+          coverImage.style.display = '';
+          if (coverFallback) coverFallback.style.display = 'none';
+        } else {
+          coverImage.removeAttribute('src');
+          coverImage.alt = '';
+          coverImage.style.display = 'none';
+          if (coverFallback) coverFallback.style.display = '';
+        }
+      }
+
+      // Toggle the artist-wordmark logo on the spine slot. Only the
+      // music shelf renders this element; on film/games it doesn't
+      // exist, so guard with a null check.
+      function setSpineLogo(src) {
+        if (!coverSpineLogo) return;
+        if (src) {
+          coverSpineLogo.src = src;
+          coverSpineLogo.style.display = '';
+        } else {
+          coverSpineLogo.removeAttribute('src');
+          coverSpineLogo.style.display = 'none';
+        }
+      }
+
+      // ── Spine color sampler ──────────────────────────────────────
+      // Computes the average RGB of an album cover and applies it as
+      // --spine-color on the cover-case, so the CD jewel case's spine
+      // slot tints to match the artwork. Cached per-src. Falls back to
+      // the curated accent hex baked into the spine's data-attribute
+      // when CORS blocks pixel reads (Last.fm CDN serves with proper
+      // CORS headers, but a custom-hosted cover URL may not).
+      const coverCase = panel && panel.querySelector('.cover-case');
+      const colorCache = new Map();
+      function setSpineColor(color) {
+        if (!coverCase || !color) return;
+        coverCase.style.setProperty('--spine-color', color);
+      }
+      function sampleAverageColor(src) {
+        if (!src) return Promise.resolve(null);
+        if (colorCache.has(src)) return Promise.resolve(colorCache.get(src));
+        return new Promise((resolve) => {
+          const probe = new Image();
+          probe.crossOrigin = 'anonymous';
+          probe.referrerPolicy = 'no-referrer';
+          probe.onload = () => {
+            try {
+              const N = 24;             /* sample at 24×24 — fast + smooth */
+              const c = document.createElement('canvas');
+              c.width = c.height = N;
+              const ctx = c.getContext('2d');
+              ctx.drawImage(probe, 0, 0, N, N);
+              const data = ctx.getImageData(0, 0, N, N).data;
+              let r = 0, g = 0, b = 0, total = 0;
+              /* Skip near-black + near-white pixels — they're typically
+                 the album's frame or empty space and would mute the
+                 averaged hue toward grey. */
+              for (let i = 0; i < data.length; i += 4) {
+                const pr = data[i], pg = data[i + 1], pb = data[i + 2];
+                const max = Math.max(pr, pg, pb);
+                const min = Math.min(pr, pg, pb);
+                if (max < 28 || min > 230) continue;
+                r += pr; g += pg; b += pb; total += 1;
+              }
+              if (!total) {
+                resolve(null);
+                return;
+              }
+              r = Math.round(r / total);
+              g = Math.round(g / total);
+              b = Math.round(b / total);
+              /* Slight saturation boost — averaging tends toward muddy
+                 greys; pushing each channel away from the luminance
+                 mean by 18% gives a more expressive spine without
+                 caricaturing the album's palette. */
+              const lum = (r * 0.299 + g * 0.587 + b * 0.114);
+              const boost = (v) => Math.max(0, Math.min(255, Math.round(v + (v - lum) * 0.18)));
+              const result = `rgb(${boost(r)}, ${boost(g)}, ${boost(b)})`;
+              colorCache.set(src, result);
+              resolve(result);
+            } catch (err) {
+              /* CORS / SecurityError — fall through to caller's fallback. */
+              colorCache.set(src, null);
+              resolve(null);
+            }
+          };
+          probe.onerror = () => {
+            colorCache.set(src, null);
+            resolve(null);
+          };
+          probe.src = src;
+        });
+      }
+      async function applySpineColor(src, fallback) {
+        const sampled = await sampleAverageColor(src);
+        setSpineColor(sampled || fallback || '#2a2a2a');
+      }
+
+      // Cross-fade swap. Brief opacity dip on the panel (and the info
+      // strip) makes a quick cursor-sweep across spines read as smooth
+      // scrubbing instead of a hard text replace flicker.
+      let swapTimer = null;
+      function apply(sp) {
+        if (!sp) return;
+        const { title, creator, sub, rank, image, accent, logo } = sp.dataset;
+
+        // No-op if values already match; saves DOM writes during a quick
+        // re-hover.
+        if (infoTitle && infoTitle.textContent === title
+            && coverImage && coverImage.getAttribute('src') === (image || null)) {
+          return;
+        }
+
+        const fadeTargets = [panel, info].filter(Boolean);
+        fadeTargets.forEach((el) => (el.style.opacity = '0.55'));
+        if (swapTimer) clearTimeout(swapTimer);
+        swapTimer = setTimeout(() => {
+          if (infoTitle)   infoTitle.textContent   = title || '';
+          if (infoCreator) infoCreator.textContent = creator || '';
+          if (infoSub)     infoSub.textContent     = sub || '';
+          if (infoRank)    infoRank.textContent    = rank ? `#${rank}` : '';
+
+          if (coverTitle)   coverTitle.textContent   = title || '';
+          if (coverCreator) coverCreator.textContent = creator || '';
+          if (coverMeta)    coverMeta.textContent    = sub || '';
+          if (coverRank)    coverRank.textContent    = rank ? `#${rank}` : '';
+          setCoverImage(image, `${title} cover`);
+          setSpineLogo(logo);
+          /* Set the curated accent immediately as a fallback so the
+             spine never reads as a solid grey while the canvas sample
+             is still in flight; the async sampler will overwrite it
+             with the computed colour when ready. */
+          setSpineColor(accent || '#2a2a2a');
+          applySpineColor(image, accent);
+          fadeTargets.forEach((el) => (el.style.opacity = ''));
+        }, 100);
+      }
+
+      // Set initial cover state — the SSR'd img has src="" if the first
+      // item has no image URL; switch it to display:none so the
+      // typographic fallback renders cleanly.
+      const initial = spines[0];
+      if (initial) {
+        setCoverImage(initial.dataset.image, `${initial.dataset.title} cover`);
+        setSpineLogo(initial.dataset.logo);
+        setSpineColor(initial.dataset.accent || '#2a2a2a');
+        applySpineColor(initial.dataset.image, initial.dataset.accent);
+      }
+
+      spines.forEach((sp) => {
+        sp.addEventListener('pointerenter', () => apply(sp));
+        sp.addEventListener('focus',        () => apply(sp));
+      });
+
+      /* Mouse-parallax tilt on the cover case.
+         When the cursor is over the cover-preview panel area, normalise
+         its position to [-1, 1] from the panel center and write those
+         values to --tilt-x / --tilt-y on the case. The hover CSS rule
+         (.cover-case--tilting) consumes those vars to apply a
+         real-time 3D rotateX/rotateY transform — gives the case the
+         feel of being held and turned in your hand.
+         Listening on the column (not the panel) is necessary because
+         .shelf-cover-panel has pointer-events: none. mousemove still
+         bubbles up from whatever the cursor is over (even nothing,
+         since transparent areas don't capture).
+         coverCase is already declared above for the spine-color
+         sampler — re-use it instead of redeclaring. */
+      if (panel && coverCase) {
+        let raf = 0;
+        let pending = null;
+        const apply2 = () => {
+          raf = 0;
+          if (!pending) return;
+          const { nx, ny, inside } = pending;
+          if (inside) {
+            coverCase.style.setProperty('--tilt-x', nx.toFixed(3));
+            coverCase.style.setProperty('--tilt-y', ny.toFixed(3));
+            coverCase.classList.add('cover-case--tilting');
+          } else {
+            coverCase.style.setProperty('--tilt-x', '0');
+            coverCase.style.setProperty('--tilt-y', '0');
+            coverCase.classList.remove('cover-case--tilting');
+          }
+        };
+        const onMove = (e) => {
+          /* Active region = the ENTIRE shelf column. The cursor can be
+             anywhere from the leftmost spine to past the cover panel
+             and still drive parallax — gives the case a much wider
+             reactive area than just hovering directly on it. */
+          const colRect = col.getBoundingClientRect();
+          const cx = e.clientX - colRect.left;
+          const cy = e.clientY - colRect.top;
+          const inside = cx >= 0 && cx <= colRect.width
+                       && cy >= 0 && cy <= colRect.height;
+          if (!inside) {
+            pending = { nx: 0, ny: 0, inside: false };
+            if (!raf) raf = requestAnimationFrame(apply2);
+            return;
+          }
+          /* Tilt is computed as the offset from the panel CENTER,
+             normalised by half the panel size. So cursor on the panel
+             edges produces ±1 (full tilt), at the panel center produces
+             0, and anywhere further out clamps to ±1 — meaning the
+             whole-shelf reactive zone yields a smooth gradient that
+             pegs at maximum once the cursor is past the panel rim. */
+          const rect = panel.getBoundingClientRect();
+          const halfW = rect.width  / 2;
+          const halfH = rect.height / 2;
+          const dx = e.clientX - (rect.left + halfW);
+          const dy = e.clientY - (rect.top  + halfH);
+          const nx = Math.max(-1, Math.min(1, dx / halfW));
+          const ny = Math.max(-1, Math.min(1, dy / halfH));
+          pending = { nx, ny, inside: true };
+          if (!raf) raf = requestAnimationFrame(apply2);
+        };
+        const onLeave = () => {
+          pending = { nx: 0, ny: 0, inside: false };
+          if (!raf) raf = requestAnimationFrame(apply2);
+        };
+        col.addEventListener('mousemove', onMove);
+        col.addEventListener('mouseleave', onLeave);
+      }
+    });
+  })();
+</script>

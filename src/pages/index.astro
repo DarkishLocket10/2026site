@@ -6,19 +6,19 @@ import ProfessionalExperience from "../components/ProfessionalExperience.astro";
 import Work from "../components/Work.astro";
 import Photography from "../components/Photography.astro";
 import Gallery from "../components/gallery.astro";
-import TopAlbums from "../components/TopAlbums.astro";
+import Bookshelves from "../components/Bookshelves.astro";
 import BlogDisplay from '../components/BlogDisplay.astro';
 
 const educationItems = [
   {
-    years: '‎ 🎓2020–2025',
+    years: '2020–2025',
     institution: "Queen's University",
     details: 'Bachelor of Computing (Honours), Specialization in Software Design',
     crest: '/crests/queens.svg',
     crestAlt: "Queen's University crest",
   },
   {
-    years: '‎ 🎓2016–2020',
+    years: '2016–2020',
     institution: 'Korah Collegiate & Vocational School',
     details: 'High School Diploma, Academic Stream',
     crest: '/crests/korah.png',
@@ -175,7 +175,7 @@ icons: ['simple-icons:csharp', 'simple-icons:dotnet', 'simple-icons:docker', 'si
 
 <BlogDisplay />
 
-
+  <Bookshelves />
 
 
   <Photography
@@ -187,8 +187,6 @@ icons: ['simple-icons:csharp', 'simple-icons:dotnet', 'simple-icons:docker', 'si
   />
 
   <Gallery />
-
-  <TopAlbums />
 
 
 </Layout>
