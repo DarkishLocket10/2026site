@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep -nC2 -i \"gallery\" src/components/Photography.astro src/pages/index.astro)"
+      "Bash(grep -nC2 -i \"gallery\" src/components/Photography.astro src/pages/index.astro)",
+      "Bash(curl -s http://localhost:4321/)"
     ]
   }
 }

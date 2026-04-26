@@ -37,13 +37,40 @@ type ShelfItem = {
   image: string | null;
   accent: string;
   /* Optional URL/path to a TRANSPARENT-PNG of the artist's wordmark or
-     band logo. When present, the CD jewel case's spine slot renders the
-     logo (rotated to read top-to-bottom) instead of staying as a plain
-     colour fill. fanart.tv's "hdmusiclogo" assets are ideal — give it a
-     MusicBrainz artist ID and it returns the band's stylised name as a
-     transparent PNG. Drop files into /public/artists/<slug>.png or use
-     a remote URL. Leave undefined to fall back to the plain colour. */
+     band logo (music) or game title wordmark (games). When present:
+       - Music: rendered along the CD jewel case's spine slot (rotated
+         to read top-to-bottom) and replaces the spine title text.
+       - Games: rendered along the white sticker label of the cartridge
+         spine (rotated to read top-to-bottom) and replaces the spine
+         title text. The cover-case spine slot for games has no
+         equivalent rendering (the cartridge silhouette doesn't expose
+         a spine slot the way a CD jewel case does).
+     Drop files into /public/artists/<slug>.png (music) or
+     /public/game icons and logos/<slug> logo.png (games). */
   logo?: string | null;
+  /* Games-only — small square icon (transparent PNG) rendered at the
+     BOTTOM of the cartridge spine, below the sticker label. Acts as
+     the cartridge's secondary visual identifier (e.g. franchise mark
+     or studio symbol). Files in /public/game icons and logos/<slug>
+     icon.png. Leave undefined to render nothing. */
+  icon?: string | null;
+  /* Optional uniform-scale factor applied to the spine logo. Defaults
+     to 1 (logo fills the available wordmark slot). Set to e.g. 0.85
+     when a logo's natural aspect makes it render too large or
+     overpowering for the spine. Implemented as a CSS variable
+     consumed by the per-kind .spine-logo transform. */
+  logoScale?: number | null;
+  /* Optional per-item override for `object-position` on the cover image.
+     The cover image uses `object-fit: cover`, so when the source aspect
+     doesn't match the slot the image gets cropped — `crop` controls
+     which part survives. Accepts any valid CSS object-position value:
+     "center", "50% 75%", "top", "left bottom", etc.
+     - For films, the per-kind default is "50% 75%" (anchors toward the
+       bottom of a 2:3 poster so the title area is preserved and the
+       crop comes off the top).
+     - For games / music, the per-kind default is "center".
+     Leave undefined to use the per-kind default. */
+  crop?: string | null;
 };
 
 type Shelf = {
@@ -69,7 +96,7 @@ const shelves: Shelf[] = [
 <section id="bookshelves" class="w-full py-6">
   <div
     class="
-      bookshelves-root mx-auto w-full max-w-6xl px-6
+      bookshelves-root mx-auto w-full px-6
       opacity-0 translate-y-4
       transition-all duration-700 ease-out delay-100
       motion-reduce:opacity-100 motion-reduce:translate-y-0
@@ -91,12 +118,10 @@ const shelves: Shelf[] = [
                 <div class="shelf-inner">
                   <div class="shelf-items" role="list" aria-label={`${shelf.label} top ten`}>
                     {shelf.items.map((it, i) => (
-                      <a
+                      <button
+                        type="button"
                         class="spine"
                         role="listitem"
-                        href={it.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         data-spine
                         data-idx={i}
                         data-title={it.title}
@@ -106,17 +131,26 @@ const shelves: Shelf[] = [
                         data-image={it.image ?? ''}
                         data-accent={it.accent}
                         data-logo={it.logo ?? ''}
-                        style={`--accent: ${it.accent};`}
-                        aria-label={`#${it.rank} ${it.title} — ${it.creator}`}
+                        data-icon={it.icon ?? ''}
+                        data-crop={it.crop ?? ''}
+                        data-url={it.url}
+                        style={[
+                          `--accent: ${it.accent}`,
+                          it.logoScale != null ? `--logo-scale: ${it.logoScale}` : null
+                        ].filter(Boolean).join('; ') + ';'}
+                        aria-label={`#${it.rank} ${it.title} — ${it.creator}. Click to preview.`}
                         title={`${it.title} — ${it.creator}`}
                       >
-                        {/* Music shelf only: artist wordmark printed
-                            vertically on the spine. Replaces the title text
-                            when present, just like a real CD jewel case
-                            spine where the band/artist logo is the primary
-                            identifier. Falls back to the typographic title
-                            for items without a logo asset. */}
-                        {shelf.id === 'music' && it.logo && (
+                        {/* Wordmark / title logo printed on the spine. For
+                            music it's the artist wordmark running down the
+                            CD spine; for games it's the game's title logo
+                            on the cartridge sticker; for films it's the
+                            movie title wordmark on the Blu-ray spine.
+                            Each kind has its own CSS positioning the logo
+                            inside the spine's available wordmark slot.
+                            Replaces the typographic title text when
+                            present. */}
+                        {it.logo && (
                           <img
                             class="spine-logo"
                             src={it.logo}
@@ -126,9 +160,23 @@ const shelves: Shelf[] = [
                             aria-hidden="true"
                           />
                         )}
+                        {/* Games-only: small franchise/studio icon at the
+                            BOTTOM of the cartridge spine, below the
+                            sticker label area. */}
+                        {shelf.id === 'games' && it.icon && (
+                          <img
+                            class="spine-icon"
+                            src={it.icon}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            aria-hidden="true"
+                          />
+                        )}
                         {/* Thin printed title that runs down the spine. The
                             writing-mode flip is what produces the bottom-to-top
-                            reading order used on real physical spines. */}
+                            reading order used on real physical spines.
+                            Hidden via CSS when a wordmark logo is rendered. */}
                         <span class="spine-text">{it.title}</span>
                         {/* Media-specific decorative faces drawn as children
                             so the per-kind CSS can position/style them without
@@ -137,7 +185,7 @@ const shelves: Shelf[] = [
                         <span class="spine-gutter spine-gutter--l" aria-hidden="true"></span>
                         <span class="spine-gutter spine-gutter--r" aria-hidden="true"></span>
                         <span class="spine-shine" aria-hidden="true"></span>
-                      </a>
+                      </button>
                     ))}
                   </div>
                   <div class="shelf-board" aria-hidden="true"></div>
@@ -151,7 +199,18 @@ const shelves: Shelf[] = [
                     flat-facing the viewer while the spines tilt back, so it
                     reads as a piece of art being held up for inspection. */}
                 <div class="shelf-cover-panel" data-cover-panel>
-                  <div class="cover-case" data-cover-case>
+                  <a
+                    class="cover-case cover-link"
+                    data-cover-case
+                    data-cover-link
+                    href={shelf.items[0].url || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open ${shelf.items[0].title} externally`}
+                    style={shelf.id === 'music'
+                      ? `--spine-color: ${shelf.items[0].accent || '#2a2a2a'}`
+                      : undefined}
+                  >
                     {/* Real-asset slot — rendered when the active item has an
                         image URL. Falls back to display:none when src is
                         empty so the typographic fallback shows through. */}
@@ -162,6 +221,9 @@ const shelves: Shelf[] = [
                       alt=""
                       loading="lazy"
                       decoding="async"
+                      style={shelf.items[0].crop
+                        ? `object-position: ${shelf.items[0].crop}`
+                        : undefined}
                     />
                     {/* Spine logo — only rendered on the music kind. Sits on
                         top of the spine-colour rectangle, rotated to read
@@ -190,15 +252,13 @@ const shelves: Shelf[] = [
                       </span>
                       <span class="cover-band cover-band--bottom">
                         <span class="cover-meta" data-cover-meta>{shelf.items[0].sub}</span>
-                        <span class="cover-rank" data-cover-rank>#{shelf.items[0].rank}</span>
                       </span>
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
 
               <div class="shelf-info" aria-live="polite" data-info>
-                <div class="info-rank" data-info-rank>#{shelf.items[0].rank}</div>
                 <div class="info-text">
                   <div class="info-title" data-info-title>{shelf.items[0].title}</div>
                   <div class="info-sub">
@@ -226,6 +286,9 @@ const shelves: Shelf[] = [
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    max-width: 1152px;        /* matches max-w-6xl baseline; raised in
+                                 the 3-col @media so each shelf gets
+                                 enough horizontal room. */
   }
 
   .shelves-grid {
@@ -233,10 +296,36 @@ const shelves: Shelf[] = [
     grid-template-columns: 1fr;
     gap: 1.25rem 1.5rem;
   }
-  @media (min-width: 780px) {
+  /* 3-col only kicks in once each column is wide enough for the cover
+     panel + spine row to sit side-by-side without the panel covering
+     any spines. With current sizing (spines ~256, panel 215 + 4 gap)
+     scene width must be ≥ 480; (content_w - 48 gap × 2) / 3 ≥ 480
+     ⟹ content_w ≥ 1488 ⟹ root width ≥ 1536. The bookshelves-root
+     is normally capped at max-w-6xl (1152px) — too narrow for this —
+     so we raise the cap inside this same breakpoint. Below 1600 we
+     fall back to one shelf per row, which has plenty of room. */
+  @media (min-width: 1600px) {
+    .bookshelves-root {
+      max-width: 1600px;
+    }
     .shelves-grid {
       grid-template-columns: repeat(3, 1fr);
       align-items: start;
+    }
+  }
+  /* In single-column mode we cap the shelf-scene width so the cover
+     panel doesn't drift far to the right of the spines on wide
+     viewports. width:100% + max-width is the right combination here
+     because shelf-scene is a flex item inside .shelf-col (column
+     direction); auto margins on a flex item's cross axis cause
+     shrink-to-content instead of centering, so we explicitly fill
+     until the cap kicks in, then align-self centers within the
+     wider column. Above 1500 (3-col) the natural stretch is fine. */
+  @media (min-width: 601px) and (max-width: 1599px) {
+    .shelf-scene {
+      width: 100%;
+      max-width: 560px;
+      align-self: center;
     }
   }
 
@@ -278,15 +367,9 @@ const shelves: Shelf[] = [
     position: relative;
     perspective: 1400px;
     perspective-origin: 50% 8%;
-    padding-right: 165px;          /* cover panel width (180) - overlap into spine area */
-    min-height: 220px;             /* ensure the absolutely-positioned panel
+    padding-right: 210px;          /* cover panel width (230) - overlap into spine area */
+    min-height: 270px;             /* ensure the absolutely-positioned panel
                                        has a parent tall enough not to clip */
-  }
-  @media (max-width: 480px) {
-    /* On phones the column is narrow enough that the cover takes most of
-       the row width; drop perspective padding and stack the panel below
-       the spine row instead. */
-    .shelf-scene { padding-right: 0; }
   }
 
   /* The inner container carries the tilt. Anything inside (the spine row
@@ -308,7 +391,7 @@ const shelves: Shelf[] = [
     align-items: flex-end;
     justify-content: flex-start;
     gap: 0;
-    height: 170px;
+    height: 220px;
     padding: 0 8px;
     transform-style: preserve-3d;
   }
@@ -341,14 +424,23 @@ const shelves: Shelf[] = [
   }
 
   /* ── Spine (shared baseline, media-specific overrides below) ─────── */
-  /* All spines are links, so keyboard focus-visible handles the a11y
-     highlight without extra JS. */
+  /* Spines are <button>s — clicking one selects/previews the item in the
+     floating cover-case to its right. Browser-default button styling
+     is reset (background, border, font, etc.) so the visual is driven
+     entirely by the per-kind CSS below. focus-visible handles a11y. */
   .spine {
     position: relative;
     flex: 0 0 auto;
-    width: 18px;
-    height: 170px;
+    width: 24px;
+    height: 220px;
     display: block;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    text-align: inherit;
     text-decoration: none;
     color: inherit;
     cursor: pointer;
@@ -469,9 +561,9 @@ const shelves: Shelf[] = [
     position: absolute;
     right: 4px;
     bottom: 6px;                  /* sits just above the shelf board */
-    width: 180px;                 /* widened bounding box so each kind can
+    width: 230px;                 /* widened bounding box so each kind can
                                      pick its own aspect inside */
-    height: 200px;
+    height: 250px;
     pointer-events: none;
     z-index: 5;
     transition: opacity 220ms ease;
@@ -484,6 +576,45 @@ const shelves: Shelf[] = [
     perspective: 700px;
     perspective-origin: 50% 80%;
     /* Shadow is on .cover-case so border-radius is honoured. */
+  }
+  /* Mobile layout — on phones the column is narrow enough that there's
+     no horizontal room for the cover panel beside the spines. Switch
+     shelf-scene to a flex column and pull the (normally absolutely-
+     positioned) cover panel into normal flow so it stacks BELOW the
+     spine row. Placed AFTER the .shelf-cover-panel base rule so the
+     position override wins on equal specificity. The 600px boundary
+     is the minimum single-column width that fits the side-by-side
+     layout without overlap (scene width ≥ 480 + 48 page padding +
+     a buffer). */
+  @media (max-width: 600px) {
+    .shelf-scene {
+      padding-right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 0;
+    }
+    .shelf-cover-panel {
+      position: static;
+      align-self: center;
+      margin-top: 8px;
+    }
+  }
+
+  /* The cover-case is now an <a> — clicking it opens the active item's
+     URL in a new tab. Re-enable pointer-events here (the parent panel
+     has them disabled so the spine row underneath can be hovered freely
+     during parallax mousemove tracking) and reset the default link
+     decoration so the case visual is unaffected. */
+  .cover-link {
+    text-decoration: none;
+    color: inherit;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .cover-link:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-accent, #e7a03a) 70%, transparent);
+    outline-offset: 4px;
   }
   .cover-case {
     position: relative;
@@ -636,7 +767,6 @@ const shelves: Shelf[] = [
     overflow-wrap: anywhere;
   }
   .cover-meta { font-variant-numeric: tabular-nums; }
-  .cover-rank { opacity: 0.55; font-weight: 700; }
 
   /* Per-kind case styling — different materials, layouts, and overlay
      decorations. The image (when set) is positioned per-kind inside the
@@ -676,23 +806,23 @@ const shelves: Shelf[] = [
      The PNG is 680×624 (~1.09:1) so we match that ratio in the case
      dimensions to preserve the asset's geometry. */
   [data-kind="music"] .cover-case {
-    width: 175px;
-    height: 160px;             /* matches PNG aspect 680/624 ≈ 1.09:1 */
+    width: 224px;
+    height: 203px;             /* matches PNG aspect 680/624 ≈ 1.09:1 */
     /* Spine-color rectangle is INSET from the case bounds so it never
        reaches the very top/bottom/left edges (a real jewel case has
        plastic rim there, not paper insert). Achieved with a single
-       background-image painted at offset (2px, 4px) with a constrained
-       size — 12px wide × (case height − 8px) tall. */
+       background-image painted at offset (2px, 5px) with a constrained
+       size — 11px wide × (case height − 10px) tall. */
     background-color: transparent;
     background-image: linear-gradient(
       var(--spine-color, #2a2a2a),
       var(--spine-color, #2a2a2a)
     );
-    background-position: 2px 4px;
-    /* 9px wide → ends at x=11, album art starts at x=14, leaving a
-       ~3px gap so the spine colour and the album cover read as
+    background-position: 2px 5px;
+    /* 11px wide → ends at x=13, album art starts at x=17, leaving a
+       ~4px gap so the spine colour and the album cover read as
        distinct physical layers. */
-    background-size: 9px calc(100% - 8px);
+    background-size: 11px calc(100% - 10px);
     background-repeat: no-repeat;
     border-radius: 0;
     overflow: visible;
@@ -714,18 +844,18 @@ const shelves: Shelf[] = [
     position: absolute;
     top: 0;
     left: 0;
-    width: calc(100% - 8px);   /* the spine's long axis after rotation */
-    height: 9px;               /* the spine's short axis after rotation */
+    width: calc(100% - 10px);  /* the spine's long axis after rotation */
+    height: 11px;              /* the spine's short axis after rotation */
     object-fit: contain;
     object-position: center;
     z-index: 4;
     pointer-events: none;
-    /* translate(11px, 4px) puts the post-rotation top-left edge at
-       (2, 4) in the case's coord space. The rotation of 90° clockwise
+    /* translate(13px, 5px) puts the post-rotation top-left edge at
+       (2, 5) in the case's coord space. The rotation of 90° clockwise
        (transform-origin: 0 0) flips the image's width-axis into the
        vertical direction so the wordmark reads top→bottom. */
     transform-origin: 0 0;
-    transform: translate(11px, 4px) rotate(90deg);
+    transform: translate(13px, 5px) rotate(90deg);
     /* Subtle drop-shadow so the print reads against the spine colour. */
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
     transition: opacity 220ms ease;
@@ -740,12 +870,12 @@ const shelves: Shelf[] = [
      the album art. The spine slot itself remains transparent — it
      picks up whatever's behind the case. */
   [data-kind="music"] .cover-image {
-    top: 3px;
-    left: 14px;
+    top: 4px;
+    left: 17px;
     right: auto;
     bottom: auto;
-    width: calc(100% - 18px);
-    height: calc(100% - 6px);
+    width: calc(100% - 21px);
+    height: calc(100% - 8px);
     border-radius: 1px;
     object-fit: cover;
     z-index: 2;
@@ -768,7 +898,7 @@ const shelves: Shelf[] = [
   [data-kind="music"] .cover-case::before {
     content: "";
     position: absolute;
-    inset: 3px 4px 3px 14px;
+    inset: 4px 5px 4px 17px;
     border-radius: 1px;
     background:
       /* Sharp specular core (the window pane reflection itself) */
@@ -829,7 +959,7 @@ const shelves: Shelf[] = [
   [data-kind="music"] .cover-fallback {
     background: linear-gradient(180deg, #f5efe1 0%, #e8e0c8 100%);
     color: #1a1408;
-    margin: 4px 6px 4px 4px;
+    margin: 5px 7px 5px 5px;
     border-radius: 2px;
   }
   [data-kind="music"] .cover-band--top { background: var(--accent); }
@@ -847,31 +977,34 @@ const shelves: Shelf[] = [
      the inner art region, leaving the blue plastic frame + Blu-ray
      Disc wordmark visible from the asset itself. */
   [data-kind="film"] .cover-case {
-    width: 142px;
-    height: 181px;             /* matches PNG aspect 600/766 ≈ 0.783:1 */
+    width: 180px;
+    height: 229px;             /* matches PNG aspect 600/766 ≈ 0.783:1 */
     background: #0a0a0a;       /* matte black tray behind the poster */
     border-radius: 4px;
   }
   /* Poster sits BEHIND the plastic overlay. Inset matches the asset's
-     measured art window — left/right ~2%, top ~10% (blue header band),
-     bottom ~3% (bottom rim).
-     object-fit: contain preserves the full theatrical poster (which is
-     2:3 / 0.667 aspect, taller than the slot's 0.86) instead of
-     cropping the top and bottom. The matte black tray (cover-case
-     background) shows on the left/right of the centered poster — same
-     visual effect as a real Blu-ray case where a theatrical poster
-     was used as the cover insert. */
+     measured art window minus a 3px lift to better visually centre the
+     poster inside the case — the original 18px top inset matched the
+     PNG asset's blue header band exactly but read as "shifted down"
+     compared to the bottom rim, so the slot now starts at 15px.
+     object-fit: cover crops a 2:3 theatrical poster (0.667 aspect)
+     to fill the 0.86 slot edge-to-edge — without a position bias the
+     crop would split the lost ~29% of vertical pixels evenly between
+     top and bottom; biasing object-position to 50% 75% anchors the
+     visible window toward the bottom of the source so the title /
+     character credits area is preserved and most of the lost pixels
+     come off the top instead. */
   [data-kind="film"] .cover-image {
     top: 18px;
-    left: 3px;
+    left: 4px;
     right: auto;
     bottom: auto;
-    width: calc(100% - 6px);   /* leaves ~3px of plastic on each side */
-    height: calc(100% - 23px); /* leaves room for the top band + bottom rim */
+    width: calc(100% - 8px);   /* leaves ~4px of plastic on each side */
+    height: calc(100% - 24px); /* leaves room for the top band + bottom rim */
     z-index: 2;
     border-radius: 1px;
-    object-fit: contain;
-    object-position: center;
+    object-fit: cover;
+    object-position: 50% 75%;
   }
   /* Subtle moving shine on the poster — same currentColor trick as the
      CD case, ramps with --tilt-y from the parallax script. */
@@ -879,9 +1012,9 @@ const shelves: Shelf[] = [
     content: "";
     position: absolute;
     top: 18px;
-    left: 3px;
-    width: calc(100% - 6px);
-    height: calc(100% - 23px);
+    left: 4px;
+    width: calc(100% - 8px);
+    height: calc(100% - 24px);
     border-radius: 1px;
     background: linear-gradient(
       135deg,
@@ -909,9 +1042,9 @@ const shelves: Shelf[] = [
   [data-kind="film"] .cover-fallback {
     color: #f4f7fb;
     top: 18px;
-    left: 3px;
-    width: calc(100% - 6px);
-    height: calc(100% - 23px);
+    left: 4px;
+    width: calc(100% - 8px);
+    height: calc(100% - 24px);
     inset: auto;
     background: #0a0a0a;
     border-radius: 1px;
@@ -948,11 +1081,19 @@ const shelves: Shelf[] = [
        black-region top    ≈ 7%
        black-region bottom ≈ 37.5% */
   [data-kind="games"] .cover-case {
-    width: 168px;
-    height: 182px;             /* matches PNG aspect 1936/2092 ≈ 0.925:1 */
+    width: 212px;
+    height: 230px;             /* matches PNG aspect 1936/2092 ≈ 0.925:1 */
     background: transparent;   /* the PNG provides all the silhouette;
                                    no CSS body needed underneath */
     border-radius: 0;
+    /* Cartridge silhouette has irregular bottom edges and the
+       drop-shadow on ::after extends ~12px past the case bottom.
+       The base .cover-case rule sets overflow: hidden (needed for
+       the rectangular CD/Blu-ray cases to clip their plastic
+       overlays) — for games we override to visible so the shadow
+       can land naturally on the shelf board below instead of being
+       chopped flat at y=case_bottom. */
+    overflow: visible;
   }
   /* Cover art sits ON TOP of the cartridge like a real paper sticker on
      the label recess. The new asset is a photograph of bare plastic with
@@ -1065,7 +1206,7 @@ const shelves: Shelf[] = [
      vertically along the spine — when present it replaces the
      typographic title (see .spine-logo + :has() rule below). */
   [data-kind="music"] .spine {
-    width: 12px;
+    width: 16px;
     background:
       linear-gradient(180deg,
         color-mix(in srgb, var(--accent) 88%, white 12%) 0%,
@@ -1086,21 +1227,21 @@ const shelves: Shelf[] = [
   /* Artist wordmark logo printed vertically along the spine. Mirrors
      the same 90°-rotation trick used on the active cover-case spine —
      wordmark is naturally horizontal, we rotate it so it reads
-     top-to-bottom along the spine's long axis. Sized for the 12×170
-     spine: 154px long axis (=spine height − 16 padding), 9px short
+     top-to-bottom along the spine's long axis. Sized for the 16×200
+     spine: 184px long axis (=spine height − 16 padding), 13px short
      axis (=spine width − 3). */
   [data-kind="music"] .spine-logo {
     position: absolute;
     top: 0;
     left: 0;
-    width: 154px;
-    height: 9px;
+    width: calc(184px * var(--logo-scale, 1));
+    height: 13px;
     max-width: none;             /* override Tailwind's img max-width: 100% */
     object-fit: contain;
     object-position: center;
     pointer-events: none;
     transform-origin: 0 0;
-    transform: translate(10.5px, 8px) rotate(90deg);
+    transform: translate(14.5px, calc(8px + (184px * (1 - var(--logo-scale, 1)) / 2))) rotate(90deg);
     filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.45));
     z-index: 2;
   }
@@ -1144,6 +1285,29 @@ const shelves: Shelf[] = [
     /* start below the blue header band */
     inset: 26px 0 7px 0;
   }
+  /* Movie title wordmark printed on the dark portion of the Blu-ray
+     spine (below the blue header band that ends at ~26px). The spine
+     is 24 wide × 200 tall; the wordmark slot is 167 tall × 20 wide
+     after accounting for the blue band (top: 26) and a small bottom
+     padding (7). Same rotate-90-around-top-left trick as music/games. */
+  [data-kind="film"] .spine-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(167px * var(--logo-scale, 1));
+    height: 20px;
+    max-width: none;
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
+    transform-origin: 0 0;
+    transform: translate(22px, calc(26px + (167px * (1 - var(--logo-scale, 1)) / 2))) rotate(90deg);
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+    z-index: 2;
+  }
+  [data-kind="film"] .spine:has(.spine-logo) .spine-text {
+    display: none;
+  }
   /* The blue header stripe on a real Blu-ray case carries the tiny
      "BLU-RAY" wordmark. Drawn here as a single-character indicator
      centered on the header — too small to read at 14px spine width, but
@@ -1171,11 +1335,11 @@ const shelves: Shelf[] = [
   }
 
   /* Games — cartridge.
-     Chunkier (16px) coloured plastic with a white label band carrying
+     Chunkier (24px) coloured plastic with a white label band carrying
      the title. Cartridges read downward, so the text is rotated the
      opposite way from spines above — closer to a real sticker orientation. */
   [data-kind="games"] .spine {
-    width: 20px;
+    width: 24px;
     background:
       linear-gradient(180deg,
         color-mix(in srgb, var(--accent) 120%, #000) 0%,
@@ -1215,6 +1379,54 @@ const shelves: Shelf[] = [
     font-size: 9px;
     padding: 0 3px;
   }
+  /* Game title wordmark printed on the cartridge sticker. The sticker
+     spans top:14 to top:144 (130 tall) and is ~20 wide. The logo PNG
+     is naturally horizontal, so we lay it out at its natural
+     orientation sized to the sticker's long axis (130) × short axis
+     (20), then rotate 90° clockwise around its top-left so it reads
+     top-to-bottom along the cartridge label. translate(22, 14) puts
+     the post-rotation top-left edge at (sticker-left=2, sticker-top=14). */
+  [data-kind="games"] .spine-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Long axis (width here, vertical after rotation) shrinks with
+       --logo-scale; short axis stays full so object-fit: contain has
+       a consistent thickness slot. The translate Y is bumped down by
+       half the lost length so the shrunk wordmark stays visually
+       centered on the sticker. */
+    width: calc(130px * var(--logo-scale, 1));
+    height: 20px;
+    max-width: none;
+    object-fit: contain;
+    object-position: center;
+    pointer-events: none;
+    transform-origin: 0 0;
+    transform: translate(22px, calc(14px + (130px * (1 - var(--logo-scale, 1)) / 2))) rotate(90deg);
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.35));
+    z-index: 2;
+  }
+  /* Hide the typographic title when a wordmark logo is rendered. */
+  [data-kind="games"] .spine:has(.spine-logo) .spine-text {
+    display: none;
+  }
+  /* Franchise / studio icon at the bottom of the cartridge spine,
+     below the sticker label (which ends at top:144 of a 200-tall
+     spine). Centered horizontally within the 24-wide spine. */
+  [data-kind="games"] .spine-icon {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    max-width: none;
+    object-fit: contain;
+    object-position: center;
+    transform: translateX(-50%);
+    pointer-events: none;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45));
+    z-index: 2;
+  }
   [data-kind="games"] .spine-shine {
     left: 30%;
     opacity: 0.35;
@@ -1229,14 +1441,7 @@ const shelves: Shelf[] = [
     padding: 0 2px;
     border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
     padding-top: 0.45rem;
-  }
-  .info-rank {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    opacity: 0.4;
-    font-variant-numeric: tabular-nums;
-    min-width: 22px;
+    transition: opacity 220ms ease;
   }
   .info-text {
     display: flex;
@@ -1295,24 +1500,22 @@ const shelves: Shelf[] = [
       const infoTitle   = info && info.querySelector('[data-info-title]');
       const infoCreator = info && info.querySelector('[data-info-creator]');
       const infoSub     = info && info.querySelector('[data-info-sub]');
-      const infoRank    = info && info.querySelector('[data-info-rank]');
 
       // Right-side cover preview panel.
       const panel       = col.querySelector('[data-cover-panel]');
+      const coverLink   = panel && panel.querySelector('[data-cover-link]');
       const coverImage  = panel && panel.querySelector('[data-cover-image]');
       const coverTitle  = panel && panel.querySelector('[data-cover-title]');
       const coverCreator= panel && panel.querySelector('[data-cover-creator]');
       const coverMeta   = panel && panel.querySelector('[data-cover-meta]');
-      const coverRank   = panel && panel.querySelector('[data-cover-rank]');
       const coverFallback = panel && panel.querySelector('[data-cover-fallback]');
       const coverSpineLogo = panel && panel.querySelector('[data-cover-spine-logo]');
 
-      // Quick lookup helper — toggles the <img> AND the typographic
-      // fallback's visibility based on whether the active item provides
-      // an image URL. Hiding the fallback matters for cases (like the
-      // CD jewel) where the album art is inset to expose a spine slot:
-      // if the fallback stays rendered, its cream paper-insert gradient
-      // peeks through that gap.
+      // Synchronous content swapper. The panel-level fade in apply()
+      // hides this swap from the user — the parent panel is at
+      // opacity 0 by the time this runs — so no per-image transition
+      // is needed here. apply() also gates the call on a successful
+      // off-screen decode so the bitmap is ready before .src is set.
       function setCoverImage(src, alt) {
         if (!coverImage) return;
         if (src) {
@@ -1355,12 +1558,21 @@ const shelves: Shelf[] = [
       // silently. Short-circuit them to the curated accent fallback.
       const NO_CORS_HOSTS = new Set(['a.ltrbxd.com']);
       const coverCase = panel && panel.querySelector('.cover-case');
+      const isMusic = col.dataset.kind === 'music';
       const colorCache = new Map();
       function setSpineColor(color) {
-        if (!coverCase || !color) return;
+        // Only the music shelf's CSS reads --spine-color (the CD jewel
+        // case spine slot). Skipping the inline-style write on other
+        // kinds saves a property write per click and avoids polluting
+        // their style attribute with an unused custom property.
+        if (!coverCase || !color || !isMusic) return;
         coverCase.style.setProperty('--spine-color', color);
       }
       function sampleAverageColor(src) {
+        // Only music consumes the sampled colour; skip the canvas read
+        // (which involves a network fetch + decode + pixel scan) on
+        // film/games where it would be discarded.
+        if (!isMusic) return Promise.resolve(null);
         if (!src) return Promise.resolve(null);
         if (colorCache.has(src)) return Promise.resolve(colorCache.get(src));
         try {
@@ -1427,51 +1639,110 @@ const shelves: Shelf[] = [
         setSpineColor(sampled || fallback || '#2a2a2a');
       }
 
-      // Cross-fade swap. Brief opacity dip on the panel (and the info
-      // strip) makes a quick cursor-sweep across spines read as smooth
-      // scrubbing instead of a hard text replace flicker.
-      let swapTimer = null;
-      function apply(sp) {
+      // Whole-panel fade swap. The cover-panel and the info strip
+      // fade out together, all content (image, logo, spine colour,
+      // text labels) is swapped while invisible, then they fade back
+      // in. New image is decoded off-screen first so the panel never
+      // pops in mid-fade. applyToken cancels in-flight swaps if the
+      // user clicks another spine before the previous fade completes.
+      let applyToken = 0;
+      const PANEL_FADE_OUT_MS = 220;
+      const PANEL_FADE_IN_MS  = 240;
+      async function apply(sp) {
         if (!sp) return;
-        const { title, creator, sub, rank, image, accent, logo } = sp.dataset;
+        const { title, creator, sub, image, accent, logo, url, crop } = sp.dataset;
 
-        // No-op if values already match; saves DOM writes during a quick
-        // re-hover.
+        // Mark active spine for keyboard/touch users (the [data-active]
+        // selector already lifts the spine via the same transform as :hover).
+        spines.forEach((other) => {
+          if (other === sp) other.setAttribute('data-active', 'true');
+          else other.removeAttribute('data-active');
+        });
+
+        // Update the cover-link href synchronously so right-click /
+        // middle-click work immediately, even before the fade settles.
+        if (coverLink) {
+          if (url) {
+            coverLink.setAttribute('href', url);
+            coverLink.setAttribute('aria-label', `Open ${title || ''} externally`);
+          } else {
+            coverLink.removeAttribute('href');
+            coverLink.removeAttribute('aria-label');
+          }
+        }
+
+        // No-op if the visible content already matches.
         if (infoTitle && infoTitle.textContent === title
             && coverImage && coverImage.getAttribute('src') === (image || null)) {
           return;
         }
 
-        const fadeTargets = [panel, info].filter(Boolean);
-        fadeTargets.forEach((el) => (el.style.opacity = '0.55'));
-        if (swapTimer) clearTimeout(swapTimer);
-        swapTimer = setTimeout(() => {
-          if (infoTitle)   infoTitle.textContent   = title || '';
-          if (infoCreator) infoCreator.textContent = creator || '';
-          if (infoSub)     infoSub.textContent     = sub || '';
-          if (infoRank)    infoRank.textContent    = rank ? `#${rank}` : '';
+        const myToken = ++applyToken;
 
-          if (coverTitle)   coverTitle.textContent   = title || '';
-          if (coverCreator) coverCreator.textContent = creator || '';
-          if (coverMeta)    coverMeta.textContent    = sub || '';
-          if (coverRank)    coverRank.textContent    = rank ? `#${rank}` : '';
-          setCoverImage(image, `${title} cover`);
-          setSpineLogo(logo);
-          /* Set the curated accent immediately as a fallback so the
-             spine never reads as a solid grey while the canvas sample
-             is still in flight; the async sampler will overwrite it
-             with the computed colour when ready. */
-          setSpineColor(accent || '#2a2a2a');
-          applySpineColor(image, accent);
-          fadeTargets.forEach((el) => (el.style.opacity = ''));
-        }, 100);
+        // 1) Fade panel + info OUT together. CSS transitions on
+        //    .shelf-cover-panel and .shelf-info handle the easing.
+        if (panel) panel.style.opacity = '0';
+        if (info)  info.style.opacity  = '0';
+        await new Promise((r) => setTimeout(r, PANEL_FADE_OUT_MS));
+        if (myToken !== applyToken) return;
+
+        // 2) Decode the new cover off-screen so .src assignment below
+        //    paints a fully-decoded bitmap. Cache-warming at startup
+        //    means this is usually instant.
+        if (image) {
+          try {
+            const probe = new Image();
+            probe.src = image;
+            await probe.decode();
+          } catch (_) {
+            await new Promise((res) => {
+              const probe = new Image();
+              probe.onload  = () => res();
+              probe.onerror = () => res();
+              probe.src = image;
+            });
+          }
+          if (myToken !== applyToken) return;
+        }
+
+        // 3) Swap ALL content while the panel is invisible.
+        if (infoTitle)    infoTitle.textContent    = title || '';
+        if (infoCreator)  infoCreator.textContent  = creator || '';
+        if (infoSub)      infoSub.textContent      = sub || '';
+
+        if (coverTitle)   coverTitle.textContent   = title || '';
+        if (coverCreator) coverCreator.textContent = creator || '';
+        if (coverMeta)    coverMeta.textContent    = sub || '';
+
+        setCoverImage(image, `${title} cover`);
+        // Per-item crop override: empty string falls back to the
+        // per-kind CSS default by clearing the inline style.
+        if (coverImage) coverImage.style.objectPosition = crop || '';
+        setSpineLogo(logo);
+        // Curated accent first as an instant fallback, then the
+        // canvas-sampled colour overrides it when the sampler
+        // finishes (which may resolve mid-fade-in — that's fine, the
+        // background-image transition smooths the colour change).
+        setSpineColor(accent || '#2a2a2a');
+        applySpineColor(image, accent);
+
+        // 4) Fade panel + info BACK in. Two rAFs to commit the
+        //    invisible state before flipping to opacity 1; without
+        //    them the browser can skip the transition.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (myToken !== applyToken) return;
+          if (panel) panel.style.opacity = '1';
+          if (info)  info.style.opacity  = '1';
+        }));
       }
 
       // Set initial cover state — the SSR'd img has src="" if the first
       // item has no image URL; switch it to display:none so the
-      // typographic fallback renders cleanly.
+      // typographic fallback renders cleanly. Also mark spine #0 active
+      // so its visual matches the cover-case shown to its right.
       const initial = spines[0];
       if (initial) {
+        initial.setAttribute('data-active', 'true');
         setCoverImage(initial.dataset.image, `${initial.dataset.title} cover`);
         setSpineLogo(initial.dataset.logo);
         setSpineColor(initial.dataset.accent || '#2a2a2a');
@@ -1479,8 +1750,15 @@ const shelves: Shelf[] = [
       }
 
       spines.forEach((sp) => {
-        sp.addEventListener('pointerenter', () => apply(sp));
-        sp.addEventListener('focus',        () => apply(sp));
+        // Click is the only path that changes the active item — hover
+        // and focus intentionally do NOT call apply(), so sweeping the
+        // cursor across the shelf no longer thrashes the cover-case
+        // through every item it passes over. Keyboard users get a
+        // visual lift via .spine:focus-visible (CSS), then press
+        // Enter/Space to actually select — which fires this click
+        // handler. The spine no longer navigates anywhere; clicking the
+        // floating cover-case to the right is what opens the item.
+        sp.addEventListener('click', () => apply(sp));
       });
 
       /* Warm the HTTP cache for every cover + logo URL once, after the
@@ -1496,8 +1774,8 @@ const shelves: Shelf[] = [
       preloadIdle(() => {
         const seen = new Set();
         spines.forEach((sp) => {
-          const { image, logo } = sp.dataset;
-          [image, logo].forEach((url) => {
+          const { image, logo, icon } = sp.dataset;
+          [image, logo, icon].forEach((url) => {
             if (!url || seen.has(url)) return;
             seen.add(url);
             const img = new Image();
@@ -1540,27 +1818,30 @@ const shelves: Shelf[] = [
           }
         };
         const onMove = (e) => {
-          /* Active region = the ENTIRE shelf column. The cursor can be
-             anywhere from the leftmost spine to past the cover panel
-             and still drive parallax — gives the case a much wider
-             reactive area than just hovering directly on it. */
-          const colRect = col.getBoundingClientRect();
-          const cx = e.clientX - colRect.left;
-          const cy = e.clientY - colRect.top;
-          const inside = cx >= 0 && cx <= colRect.width
-                       && cy >= 0 && cy <= colRect.height;
+          /* Active region = the cover panel + a small buffer around it.
+             Wider than the case bounds (so the tilt feels reactive
+             even before the cursor is exactly on the case) but
+             narrow enough that cursor anywhere else in the col
+             (over the spines, the title strip, etc.) leaves the
+             cover-case alone — keeping its idle PS2-float animation
+             running. The previous implementation used the whole
+             column as the trigger zone, which paused the float as
+             soon as the user's cursor entered any part of the shelf. */
+          const rect = panel.getBoundingClientRect();
+          const buffer = 60;
+          const inside = e.clientX >= rect.left  - buffer
+                      && e.clientX <= rect.right + buffer
+                      && e.clientY >= rect.top   - buffer
+                      && e.clientY <= rect.bottom + buffer;
           if (!inside) {
             pending = { nx: 0, ny: 0, inside: false };
             if (!raf) raf = requestAnimationFrame(apply2);
             return;
           }
           /* Tilt is computed as the offset from the panel CENTER,
-             normalised by half the panel size. So cursor on the panel
-             edges produces ±1 (full tilt), at the panel center produces
-             0, and anywhere further out clamps to ±1 — meaning the
-             whole-shelf reactive zone yields a smooth gradient that
-             pegs at maximum once the cursor is past the panel rim. */
-          const rect = panel.getBoundingClientRect();
+             normalised by half the panel size. Cursor on the panel
+             edges produces ±1, at the panel center produces 0, and
+             anywhere outside-but-within-buffer clamps to ±1. */
           const halfW = rect.width  / 2;
           const halfH = rect.height / 2;
           const dx = e.clientX - (rect.left + halfW);

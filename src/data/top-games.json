@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-04-24",
+  "updatedAt": "2026-04-26",
   "source": "hand-curated",
-  "note": "Edit this list to reflect your actual top 10. Each accent is the cartridge's plastic colour; image is the cover URL (Wikipedia/Wikimedia URLs work, or your own hosted assets in /public/covers/).",
+  "note": "Edit this list to reflect your actual top 10. accent = cartridge plastic colour; image = box art (poster) in /public/games/; logo = title wordmark (transparent PNG) printed on the cartridge sticker, in /public/game icons and logos/<slug> logo.png; icon = small franchise/studio mark sitting at the bottom of the spine, same folder as logo.",
   "items": [
     {
       "rank": 1,
@@ -10,7 +10,10 @@
       "sub": "2013",
       "url": "https://www.playstation.com/en-us/games/the-last-of-us/",
       "accent": "#6a3a2a",
-      "image": "https://upload.wikimedia.org/wikipedia/en/4/46/Video_Game_Cover_-_The_Last_of_Us.jpg"
+      "image": "/games/the last of us.jpg",
+      "logo": "/game icons and logos/the last of us logo.png",
+      "icon": "/game icons and logos/the last of us icon.png",
+      "logoScale": 0.85
     },
     {
       "rank": 2,
@@ -19,7 +22,9 @@
       "sub": "2000",
       "url": "https://www.zelda.com/majoras-mask-3d/",
       "accent": "#6a3a8a",
-      "image": "https://upload.wikimedia.org/wikipedia/en/6/60/The_Legend_of_Zelda_-_Majora%27s_Mask_Box_Art.jpg"
+      "image": "/games/majoras mask.png",
+      "logo": "/game icons and logos/legend of zelda majoras mask logo.png",
+      "icon": "/game icons and logos/legend of zelda majoras mask icon.png"
     },
     {
       "rank": 3,
@@ -28,7 +33,9 @@
       "sub": "2014",
       "url": "https://www.playstation.com/en-us/games/infamous-second-son/",
       "accent": "#d44419",
-      "image": "https://upload.wikimedia.org/wikipedia/en/3/34/Infamous_second_son_boxart.jpg"
+      "image": "/games/infamous second son.png",
+      "logo": "/game icons and logos/infamous second son logo.png",
+      "icon": "/game icons and logos/infamous second son icon.png"
     },
     {
       "rank": 4,
@@ -37,7 +44,10 @@
       "sub": "2011",
       "url": "https://www.playstation.com/en-us/games/uncharted-the-nathan-drake-collection/",
       "accent": "#c2884a",
-      "image": "https://upload.wikimedia.org/wikipedia/en/0/02/Uncharted_3_Boxart.jpg"
+      "image": "/games/uncharted 3.png",
+      "logo": "/game icons and logos/uncharted 3 logo.png",
+      "icon": "/game icons and logos/uncharted 3 icon.png",
+      "logoScale": 0.85
     },
     {
       "rank": 5,
@@ -46,7 +56,10 @@
       "sub": "2020",
       "url": "https://www.playstation.com/en-us/games/ghost-of-tsushima/",
       "accent": "#c4475a",
-      "image": "https://upload.wikimedia.org/wikipedia/en/b/b6/Ghost_of_Tsushima.jpg"
+      "image": "/games/ghost of tsushima.png",
+      "logo": "/game icons and logos/ghost of tsushima logo.png",
+      "icon": "/game icons and logos/ghost of tsushima icon.png",
+      "logoScale": 0.85
     },
     {
       "rank": 6,
@@ -55,7 +68,10 @@
       "sub": "2011",
       "url": "https://www.minecraft.net/",
       "accent": "#3a7a3a",
-      "image": null
+      "image": "/games/minecraft.jpg",
+      "logo": "/game icons and logos/minecraft logo.png",
+      "icon": "/game icons and logos/minecraft icon.png",
+      "logoScale": 0.85
     },
     {
       "rank": 7,
@@ -64,7 +80,10 @@
       "sub": "2020",
       "url": "https://www.playstation.com/en-us/games/the-last-of-us-part-ii/",
       "accent": "#3a4a3a",
-      "image": "https://upload.wikimedia.org/wikipedia/en/4/4f/TLOU_P2_Box_Art_2.png"
+      "image": "/games/the last of us part 2.png",
+      "logo": "/game icons and logos/the last of us part 2 logo.png",
+      "icon": "/game icons and logos/the last of us part 2 icon.png",
+      "logoScale": 0.85
     },
     {
       "rank": 8,
@@ -73,7 +92,10 @@
       "sub": "2019",
       "url": "https://www.kojimaproductions.jp/en/death_stranding",
       "accent": "#bcc4cc",
-      "image": "https://upload.wikimedia.org/wikipedia/en/2/22/Death_Stranding.jpg"
+      "image": "/games/death stranding.png",
+      "logo": "/game icons and logos/death stranding logo.png",
+      "icon": "/game icons and logos/death stranding icon.png",
+      "logoScale": 0.85
     },
     {
       "rank": 9,
@@ -82,7 +104,10 @@
       "sub": "2013",
       "url": "https://www.nintendo.com/us/store/products/pikmin-3-deluxe-switch/",
       "accent": "#5a8a3a",
-      "image": "https://upload.wikimedia.org/wikipedia/en/5/53/Pikmin_3_box_artwork.png"
+      "image": "/games/pikmin 3.png",
+      "logo": "/game icons and logos/pikmin 3 logo.png",
+      "icon": "/game icons and logos/pikmin 3 icon.png",
+      "logoScale": 0.85
     },
     {
       "rank": 10,
@@ -91,7 +116,10 @@
       "sub": "2010",
       "url": "https://www.nintendo.com/us/store/products/super-mario-galaxy-2-wii/",
       "accent": "#d4a83a",
-      "image": "https://upload.wikimedia.org/wikipedia/en/6/65/Super_Mario_Galaxy_2_Box_Art.jpg"
+      "image": "/games/super mario galaxy 2.png",
+      "logo": "/game icons and logos/super mario galaxy 2 logo.png",
+      "icon": "/game icons and logos/super mario galaxy 2 icon.png",
+      "logoScale": 0.85
     }
   ]
 }
