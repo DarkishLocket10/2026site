@@ -29,23 +29,30 @@ const PIWIGO_BUILD_API =
   + '?format=json&method=pwg.categories.getImages'
   + '&recursive=true&per_page=50&order=random';
 
-// Two-tier derivative selection — biased small to keep total bandwidth low.
+// Two-tier derivative selection — biased aggressively small for low-end
+// device + low-bandwidth visitors.
 //
 //   tileSrc — what the collage tile loads. Tile renders at 130–235 CSS px
-//             tall (× ratio for width), so 130–700 CSS px wide. The
-//             `small` derivative (~576 px) is sufficient at every
-//             carousel size on retina mobile (where most visitors land)
-//             and only marginally soft on a wide-landscape desktop tile.
-//             ~50 % less data than `medium`, which adds up across 100+
-//             tiles per visit.
+//             tall (× ratio for width), so 130–700 CSS px wide. `xsmall`
+//             (~432 px) covers every mobile size at retina DPR and is
+//             only mildly soft on a wide-landscape desktop tile — at the
+//             scrapbook density of the carousel that softness reads as
+//             "old print" rather than "low quality." Falls back to other
+//             sub-medium tiers if `xsmall` isn't present on a given image
+//             (key naming varies between Piwigo versions: `xsmall`, `xs`,
+//             `2small`, `xxs`).
+//             Each xsmall image is ~40 KB vs ~70 KB for small — across 80
+//             tiles per visit that's ~2.4 MB saved for the same visual
+//             density.
 //
-//   fullSrc — what the lightbox swaps to when a tile is clicked. Bumps
-//             one tier up to `medium` (~792 px) for a sharper view than
-//             the tile itself. Falls back upward through the size ladder
-//             if the chosen tier is missing on a given image.
+//   fullSrc — what the lightbox swaps to when a tile is clicked. Stays
+//             at `medium` (~792 px) so the click reveals a clear quality
+//             jump. Falls back upward through the size ladder if `medium`
+//             isn't present.
 function pickPiwigoSources(raw) {
   const d = raw.derivatives || {};
-  const tilePick = d.small  || d.medium || d.large  || d.xlarge || d.xxlarge;
+  const tilePick = d.xsmall || d.xs || d['2small'] || d.xxs
+                 || d.small  || d.medium || d.large || d.xlarge || d.xxlarge;
   const fullPick = d.medium || d.large  || d.xlarge || d.xxlarge;
   const tileSrc  = (tilePick && tilePick.url) || raw.element_url;
   const fullSrc  = (fullPick && fullPick.url) || raw.element_url || tileSrc;
@@ -1586,14 +1593,20 @@ const photos = piwigoPhotos;
 
     // ── Smart preloader for off-screen tiles ──
     // Tiles at index >= 24 render with a `data-src` attribute instead of a
-    // real src (see the `eager` branch in the template). This observer swaps
-    // data-src → src when a tile enters a 1000px horizontal margin around
-    // the viewport — about 30s of autodrift look-ahead at 33 px/s. Earlier
-    // this was 2500px (75s) which had typical-broadband bandwidth in mind:
-    // on a phone over cellular that meant 30+ images racing the connection
-    // for content the user might never reach. 1000px is still well clear
-    // of image decode+load latency on most networks while cutting concurrent
-    // fetch pressure to ~1/3.
+    // real src (see the `eager` branch in the template). This observer
+    // swaps data-src → src when a tile enters a 2500 px horizontal margin
+    // around the viewport — about 75 seconds of autodrift look-ahead at
+    // 33 px/s, AND enough headroom to absorb a fast user-driven swipe
+    // (which can clear ~1500 px in under a second) without an image ever
+    // being visibly mid-load.
+    //
+    // The earlier concern about wide margins was concurrent-fetch pressure
+    // on weak connections. That's now addressed two ways: tiles fetch the
+    // `xsmall` Piwigo derivative (~40 KB each, ~½ the bytes of the prior
+    // `small` pick) AND Save-Data / 2g visitors skip the runtime extras
+    // entirely via shouldSkipExtras() — so the worst case is 50 baked
+    // tiles × 40 KB = 2 MB of headroom load, which any non-2g connection
+    // handles in single-digit seconds.
     //
     // Why not rely on native loading="lazy"? The threshold is browser-
     // specific: Chrome expands it generously (≈ 1250-2500px depending on
@@ -1630,7 +1643,7 @@ const photos = piwigoPhotos;
           }
         }, {
           root: viewport,
-          rootMargin: '0px 1000px 0px 1000px',
+          rootMargin: '0px 2500px 0px 2500px',
         });
       }
       track.querySelectorAll('img[data-src]').forEach((img) => lazyIO.observe(img));
@@ -2073,16 +2086,17 @@ const photos = piwigoPhotos;
 
     // Piwigo's API returns a `derivatives` map with pre-sized image URLs and
     // dimensions. We pick TWO different sizes per photo:
-    //   tileSrc — `small` (~576 px) for the collage tile. Sufficient at
-    //             every carousel size on retina mobile; only marginally
-    //             soft on a wide-landscape desktop tile.
-    //   fullSrc — `medium` (~792 px) for the lightbox. One tier sharper
-    //             than the tile so the swap on click is visibly improving
-    //             quality, without the bandwidth blow-up of xlarge.
+    //   tileSrc — `xsmall` (~432 px) for the collage tile. Smallest tier
+    //             that still reads crisply at retina-mobile carousel sizes.
+    //             Falls back through alt names (`xs`, `2small`, `xxs`) since
+    //             Piwigo derivative-key naming varies.
+    //   fullSrc — `medium` (~792 px) for the lightbox. Two tiers sharper
+    //             than the tile so the click swap is a clear quality jump.
     // Mirrors the build-time pickPiwigoSources(); kept in sync there.
     function extractPiwigoPhoto(raw) {
       const d = raw.derivatives || {};
-      const tilePick = d.small  || d.medium || d.large  || d.xlarge || d.xxlarge;
+      const tilePick = d.xsmall || d.xs || d['2small'] || d.xxs
+                     || d.small  || d.medium || d.large || d.xlarge || d.xxlarge;
       const fullPick = d.medium || d.large  || d.xlarge || d.xxlarge;
       const tileSrc  = (tilePick && tilePick.url) || raw.element_url;
       const fullSrc  = (fullPick && fullPick.url) || raw.element_url || tileSrc;
