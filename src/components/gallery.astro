@@ -917,6 +917,11 @@ const photos = piwigoPhotos;
     display: block;
     border-radius: var(--radius-lg);
     box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.55);
+    /* JS sets opacity to 0 at the start of openAt() and back to 1 once the
+       new full-size image is decoded — this transition makes that swap a
+       fade rather than a hard pop, hiding the gap between click and
+       xlarge-decode (typically 100-300 ms on a fresh load). */
+    transition: opacity 180ms ease-out;
   }
 
   .gallery-lightbox-nav,
@@ -2010,32 +2015,108 @@ const photos = piwigoPhotos;
       const apiImages = (data.result && data.result.images) || [];
       if (!apiImages.length) return;
 
-      // Dedupe against photos already on the page (hardcoded set + build-time batch).
+      // Dedupe against the already-baked build-time set.
       const existingSrcs = new Set(imgs.map((i) => i && i.src).filter(Boolean));
       const photos = apiImages
         .map(extractPiwigoPhoto)
         .filter((p) => p && !existingSrcs.has(p.src));
       if (!photos.length) return;
+      if (viewport.dataset.state !== 'ready') return;
+      if (!rowEls.length) return;
 
-      // Add each new photo as a tile. API-provided ratios let us lay them out
-      // roughly right on the first pass; we re-measure + re-layout once the
-      // actual image bytes arrive for pixel-accurate sizes.
-      const newImgs = [];
-      photos.forEach((p) => {
-        const idx = tiles.length;
-        const { tile, img } = createTile(p, idx);
-        tiles.push(tile);
-        imgs.push(img);
-        ratios.push(p.ratio || 4 / 3);
-        track.appendChild(tile);                            // layout() will move it into a row
-        newImgs.push(img);
+      // ── Append-only growth ────────────────────────────────────────────
+      // Earlier this called layout() to re-partition all tiles. With 100
+      // build-time tiles + ~70 runtime tiles that meant the entire carousel
+      // got reshuffled mid-view: rows lost their stable content, scrollLeft
+      // restored to a position that no longer pointed at the same photos,
+      // and the user saw the visible state "break" right when extras
+      // arrived — exactly the symptom reported.
+      //
+      // Instead: keep every existing tile exactly where it is, and append
+      // each new tile to the least-loaded row, biased to break same-bucket
+      // adjacencies at the row's tail. The carousel keeps its rhythm; the
+      // new random-per-visit content tacks on after the baked content and
+      // becomes visible as the autodrift carries the user past.
+      const targetH = pickTargetHeight(viewport.clientWidth);
+
+      // Per-row state: cumulative ratio (drives "least loaded") and the
+      // bucket of the last original tile (drives rhythm-aware placement).
+      const rowState = rowEls.map((rowEl) => {
+        const origs = rowEl.querySelectorAll('[data-tile]:not([aria-hidden="true"])');
+        let totalRatio = 0;
+        let lastBucket = -1;
+        origs.forEach((t) => {
+          const idx = parseInt(t.getAttribute('data-index'), 10);
+          const r = ratios[idx];
+          if (Number.isFinite(r) && r > 0) {
+            totalRatio += r;
+            lastBucket = bucketOf(r);
+          }
+        });
+        return { rowEl, totalRatio, lastBucket };
       });
 
-      if (viewport.dataset.state === 'ready') layout();     // first pass, approximate
+      photos.forEach((p) => {
+        const idx = tiles.length;
+        const ratio = (Number.isFinite(p.ratio) && p.ratio > 0) ? p.ratio : 1;
+        const { tile, img } = createTile(p, idx);
+        tile.style.width  = Math.round(ratio * targetH) + 'px';
+        tile.style.height = targetH + 'px';
+        tiles.push(tile);
+        imgs.push(img);
+        ratios.push(ratio);
 
-      await Promise.all(newImgs.map(imageReady));
-      measureAll();
-      if (viewport.dataset.state === 'ready') layout();     // second pass, exact
+        const newBucket = bucketOf(ratio);
+        // Pick the row that minimises (total_ratio + same-bucket-penalty).
+        // The penalty (≈ 1 row's worth of avg ratio) ensures rhythm wins
+        // when totals are close, but a clearly-shorter row still wins
+        // even if it'd cause a same-bucket adjacency.
+        let bestRow = 0, bestScore = Infinity;
+        for (let r = 0; r < rowState.length; r++) {
+          const s = rowState[r];
+          const score = s.totalRatio + (s.lastBucket === newBucket ? 1 : 0);
+          if (score < bestScore) { bestScore = score; bestRow = r; }
+        }
+
+        const target = rowState[bestRow];
+        target.totalRatio += ratio;
+        target.lastBucket = newBucket;
+
+        // Insert the new tile BEFORE the first existing clone in this row,
+        // so all originals stay contiguous at the row's start (the wrap
+        // logic depends on scrollWidth/2 splitting cleanly between
+        // originals and clones). Walk DIRECT children — a plain
+        // querySelector('[aria-hidden]') would match the cursor-pool span
+        // nested inside the first original tile and break insertBefore.
+        let firstClone = null;
+        for (const child of target.rowEl.children) {
+          if (child.hasAttribute('aria-hidden')) { firstClone = child; break; }
+        }
+        if (firstClone) target.rowEl.insertBefore(tile, firstClone);
+        else target.rowEl.appendChild(tile);
+      });
+
+      // Rebuild clones once at the end — the old clones no longer reflect
+      // the (now longer) original sequence, so the wrap point would land
+      // mid-content. Drop them, take a fresh snapshot of each row's
+      // originals, and clone that snapshot wholesale.
+      rowEls.forEach((rowEl) => {
+        Array.from(rowEl.children).forEach((child) => {
+          if (child.hasAttribute('aria-hidden')) child.remove();
+        });
+        const sources = Array.from(rowEl.children);
+        sources.forEach((orig) => {
+          const clone = orig.cloneNode(true);
+          clone.setAttribute('aria-hidden', 'true');
+          clone.setAttribute('tabindex', '-1');
+          rowEl.appendChild(clone);
+        });
+      });
+
+      // Refresh the shine cache + half-scrollWidth for the wrap, and let
+      // the lazy IO start watching the new tiles' data-src imgs.
+      recomputeShineCache();
+      setupLazyLoader();
     }
 
     loadPiwigoExtras();                                     // fires in parallel, doesn't block
@@ -2059,8 +2140,46 @@ const photos = piwigoPhotos;
       const srcImg = imgs[current];
       const fullSrc = (tile && tile.getAttribute('data-full')) || null;
       const tileSrc = (srcImg.dataset && srcImg.dataset.src) || srcImg.src;
-      boxImg.src = fullSrc || tileSrc;
+      const nextSrc = fullSrc || tileSrc;
+
+      // Flicker guard. The lightbox <img> is reused across opens. If we
+      // simply assign boxImg.src = nextSrc, the browser keeps the PREVIOUS
+      // photo painted while the new one downloads — and now that the
+      // lightbox uses xlarge while tiles use medium, the new URL is never
+      // already in cache, so the previous photo flashes for ~100-300 ms
+      // every open.
+      //
+      // Two steps are needed:
+      //   1. SNAP opacity to 0 with the transition disabled. A simple
+      //      `boxImg.style.opacity='0'` would run the 180ms fade-out
+      //      first, leaving the old photo visible during that window —
+      //      which is exactly what we're trying to suppress.
+      //   2. Re-enable the transition, assign the new src, and reveal
+      //      via decode(). The reveal goes 0 → 1 with the transition
+      //      back in effect, so the new photo fades in cleanly.
+      boxImg.style.transition = 'none';
+      boxImg.style.opacity = '0';
+      // Force a layout/style flush so the no-transition zero-opacity is
+      // committed BEFORE the transition is re-armed. Without this, the
+      // browser may coalesce the two style writes and run a single
+      // transition from the previous opacity (1) to the next state (also
+      // probably 1 once revealed), bypassing our hide entirely.
+      void boxImg.offsetWidth;
+      boxImg.style.transition = '';
+      boxImg.src = nextSrc;
       boxImg.alt = srcImg.alt;
+      const reveal = () => { boxImg.style.opacity = '1'; };
+      if (boxImg.complete && boxImg.naturalWidth > 0) {
+        reveal();
+      } else if (typeof boxImg.decode === 'function') {
+        // decode() resolves once the image is paint-ready; preferable to
+        // the load event because it accounts for decode time too.
+        boxImg.decode().then(reveal, reveal);   // resolve OR reject → reveal
+      } else {
+        boxImg.addEventListener('load',  reveal, { once: true });
+        boxImg.addEventListener('error', reveal, { once: true });
+      }
+
       counter.textContent = (current + 1) + ' / ' + tiles.length;
       box.dataset.open = 'true';
       box.setAttribute('aria-hidden', 'false');
