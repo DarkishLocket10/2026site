@@ -19,30 +19,34 @@ const hardcodedPhotos = [
 // Build-time fetch: runs once per `astro build` on the build server (no CORS
 // there since it's server-side), gets a random batch, and bakes the URLs
 // straight into the HTML. This is the guaranteed-to-work path.
+// 50 build-time photos is enough for a "scrapbook" feel across 3 rows
+// (~17 per row) without ballooning the DOM. Each tile is a 6-layer gradient
+// + 3D-transformed compositor layer; capping originals also caps the clones
+// (clones double the count for the seamless wrap). Doubling this would
+// double the GPU memory pressure on weak phones for marginal visual gain.
 const PIWIGO_BUILD_API =
   'https://piwigo.darkishlocket10.me/ws.php'
   + '?format=json&method=pwg.categories.getImages'
-  + '&recursive=true&per_page=100&order=random';
+  + '&recursive=true&per_page=50&order=random';
 
-// Two-tier derivative selection.
+// Two-tier derivative selection — biased small to keep total bandwidth low.
 //
-//   tileSrc — what the collage tile loads. Tile renders at 130–235 px tall
-//             (× ratio for width), which is 130–700 CSS px wide. At
-//             retina DPR 2–3 the actual pixel demand is ~260–2100. The
-//             `medium` derivative (~792 px wide) is the sweet spot:
-//             crisp at every carousel size, ~30 % less data than `large`.
-//             Falls back through the size ladder if `medium` is absent.
+//   tileSrc — what the collage tile loads. Tile renders at 130–235 CSS px
+//             tall (× ratio for width), so 130–700 CSS px wide. The
+//             `small` derivative (~576 px) is sufficient at every
+//             carousel size on retina mobile (where most visitors land)
+//             and only marginally soft on a wide-landscape desktop tile.
+//             ~50 % less data than `medium`, which adds up across 100+
+//             tiles per visit.
 //
-//   fullSrc — what the lightbox loads when a tile is clicked. The lightbox
-//             fills the viewport, so we want at least 1200–1920 px wide.
-//             `xlarge` (~1224 px) is preferred; `xxlarge` (~1656 px) wins
-//             if available; original (`element_url`) is the last resort
-//             since it's typically 4–8 MB and overkill for an in-browser
-//             viewer.
+//   fullSrc — what the lightbox swaps to when a tile is clicked. Bumps
+//             one tier up to `medium` (~792 px) for a sharper view than
+//             the tile itself. Falls back upward through the size ladder
+//             if the chosen tier is missing on a given image.
 function pickPiwigoSources(raw) {
   const d = raw.derivatives || {};
-  const tilePick = d.medium || d.large || d.xlarge || d.small || d.xxlarge;
-  const fullPick = d.xlarge || d.xxlarge || d.large  || d.medium;
+  const tilePick = d.small  || d.medium || d.large  || d.xlarge || d.xxlarge;
+  const fullPick = d.medium || d.large  || d.xlarge || d.xxlarge;
   const tileSrc  = (tilePick && tilePick.url) || raw.element_url;
   const fullSrc  = (fullPick && fullPick.url) || raw.element_url || tileSrc;
   if (!tileSrc) return null;
@@ -1583,10 +1587,13 @@ const photos = piwigoPhotos;
     // ── Smart preloader for off-screen tiles ──
     // Tiles at index >= 24 render with a `data-src` attribute instead of a
     // real src (see the `eager` branch in the template). This observer swaps
-    // data-src → src when a tile enters a 2500px horizontal margin around
-    // the viewport — about 75s of autodrift look-ahead at 33 px/s, which is
-    // well clear of typical image decode+load latency so the photo is ready
-    // before it's visible.
+    // data-src → src when a tile enters a 1000px horizontal margin around
+    // the viewport — about 30s of autodrift look-ahead at 33 px/s. Earlier
+    // this was 2500px (75s) which had typical-broadband bandwidth in mind:
+    // on a phone over cellular that meant 30+ images racing the connection
+    // for content the user might never reach. 1000px is still well clear
+    // of image decode+load latency on most networks while cutting concurrent
+    // fetch pressure to ~1/3.
     //
     // Why not rely on native loading="lazy"? The threshold is browser-
     // specific: Chrome expands it generously (≈ 1250-2500px depending on
@@ -1623,7 +1630,7 @@ const photos = piwigoPhotos;
           }
         }, {
           root: viewport,
-          rootMargin: '0px 2500px 0px 2500px',
+          rootMargin: '0px 1000px 0px 1000px',
         });
       }
       track.querySelectorAll('img[data-src]').forEach((img) => lazyIO.observe(img));
@@ -1828,9 +1835,20 @@ const photos = piwigoPhotos;
     }
 
     let hoveredTile = null;
-    function updateCursor(e) {
-      if (e.pointerType && e.pointerType !== 'mouse') return;
-      const tile = e.target.closest && e.target.closest('[data-tile]');
+    // RAF coalescing for pointermove. High-poll-rate gaming mice fire
+    // pointermove at 1000 Hz; without throttling, updateCursor would do a
+    // getBoundingClientRect() (forces layout) + 5 setProperty() calls per
+    // event = ~16 layout flushes per actual rendered frame. RAF-batching
+    // collapses every pointermove inside one frame into a single write,
+    // which is the only one that can affect the visible result anyway.
+    let pendingPointer = null;       // {target, clientX, clientY} or null
+    let pointerRAF = 0;
+    function applyCursor() {
+      pointerRAF = 0;
+      const ev = pendingPointer;
+      pendingPointer = null;
+      if (!ev) return;
+      const tile = ev.target && ev.target.closest && ev.target.closest('[data-tile]');
       if (tile !== hoveredTile) {
         // Clean up the previous tile: drop pressure state, relax the
         // parallax rotation back to flat via the @property transition.
@@ -1842,8 +1860,8 @@ const photos = piwigoPhotos;
       }
       if (!tile) return;
       const r = tile.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width)  * 100;
-      const y = ((e.clientY - r.top)  / r.height) * 100;
+      const x = ((ev.clientX - r.left) / r.width)  * 100;
+      const y = ((ev.clientY - r.top)  / r.height) * 100;
       const s = tile.style;
       s.setProperty('--cursor-x', x.toFixed(1) + '%');
       s.setProperty('--cursor-y', y.toFixed(1) + '%');
@@ -1875,6 +1893,15 @@ const photos = piwigoPhotos;
       s.setProperty('--shine-x', x.toFixed(2) + '%');
       s.setProperty('--light-x', x.toFixed(2) + '%');
       s.setProperty('--shine-a', '1');
+    }
+    function updateCursor(e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      // Capture the data we need from the event (it gets recycled by the
+      // browser after the handler returns, so keep only what applyCursor
+      // reads). Then schedule one RAF if not already queued — the latest
+      // pointermove inside any frame is the one that gets applied.
+      pendingPointer = { target: e.target, clientX: e.clientX, clientY: e.clientY };
+      if (!pointerRAF) pointerRAF = requestAnimationFrame(applyCursor);
     }
     track.addEventListener('pointermove', updateCursor);
     // When the pointer leaves the track entirely, relax whichever tile was
@@ -1908,11 +1935,36 @@ const photos = piwigoPhotos;
     viewport.dataset.state = 'ready';
     layout();
 
-    // As images actually arrive, re-measure (naturalWidth/Height is the
-    // source of truth) and re-layout for pixel-accurate widths.
+    // As images actually arrive, re-measure naturalWidth/Height. The Piwigo
+    // API embeds exact derivative dimensions in the build-time bake, so the
+    // measured ratios usually match the seeded ones to four decimal places
+    // — measureAll is a no-op in the common case.
+    //
+    // Critically, we DON'T blindly call layout() afterwards. Re-running
+    // layout() while the user is looking at the carousel re-partitions
+    // every row from scratch; the cosmetic "scroll-position preserved"
+    // restore lands on different content than was visible a moment ago,
+    // and the carousel reads as broken. This only matters for users on
+    // a slow / Save-Data connection: their browser invokes the lazy-load
+    // intervention (the "[Intervention] Images loaded lazily and replaced
+    // with placeholders" console message), which makes this Promise.all
+    // resolve seconds after first paint instead of milliseconds — meaning
+    // the disruptive re-layout happens AFTER the user has already started
+    // engaging with the carousel.
+    //
+    // Run layout only if a ratio shifted by >2 % (the threshold below
+    // which row-packing decisions wouldn't change anyway). For Piwigo
+    // sources this branch is never taken.
     Promise.all(imgs.map(imageReady)).then(() => {
+      const before = ratios.slice();
       measureAll();
-      layout();
+      let materialChange = false;
+      for (let i = 0; i < ratios.length; i++) {
+        const a = before[i], b = ratios[i];
+        if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+        if (Math.abs(b - a) / Math.max(a, 0.01) > 0.02) { materialChange = true; break; }
+      }
+      if (materialChange) layout();
     });
 
     let resizeT;
@@ -1932,9 +1984,13 @@ const photos = piwigoPhotos;
     // all (public) albums and append them to the collage. If the request
     // fails (CORS, offline, server down, API method disabled), the hardcoded
     // set still renders and nothing else happens.
+    // Runtime fetch: 50 random photos. Combined with the 50 baked at build
+    // time and the ~30-50 % overlap rate (both are random samples from the
+    // same pool), this typically appends 25-40 fresh photos per visit —
+    // enough variety without doubling the carousel's DOM footprint.
     const PIWIGO_API = 'https://piwigo.darkishlocket10.me/ws.php'
       + '?format=json&method=pwg.categories.getImages'
-      + '&recursive=true&per_page=100&order=random';
+      + '&recursive=true&per_page=50&order=random';
 
     // 1x1 transparent SVG — the placeholder for data-src tiles. Reserves
     // layout (width/height still applied) and shows nothing visible; no
@@ -1980,15 +2036,17 @@ const photos = piwigoPhotos;
 
     // Piwigo's API returns a `derivatives` map with pre-sized image URLs and
     // dimensions. We pick TWO different sizes per photo:
-    //   tileSrc — `medium` (~792 px) for the collage tile. Crisp at every
-    //             carousel size on retina, ~30 % less data than `large`.
-    //   fullSrc — `xlarge` / `xxlarge` for the lightbox. Sharper at fullscreen
-    //             than the previous single-pick that reused the tile URL.
+    //   tileSrc — `small` (~576 px) for the collage tile. Sufficient at
+    //             every carousel size on retina mobile; only marginally
+    //             soft on a wide-landscape desktop tile.
+    //   fullSrc — `medium` (~792 px) for the lightbox. One tier sharper
+    //             than the tile so the swap on click is visibly improving
+    //             quality, without the bandwidth blow-up of xlarge.
     // Mirrors the build-time pickPiwigoSources(); kept in sync there.
     function extractPiwigoPhoto(raw) {
       const d = raw.derivatives || {};
-      const tilePick = d.medium || d.large || d.xlarge || d.small || d.xxlarge;
-      const fullPick = d.xlarge || d.xxlarge || d.large  || d.medium;
+      const tilePick = d.small  || d.medium || d.large  || d.xlarge || d.xxlarge;
+      const fullPick = d.medium || d.large  || d.xlarge || d.xxlarge;
       const tileSrc  = (tilePick && tilePick.url) || raw.element_url;
       const fullSrc  = (fullPick && fullPick.url) || raw.element_url || tileSrc;
       if (!tileSrc) return null;
@@ -2002,7 +2060,28 @@ const photos = piwigoPhotos;
       };
     }
 
+    // ── Bandwidth-conscious skip ────────────────────────────────────
+    // The runtime extras pull adds ~70 fresh photos to the carousel for
+    // visit-to-visit variety. On a slow / metered connection that's pure
+    // waste — the visitor barely has bandwidth for the ~50 baked photos,
+    // and they'll never reach the appended runtime tail before drifting
+    // away from the page. Skip the API call AND the resulting image
+    // downloads when:
+    //   • Save-Data header is on (user explicitly opted into reduced data),
+    //   • effectiveType is 2g / slow-2g (~70 KB/s ceiling — half a baked
+    //     photo per second, no headroom for extras).
+    // The Network Information API isn't on Safari yet, so missing data
+    // means we proceed normally — opting OUT requires affirmative slow.
+    function shouldSkipExtras() {
+      const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (!c) return false;
+      if (c.saveData === true) return true;
+      if (c.effectiveType === '2g' || c.effectiveType === 'slow-2g') return true;
+      return false;
+    }
+
     async function loadPiwigoExtras() {
+      if (shouldSkipExtras()) return;
       let data;
       try {
         const res = await fetch(PIWIGO_API, { credentials: 'omit' });
