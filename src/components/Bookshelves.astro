@@ -980,7 +980,13 @@ const shelves: Shelf[] = [
     width: 180px;
     height: 229px;             /* matches PNG aspect 600/766 ≈ 0.783:1 */
     background: #0a0a0a;       /* matte black tray behind the poster */
-    border-radius: 4px;
+    /* Top corners rounded more aggressively than the bottom so the
+       matte black tray (#0a0a0a) doesn't poke past the Blu-ray PNG
+       overlay's drawn corner curves at the top. Top-right is bumped
+       slightly higher than top-left because the PNG's drawn curve is
+       a touch sharper on that side. The bottom rim of the PNG is
+       straighter, so 4px there is fine. */
+    border-radius: 8px 11px 4px 4px;
   }
   /* Poster sits BEHIND the plastic overlay. Inset matches the asset's
      measured art window minus a 3px lift to better visually centre the

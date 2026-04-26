@@ -92,7 +92,7 @@ const piwigoPhotos = await fetchPiwigoAtBuild();
 const photos = piwigoPhotos;
 ---
 
-<section class="gallery-wrap w-full py-6 overflow-x-clip">
+<section class="gallery-wrap w-full pt-6 pb-0 overflow-x-clip">
   {/* Eight filter variants — each tile picks one deterministically via hash, so
      no two adjacent polaroids share the same gloss bowing pattern. Each variant
      combines a unique turbulence seed, anisotropic baseFrequency (scratches
@@ -276,7 +276,11 @@ const photos = piwigoPhotos;
   /* Ambient sun presence — a soft warm radial sits at the same horizontal
      fraction used by the JS virtual-light (LIGHT_X_FRAC = 30%). Screen-blended
      at low opacity so it warms the page bg without washing out either theme.
-     Pointer-events off, behind the viewport — zero interactivity cost. */
+     Pointer-events off, behind the viewport — zero interactivity cost.
+     The radial's stops (transparent at 68% from center) make the bottom of
+     the wrap naturally fade to transparent without needing to extend the
+     pseudo-element's box past the wrap — which would otherwise add layout
+     height to the document and leave dead space below the footer. */
   .gallery-wrap::before {
     content: "";
     position: absolute;
