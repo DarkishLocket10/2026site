@@ -1997,12 +1997,47 @@ const photos = piwigoPhotos;
     // broken-image icon either, because it IS a valid image.
     const BLANK_SRC = "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201%201'%2F%3E";
 
+    // ── Astro CSS-scope attributes ────────────────────────────────────
+    // Astro scopes component CSS by stamping `data-astro-cid-XXXX` onto
+    // every element in the source tree, then rewriting selectors as
+    // `.gallery-tile[data-astro-cid-XXXX]::before { ... }`. Build-time
+    // baked tiles get the attribute automatically; clones inherit it via
+    // cloneNode(true). But tiles built at runtime via document.create­
+    // Element() do NOT carry it — and without it, NONE of the polaroid
+    // styling matches them. They render as bare buttons with their
+    // inline custom-property values orphaned, which is exactly the
+    // "filterless / no-polaroid" pop-in the user reported.
+    //
+    // Sniff the CID names off a reference baked element once, and stamp
+    // them onto every element we create at runtime. The reference is the
+    // first .gallery-tile in the DOM; if there's no bake (e.g. Piwigo
+    // build-time fetch was offline), we fall back to the gallery section
+    // itself, which definitely carries the attribute.
+    const SCOPE_ATTRS = (() => {
+      const ref = track.querySelector('.gallery-tile') ||
+                  document.querySelector('.gallery-wrap') ||
+                  viewport;
+      const names = [];
+      if (ref) {
+        for (const a of ref.attributes) {
+          if (a.name.indexOf('data-astro-cid-') === 0) names.push(a.name);
+        }
+      }
+      return names;
+    })();
+    function applyScope(el) {
+      for (let k = 0; k < SCOPE_ATTRS.length; k++) {
+        el.setAttribute(SCOPE_ATTRS[k], '');
+      }
+    }
+
     function createTile(photo, index) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'gallery-tile';
       btn.setAttribute('data-tile', '');
       btn.setAttribute('data-index', String(index));
+      applyScope(btn);
       // data-full carries the lightbox-resolution URL. The tile's <img>
       // loads photo.src (medium); openAt reads data-full and only then
       // pays the bandwidth for the larger version.
@@ -2021,6 +2056,7 @@ const photos = piwigoPhotos;
       img.alt = photo.alt || 'Photograph';
       img.loading = 'lazy';
       img.decoding = 'async';
+      applyScope(img);
       btn.appendChild(img);
 
       // Cursor-pool element. Must be a real DOM node (not a pseudo) because
@@ -2029,6 +2065,7 @@ const photos = piwigoPhotos;
       const cursor = document.createElement('span');
       cursor.className = 'gallery-tile-cursor';
       cursor.setAttribute('aria-hidden', 'true');
+      applyScope(cursor);
       btn.appendChild(cursor);
 
       return { tile: btn, img: img };
