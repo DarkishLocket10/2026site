@@ -9,6 +9,10 @@ image:
     alt: 'Childish Gambino at Scotiabank Arena, shot by me'
 tags: ["Blog", "Computer Science"]
 showHero: false
+
+song:
+  title: "3005"
+  artist: "Childish Gambino"
 ---
 
 <figure>

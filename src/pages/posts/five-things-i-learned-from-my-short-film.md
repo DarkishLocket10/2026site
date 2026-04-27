@@ -9,6 +9,10 @@ image:
     alt: 'My incredibly talented team'
 tags: ["Blog", "Photography"]
 showHero: false
+
+song:
+  title: "Confidence"
+  artist: "Ocean Alley"
 ---
 
 ### Setting the stage

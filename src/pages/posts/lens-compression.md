@@ -9,6 +9,10 @@ image:
     alt: 'A bustling shopping centre in Osaka, Japan.'
 tags: ["Blog", "Photography"]
 showHero: false
+
+song:
+  title: "Run Your Mouth"
+  artist: "The Marías"
 ---
 
 Have you ever wondered why taking a close up "<u><a href="https://petapixel.com/2022/07/15/the-0-5-selfie-is-the-latest-photo-trend-taking-over-instagram/" target="_blank">0.5x picture</a></u>" makes faces look goofy, or why zooming in makes mountains suddenly appear huge behind your subject? This is due to a phenomenon that, in a moment of sheer brilliance, we collectively decided to name "lens compression". 

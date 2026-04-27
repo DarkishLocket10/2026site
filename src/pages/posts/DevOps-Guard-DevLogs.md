@@ -9,6 +9,10 @@ image:
     alt: 'Screenshot of the DevOps Guard dashboard'
 tags: ["Computer Science"]
 showHero: false
+
+song:
+  title: "LOVE TO PARTY"
+  artist: "Avii"
 ---
 
 ### Intro

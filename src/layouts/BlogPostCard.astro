@@ -85,7 +85,10 @@ const displayDate = dateObj.toLocaleDateString(undefined, {
   box-shadow:
     0 1px 2px rgba(0,0,0,.05),
     0 4px 14px -6px rgba(0,0,0,.12);
-  transition: box-shadow .25s ease, transform .25s ease;
+  transition: box-shadow .35s var(--ease-spring),
+              transform .35s var(--ease-spring),
+              border-color .25s var(--ease-spring);
+  border: 1px solid transparent;
 }
 .card:hover,
 .card:focus-within {
@@ -93,20 +96,35 @@ const displayDate = dateObj.toLocaleDateString(undefined, {
   box-shadow:
     0 4px 10px rgba(0,0,0,.12),
     0 18px 50px -20px rgba(0,0,0,.25);
+  border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 
 .image-wrap {
+  position: relative;
   aspect-ratio: 4 / 3;
   width: 100%;
   overflow: hidden;
   background: var(--card-image-wrap-bg);
+}
+.image-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.35), transparent 55%);
+  opacity: 0;
+  transition: opacity .35s var(--ease-spring);
+  pointer-events: none;
+}
+.card:hover .image-wrap::after,
+.card:focus-within .image-wrap::after {
+  opacity: 1;
 }
 .card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform .6s ease;
+  transition: transform .6s var(--ease-spring);
 }
 .card:hover .card-image {
   transform: scale(1.05);
@@ -175,7 +193,7 @@ const displayDate = dateObj.toLocaleDateString(undefined, {
   letter-spacing: .5px;
   color: var(--card-tag-text);
   text-decoration: none;
-  transition: background .2s ease, transform .15s ease;
+  transition: background .25s var(--ease-spring), transform .2s var(--ease-spring);
   position: relative;
 }
 

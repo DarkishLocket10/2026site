@@ -9,6 +9,10 @@ image:
     alt: 'Screenshot of CullPix'
 tags: ["Blog", "Photography", "Computer Science"]
 showHero: false
+
+song:
+  title: "Gabriella"
+  artist: "KATSEYE"
 ---
 
 <figure>

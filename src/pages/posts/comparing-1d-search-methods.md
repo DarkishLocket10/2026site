@@ -9,6 +9,10 @@ image:
 pubDate: 2025-07-29
 tags: ["Computer Science"]
 showHero: false
+
+song:
+  title: "Hold My Place in Heaven"
+  artist: "Saint Motel"
 ---
 
 ### What are we doing?

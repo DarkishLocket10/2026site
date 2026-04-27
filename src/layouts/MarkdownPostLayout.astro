@@ -1,5 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { resolveSongArtwork } from '../utils/songArtwork';
 import "../styles/globalblog.css";
 import 'katex/dist/katex.min.css';
 
@@ -12,7 +14,8 @@ const {
   pubDate,
   author = 'Anonymous',
   image,
-  tags = []
+  tags = [],
+  song,
 } = frontmatter;
 
 const isoDate = pubDate instanceof Date ? pubDate.toISOString() : new Date(pubDate).toISOString();
@@ -27,16 +30,23 @@ const html = await Astro.slots.render('default') || '';
 const plain = html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 const words = plain.split(' ').filter(Boolean).length;
 const readingMinutes = Math.max(1, Math.round(words / 200));
+
+// Auto-resolve album art from iTunes if no image was supplied
+const resolvedSong = song
+  ? { ...song, image: song.image ?? await resolveSongArtwork(song.title, song.artist) }
+  : null;
 ---
 <BaseLayout title={title} description={description}>
   <article class="post ">
 
-    
-
+  <Breadcrumbs items={[
+    { label: 'Blog', href: '/blog' },
+    { label: title },
+  ]} />
 
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 
-  <a href="/blog" class="back-button" aria-label="Back to blog list">
+  <a href="/blog" class="back-button" data-smart-back aria-label="Back">
     <span class="iconify" data-icon="mdi:arrow-left" aria-hidden="true"></span>
   </a>
 
@@ -82,13 +92,48 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
     </div>
 
     <footer class="post__footer">
-      <hr />
-      <div class="author-blurb">
-        <strong>{author}</strong>
-        <p class="author-blurb__text">
-          <!-- You can inject an author bio here or pull from a data file -->
-          Writing about the funny things I think about
-        </p>
+      <div class={`author-card${resolvedSong ? ' author-card--has-song' : ''}`}>
+        <img
+          class="author-card__avatar"
+          src="/mainphotos/about.jpg"
+          alt={`Photo of ${author}`}
+          width="96"
+          height="96"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="author-card__body">
+          <strong class="author-card__name">{author}</strong>
+          <p class="author-card__text">Writing about the funny things I think about</p>
+          <div class="author-card__links">
+            <a href="/blog" aria-label="More posts">More posts</a>
+            <a href="/rss.xml" aria-label="RSS feed">RSS</a>
+            <a href="https://github.com/darkishlocket10" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
+          </div>
+        </div>
+
+        {resolvedSong && (() => {
+          const Tag: any = resolvedSong.url ? 'a' : 'div';
+          const tagProps = resolvedSong.url
+            ? { href: resolvedSong.url, target: '_blank', rel: 'noopener', 'aria-label': `Listen to ${resolvedSong.title} by ${resolvedSong.artist || 'unknown'}` }
+            : {};
+          return (
+            <Tag class="now-playing" {...tagProps}>
+              {resolvedSong.image ? (
+                <img class="now-playing__cover" src={resolvedSong.image} alt="" loading="lazy" decoding="async" width="56" height="56" />
+              ) : (
+                <span class="now-playing__cover now-playing__cover--placeholder" aria-hidden="true">
+                  <span class="iconify" data-icon="mdi:music"></span>
+                </span>
+              )}
+              <span class="now-playing__meta">
+                <span class="now-playing__label">Song of the post</span>
+                <span class="now-playing__title">{resolvedSong.title}</span>
+                {resolvedSong.artist && <span class="now-playing__artist">{resolvedSong.artist}</span>}
+              </span>
+            </Tag>
+          );
+        })()}
       </div>
     </footer>
   </article>
@@ -99,7 +144,72 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
   mermaid.initialize({ startOnLoad: true });
 </script>
 
-  
+<script is:inline>
+  // Referrer-aware back button: if you came from /blog or /tags/*, return there.
+  (() => {
+    const btn = document.querySelector('a[data-smart-back]');
+    if (!btn) return;
+    try {
+      const ref = document.referrer ? new URL(document.referrer) : null;
+      if (ref && ref.origin === location.origin) {
+        const p = ref.pathname;
+        if (p === '/blog' || p.startsWith('/tags')) {
+          btn.setAttribute('href', ref.pathname + ref.search);
+          btn.setAttribute('aria-label', `Back to ${p.startsWith('/tags/') ? 'tag' : p === '/tags' ? 'tags' : 'blog'}`);
+        }
+      }
+    } catch {}
+  })();
+</script>
+
+<script is:inline>
+  // Code block chrome — language badge + copy button
+  (() => {
+    const blocks = document.querySelectorAll('.post__content pre.astro-code');
+    blocks.forEach(pre => {
+      if (pre.dataset.chromed) return;
+      pre.dataset.chromed = '1';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+
+      // Language detection: prefer data-language, fall back to class
+      const lang = pre.dataset.language
+        || (pre.className.match(/language-(\w+)/) || [])[1]
+        || '';
+      if (lang) {
+        const badge = document.createElement('span');
+        badge.className = 'code-lang';
+        badge.textContent = lang;
+        wrap.appendChild(badge);
+      }
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'code-copy';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', async () => {
+        const code = pre.querySelector('code')?.innerText ?? pre.innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = 'Copied';
+          btn.classList.add('is-copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('is-copied');
+          }, 1400);
+        } catch {
+          btn.textContent = 'Error';
+          setTimeout(() => { btn.textContent = 'Copy'; }, 1400);
+        }
+      });
+      wrap.appendChild(btn);
+    });
+  })();
+</script>
+
 </BaseLayout>
 
 <style>
@@ -139,7 +249,7 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
     --shadow-soft: 0 4px 14px rgba(0,0,0,.06);
     --max-width: 80ch;
     --line-height: 1.6;
-    --transition: 150ms cubic-bezier(.4,0,.2,1);
+    --transition: 200ms var(--ease-spring, cubic-bezier(.2,.8,.2,1));
   }
  
     /* Typography hierarchy */
@@ -355,18 +465,145 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
     margin-top: 3rem;
   }
 
-  .author-blurb {
+  .author-card {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.1rem 1.25rem;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border, color-mix(in srgb, var(--text) 10%, transparent));
+    border-radius: var(--radius-2xl);
+    font-family: var(--font-sans);
+  }
+  .author-card--has-song .author-card__body {
+    flex: 1 1 auto;
+  }
+
+  .now-playing {
+    flex: 0 0 auto;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .55rem .85rem .55rem .55rem;
+    border-radius: var(--radius-xl);
+    background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 22%, transparent);
+    color: var(--text);
+    text-decoration: none;
+    transition: transform .25s var(--ease-spring),
+                background .25s var(--ease-spring),
+                border-color .25s var(--ease-spring);
+    max-width: 18rem;
+    min-width: 0;
+  }
+  a.now-playing:hover,
+  a.now-playing:focus-visible {
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  .now-playing__cover {
+    flex: 0 0 auto;
+    width: 3.25rem;
+    height: 3.25rem;
+    display: block;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--text) 12%, transparent),
+      0 4px 10px -4px rgba(0, 0, 0, .35);
+  }
+  .now-playing__cover--placeholder {
+    display: grid;
+    place-items: center;
+    color: var(--color-accent);
+    font-size: 1.4rem;
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  }
+
+  .now-playing__meta {
     display: flex;
     flex-direction: column;
-    gap: .25rem;
-    font-family: var(--font-sans);
+    justify-content: center;
+    gap: .15rem;
+    min-width: 0;
+    line-height: 1.25;
+  }
+  .now-playing__label {
+    font-size: .62rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+  .now-playing__title {
     font-size: .9rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 12rem;
+  }
+  .now-playing__artist {
+    font-size: .78rem;
     color: var(--color-text-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 12rem;
   }
-  .author-blurb__text {
+
+  /* Stack on narrow widths so it doesn't crowd the bio */
+  @media (max-width: 640px) {
+    .author-card--has-song {
+      flex-wrap: wrap;
+    }
+    .now-playing {
+      margin-left: 0;
+      width: 100%;
+      max-width: none;
+      flex-basis: 100%;
+    }
+    .now-playing__title,
+    .now-playing__artist { max-width: none; }
+  }
+  .author-card__avatar {
+    flex: 0 0 auto;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+    border: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--text) 8%, transparent),
+      0 4px 12px -4px rgba(0, 0, 0, .25);
+    background: var(--card-bg);
+  }
+  .author-card__body { display: flex; flex-direction: column; gap: .2rem; min-width: 0; }
+  .author-card__name { font-size: .95rem; }
+  .author-card__text {
     margin: 0;
-    line-height: 1.5;
+    font-size: .85rem;
+    color: var(--color-text-soft);
+    line-height: 1.45;
   }
+  .author-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .9rem;
+    margin-top: .25rem;
+    font-size: .78rem;
+  }
+  .author-card__links a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .author-card__links a:hover { text-decoration: underline; }
 
   @media (min-width: 860px) {
     .post { padding: 3.5rem 2.5rem 5rem; }
@@ -382,6 +619,57 @@ const readingMinutes = Math.max(1, Math.round(words / 200));
     list-style: decimal inside;
   }
 
+  /* Code block chrome */
+  .post__content :global(.code-wrap) {
+    position: relative;
+    margin: 2rem 0;
+  }
+  .post__content :global(.code-wrap pre) {
+    margin: 0;
+    padding-top: 2.1rem;
+  }
+  .post__content :global(.code-lang) {
+    position: absolute;
+    top: .55rem;
+    left: .9rem;
+    font-family: var(--font-mono);
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: rgba(255,255,255,.55);
+    pointer-events: none;
+    user-select: none;
+  }
+  .post__content :global(.code-copy) {
+    position: absolute;
+    top: .5rem;
+    right: .55rem;
+    font-family: var(--font-sans);
+    font-size: .72rem;
+    font-weight: 500;
+    letter-spacing: .03em;
+    color: rgba(255,255,255,.75);
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: var(--radius-md);
+    padding: .25rem .55rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .25s var(--ease-spring), background .2s var(--ease-spring), color .2s var(--ease-spring);
+  }
+  .post__content :global(.code-wrap:hover .code-copy),
+  .post__content :global(.code-wrap:focus-within .code-copy) {
+    opacity: 1;
+  }
+  .post__content :global(.code-copy:hover) {
+    background: rgba(255,255,255,.16);
+    color: #fff;
+  }
+  .post__content :global(.code-copy.is-copied) {
+    color: var(--color-accent);
+    background: rgba(94, 201, 212, .12);
+    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    opacity: 1;
+  }
 
-  
 </style>

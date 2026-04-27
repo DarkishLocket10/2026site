@@ -4,7 +4,7 @@ import BlogPostCard from '../layouts/BlogPostCard.astro';
 
 
 
-// Grab all markdown post modules 
+// Grab all markdown post modules
 const modules = import.meta.glob('./posts/*.md', { eager: true });
 
 interface PostModule {
@@ -29,13 +29,37 @@ allPosts.sort(
     new Date(a.frontmatter.pubDate).getTime()
 );
 
+// Tag tally for the filter chips
+const tagCounts = new Map<string, number>();
+for (const post of allPosts) {
+  for (const tag of post.frontmatter.tags ?? []) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+
 const pageTitle = "My Blog!";
 ---
 
-<BaseLayout title = "Yash | Blog" pageTitle={pageTitle}>
+<BaseLayout title="Yash | Blog" pageTitle={pageTitle}>
 
   <div class="mx-auto max-w-screen-xl px-6 py-4">
-    <h1 class="text-2xl font-semibold mb-6">Blog</h1>
+    <header class="blog-hero">
+      <h1 class="blog-hero__title">Blog</h1>
+      <p class="blog-hero__subtitle">What I'm thinking about lately</p>
+      {tags.length > 0 && (
+        <nav class="blog-hero__tags" aria-label="Browse by tag">
+          {tags.map(([tag, count]) => (
+            <a class="blog-hero__tag" href={`/tags/${encodeURIComponent(tag)}`}>
+              <span class="blog-hero__tag-name">#{tag}</span>
+              <span class="blog-hero__tag-count">{count}</span>
+            </a>
+          ))}
+          <a class="blog-hero__tag blog-hero__tag--all" href="/tags">All tags →</a>
+        </nav>
+      )}
+    </header>
+
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {allPosts.map(post => <BlogPostCard post={post} />)}
     </div>
@@ -44,14 +68,78 @@ const pageTitle = "My Blog!";
 
 
 <style>
-  .page-title { margin-top: 1rem; }
-  
-  .posts-grid {
-    --gap: 1.25rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: var(--gap);
-    margin-block: 2rem 4rem;
+  .blog-hero {
+    margin: 0.25rem 0 1.75rem;
+  }
+
+  .blog-hero__title {
+    font-size: clamp(1.75rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    margin: 0 0 .35rem;
+    line-height: 1.05;
+  }
+
+  .blog-hero__subtitle {
+    margin: 0 0 1rem;
+    color: var(--color-text-soft);
+    font-size: .98rem;
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+
+  .blog-hero__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+  }
+
+  .blog-hero__tag--all {
+    color: var(--color-accent);
+    background: transparent;
+    border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+  .blog-hero__tag--all:hover,
+  .blog-hero__tag--all:focus-visible {
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
+  }
+
+  .blog-hero__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .35rem .7rem .35rem .75rem;
+    border-radius: var(--radius-pill);
+    font-size: .78rem;
+    font-weight: 500;
+    color: var(--text);
+    background: color-mix(in srgb, var(--text) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+    text-decoration: none;
+    transition: background .25s var(--ease-spring),
+                border-color .25s var(--ease-spring),
+                transform .2s var(--ease-spring),
+                color .2s var(--ease-spring);
+  }
+  .blog-hero__tag:hover,
+  .blog-hero__tag:focus-visible {
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    color: var(--text);
+    transform: translateY(-1px);
+    outline: none;
+  }
+  .blog-hero__tag-name { letter-spacing: .01em; }
+  .blog-hero__tag-count {
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--color-text-soft);
+    padding: .05rem .35rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--text) 6%, transparent);
   }
 
 </style>

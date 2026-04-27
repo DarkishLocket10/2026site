@@ -9,6 +9,9 @@ image:
     alt: 'Plot Representing Lines of best fit for OLS and CLS relative to the data points.'
 tags: ["Computer Science"]
 showHero: false
+song:
+  title: "Suzanne"
+  artist: "Mark Ronson"  
 ---
 
 
