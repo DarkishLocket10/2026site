@@ -127,6 +127,7 @@ span code {
   background: color-mix(in srgb, var(--bg) 85%, black); /* slightly darker than bg */
   padding: 0.15em 0.3em;
   border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
 }
 
 
