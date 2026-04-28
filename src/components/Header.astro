@@ -2,7 +2,7 @@
 import ThemeToggle from "./ThemeToggle.astro";
 import "../styles/glass3d.css";
 const nav = [
-  { href: "/#hero",                   label: "Home" },
+  { href: "/#hero",                    label: "Home" },
   { href: "/#professional-experience", label: "Hire me" },
   { href: "/#photography",             label: "Photography" },
   { href: "/blog",                     label: "Blog" },
@@ -10,8 +10,7 @@ const nav = [
 ];
 ---
 <header
-  class="glass3d no-rim sticky top-0 z-30
-  "
+  class="glass3d no-rim sticky top-0 z-30"
   style="height: 4.5rem;"
 >
   <nav class="mx-auto max-w-screen-2xl flex items-center justify-between px-6 md:px-8 xl:px-12 2xl:px-16 py-4">
@@ -49,36 +48,39 @@ const nav = [
     <!-- Mobile hamburger -->
     <button
       id="menu-btn"
+      type="button"
       class="md:hidden p-2 ml-2 -mr-2 rounded-full z-50 relative
-             text-[color:var(--text)]
-             hover:bg-black/5 dark:hover:bg-white/10"
+             text-[color:var(--text)]"
       aria-label="Open navigation"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
-           stroke="currentColor" stroke-width="2" stroke-linecap="round"
-           stroke-linejoin="round"
-      >
-        <path d="M3 6h18M3 12h18M3 18h18"/>
-      </svg>
+      <span class="menu-icon" aria-hidden="true">
+        <span class="bar bar-top"></span>
+        <span class="bar bar-mid"></span>
+        <span class="bar bar-bot"></span>
+      </span>
     </button>
   </nav>
 
-  <!-- Mobile slide-down (will be portaled out of the header at runtime) -->
+  <!-- Mobile backdrop scrim (portaled to body at runtime) -->
+  <div id="mobile-menu-backdrop" aria-hidden="true"></div>
+
+  <!-- Mobile slide-down (portaled to body at runtime) -->
   <div
     id="mobile-menu"
-    class="hidden md:hidden
-           bg-[color:var(--bg)]/90 dark:bg-[color:var(--bg)]/90
-           backdrop-blur-md"
+    class="glass3d"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Site navigation"
+    data-open="false"
   >
-    <ul class="flex flex-col divide-y divide-black/5 dark:divide-white/5">
-      {nav.map(({ href, label }) => (
-        <li>
-          <a
-            href={href}
-            class="block px-6 py-0.5
-                   hover:bg-black/5 dark:hover:bg-white/10"
-          >
-            {label}
+    <ul>
+      {nav.map(({ href, label }, i) => (
+        <li style={`--i:${i}`}>
+          <a href={href} data-nav-href={href}>
+            <span class="label">{label}</span>
+            <span class="chev" aria-hidden="true">&rsaquo;</span>
           </a>
         </li>
       ))}
@@ -87,43 +89,128 @@ const nav = [
 
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
-    const header = document.querySelector("header");
-    const panel  = document.getElementById("mobile-menu");
-    const btn    = document.getElementById("menu-btn");
-    const height = header.getBoundingClientRect().height;
+    const header   = document.querySelector("header");
+    const panel    = document.getElementById("mobile-menu");
+    const backdrop = document.getElementById("mobile-menu-backdrop");
+    const btn      = document.getElementById("menu-btn");
+    if (!header || !panel || !backdrop || !btn) return;
 
-    // “Portal” the panel out so it isn’t clipped
+    // Portal panel + backdrop out of the header so they aren't clipped
+    document.body.appendChild(backdrop);
     document.body.appendChild(panel);
-    Object.assign(panel.style, {
-      position: "fixed",
-      top:    `${height}px`,
-      left:   "0",
-      right:  "0",
-      zIndex: "40",
-    });
 
-    // Helper to toggle
-    function toggleMenu() {
-      panel.classList.toggle("hidden");
-      btn.querySelector("svg")?.classList.toggle("rotate-90");
+    const setTopVar = () => {
+      const h = header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty("--header-height", `${h}px`);
+    };
+    setTopVar();
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(setTopVar).observe(header);
     }
+    window.addEventListener("orientationchange", setTopVar);
 
-    // Open/close when you tap the button
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();    // don’t also trigger the document listener
-      toggleMenu();
-    });
-
-    // Prevent clicks _inside_ the menu from bubbling up and closing it
-    panel.addEventListener("click", (e) => e.stopPropagation());
-
-    // Close the menu when clicking anywhere else
-    document.addEventListener("click", () => {
-      if (!panel.classList.contains("hidden")) {
-        panel.classList.add("hidden");
-        btn.querySelector("svg")?.classList.remove("rotate-90");
+    // Active-route highlighting
+    const here = window.location.pathname.replace(/\/+$/, "") || "/";
+    const hash = window.location.hash || "";
+    panel.querySelectorAll("a[data-nav-href]").forEach((a) => {
+      const href = a.getAttribute("data-nav-href") || "";
+      let active = false;
+      if (href.startsWith("/#")) {
+        if (here === "/" && (hash === href.slice(1) || (!hash && href === "/#hero"))) {
+          active = true;
+        }
+      } else {
+        const target = href.replace(/\/+$/, "") || "/";
+        if (here === target || (target !== "/" && here.startsWith(target + "/"))) {
+          active = true;
+        }
+      }
+      if (active) {
+        a.setAttribute("aria-current", "page");
+        a.classList.add("is-active");
       }
     });
+
+    let scrollLockY = 0;
+    const lockScroll = () => {
+      scrollLockY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollLockY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+    };
+    const unlockScroll = () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      window.scrollTo(0, scrollLockY);
+    };
+
+    const focusables = () =>
+      Array.from(panel.querySelectorAll('a[href], button:not([disabled])'));
+
+    const isOpen = () => btn.getAttribute("aria-expanded") === "true";
+
+    const openMenu = () => {
+      btn.setAttribute("aria-expanded", "true");
+      btn.setAttribute("aria-label", "Close navigation");
+      panel.dataset.open = "true";
+      backdrop.dataset.open = "true";
+      lockScroll();
+      const first = focusables()[0];
+      if (first) requestAnimationFrame(() => first.focus());
+    };
+
+    const closeMenu = ({ returnFocus = true } = {}) => {
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-label", "Open navigation");
+      panel.dataset.open = "false";
+      backdrop.dataset.open = "false";
+      unlockScroll();
+      if (returnFocus) btn.focus();
+    };
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      isOpen() ? closeMenu() : openMenu();
+    });
+
+    backdrop.addEventListener("click", () => closeMenu());
+
+    // Close on link tap (so anchor jumps work cleanly)
+    panel.querySelectorAll("a[href]").forEach((a) => {
+      a.addEventListener("click", () => closeMenu({ returnFocus: false }));
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (!isOpen()) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMenu();
+        return;
+      }
+      if (e.key === "Tab") {
+        const items = focusables();
+        if (!items.length) return;
+        const first = items[0];
+        const last  = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    // Auto-close if viewport grows past the md breakpoint
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onMQ = (e) => { if (e.matches && isOpen()) closeMenu({ returnFocus: false }); };
+    mq.addEventListener ? mq.addEventListener("change", onMQ) : mq.addListener(onMQ);
   });
 </script>
 
