@@ -40,15 +40,26 @@ const { title, subtitle, description, image, alt } = Astro.props;
         const fig   = /** @type {HTMLElement} */ (document.currentScript.parentElement);
         const img   = fig.querySelector('#parallax-img');
         const range = 12;
-        function handleMove(e) {
+        let pending = null;
+        let raf = 0;
+        function apply() {
+          raf = 0;
+          const ev = pending;
+          pending = null;
+          if (!ev) return;
           const rect = fig.getBoundingClientRect();
-          const x    = e.clientX - rect.left - rect.width  / 2;
-          const y    = e.clientY - rect.top  - rect.height / 2;
+          const x    = ev.clientX - rect.left - rect.width  / 2;
+          const y    = ev.clientY - rect.top  - rect.height / 2;
           const rx   = (-y / (rect.height / 1.25)) * range;
           const ry   = ( x / (rect.width  / 1.25)) * range;
           img.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(1.05)`;
         }
+        function handleMove(e) {
+          pending = { clientX: e.clientX, clientY: e.clientY };
+          if (!raf) raf = requestAnimationFrame(apply);
+        }
         function reset() {
+          pending = null;
           img.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
         }
         fig.addEventListener('mousemove', handleMove);

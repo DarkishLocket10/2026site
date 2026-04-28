@@ -97,18 +97,34 @@ import "../styles/global.css";
     </script>
 
     <script is:inline>
+  // RAF-coalesced mousemove. High-poll-rate mice fire mousemove at up
+  // to 1000 Hz; without throttling each event would do a getBoundingClientRect
+  // (forces layout) plus an inline-style write. Coalescing into one
+  // update per animation frame collapses all that into a single layout +
+  // write per rendered frame, no matter how fast the cursor moves.
   document.querySelectorAll('figure[data-tilt]').forEach(fig => {
     const img = fig.querySelector('img');
     const range = 12;
-    function handleMove(e) {
+    let pending = null;
+    let raf = 0;
+    function apply() {
+      raf = 0;
+      const ev = pending;
+      pending = null;
+      if (!ev) return;
       const rect = fig.getBoundingClientRect();
-      const x = e.clientX - rect.left  - rect.width/2;
-      const y = e.clientY - rect.top   - rect.height/2;
+      const x = ev.clientX - rect.left  - rect.width/2;
+      const y = ev.clientY - rect.top   - rect.height/2;
       const rx = (-y/(rect.height/1.25))*range;
       const ry = ( x/(rect.width/1.25))*range;
       img.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(1.05)`;
     }
+    function handleMove(e) {
+      pending = { clientX: e.clientX, clientY: e.clientY };
+      if (!raf) raf = requestAnimationFrame(apply);
+    }
     function reset() {
+      pending = null;
       img.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
     }
     fig.addEventListener('mousemove', handleMove);
@@ -121,11 +137,16 @@ import "../styles/global.css";
     const content = container.querySelector('.tilt-content');
     if (!content) return;
     const range = 6;
-
-    function handleMove(e) {
+    let pending = null;
+    let raf = 0;
+    function apply() {
+      raf = 0;
+      const ev = pending;
+      pending = null;
+      if (!ev) return;
       const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width  / 2;
-      const y = e.clientY - rect.top  - rect.height / 2;
+      const x = ev.clientX - rect.left - rect.width  / 2;
+      const y = ev.clientY - rect.top  - rect.height / 2;
       const rx = (-y / (rect.height / 1.25)) * range;
       const ry = ( x / (rect.width  / 1.25)) * range;
       content.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(1.05)`;
@@ -135,7 +156,12 @@ import "../styles/global.css";
       content.style.setProperty('--glow-y', ny);
     }
 
+    function handleMove(e) {
+      pending = { clientX: e.clientX, clientY: e.clientY };
+      if (!raf) raf = requestAnimationFrame(apply);
+    }
     function reset() {
+      pending = null;
       content.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
       content.style.setProperty('--glow-x', '0');
       content.style.setProperty('--glow-y', '0');

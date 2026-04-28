@@ -211,6 +211,14 @@ const shelves: Shelf[] = [
                       ? `--spine-color: ${shelf.items[0].accent || '#2a2a2a'}`
                       : undefined}
                   >
+                    {/* GPU-driven highlight wrapper. Per-kind CSS positions
+                        it over the visible artwork area and gives it
+                        `overflow: hidden`. The inner ::before holds the
+                        gradient stack and animates via transform —
+                        translates within this clipping frame so the
+                        highlight visibly slides with mouse parallax
+                        without leaking past the case bounds. */}
+                    <span class="cover-shine" aria-hidden="true"></span>
                     {/* Real-asset slot — rendered when the active item has an
                         image URL. Falls back to display:none when src is
                         empty so the typographic fallback shows through. */}
@@ -895,41 +903,63 @@ const shelves: Shelf[] = [
      the surface presents a different angle to the fixed light source.
      mix-blend-mode: screen so white pixels add brightness to whatever
      album art is underneath without colour-distorting it. */
-  [data-kind="music"] .cover-case::before {
-    content: "";
+  /* Music CD-jewel-case highlight.
+     Architecture:
+       .cover-shine                  — clipping wrapper (overflow: hidden,
+                                       sized to album-art region only).
+                                       Sits inside the cover-case at z-index 3.
+       .cover-shine::before          — the moving highlight. Static gradient
+                                       stack inside, transform: translate3d
+                                       driven by --tilt-x / --tilt-y for
+                                       GPU-only parallax.
+     Why a real DOM wrapper instead of just .cover-case::before:
+     the music case has `overflow: visible` (the spine wordmark rotates
+     90° and extends below the case bottom — clipping it would chop the
+     artist name). Making the cover-case `overflow: hidden` would fix
+     the "shining square floating behind the case" the user spotted, but
+     would also clip the wordmark. A child wrapper with its OWN
+     overflow: hidden constrains the shine to the album area without
+     touching the cover-case's overflow rules. */
+  [data-kind="music"] .cover-shine {
     position: absolute;
-    inset: 4px 5px 4px 17px;
+    inset: 4px 5px 4px 17px;             /* matches album-art bounds */
     border-radius: 1px;
-    background:
-      /* Sharp specular core (the window pane reflection itself) */
-      radial-gradient(
-        ellipse 16% 48% at
-          calc(38% - var(--tilt-x, 0) * 26%)
-          calc(34% - var(--tilt-y, 0) * 22%),
-        rgba(255, 255, 255, 0.55) 0%,
-        rgba(255, 255, 255, 0.22) 30%,
-        rgba(255, 255, 255, 0.06) 60%,
-        rgba(255, 255, 255, 0) 85%
-      ),
-      /* Diffuse scattered halo (subsurface light bleed) */
-      radial-gradient(
-        ellipse 65% 60% at
-          calc(42% - var(--tilt-x, 0) * 20%)
-          calc(38% - var(--tilt-y, 0) * 16%),
-        rgba(255, 255, 255, 0.14) 0%,
-        rgba(255, 255, 255, 0.05) 40%,
-        rgba(255, 255, 255, 0) 75%
-      ),
-      /* Faint top-edge sheen (plastic catches light along its rim) */
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.16) 0%,
-        rgba(255, 255, 255, 0) 18%
-      );
-    mix-blend-mode: screen;
     pointer-events: none;
     z-index: 3;
-    opacity: 0.55;
+    overflow: hidden;
+    /* IMPORTANT: do NOT add `contain: paint` here. Paint containment
+       establishes a stacking context, which breaks the parent
+       cover-case::after's `mix-blend-mode: multiply` — instead of the
+       PNG blending through to the album art, it blends against this
+       wrapper's empty buffer and the wrapper appears as a flat dimmed
+       rectangle over the album. `overflow: hidden` is enough for the
+       clipping we need. */
+  }
+  [data-kind="music"] .cover-shine::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Single focused specular spot. The earlier top-edge linear-gradient
+       sheen was removed: in the new architecture ::before translates
+       with parallax, so any rim-anchored highlight would slide off-rim
+       as tilt-y changes (an actual rim highlight should stay pinned to
+       the rim regardless of viewing angle). The cd-jewel-case PNG
+       (::after on cover-case) already carries the plastic-edge / hinge
+       detail at the top, so the CSS rim sheen was redundant anyway. */
+    background:
+      radial-gradient(
+        ellipse 14% 36% at 38% 34%,
+        rgba(255, 255, 255, 0.38) 0%,
+        rgba(255, 255, 255, 0.10) 35%,
+        rgba(255, 255, 255, 0) 65%
+      );
+    opacity: 0.85;
+    transform: translate3d(
+      calc(var(--tilt-x, 0) * -26%),
+      calc(var(--tilt-y, 0) * -22%),
+      0
+    );
+    will-change: transform;
     transition: opacity 220ms ease;
   }
   /* Plastic case overlay using the downloaded PNG asset. Stretched to
@@ -1012,26 +1042,50 @@ const shelves: Shelf[] = [
     object-fit: cover;
     object-position: 50% 75%;
   }
-  /* Subtle moving shine on the poster — same currentColor trick as the
-     CD case, ramps with --tilt-y from the parallax script. */
-  [data-kind="film"] .cover-case::before {
-    content: "";
+  /* Film Blu-ray poster sheen.
+     Same wrapper pattern as music: .cover-shine clips, ::before slides.
+     The diagonal sheen translates with mouse parallax — replicates the
+     "light catching the glossy plastic" feel. Magnitude is smaller than
+     music (-12% / -10%) because the original film design had a more
+     subtle parallax response. */
+  [data-kind="film"] .cover-shine {
     position: absolute;
     top: 18px;
     left: 4px;
     width: calc(100% - 8px);
     height: calc(100% - 24px);
     border-radius: 1px;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, calc(0.24 + var(--tilt-y, 0) * 0.18)) 0%,
-      rgba(255, 255, 255, 0.04) 28%,
-      rgba(255, 255, 255, 0) 50%
-    );
-    mix-blend-mode: screen;
     pointer-events: none;
     z-index: 3;
-    opacity: 0.6;
+    overflow: hidden;
+    /* No `contain: paint` — same reason as the music shelf: paint
+       containment creates a stacking context that interferes with the
+       Blu-ray PNG's drop-shadow filter and the natural compositing
+       order over the poster. */
+  }
+  [data-kind="film"] .cover-shine::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Replaced the half-poster linear-gradient with a small corner-
+       anchored radial. A linear-gradient's first stop covers an entire
+       diagonal half of the wrapper, which without mix-blend-mode reads
+       as a translucent box over the poster. A tight radial centred at
+       (18 %, 22 %) collapses the visible region to a focal point near
+       the top-left, leaving the rest of the poster fully transparent. */
+    background: radial-gradient(
+      ellipse 38% 28% at 18% 22%,
+      rgba(255, 255, 255, 0.32) 0%,
+      rgba(255, 255, 255, 0.06) 45%,
+      rgba(255, 255, 255, 0) 75%
+    );
+    opacity: 0.85;
+    transform: translate3d(
+      calc(var(--tilt-x, 0) * -14%),
+      calc(var(--tilt-y, 0) * -12%),
+      0
+    );
+    will-change: transform;
     transition: opacity 220ms ease;
   }
   /* Plastic Blu-ray case overlay — the downloaded PNG. Stretched to
@@ -1126,25 +1180,47 @@ const shelves: Shelf[] = [
     z-index: 6;
     object-fit: cover;
   }
-  /* Subtle moving shine on the label area — same parallax-driven
-     diagonal as the other two cases. */
-  [data-kind="games"] .cover-case::before {
-    content: "";
+  /* Games cartridge sticker sheen.
+     Same .cover-shine wrapper pattern — overflow: hidden constrains the
+     shine to the label area, so when ::before translates with parallax
+     it can't leak past the sticker onto the cartridge body (the case
+     has `overflow: visible` for the silhouette + drop-shadow, so we
+     can't rely on the case to clip).
+     Magnitude is small (-10% / -8%) because the label area is itself
+     small; bigger would push the highlight off the sticker entirely
+     before the cursor reaches the panel edge. */
+  [data-kind="games"] .cover-shine {
     position: absolute;
     top: 9%;
     left: 41%;
     width: 39%;
     height: 56%;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, calc(0.22 + var(--tilt-y, 0) * 0.16)) 0%,
-      rgba(255, 255, 255, 0.04) 30%,
-      rgba(255, 255, 255, 0) 55%
-    );
-    mix-blend-mode: screen;
     pointer-events: none;
     z-index: 7;                /* above the cover-image sticker */
-    opacity: 0.55;
+    overflow: hidden;
+    /* No `contain: paint` — see music/film notes. */
+  }
+  [data-kind="games"] .cover-shine::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Same radial-corner approach as film. The label area is small
+       (~80×130 px) so the radial here is proportionally smaller — a
+       focused glint near the top-left of the sticker, not a half-label
+       wash. */
+    background: radial-gradient(
+      ellipse 35% 26% at 22% 24%,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(255, 255, 255, 0.05) 45%,
+      rgba(255, 255, 255, 0) 75%
+    );
+    opacity: 0.8;
+    transform: translate3d(
+      calc(var(--tilt-x, 0) * -12%),
+      calc(var(--tilt-y, 0) * -10%),
+      0
+    );
+    will-change: transform;
     transition: opacity 220ms ease;
   }
   /* The actual cartridge silhouette (PNG asset) on top, filling the
@@ -1767,17 +1843,19 @@ const shelves: Shelf[] = [
         sp.addEventListener('click', () => apply(sp));
       });
 
-      /* Warm the HTTP cache for every cover + logo URL once, after the
-         page is idle. Without this, hovering a spine for the first time
-         triggers a fresh network fetch for that cover (coverImage.src =
-         src above), which is visible as lag on slow connections.
-         Subsequent hovers of the same item are already served from
-         cache by the browser — this just front-loads the first hit so
-         every hover feels instant from the start of the session.
-         Low fetchPriority + idle scheduling keeps it from competing
-         with anything on the critical path. */
+      /* Warm the HTTP cache for every cover + logo URL — but ONLY once
+         the bookshelves section is approaching the viewport. The
+         previous version ran this preload at idle regardless of scroll
+         position, so visitors who never scrolled to the bookshelves
+         (the section sits below the work carousel near the bottom of
+         the page) still paid for ~30 cross-origin GETs to fanart.tv
+         and the local cover assets. Gating it on an
+         IntersectionObserver with a 600 px lookahead means visitors
+         who do scroll there still get the "instant hover" benefit (the
+         preload fires before the shelves are even visible), while
+         visitors who don't scroll there pay nothing. */
       const preloadIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
-      preloadIdle(() => {
+      function runPreload() {
         const seen = new Set();
         spines.forEach((sp) => {
           const { image, logo, icon } = sp.dataset;
@@ -1791,7 +1869,22 @@ const shelves: Shelf[] = [
             img.src = url;
           });
         });
-      });
+      }
+      const bookshelvesSection = document.getElementById('bookshelves');
+      if (bookshelvesSection && typeof IntersectionObserver !== 'undefined') {
+        const preloadIO = new IntersectionObserver((entries, obs) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            obs.disconnect();           // one-shot — preload is idempotent at the network layer anyway
+            preloadIdle(runPreload);    // still defer to idle so it doesn't fight critical paint
+            return;
+          }
+        }, { rootMargin: '600px 0px' }); // ~2 viewports of lookahead on a phone, ample for first-hover prefetch
+        preloadIO.observe(bookshelvesSection);
+      } else {
+        // No IO support → fall back to the original always-on idle preload.
+        preloadIdle(runPreload);
+      }
 
       /* Mouse-parallax tilt on the cover case.
          When the cursor is over the cover-preview panel area, normalise

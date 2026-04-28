@@ -452,18 +452,22 @@ function visitMeta(item: WorkItem) {
   .work-modal[data-open="true"] {
     pointer-events: auto;
   }
+  /* Backdrop reveals via opacity ONLY during the open transition.
+     Animating `backdrop-filter` ramps the GPU blur radius across every
+     frame of the 420 ms transition — the dominant per-frame cost on
+     weak phones, and the reason the modal open used to drop frames.
+     The blur snaps on AFTER the opacity transition finishes (the JS
+     toggles a `data-blur-ready` attribute on transitionend), so the
+     fully-open state still has the blurred backdrop without paying
+     the per-frame blur ramp. */
   .work-modal .work-backdrop {
     opacity: 0;
-    backdrop-filter: blur(0);
-    -webkit-backdrop-filter: blur(0);
-    will-change: backdrop-filter, opacity;
-    transition:
-      opacity 380ms ease-out,
-      backdrop-filter 420ms linear,
-      -webkit-backdrop-filter 420ms linear;
+    transition: opacity 380ms ease-out;
   }
   .work-modal[data-open="true"] .work-backdrop {
     opacity: 1;
+  }
+  .work-modal[data-blur-ready="true"] .work-backdrop {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
@@ -613,11 +617,24 @@ function visitMeta(item: WorkItem) {
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       requestAnimationFrame(() => closeBtn.focus());
+      // Apply the heavy backdrop-filter blur AFTER the opacity transition
+      // settles — animating blur radius is the dominant frame cost on
+      // weak phones, so we run only the cheap opacity transition during
+      // the open animation and snap the blur on once the modal is at
+      // rest. 400 ms ≈ the 380 ms opacity transition + a tiny safety pad.
+      clearTimeout(modal._blurReadyT);
+      modal._blurReadyT = setTimeout(() => {
+        if (modal.dataset.open === 'true') modal.dataset.blurReady = 'true';
+      }, 400);
     }
 
     function close() {
       if (modal.dataset.open !== 'true') return;
       modal.dataset.open = 'false';
+      // Drop the blur immediately so the close transition is a pure
+      // opacity fade (no GPU blur ramp). Cancel any pending apply.
+      modal.dataset.blurReady = 'false';
+      clearTimeout(modal._blurReadyT);
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
       if (lastFocused && typeof lastFocused.focus === 'function') {

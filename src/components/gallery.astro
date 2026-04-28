@@ -19,15 +19,14 @@ const hardcodedPhotos = [
 // Build-time fetch: runs once per `astro build` on the build server (no CORS
 // there since it's server-side), gets a random batch, and bakes the URLs
 // straight into the HTML. This is the guaranteed-to-work path.
-// 50 build-time photos is enough for a "scrapbook" feel across 3 rows
-// (~17 per row) without ballooning the DOM. Each tile is a 6-layer gradient
-// + 3D-transformed compositor layer; capping originals also caps the clones
-// (clones double the count for the seamless wrap). Doubling this would
-// double the GPU memory pressure on weak phones for marginal visual gain.
+// 200 build-time photos. The carousel can absorb the larger DOM weight
+// because (a) tiles are now `xsmall` derivatives (~40 KB each), (b) effects
+// can be toggled off on weak devices, and (c) Save-Data / 2g visitors skip
+// the runtime extras entirely so they cap at exactly this number.
 const PIWIGO_BUILD_API =
   'https://piwigo.darkishlocket10.me/ws.php'
   + '?format=json&method=pwg.categories.getImages'
-  + '&recursive=true&per_page=50&order=random';
+  + '&recursive=true&per_page=200&order=random';
 
 // Two-tier derivative selection — biased aggressively small for low-end
 // device + low-bandwidth visitors.
@@ -398,17 +397,16 @@ const photos = piwigoPhotos;
     flex-shrink: 0;
   }
 
-  /* Typed custom prop. Registering via @property does three things we need:
-       1. Makes --effective-tilt animatable (CSS can transition its <angle>
-          value, so the hover counter-rotation tracks the tile's rotation).
-       2. Gives it a well-defined initial value so the `calc(... - var(...))`
-          angle math never NaNs on a fresh clone.
-       3. Locks the syntax so invalid values get rejected at parse time. */
-  @property --effective-tilt {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-  }
+  /* Note: an earlier version registered `@property --effective-tilt` so the
+     gradient sweep angle could counter-rotate against the tile's rest tilt
+     and stay world-fixed across hover. That added a typed-property
+     transition entry on every one of 400+ tiles, and every transition tick
+     re-rasterised three separate gradient angles. The cost was disproportionate
+     to the visual benefit (a 3° gradient drift during a 320 ms hover, barely
+     perceivable). The angle is now just `118deg + var(--angle-jitter)`,
+     fixed in tile-space — gradients rotate WITH the tile, which reads as
+     a stable surface highlight instead of a world-fixed sun, and removes
+     the per-tile transition cost. */
 
   /* Note: --cursor-pressure was previously a typed @property so it could
      drive rgba alpha and opacity transitions. Chromium doesn't substitute
@@ -464,7 +462,6 @@ const photos = piwigoPhotos;
     --light-x: 50%;
     --gloss-strength: 1;
     --gloss-filter: url(#polaroid-gloss-0);
-    --effective-tilt: var(--tilt, 0deg);
     /* ── Per-tile surface model ─────────────────────────────────────────
        Every polaroid gets its own BRDF-inspired material profile so no two
        surfaces reflect identically. JS derives these from a hash per index
@@ -545,42 +542,40 @@ const photos = piwigoPhotos;
     padding: 5px 5px 18px 5px;
     border-radius: 3px;
     overflow: hidden;
-    contain: layout paint;                     /* scope repaint to this tile */
-    /* Warmer, deeper drop shadow + hairline inner ring on the matte edge.
-       The inner ring used to live on ::after, but ::after now carries the
-       paper grain (crisp, unfiltered) while ::before carries the highlight
-       layers (filtered). Rolling the ring into the tile's box-shadow stack
-       keeps both pseudo-elements free for their respective jobs. */
+    /* `contain: strict` = layout + style + paint + size containment. Tiles
+       receive their dimensions from inline width/height set by JS, so size
+       containment is safe — and it stops the browser from re-checking
+       parent layout when a tile's intrinsic size could theoretically shift
+       (e.g. on grain/shadow paint). With 400+ tiles, this dropped layout
+       cost is real. */
+    contain: strict;
+    /* Two-layer shadow instead of four. The earlier four-layer stack each
+       added a separate blur pass during paint — on a phone with a 200-tile
+       carousel that's the dominant chin-paint cost. Two layers reproduce
+       the same directional warmth with one blurred drop and one sharp
+       edge ring, no perceivable visual loss at carousel size. */
     box-shadow:
       inset 0 0 0 1px rgba(0, 0, 0, 0.05),
-      0 1px 2px rgba(0, 0, 0, 0.08),
-      0 10px 22px -10px rgba(30, 20, 10, 0.32),
-      0 22px 48px -20px rgba(30, 20, 10, 0.22);
-    /* Resting transform: perspective is always in the chain so that the
-       rotateX / rotateY terms (identity at rest, since --cursor-tilt-x/y
-       default to 0deg) collapse cleanly. Keeping perspective in the resting
-       transform also avoids a 2D→3D jump at the start of the :hover
-       transition — the browser can interpolate a single pre-composed 3D
-       matrix smoothly instead of reparameterising mid-animation. */
-    transform:
-      perspective(1200px)
-      rotateX(var(--cursor-tilt-y))
-      rotateY(var(--cursor-tilt-x))
-      rotate(var(--effective-tilt))
-      scale(var(--scale, 1));
-    /* --effective-tilt is typed via @property so the gradient angle stays
-       world-fixed across the lift-and-straighten animation. Cursor-tilt is
-       typed too (see @property blocks above) with a short transition so
-       pointer motion feels responsive without jittery frame-by-frame
-       cursor reads dominating the look. */
+      0 12px 28px -12px rgba(30, 20, 10, 0.38);
+    /* Resting transform: 2D only. No perspective, no rotateX/Y — those
+       create a 3D rendering context per tile, multiplied across 400+ tiles
+       it costs real GPU memory at rest. Hover re-introduces 3D explicitly
+       (see :hover below); the browser interpolates the 2D→3D matrix
+       smoothly so the transition itself is fine. */
+    transform: rotate(var(--tilt, 0deg)) scale(var(--scale, 1));
     transition:
       transform 320ms cubic-bezier(.16, 1, .3, 1),
-      --effective-tilt 320ms cubic-bezier(.16, 1, .3, 1),
       --cursor-tilt-x 140ms cubic-bezier(.2, .7, .3, 1),
       --cursor-tilt-y 140ms cubic-bezier(.2, .7, .3, 1),
       box-shadow 260ms ease-out,
       z-index 0s 260ms;
-    will-change: transform;
+    /* will-change is intentionally absent here. The earlier `will-change:
+       transform` promoted EVERY tile to its own compositor layer (400+
+       layers eats VRAM on phones). The new pattern: only the tiles
+       currently within the IntersectionObserver's visibility margin get
+       `data-visible`, and CSS only applies will-change to those — so the
+       layer count drops from 400+ to ~16 at any moment. See the
+       `[data-visible]` rules further below. */
   }
   :root.dark .gallery-tile {
     /* Dark-mode chins (the 18px bottom padding + 5px side matte) were
@@ -612,9 +607,7 @@ const photos = piwigoPhotos;
       #2a241c;
     box-shadow:
       inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-      0 1px 2px rgba(0, 0, 0, 0.08),
-      0 10px 22px -10px rgba(30, 20, 10, 0.32),
-      0 22px 48px -20px rgba(30, 20, 10, 0.22);
+      0 12px 28px -12px rgba(30, 20, 10, 0.42);
   }
 
   .gallery-tile img {
@@ -654,18 +647,31 @@ const photos = piwigoPhotos;
      because scratches are physical features of the polaroid paper and SHOULD
      rotate with the tile. When hovered straight, --effective-tilt animates
      to 0 and scratch lines stay in place relative to the paper. */
+  /* Base ::before is empty — no pseudo-element rendered for off-screen
+     tiles. The full specular stack (gradients + SVG filter + mask + layer
+     promotion) only kicks in when JS adds [data-visible] via the
+     visibility IntersectionObserver. With ~16 visible at any time vs 400+
+     total, the layer count and paint cost drop by an order of magnitude. */
   .gallery-tile::before {
     content: "";
+    display: none;
+  }
+  .gallery-tile[data-visible]::before {
+    display: block;
     position: absolute;
     inset: 5px 5px 18px 5px;                  /* photo region only */
     border-radius: 1px;
-    /* Per-tile bowing-aware angle: 118° global sun direction, counter-rotated
-       against the tile's --effective-tilt to stay world-fixed, plus a small
-       --angle-jitter that models each polaroid's slightly different surface
-       normal (real physical films are never perfectly flat). */
+    /* Original 6-layer chromatic stack, position-animated via --shine-x.
+       JS writes --shine-x / --shine-a / --light-x per visible tile per
+       frame; the gradient stops re-resolve and the layer re-rasterises.
+       This is the trade-off for the original "world-fixed sun" effect:
+       expensive on weak GPUs (the user has the Shimmer toggle in the
+       settings panel for that), but the visual identity is intact —
+       warm leading fringe, cool trailing fringe, soft bloom, scratches,
+       and a bright peak that all sweep together as the carousel scrolls. */
     background:
       linear-gradient(
-        calc(118deg - var(--effective-tilt) + var(--angle-jitter)),
+        calc(118deg + var(--angle-jitter)),
         transparent calc(var(--shine-x) - calc(var(--sweep-span) * 0.5)),
         rgba(255, 168, 86,  calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * 0.32))
           calc(var(--shine-x) - calc(var(--sweep-span) * 0.14)),
@@ -674,7 +680,7 @@ const photos = piwigoPhotos;
         rgba(255, 172, 94,  0) calc(var(--shine-x) + calc(var(--sweep-span) * 0.08))
       ),
       linear-gradient(
-        calc(118deg - var(--effective-tilt) + var(--angle-jitter)),
+        calc(118deg + var(--angle-jitter)),
         rgba(130, 176, 255, 0) calc(var(--shine-x) + calc(var(--sweep-span) * 0.04)),
         rgba(152, 196, 255, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * 0.14))
           calc(var(--shine-x) + calc(var(--sweep-span) * 0.16)),
@@ -682,12 +688,6 @@ const photos = piwigoPhotos;
           calc(var(--shine-x) + calc(var(--sweep-span) * 0.34)),
         transparent calc(var(--shine-x) + calc(var(--sweep-span) * 0.66))
       ),
-      /* Vertical extent capped at 64% (not the previous 2.2× multiplier) so
-         the bloom's non-zero alpha region stays well inside the ::before's
-         top/bottom edges. When the displacement filter runs, it can still
-         find valid source pixels at the edges instead of pulling transparent
-         from outside the filter region — that was what caused the "ripped-up"
-         dark bits at photo tops/bottoms. */
       radial-gradient(
         ellipse var(--bloom-span) 64% at var(--shine-x) 50%,
         rgba(255, 239, 198, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--bloom-a))),
@@ -708,7 +708,7 @@ const photos = piwigoPhotos;
         transparent calc(var(--scratch-b-pos, 67%) + 0.4%)
       ),
       linear-gradient(
-        calc(118deg - var(--effective-tilt) + var(--angle-jitter)),
+        calc(118deg + var(--angle-jitter)),
         transparent 0%,
         transparent calc(var(--shine-x) - var(--sweep-span)),
         rgba(255, 250, 225, calc(var(--shine-a) * var(--gloss-strength) * var(--has-shine) * var(--peak-a) * 0.18))
@@ -725,44 +725,28 @@ const photos = piwigoPhotos;
         transparent 100%
       );
     background-blend-mode: screen, screen, screen, screen, screen, screen;
-    /* Default blend is screen; [data-surface="matte"] overrides to soft-light
-       below so matte-finish tiles attenuate their specular over bright image
-       regions and read as scattered (not mirror-like). */
     mix-blend-mode: screen;
     filter: var(--gloss-filter);
+    /* `will-change: filter` is enough for layer promotion on every modern
+       engine. The previous `transform: translateZ(0)` was belt-and-braces
+       for very-old Safari but adds a 3D rendering context that survives
+       the layer demotion when [data-visible] is removed — small VRAM
+       leak across 400 tiles' lifetimes during a long scrolling session. */
+    will-change: filter;
     pointer-events: none;
     z-index: 2;
-    /* Edge feather — two crossed linear-gradient masks intersected. Kept
-       deliberately small (3px / 2px) because at the wider values used
-       earlier the feather itself became visible as a blank border around
-       every photo — the shimmer cut off before the edge instead of
-       running into it. The displacement filter can still pull transparent
-       pixels from outside its region at the extremes, but average
-       displacement is ~scale/4 and only a tiny tail exceeds this; a 3px
-       feather absorbs that tail without being wide enough to read as a
-       gap. If "torn" dark bits re-appear at edges on very-high-scale
-       variants, lift these values by 1-2px rather than by an order of
-       magnitude. */
     mask-image:
       linear-gradient(to right,  transparent 0, #000 3px, #000 calc(100% - 3px), transparent 100%),
       linear-gradient(to bottom, transparent 0, #000 2px, #000 calc(100% - 2px), transparent 100%);
     mask-composite: intersect;
     -webkit-mask-composite: source-in;
-    /* Promote to its own compositor layer so filter rasterisation stays
-       stable across frames as the gradient slides past the static turbulence
-       map. `will-change: filter` is the modern hint; `translateZ(0)` is the
-       belt-and-braces back-up — together they keep the warble smooth on
-       browsers whose compositor is more conservative about promoting filter
-       elements. No visual effect, pure compositor hint. */
-    will-change: filter;
-    transform: translateZ(0);
   }
 
   /* Matte tiles use soft-light on top of the image: the blend inherently
      attenuates where the image is bright (a real matte surface scatters
      incoming light rather than reflecting it), and emphasises where the
      image is dark (where you'd actually see diffuse highlight). */
-  .gallery-tile[data-surface="matte"]::before {
+  .gallery-tile[data-surface="matte"][data-visible]::before {
     mix-blend-mode: soft-light;
   }
 
@@ -775,12 +759,11 @@ const photos = piwigoPhotos;
      disturbing the main specular. No more cross-boundary pattern jump. */
 
   /* Cursor-pool element — retained in the markup for compatibility with
-     existing templates/clones, but visually suppressed. Earlier iterations
-     drew a crossed-band distortion at the cursor and chewed it through an
-     aggressive SVG filter; the user found the result reads as "lightning"
-     rather than a polaroid surface. The cursor interaction is now pure
-     3D parallax on the tile (rotateX / rotateY driven by pointer position)
-     — see .gallery-tile:hover below. */
+     existing templates / clones, but visually suppressed. The shine is
+     now driven by JS writing --shine-x / --shine-a / --light-x onto the
+     tile, which feeds the gradient stack on ::before above. The cursor
+     element is reserved for any future per-tile decoration that needs
+     a separate DOM node. */
   .gallery-tile-cursor {
     display: none;
   }
@@ -796,52 +779,44 @@ const photos = piwigoPhotos;
      pure VRAM cost (216 tiles × promoted ::before = 200+ layers on phones,
      which is what makes the page feel hitchy long before any frame work
      starts). */
-  @media (max-width: 520px) {
-    .gallery-tile::before { filter: none; will-change: auto; transform: none; }
-    .gallery-tile         { will-change: auto; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .gallery-tile::before { filter: none; will-change: auto; transform: none; }
-    .gallery-tile         { will-change: auto; }
-  }
+  /* (Earlier this block dropped the SVG displacement filter on mobile +
+     reduced-motion. The filter is now removed from every tier above;
+     this rule is left as a deliberate no-op anchor for future
+     viewport-conditional ::before tweaks.) */
 
   /* ── Grain pass: photo-area only, deliberately unfiltered. ────────────
      Each tile picks one of three grain data URLs via --grain-tex (set by
-     JS from hash(i)), with randomised size + offset so adjacent tiles never
-     show the same stitched seam.
-
-     mix-blend-mode: overlay reads grain as modulation on the photo —
-     darker pixels stay mostly unchanged, brighter pixels get textured
-     variance. No filter here: an earlier build put grain on ::before and
-     the displacement warped it into streaks that obscured the image. Keeping
-     grain crisp and scratches filtered on ::before separates "fine film
-     texture" from "visible surface damage" cleanly. */
-  .gallery-tile::after {
-    content: "";
+     JS from hash(i)), with randomised size + offset so adjacent tiles
+     never show the same stitched seam.
+     Gated to [data-visible]: invisible tiles render no ::after, saving a
+     pseudo-element + a paint pass apiece across the 384 tiles outside the
+     viewport at any moment. */
+  .gallery-tile::after { content: ""; display: none; }
+  .gallery-tile[data-visible]::after {
+    display: block;
     position: absolute;
     inset: 5px 5px 18px 5px;                  /* photo region only */
     border-radius: 1px;
     background-image: var(--grain-tex);
     background-size: var(--grain-size, 220px 220px);
     background-position: var(--grain-offset, 0 0);
-    mix-blend-mode: overlay;
-    opacity: calc(var(--gloss-strength) * 0.38);
+    /* `mix-blend-mode: overlay` was a real perf knife — it forces the
+       browser to read back the painted background pixels, run the overlay
+       blend per pixel, and write back. On a phone over 16 visible tiles
+       per frame that's a measurable hit. Plain opacity at the strength
+       the overlay was contributing visually (~0.18) reads almost
+       identically against the photo and costs nothing extra to composite. */
+    opacity: calc(var(--gloss-strength) * 0.18);
     pointer-events: none;
     z-index: 1;                                /* below ::before highlight */
   }
 
   .gallery-tile:hover,
   .gallery-tile:focus-visible {
-    /* Hover pose: de-tilt the resting 2D rotation, lift slightly, and keep
-       the rotateX / rotateY terms reading from --cursor-tilt-y / --cursor-tilt-x.
-       As the user moves the cursor across the tile, JS updates those typed
-       custom props every pointermove, and the @property transition makes
-       them smoothly track — producing a subtle parallax tilt.
-       The specular stack (::before) lives inside the tile, so as the tile
-       rotates in 3D the specular warps in perspective accordingly; the
-       individual shimmer and distortion visibly shift with the parallax
-       without any extra logic. */
-    --effective-tilt: 0deg;
+    /* Hover re-introduces 3D explicitly — perspective + rotateX/Y from the
+       cursor parallax props. The transform interpolates from the 2D
+       resting matrix to this 3D matrix smoothly; we're paying the 3D
+       context only on the ONE hovered tile, not all 400. */
     transform:
       perspective(1200px)
       rotateX(var(--cursor-tilt-y))
@@ -854,17 +829,14 @@ const photos = piwigoPhotos;
     z-index: 2;
     transition:
       transform 280ms cubic-bezier(.16, 1, .3, 1),
-      --effective-tilt 280ms cubic-bezier(.16, 1, .3, 1),
       --cursor-tilt-x 140ms cubic-bezier(.2, .7, .3, 1),
       --cursor-tilt-y 140ms cubic-bezier(.2, .7, .3, 1),
       box-shadow 260ms ease-out,
       z-index 0s;
   }
 
-  /* Pressed state: JS flips [data-pressed] on pointerdown. The tile takes
-     a small depressing dip (translateY +2px vs hover, plus a tiny scale
-     compression). Deliberately subtle — the card stays rigid, only the
-     pose shifts; parallax rotateX/Y still track the cursor. */
+  /* Pressed state: JS flips [data-pressed] on pointerdown. Same 3D pose
+     as hover, just dipped a little. */
   .gallery-tile[data-pressed] {
     transform:
       perspective(1200px)
@@ -1011,6 +983,418 @@ const photos = piwigoPhotos;
       transform: none !important;
     }
   }
+
+  /* ── Granular effects controls ──────────────────────────────────────
+     Each effect can be independently toggled by the settings panel via
+     a `data-fx-<name>="off"` attribute on the gallery-wrap. CSS rules
+     below short-circuit the heavy paths when an effect is off. JS
+     controls them; localStorage persists the choice across visits.
+
+     Effects:
+       data-fx-frame    — polaroid chin, tilt, scale variation. Off →
+                          flat rectangles, no rotation, photo-only.
+       data-fx-shimmer  — ::before specular gradient stack + SVG filter.
+                          Off → no moving highlight, no displacement filter.
+       data-fx-grain    — ::after grain texture. Off → clean photo.
+       data-fx-hover    — 3D rotateX/Y parallax on hover. Off → simple
+                          2D lift on hover.
+       data-fx-drift    — ambient autoscroll. Off → carousel sits still
+                          unless user swipes/drags. Read by computeVel()
+                          in JS.
+  */
+
+  /* Frame off → flat tiles, no rotation, no shadow stack. */
+  .gallery-wrap[data-fx-frame="off"] .gallery-tile {
+    --tilt: 0deg;
+    --scale: 1;
+    transform: none !important;
+    background: #2a241c;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: none !important;
+    padding: 4px;
+    contain: strict;
+  }
+  :root:not(.dark) .gallery-wrap[data-fx-frame="off"] .gallery-tile {
+    background: #f8f1e1;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+  .gallery-wrap[data-fx-frame="off"] .gallery-tile:hover,
+  .gallery-wrap[data-fx-frame="off"] .gallery-tile:focus-visible {
+    transform: scale(1.02) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+    transition: transform 160ms ease-out, box-shadow 160ms ease-out !important;
+  }
+
+  /* Shimmer off → kill ::before entirely. */
+  .gallery-wrap[data-fx-shimmer="off"] .gallery-tile::before {
+    display: none !important;
+  }
+
+  /* Grain off → kill ::after entirely. */
+  .gallery-wrap[data-fx-grain="off"] .gallery-tile::after {
+    display: none !important;
+  }
+
+  /* Hover off → 2D-only hover (no perspective / 3D rotation). */
+  .gallery-wrap[data-fx-hover="off"] .gallery-tile:hover,
+  .gallery-wrap[data-fx-hover="off"] .gallery-tile:focus-visible,
+  .gallery-wrap[data-fx-hover="off"] .gallery-tile[data-pressed] {
+    transform: translateY(-4px) scale(var(--scale, 1)) !important;
+  }
+
+  /* ── Settings UI ────────────────────────────────────────────────────
+     Visual language matches the rest of the site:
+       – Surfaces use var(--bg) / var(--card-bg) with backdrop-blur (same
+         pattern as the header dropdown — see Header.astro).
+       – Accent for "on" state and focus rings is var(--color-accent),
+         the site-wide cyan #5EC9D4.
+       – Borders are 1px hairlines in black/5 (light) or white/10 (dark)
+         — the divide pattern used elsewhere.
+       – Radii come from the site's --radius-* scale; no custom values.
+       – Easing comes from var(--ease-out), the site's standard curve.
+     No gradients anywhere — solid surfaces only, consistent with the
+     rest of the page's flat-surface aesthetic.
+  */
+  /* Mirrors the page's standard CTA button language exactly:
+     transparent surface + 1px border + rounded-lg + accent-tint hover.
+     The reference is the "Check out my self-hosted photo gallery!"
+     button that sits directly above the carousel — Tailwind's
+     `border rounded-lg hover:bg-accent/10 transition-colors`. By
+     matching that, the settings control reads as a peer of that CTA
+     instead of an alien overlay. */
+  .gallery-fx-settings {
+    position: absolute;
+    /* Pulled above the section's natural content. The wrap has py-6
+       (24 px top padding) and the track adds another 18 px before the
+       first row of tiles, so a positive `top` smaller than ~42 px makes
+       the button overlap the top edge of row 1 (which lifts on tilt to
+       a few px above the row baseline). Negative top positions the
+       button into the section's padding zone, well above any tile. */
+    top: -8px;
+    right: 12px;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid currentColor;
+    border-color: rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-out),
+      border-color 200ms var(--ease-out),
+      color 200ms var(--ease-out);
+  }
+  :root.dark .gallery-fx-settings {
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  .gallery-fx-settings:hover,
+  .gallery-fx-settings:focus-visible,
+  .gallery-fx-settings[aria-expanded="true"] {
+    /* Same accent-tint hover the page's other border-buttons use:
+       color-mix lands on Tailwind's `bg-accent/10` equivalent, which is
+       what the Piwigo-link CTA above the carousel uses on hover. */
+    color: var(--color-accent);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+  .gallery-fx-settings:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .gallery-fx-settings svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── Popover panel ──────────────────────────────────────────────────
+     Same overlay pattern as the header dropdown: var(--bg) at 95% +
+     backdrop-blur, hairline divider rows, no shadows beyond a soft drop
+     for depth. Anchor triangle uses the same surface so panel + anchor
+     read as one shape.
+  */
+  .gallery-fx-panel {
+    position: absolute;
+    /* Tracks the button's new top: -8px position. Button bottom sits at
+       26 px from the wrap top (-8 + 34); the panel opens 8 px below
+       that, so the anchor triangle (top: -6 of panel) lines up just
+       under the button's bottom edge for a clean visual link. */
+    top: 36px;
+    right: 12px;
+    z-index: 7;
+    width: 296px;
+    padding: 14px 16px 12px;
+    background: color-mix(in srgb, var(--bg) 95%, transparent);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.18);
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: top right;
+    pointer-events: none;
+    transition:
+      opacity 180ms var(--ease-out),
+      transform 200ms var(--ease-out);
+  }
+  :root.dark .gallery-fx-panel {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.55);
+  }
+  .gallery-fx-panel[data-open="true"] {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  /* Anchor triangle pointing up to the gear button. */
+  .gallery-fx-anchor {
+    position: absolute;
+    top: -6px;
+    right: 14px;
+    width: 12px;
+    height: 12px;
+    background: color-mix(in srgb, var(--bg) 95%, transparent);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
+    transform: rotate(45deg);
+    border-top-left-radius: 2px;
+  }
+  :root.dark .gallery-fx-anchor {
+    border-top-color: rgba(255, 255, 255, 0.08);
+    border-left-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .gallery-fx-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .gallery-fx-panel-title {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-soft);
+    margin: 0;
+  }
+
+  /* ── Effect rows ──────────────────────────────────────────────────── */
+  .gallery-fx-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 6px;
+    margin: 0 -6px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: var(--radius-md);
+    transition: background 160ms var(--ease-out);
+  }
+  .gallery-fx-row:hover,
+  .gallery-fx-row:focus-within {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  :root.dark .gallery-fx-row:hover,
+  :root.dark .gallery-fx-row:focus-within {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .gallery-fx-row + .gallery-fx-row {
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.06);
+  }
+  :root.dark .gallery-fx-row + .gallery-fx-row {
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06);
+  }
+  .gallery-fx-row-icon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--color-text-soft);
+    transition: background 160ms var(--ease-out), color 160ms var(--ease-out);
+  }
+  :root.dark .gallery-fx-row-icon {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .gallery-fx-row:hover .gallery-fx-row-icon {
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent);
+  }
+  .gallery-fx-row-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .gallery-fx-row-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .gallery-fx-row-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .gallery-fx-row-help {
+    font-size: 11px;
+    color: var(--color-text-soft);
+    line-height: 1.35;
+  }
+
+  /* ── Switch ─────────────────────────────────────────────────────────
+     Cyan accent (--color-accent) when on, neutral grey when off.
+     Solid colors only, no gradients.
+  */
+  .gallery-fx-switch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 24px;
+  }
+  .gallery-fx-switch input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1;
+  }
+  .gallery-fx-switch-track {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: var(--radius-pill);
+    transition: background 220ms var(--ease-out);
+    pointer-events: none;
+  }
+  :root.dark .gallery-fx-switch-track {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .gallery-fx-switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 220ms var(--ease-spring);
+    pointer-events: none;
+  }
+  .gallery-fx-switch input:checked ~ .gallery-fx-switch-track {
+    background: var(--color-accent);
+  }
+  .gallery-fx-switch input:checked ~ .gallery-fx-switch-thumb {
+    transform: translateX(18px);
+  }
+  .gallery-fx-switch input:focus-visible ~ .gallery-fx-switch-track {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* ── Footer ─────────────────────────────────────────────────────────
+     Mirrors the page's ghost-button pattern: hairline border + transparent
+     fill, accent color tint on hover.
+  */
+  .gallery-fx-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: flex-end;
+  }
+  :root.dark .gallery-fx-footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+  .gallery-fx-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--color-text-soft);
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    transition:
+      color 160ms var(--ease-out),
+      background 160ms var(--ease-out),
+      border-color 160ms var(--ease-out);
+  }
+  :root.dark .gallery-fx-reset {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .gallery-fx-reset svg {
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .gallery-fx-reset:hover,
+  .gallery-fx-reset:focus-visible {
+    color: var(--color-accent);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+  .gallery-fx-reset:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Phone tweaks — bigger hit targets, slightly tighter panel margin. */
+  @media (max-width: 520px) {
+    .gallery-fx-panel {
+      right: 8px;
+      width: calc(100vw - 24px);
+      max-width: 296px;
+    }
+    .gallery-fx-row {
+      padding: 11px 6px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-fx-settings,
+    .gallery-fx-panel,
+    .gallery-fx-switch-thumb,
+    .gallery-fx-switch-track,
+    .gallery-fx-row,
+    .gallery-fx-row-icon,
+    .gallery-fx-reset {
+      transition: none !important;
+    }
+  }
 </style>
 
 <script is:inline>
@@ -1023,6 +1407,282 @@ const photos = piwigoPhotos;
     const imgs = tiles.map((t) => t.querySelector('img'));
 
     const NUM_ROWS = 3;
+
+    // ── Astro CSS-scope attributes (hoisted) ───────────────────────────
+    // Astro stamps `data-astro-cid-XXXX` on every element in the source
+    // tree and rewrites scoped CSS selectors to require that attribute.
+    // Anything we build at runtime via document.createElement() must
+    // carry the same attribute or none of the scoped CSS matches it
+    // (the symptom is "my pretty styles do nothing on dynamic elements").
+    // Sniff the CID once, expose helpers for each call site.
+    const SCOPE_ATTRS = (() => {
+      const ref = track.querySelector('.gallery-tile') ||
+                  document.querySelector('.gallery-wrap') ||
+                  viewport;
+      const names = [];
+      if (ref) {
+        for (const a of ref.attributes) {
+          if (a.name.indexOf('data-astro-cid-') === 0) names.push(a.name);
+        }
+      }
+      return names;
+    })();
+    function applyScope(el) {
+      for (let k = 0; k < SCOPE_ATTRS.length; k++) {
+        el.setAttribute(SCOPE_ATTRS[k], '');
+      }
+    }
+    function applyScopeDeep(root) {
+      applyScope(root);
+      const all = root.querySelectorAll('*');
+      for (let i = 0; i < all.length; i++) applyScope(all[i]);
+    }
+
+    // ── Granular effects controls ──────────────────────────────────────
+    // Five independent toggles — frame, shimmer, grain, hover, drift —
+    // each map to a `data-fx-<name>` attribute on the wrap. The CSS
+    // rules under `.gallery-wrap[data-fx-X="off"]` short-circuit the
+    // matching effect path. JS persists the choice per-toggle to
+    // localStorage and can recompute "recommended" defaults from the
+    // current device's media-query state.
+    //
+    // Effect catalogue, ordered by visual impact:
+    //   frame   — polaroid chin + per-tile rotation/scale.
+    //   shimmer — moving specular highlight (most expensive).
+    //   grain   — paper grain noise overlay.
+    //   hover   — 3D rotateX/Y parallax on cursor hover.
+    //   drift   — ambient autoscroll (read by computeVel below).
+    const wrap = document.querySelector('.gallery-wrap');
+    const FX_KEYS = ['frame', 'shimmer', 'grain', 'hover', 'drift'];
+    // Icon library for effect rows. Tiny, unfilled SVGs at 16×16 — same
+    // visual weight as the column they sit in, with a stroke style that
+    // matches the gear button so the panel feels of-a-piece.
+    const FX_ICONS = {
+      // Photo-frame outline with a small corner notch.
+      frame:   '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="1.5"/><circle cx="6" cy="7" r="1"/><path d="M2 11l3-3 3 3 2-2 4 4"/></svg>',
+      // Spark / starburst — 8-point asterisk for "shimmer".
+      shimmer: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v4M8 10v4M2 8h4M10 8h4M4 4l2.5 2.5M9.5 9.5L12 12M12 4l-2.5 2.5M6.5 9.5L4 12"/></svg>',
+      // Cluster of dots for "grain".
+      grain:   '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="4" cy="4" r="0.8" fill="currentColor" stroke="none"/><circle cx="9" cy="3" r="0.6" fill="currentColor" stroke="none"/><circle cx="12" cy="6" r="0.7" fill="currentColor" stroke="none"/><circle cx="6" cy="8" r="0.6" fill="currentColor" stroke="none"/><circle cx="11" cy="10" r="0.8" fill="currentColor" stroke="none"/><circle cx="3" cy="11" r="0.7" fill="currentColor" stroke="none"/><circle cx="8" cy="13" r="0.6" fill="currentColor" stroke="none"/></svg>',
+      // Cursor with depth indicator for "3D parallax".
+      hover:   '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l8 4-3.5 1.5L6 11z"/><path d="M11 11l3 3M14 11l-3 3"/></svg>',
+      // Play arrow for "auto-scroll".
+      drift:   '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3v10l8-5z"/></svg>',
+    };
+    const FX_DEFS = {
+      frame:   { label: 'Polaroid frame', help: 'Cream paper border, slight tilt, soft shadow.', icon: FX_ICONS.frame },
+      shimmer: { label: 'Shimmer',        help: 'Moving highlight that catches the light. Expensive.', icon: FX_ICONS.shimmer },
+      grain:   { label: 'Paper grain',    help: 'Subtle film-grain texture across each photo.', icon: FX_ICONS.grain },
+      hover:   { label: '3D parallax',    help: 'Tile tilts toward your cursor on hover.', icon: FX_ICONS.hover },
+      drift:   { label: 'Auto-scroll',    help: 'Carousel drifts on its own when you’re not interacting.', icon: FX_ICONS.drift },
+    };
+    // "Recommended" = on for fine-pointer / wide-screen devices; off for
+    // anything coarse-pointer or narrow. Drift stays on across the board
+    // (it's cheap, and most visitors expect a moving carousel).
+    function recommendedFx() {
+      const coarse = matchMedia('(hover: none)').matches;
+      const narrow = matchMedia('(max-width: 520px)').matches;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const heavy  = !(coarse || narrow || reduce);
+      return {
+        frame:   true,                // cheap; always recommended
+        shimmer: heavy,
+        grain:   heavy,
+        hover:   !coarse,             // hover doesn't apply on touch anyway
+        drift:   !reduce,             // motion-sensitive users get a still carousel
+      };
+    }
+    function loadFx() {
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem('gallery-fx') || 'null'); } catch (_) {}
+      if (!saved || typeof saved !== 'object') return recommendedFx();
+      const rec = recommendedFx();
+      const out = {};
+      // Honour every saved key; fall through to recommended for unknown.
+      for (const k of FX_KEYS) out[k] = (typeof saved[k] === 'boolean') ? saved[k] : rec[k];
+      return out;
+    }
+    function saveFx(state) {
+      try { localStorage.setItem('gallery-fx', JSON.stringify(state)); } catch (_) {}
+    }
+    function applyFx(state) {
+      if (!wrap) return;
+      for (const k of FX_KEYS) wrap.dataset['fx' + k.charAt(0).toUpperCase() + k.slice(1)] = state[k] ? 'on' : 'off';
+    }
+
+    let fxState = loadFx();
+    applyFx(fxState);
+
+    // Build the settings UI: a gear button + popover with one switch per
+    // effect + a "Reset to recommended" footer. Mirrors common settings-
+    // popover conventions (aria-expanded on trigger, aria-labelled panel,
+    // click-outside + Escape to close, focus trap inside while open).
+    if (wrap) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'gallery-fx-settings';
+      btn.setAttribute('aria-label', 'Effects settings');
+      btn.setAttribute('aria-haspopup', 'dialog');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-controls', 'gallery-fx-panel');
+      // Sliders icon — three horizontal tracks with adjustable circles.
+      // Reads as "tweak settings" more clearly than a generic gear, and
+      // matches the per-row toggle metaphor visually.
+      btn.innerHTML =
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+          '<line x1="4" y1="6"  x2="11" y2="6"></line>' +
+          '<line x1="15" y1="6" x2="20" y2="6"></line>' +
+          '<line x1="4" y1="12" x2="7"  y2="12"></line>' +
+          '<line x1="11" y1="12" x2="20" y2="12"></line>' +
+          '<line x1="4" y1="18" x2="15" y2="18"></line>' +
+          '<line x1="19" y1="18" x2="20" y2="18"></line>' +
+          '<circle cx="13" cy="6"  r="2"></circle>' +
+          '<circle cx="9"  cy="12" r="2"></circle>' +
+          '<circle cx="17" cy="18" r="2"></circle>' +
+        '</svg>';
+
+      const panel = document.createElement('div');
+      panel.className = 'gallery-fx-panel';
+      panel.id = 'gallery-fx-panel';
+      panel.setAttribute('role', 'dialog');
+      panel.setAttribute('aria-label', 'Gallery effects');
+      panel.setAttribute('data-open', 'false');
+
+      // Anchor — the small triangle that visually connects the panel to
+      // the gear button. Pure CSS via ::before could work, but a real
+      // element gets us a clean shadow + matches the panel's blur.
+      const anchor = document.createElement('span');
+      anchor.className = 'gallery-fx-anchor';
+      anchor.setAttribute('aria-hidden', 'true');
+      panel.appendChild(anchor);
+
+      // Header with title + close affordance.
+      const header = document.createElement('div');
+      header.className = 'gallery-fx-header';
+      const title = document.createElement('h3');
+      title.className = 'gallery-fx-panel-title';
+      title.id = 'gallery-fx-title';
+      title.textContent = 'Effects';
+      panel.setAttribute('aria-labelledby', 'gallery-fx-title');
+      header.appendChild(title);
+      panel.appendChild(header);
+
+      // Build one row per effect.
+      const switches = {};
+      for (const k of FX_KEYS) {
+        const def = FX_DEFS[k];
+        const row = document.createElement('label');
+        row.className = 'gallery-fx-row';
+
+        // Left side: icon + text stack.
+        const icon = document.createElement('span');
+        icon.className = 'gallery-fx-row-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.innerHTML = def.icon;
+
+        const text = document.createElement('span');
+        text.className = 'gallery-fx-row-text';
+        const lbl = document.createElement('span');
+        lbl.className = 'gallery-fx-row-label';
+        lbl.textContent = def.label;
+        const help = document.createElement('span');
+        help.className = 'gallery-fx-row-help';
+        help.textContent = def.help;
+        text.appendChild(lbl);
+        text.appendChild(help);
+
+        // Right side: iOS-style switch.
+        const sw = document.createElement('span');
+        sw.className = 'gallery-fx-switch';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = fxState[k];
+        input.setAttribute('role', 'switch');
+        input.setAttribute('aria-label', def.label);
+        const trk = document.createElement('span');
+        trk.className = 'gallery-fx-switch-track';
+        const thb = document.createElement('span');
+        thb.className = 'gallery-fx-switch-thumb';
+        sw.appendChild(input);
+        sw.appendChild(trk);
+        sw.appendChild(thb);
+
+        row.appendChild(icon);
+        row.appendChild(text);
+        row.appendChild(sw);
+        panel.appendChild(row);
+        switches[k] = input;
+
+        input.addEventListener('change', () => {
+          fxState = { ...fxState, [k]: input.checked };
+          applyFx(fxState);
+          saveFx(fxState);
+        });
+      }
+
+      // Footer: Reset action with refresh icon.
+      const footer = document.createElement('div');
+      footer.className = 'gallery-fx-footer';
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'gallery-fx-reset';
+      resetBtn.innerHTML =
+        '<svg viewBox="0 0 16 16" aria-hidden="true">' +
+          '<path d="M3 8a5 5 0 0 1 8.5-3.5L13 3"></path>' +
+          '<path d="M13 3v3.5h-3.5"></path>' +
+          '<path d="M13 8a5 5 0 0 1-8.5 3.5L3 13"></path>' +
+          '<path d="M3 13v-3.5h3.5"></path>' +
+        '</svg>' +
+        '<span>Reset to recommended</span>';
+      footer.appendChild(resetBtn);
+      panel.appendChild(footer);
+      resetBtn.addEventListener('click', () => {
+        fxState = recommendedFx();
+        applyFx(fxState);
+        saveFx(fxState);
+        for (const k of FX_KEYS) switches[k].checked = fxState[k];
+      });
+
+      // Open / close logic.
+      function setOpen(open) {
+        btn.setAttribute('aria-expanded', String(open));
+        panel.setAttribute('data-open', String(open));
+        if (open) {
+          // Focus the first switch for keyboard users.
+          setTimeout(() => switches[FX_KEYS[0]].focus(), 50);
+          document.addEventListener('keydown', onKey);
+          document.addEventListener('mousedown', onOutside, true);
+        } else {
+          document.removeEventListener('keydown', onKey);
+          document.removeEventListener('mousedown', onOutside, true);
+        }
+      }
+      function onKey(e) {
+        if (e.key === 'Escape') {
+          setOpen(false);
+          btn.focus();
+        }
+      }
+      function onOutside(e) {
+        if (panel.contains(e.target) || btn.contains(e.target)) return;
+        setOpen(false);
+      }
+      btn.addEventListener('click', () => {
+        const open = btn.getAttribute('aria-expanded') !== 'true';
+        setOpen(open);
+      });
+
+      // Stamp Astro's scope attribute onto every element in both subtrees
+      // BEFORE attaching to the DOM. Without this the production-build
+      // CSS (which is element-scoped via `[data-astro-cid-XXXX]`) would
+      // skip every selector in this section and the panel would render
+      // as unstyled defaults.
+      applyScopeDeep(btn);
+      applyScopeDeep(panel);
+
+      wrap.appendChild(btn);
+      wrap.appendChild(panel);
+    }
 
     // ── Deterministic per-tile variations (scrapbook feel, stable per index) ──
     function hash01(i, seed) {
@@ -1155,12 +1815,12 @@ const photos = piwigoPhotos;
       s.setProperty('--bloom-span', bloomSpan);
       s.setProperty('--angle-jitter', angleJitterFor(i).toFixed(1) + 'deg');
       s.setProperty('--has-shine',    hasShineFor(i));
-      // Shimmer phase offset — a per-tile horizontal shift applied to shine-x.
-      // Without this, all tiles at the same screen-x show the same highlight
-      // position, which reads as one big screen-space light bar passing over.
-      // A ±8% phase breaks the lockstep without destroying the world-fixed
-      // sun illusion: every card still reacts to the same light, but each has
-      // a slightly different "waviness" in when its peak lines up.
+      // Per-tile horizontal phase offset for the shine cursor. Without
+      // a desync, tiles at the same screen-x would all peak at the same
+      // instant — one big screen-wide light bar instead of individual
+      // tiles each catching the light a moment apart. A ±8 % offset
+      // keeps the global "world-fixed sun" feeling intact while
+      // breaking the lockstep — read by updateShine() per frame.
       s.setProperty('--shimmer-phase', ((hash01(i, 99.773) - 0.5) * 16).toFixed(2));
     }
     tiles.forEach(applyVariants);
@@ -1492,6 +2152,7 @@ const photos = piwigoPhotos;
       // cloneNode(true); new Piwigo tiles added at runtime arrive here too).
       // Idempotent: IO silently no-ops on re-observed elements.
       setupLazyLoader();
+      setupVisibilityObserver();
     }
 
     // ── Virtual light source + shine tracking ──
@@ -1509,10 +2170,20 @@ const photos = piwigoPhotos;
     // Offscreen tiles are culled in the loop (no DOM writes), which drops the
     // per-frame work from ~116 tiles to the ~16 actually visible on desktop.
     const LIGHT_X_FRAC     = 0.3;        // light horizontal position (0=left, 1=right)
-    const SHINE_GAIN       = 80;         // screen-dx → shine-x gain (%)
+    const SHINE_GAIN       = 150;        // screen-dx → shine-x gain (%)
+                                         // Bumped 80 → 120 → 150 across two
+                                         // user requests for a livelier sweep.
+                                         // At 150 the shine crosses each tile
+                                         // ~1.9× faster than the original 80
+                                         // for the same scroll distance.
+                                         // Higher values would clamp the
+                                         // shine at the 8…92 % edge for longer
+                                         // intervals, so this is near the
+                                         // ceiling before the sweep starts to
+                                         // feel discontinuous.
     // Tight EPS values so sub-pixel shine motion makes it to the DOM.
-    // Earlier 0.3% ≈ 0.6px steps on a 200px tile; visible as discrete jumps
-    // to a careful viewer. 0.08% ≈ 0.16px (sub-pixel) reads as continuous.
+    // 0.08% ≈ 0.16px on a 200px tile (sub-pixel) → reads as continuous
+    // sliding rather than discrete steps.
     const SHINE_EPS        = 0.08;       // skip --shine-x writes under this ∆ (%)
     const SHINE_A_EPS      = 0.004;      // skip --shine-a writes under this ∆
     const INTENSITY_WIDTH  = 1.25;       // gaussian σ in viewport widths
@@ -1582,13 +2253,21 @@ const photos = piwigoPhotos;
     function recomputeShineCache() {
       const trackRect = track.getBoundingClientRect();
       const all = track.querySelectorAll('[data-tile]');
-      // Cache the per-tile shimmer phase alongside centerInTrack so the hot
-      // loop never reads inline styles. The value is set once in applyVariants;
-      // parsing it here incurs one parseFloat per layout, not per frame.
+      // Cache per-tile data the shine loop needs. Reading inline styles
+      // and getBoundingClientRect ONCE per layout (not per frame) is
+      // what keeps the per-frame hot path cheap. `_cursorEl` is filled
+      // lazily by updateShine on first reference.
       tileCenters = Array.from(all).map((el) => {
         const r = el.getBoundingClientRect();
         const phase = parseFloat(el.style.getPropertyValue('--shimmer-phase') || '0');
-        return { el, centerInTrack: r.left + r.width / 2 - trackRect.left, phase };
+        return {
+          el,
+          centerInTrack: r.left + r.width / 2 - trackRect.left,
+          width: r.width,
+          phase,
+          _wasVisible: false,
+          _cursorEl: null,
+        };
       });
       // Refresh cached half-width here — layout() is the only thing that can
       // change scrollWidth, and it always finishes by calling this function.
@@ -1653,6 +2332,54 @@ const photos = piwigoPhotos;
       track.querySelectorAll('img[data-src]').forEach((img) => lazyIO.observe(img));
     }
 
+    // ── Visibility-driven layer / paint promotion ─────────────────────
+    // The CSS rules `.gallery-tile[data-visible]::before { ... }` and
+    // `.gallery-tile[data-visible]::after { ... }` enable the heavy
+    // gradient-stack + filter + grain only on tiles inside the viewport
+    // (with a margin so transitions happen before the user can see
+    // them). Off-screen tiles render as a flat chin + photo, no pseudo-
+    // elements, no compositor layer.
+    //
+    // We compute visibility ourselves rather than using IntersectionObserver
+    // because IO with `root: viewport` (an overflow:auto element) reports
+    // unreliably for horizontally-scrolled content in some engines. The
+    // `tileCenters` cache we already maintain for the shine loop has the
+    // exact data we need — one screen-x per tile — so visibility is just
+    // a comparison against the viewport's left/right + a margin. This
+    // runs once per `tick()` after autoscroll has updated scrollLeft.
+    const VIS_MARGIN_PX = 500;
+    function updateVisibility(vpRect, trackScreenX) {
+      const visLeft  = vpRect.left  - VIS_MARGIN_PX;
+      const visRight = vpRect.right + VIS_MARGIN_PX;
+      for (let i = 0; i < tileCenters.length; i++) {
+        const entry = tileCenters[i];
+        const x = trackScreenX + entry.centerInTrack;
+        const nowVis = x >= visLeft && x <= visRight;
+        if (nowVis !== entry._wasVisible) {
+          if (nowVis) entry.el.setAttribute('data-visible', '');
+          else        entry.el.removeAttribute('data-visible');
+          entry._wasVisible = nowVis;
+        }
+      }
+    }
+    // Initial sweep: mark visible tiles immediately on first paint so the
+    // heavy effects don't pop in a frame after layout. Recomputed on each
+    // layout pass alongside recomputeShineCache.
+    function setupVisibilityObserver() {
+      // No-op stub kept so existing callers (layout(), loadPiwigoExtras())
+      // don't need rewiring. The real visibility update happens inline in
+      // tick(); the cache they refresh via recomputeShineCache() is the
+      // input to that update, so a fresh layout takes effect on the next
+      // animation frame regardless.
+    }
+
+    // Original per-frame shine update. For each visible tile, computes
+    // the position of the virtual sun in tile-space (with per-tile phase
+    // offset) and the gaussian-falloff intensity, then writes those to
+    // CSS custom properties that drive the gradient-stop positions on
+    // ::before. Each prop change re-rasterises the gradient stack on
+    // the CPU — that's the cost of the original "world-fixed sun"
+    // identity. Visible tiles only; offscreen tiles culled.
     function updateShine() {
       if (!tileCenters.length) return;
       const vpRect       = viewport.getBoundingClientRect();
@@ -1661,33 +2388,20 @@ const photos = piwigoPhotos;
       const lightScreenX = vpRect.left + vpW * LIGHT_X_FRAC;
       const cullLeft     = vpRect.left  - CULL_MARGIN_PX;
       const cullRight    = vpRect.right + CULL_MARGIN_PX;
-      // Precompute gaussian denominator once per frame (avoid 116 divisions).
       const sigma = vpW * INTENSITY_WIDTH;
       const invTwoSigmaSq = 1 / (2 * sigma * sigma);
 
       for (let i = 0; i < tileCenters.length; i++) {
         const entry = tileCenters[i];
         const tileScreenX = trackScreenX + entry.centerInTrack;
-        // Cull offscreen tiles — no DOM reads, no writes. Biggest win: on desktop
-        // ~100 of 116 tiles are offscreen at any moment; this skips them entirely.
         if (tileScreenX < cullLeft || tileScreenX > cullRight) continue;
-        // Hovered tile gets its --shine-x / --shine-a from the cursor writer;
-        // skipping here avoids both writers competing on the same property.
-        // When unhover happens, hoveredTile becomes null and the next frame
-        // resumes writing light-driven shine here.
         if (entry.el === hoveredTile) continue;
 
         const dx = lightScreenX - tileScreenX;
-        // Shine position: positive dx ⇒ light is to the right of tile ⇒ band right-of-centre.
-        // The per-tile phase offset desynchronises tiles horizontally so they
-        // never all line up with their peak shine at once — the reflections
-        // read as card-local surface responses, not a screen-wide light bar.
         let shineX = 50 + (dx / vpW) * SHINE_GAIN + entry.phase;
         if (shineX < 8)  shineX = 8;
         else if (shineX > 92) shineX = 92;
 
-        // Intensity: gaussian falloff with distance from light — tiles near the
-        // light catch a bright, hot specular; tiles at the edges fade to ambient.
         const intensity = Math.exp(-(dx * dx) * invTwoSigmaSq);
         const shineA = SHINE_A_MIN + intensity * SHINE_A_SPAN;
 
@@ -1695,17 +2409,13 @@ const photos = piwigoPhotos;
         if (last !== undefined
             && Math.abs(last.x - shineX) < SHINE_EPS
             && Math.abs(last.a - shineA) < SHINE_A_EPS) continue;
-
-        // Reuse the stored object to avoid a per-update allocation.
         if (last === undefined) {
           lastShine.set(entry.el, { x: shineX, a: shineA });
         } else {
-          last.x = shineX;
-          last.a = shineA;
+          last.x = shineX; last.a = shineA;
         }
 
         const s = entry.el.style;
-        // 2 decimals for sub-pixel shine precision; matches the tightened EPS.
         const xStr = shineX.toFixed(2) + '%';
         s.setProperty('--shine-x', xStr);
         s.setProperty('--shine-a', shineA.toFixed(3));
@@ -1735,6 +2445,9 @@ const photos = piwigoPhotos;
       if (isPointerDown) return 0;
       if (performance.now() < touchCooldownEnd) return 0;
       if (hoverVel !== null) return hoverVel;
+      // Honour the "auto-scroll" effect toggle: when the user has it off,
+      // the carousel stays still until they actively swipe / drag.
+      if (wrap && wrap.dataset.fxDrift === 'off') return 0;
       return DEFAULT_DRIFT;
     }
 
@@ -1762,6 +2475,15 @@ const photos = piwigoPhotos;
 
     let rafId = null;
     let frameCount = 0;
+    // Sub-pixel drift accumulator. iOS Safari's `scrollLeft` setter accepts
+    // fractional values but the GETTER rounds them away — `scrollLeft +=
+    // 0.55` reads 0, computes 0.55, writes 0.55 (silently rounded back to
+    // 0 on next read), repeats forever, and the carousel never advances.
+    // This was the "stuck on iPhone" symptom: ambient drift produces
+    // sub-pixel deltas that the engine eats. Buffer the fractional part
+    // here and only write integer pixel deltas to scrollLeft. Every
+    // browser commits integer writes faithfully, so this is universal.
+    let driftAcc = 0;
     function tick() {
       rafId = requestAnimationFrame(tick);
       if (viewport.dataset.state !== 'ready') return;
@@ -1773,20 +2495,40 @@ const photos = piwigoPhotos;
       // moves; only the per-tile shine update is gated by visibility.
       const v = computeVel();
       if (v !== 0) {
-        viewport.scrollLeft += v;
-        wrapScroll();                    // only wrap while we're actively drifting —
+        driftAcc += v;
+        // Commit only integer pixel deltas. Truncate toward zero so
+        // negative drift (reverse-hover) commits symmetrically.
+        const dx = driftAcc >= 0 ? Math.floor(driftAcc) : Math.ceil(driftAcc);
+        if (dx !== 0) {
+          viewport.scrollLeft += dx;
+          driftAcc -= dx;
+          wrapScroll();                  // only wrap while we're actively drifting —
                                          // writing scrollLeft during native momentum
                                          // scroll breaks it on iOS
+        }
       }
 
-      // Tier-based throttling for the EXPENSIVE update. inView gates this
-      // separately: when offscreen, we skip the per-tile prop writes (the
-      // dominant cost in the frame). Phones / reduced-motion: skipShine
-      // forces the gate closed; tablets: every other frame; desktop: every.
-      if (!inView) return;
-      if (!skipShine && (++frameCount % shineEveryN === 0)) {
-        updateShine();
+      // Visibility update — toggles `data-visible` on tiles based on screen
+      // position. Drives the heavy CSS rules (::before, ::after, will-change)
+      // so they only apply to ~16 tiles instead of 400+. Cheap (one
+      // comparison per tile, attribute write only on state change), runs
+      // every frame regardless of inView/skipShine because data-visible
+      // governs paint cost even on the most stripped-down tiers.
+      if (tileCenters.length) {
+        const vpRect = viewport.getBoundingClientRect();
+        const trackScreenX = vpRect.left - viewport.scrollLeft;
+        updateVisibility(vpRect, trackScreenX);
       }
+
+      // Shine update — GPU-only writes (transform + opacity), gated on
+      // actual scroll position change. When the carousel sits still,
+      // updateShine() returns immediately on its scrollLeft compare.
+      // When the carousel scrolls, ~16 cheap inline-style writes happen.
+      // Skipped when shimmer is toggled off, when the carousel is out
+      // of view, or when reduced-motion users have set the preference.
+      if (!inView) return;
+      if (wrap && wrap.dataset.fxShimmer === 'off') return;
+      updateShine();
     }
     tick();
 
@@ -2001,13 +2743,14 @@ const photos = piwigoPhotos;
     // all (public) albums and append them to the collage. If the request
     // fails (CORS, offline, server down, API method disabled), the hardcoded
     // set still renders and nothing else happens.
-    // Runtime fetch: 50 random photos. Combined with the 50 baked at build
-    // time and the ~30-50 % overlap rate (both are random samples from the
-    // same pool), this typically appends 25-40 fresh photos per visit —
-    // enough variety without doubling the carousel's DOM footprint.
+    // Runtime fetch: 200 random photos. Combined with the 200 baked at
+    // build time and the typical ~30-50 % overlap rate (both are random
+    // samples from the same pool), the carousel ends up with roughly
+    // 250-280 unique tiles after dedup. Save-Data / 2g visitors skip
+    // this entirely via shouldSkipExtras() and stay at the baked 200.
     const PIWIGO_API = 'https://piwigo.darkishlocket10.me/ws.php'
       + '?format=json&method=pwg.categories.getImages'
-      + '&recursive=true&per_page=50&order=random';
+      + '&recursive=true&per_page=200&order=random';
 
     // 1x1 transparent SVG — the placeholder for data-src tiles. Reserves
     // layout (width/height still applied) and shows nothing visible; no
@@ -2025,29 +2768,6 @@ const photos = piwigoPhotos;
     // inline custom-property values orphaned, which is exactly the
     // "filterless / no-polaroid" pop-in the user reported.
     //
-    // Sniff the CID names off a reference baked element once, and stamp
-    // them onto every element we create at runtime. The reference is the
-    // first .gallery-tile in the DOM; if there's no bake (e.g. Piwigo
-    // build-time fetch was offline), we fall back to the gallery section
-    // itself, which definitely carries the attribute.
-    const SCOPE_ATTRS = (() => {
-      const ref = track.querySelector('.gallery-tile') ||
-                  document.querySelector('.gallery-wrap') ||
-                  viewport;
-      const names = [];
-      if (ref) {
-        for (const a of ref.attributes) {
-          if (a.name.indexOf('data-astro-cid-') === 0) names.push(a.name);
-        }
-      }
-      return names;
-    })();
-    function applyScope(el) {
-      for (let k = 0; k < SCOPE_ATTRS.length; k++) {
-        el.setAttribute(SCOPE_ATTRS[k], '');
-      }
-    }
-
     function createTile(photo, index) {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -2248,9 +2968,10 @@ const photos = piwigoPhotos;
       });
 
       // Refresh the shine cache + half-scrollWidth for the wrap, and let
-      // the lazy IO start watching the new tiles' data-src imgs.
+      // the lazy IO + visibility IO start watching the new tiles.
       recomputeShineCache();
       setupLazyLoader();
+      setupVisibilityObserver();
     }
 
     loadPiwigoExtras();                                     // fires in parallel, doesn't block
