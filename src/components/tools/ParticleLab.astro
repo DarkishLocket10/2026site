@@ -1,0 +1,1377 @@
+---
+---
+
+<div id="particle-lab-tool" class="pl-shell">
+  <div class="pl-titlebar">
+    <span>Particle Lab 2026</span>
+    <span id="pl-stats">0 dots</span>
+  </div>
+
+  <div class="pl-screen">
+    <canvas id="particle-canvas" width="400" height="250" aria-label="Particle simulation canvas"></canvas>
+  </div>
+
+  <div class="pl-menu" aria-label="Particle lab menu">
+    <div class="pl-palette" role="toolbar" aria-label="Material selector">
+      <button type="button" class="pl-tool" data-material="sand" title="Loose granular sand"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>SAND</span></button>
+      <button type="button" class="pl-tool" data-material="water" title="Water splash"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>WATER</span></button>
+      <button type="button" class="pl-tool" data-material="flame" title="Fast heat and ignition"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>FLAME</span></button>
+      <button type="button" class="pl-tool" data-material="spore" title="Spore growth near water"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>SPORE</span></button>
+      <button type="button" class="pl-tool" data-material="wood" title="Burnable solid"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>WOOD</span></button>
+      <button type="button" class="pl-tool" data-material="blast" title="Pressure-sensitive blast dust"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>BLAST</span></button>
+      <button type="button" class="pl-tool" data-material="oil" title="Flammable liquid"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>OIL</span></button>
+      <button type="button" class="pl-tool" data-material="stone" title="Heavy crumbling grit"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>STONE</span></button>
+      <button type="button" class="pl-tool" data-material="lava" title="Hot heavy liquid"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>LAVA</span></button>
+      <button type="button" class="pl-tool" data-material="gas" title="Flammable gas"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>GAS</span></button>
+      <button type="button" class="pl-tool" data-material="vapor" title="Rising vapor"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>VAPOR</span></button>
+      <button type="button" class="pl-tool" data-material="acid" title="Melts many dots"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>ACID</span></button>
+      <button type="button" class="pl-tool" data-material="metal" title="Solid conductor"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>METAL</span></button>
+      <button type="button" class="pl-tool" data-material="wall" title="Indestructible wall"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>WALL</span></button>
+      <button type="button" class="pl-tool" data-material="gust" title="Directional gust"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>GUST</span></button>
+      <button type="button" class="pl-tool" data-material="wipe" title="Delete dots"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>WIPE</span></button>
+      <button type="button" class="pl-tool" data-material="ice" title="Freezes water and melts near heat"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>ICE</span></button>
+      <button type="button" class="pl-tool" data-material="snow" title="Soft flakes that melt"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>SNOW</span></button>
+      <button type="button" class="pl-tool" data-material="salt" title="Dissolves in water and falls as grains"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>SALT</span></button>
+      <button type="button" class="pl-tool" data-material="plant" title="Grows through water and burns"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>PLANT</span></button>
+      <button type="button" class="pl-tool" data-material="arc" title="Electric ignition and metal conduction"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>ARC</span></button>
+      <button type="button" class="pl-tool" data-material="charge" title="Pressure blast charge"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>CHARGE</span></button>
+      <button type="button" class="pl-tool" data-material="glass" title="Transparent solid made by heat"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>GLASS</span></button>
+      <button type="button" class="pl-tool" data-material="sink" title="Consumes nearby matter"><span class="pl-markers"><i class="pl-l"></i><i class="pl-r"></i></span><span>SINK</span></button>
+    </div>
+
+    <div class="pl-controls">
+      <label class="pl-control pl-control-wide" title="Pen size">
+        <span>BRUSH</span>
+        <input id="pl-pen-size" type="range" min="1" max="12" value="4" />
+        <output id="pl-pen-size-value" for="pl-pen-size">4</output>
+      </label>
+      <button type="button" class="pl-button" id="pl-speed">RATE x1</button>
+      <button type="button" class="pl-button" id="pl-stop">STOP</button>
+      <button type="button" class="pl-button" id="pl-side">WRAP OFF</button>
+      <button type="button" class="pl-button" id="pl-grid">GRID OFF</button>
+      <button type="button" class="pl-button" id="pl-bg">BG FLAT</button>
+      <button type="button" class="pl-button" id="pl-demo">SCENE</button>
+      <button type="button" class="pl-button" id="pl-clear">WIPE</button>
+      <button type="button" class="pl-button" id="pl-reset">RESET</button>
+    </div>
+
+    <div class="pl-status">
+      <span id="pl-left-status"><b></b> L: SAND</span>
+      <span id="pl-right-status"><b></b> R: GUST</span>
+      <span id="pl-mode-status">DRAW FREE</span>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  #particle-lab-tool {
+    --pl-surface: color-mix(in srgb, var(--card-bg) 84%, transparent);
+    --pl-panel: color-mix(in srgb, var(--card-bg) 74%, var(--bg) 26%);
+    --pl-panel-strong: color-mix(in srgb, var(--card-bg) 90%, var(--color-accent) 10%);
+    --pl-title: var(--text);
+    --pl-title-soft: var(--color-text-soft);
+    --pl-text: var(--text);
+    --pl-soft: var(--color-text-soft);
+    --pl-control: color-mix(in srgb, var(--card-bg) 72%, var(--text) 6%);
+    --pl-control-hover: color-mix(in srgb, var(--card-bg) 66%, var(--color-accent) 18%);
+    --pl-screen-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+    width: min(100%, 960px);
+    margin: 0 auto;
+    padding: 16px;
+    border: 0;
+    border-radius: var(--radius-3xl);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 94%, #fff 6%), var(--pl-surface));
+    color: var(--pl-text);
+    box-shadow:
+      0 24px 70px rgba(15, 23, 42, 0.16),
+      0 1px 0 rgba(255, 255, 255, 0.75) inset;
+    font-family: var(--font-sans, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
+    -webkit-backdrop-filter: blur(18px) saturate(1.18);
+    backdrop-filter: blur(18px) saturate(1.18);
+  }
+
+  .dark #particle-lab-tool {
+    --pl-surface: color-mix(in srgb, var(--card-bg) 82%, rgba(255, 255, 255, 0.06));
+    --pl-panel: color-mix(in srgb, var(--card-bg) 78%, #111827 22%);
+    --pl-panel-strong: color-mix(in srgb, var(--card-bg) 76%, var(--color-accent) 8%);
+    --pl-title: #f3f7f8;
+    --pl-title-soft: #aeb9bf;
+    --pl-control: rgba(255, 255, 255, 0.07);
+    --pl-control-hover: rgba(255, 255, 255, 0.12);
+    --pl-screen-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+    box-shadow:
+      0 24px 72px rgba(0, 0, 0, 0.36),
+      0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  }
+
+  #particle-lab-tool .pl-titlebar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 12px;
+    color: var(--pl-title);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  #particle-lab-tool .pl-titlebar span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #particle-lab-tool .pl-titlebar span:first-child::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  #particle-lab-tool #pl-stats {
+    min-width: 132px;
+    text-align: right;
+    color: var(--pl-title-soft);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #particle-lab-tool .pl-screen {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border: 0;
+    border-radius: var(--radius-2xl);
+    background: #000;
+    box-shadow: var(--pl-screen-shadow);
+  }
+
+  #particle-lab-tool #particle-canvas {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 10;
+    display: block;
+    border: 0;
+    border-radius: inherit;
+    background: #000;
+    cursor: crosshair;
+    image-rendering: pixelated;
+    touch-action: none;
+  }
+
+  #particle-lab-tool .pl-menu {
+    margin-top: 12px;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--radius-2xl);
+    background: var(--pl-panel);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.55) inset,
+      0 8px 24px rgba(15, 23, 42, 0.07);
+  }
+
+  #particle-lab-tool .pl-palette {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 6px;
+    padding: 10px;
+    border-bottom: 0;
+  }
+
+  #particle-lab-tool .pl-tool,
+  #particle-lab-tool .pl-button {
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--tool-color, #eee);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 850;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  #particle-lab-tool .pl-tool {
+    display: grid;
+    grid-template-columns: 13px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 4px;
+    min-height: 26px;
+    padding: 6px 7px;
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--card-bg) 58%, transparent);
+    color: color-mix(in srgb, var(--tool-color, var(--pl-title)) 58%, var(--pl-title) 42%);
+    box-shadow: none;
+  }
+
+  #particle-lab-tool .pl-tool:hover,
+  #particle-lab-tool .pl-button:hover {
+    background: var(--pl-control-hover);
+    color: var(--pl-title);
+  }
+
+  #particle-lab-tool .pl-tool.is-left,
+  #particle-lab-tool .pl-tool.is-right {
+    background: var(--pl-panel-strong);
+    color: var(--pl-title);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  #particle-lab-tool .pl-tool span:last-child,
+  #particle-lab-tool .pl-button {
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+  }
+
+  #particle-lab-tool .pl-markers {
+    position: relative;
+    width: 14px;
+    height: 10px;
+    display: block;
+  }
+
+  #particle-lab-tool .pl-markers i {
+    position: absolute;
+    top: 1px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 0;
+    opacity: 0.18;
+    box-shadow: none;
+  }
+
+  #particle-lab-tool .pl-l {
+    left: 0;
+    background: #ff4a43;
+  }
+
+  #particle-lab-tool .pl-r {
+    right: 0;
+    background: #3885ff;
+  }
+
+  #particle-lab-tool .pl-tool.is-left .pl-l,
+  #particle-lab-tool .pl-tool.is-right .pl-r {
+    opacity: 1;
+  }
+
+  #particle-lab-tool .pl-controls {
+    display: grid;
+    grid-template-columns: minmax(145px, 1.45fr) repeat(8, minmax(42px, 1fr));
+    gap: 6px;
+    align-items: center;
+    padding: 0 10px 10px;
+    border-bottom: 0;
+  }
+
+  #particle-lab-tool .pl-control {
+    display: grid;
+    grid-template-columns: auto minmax(70px, 1fr) 2ch;
+    align-items: center;
+    gap: 7px;
+    min-height: 28px;
+    padding: 5px 8px;
+    border-radius: var(--radius-lg);
+    background: var(--pl-control);
+    color: var(--pl-soft);
+    font-size: 10px;
+    font-weight: 850;
+    line-height: 1;
+  }
+
+  #particle-lab-tool .pl-control input {
+    width: 100%;
+    accent-color: var(--color-accent);
+  }
+
+  #particle-lab-tool .pl-control output {
+    min-width: 2ch;
+    text-align: right;
+    color: var(--pl-title);
+    font-variant-numeric: tabular-nums;
+  }
+
+  #particle-lab-tool .pl-button {
+    min-height: 28px;
+    padding: 6px 6px;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: var(--pl-control);
+    color: var(--pl-soft);
+    text-align: center;
+  }
+
+  #particle-lab-tool .pl-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0 12px 12px;
+    color: var(--pl-soft);
+    font-size: 10px;
+    font-weight: 850;
+    line-height: 1;
+  }
+
+  #particle-lab-tool .pl-status span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  #particle-lab-tool .pl-status b {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  #particle-lab-tool #pl-left-status b {
+    background: #ff4a43;
+  }
+
+  #particle-lab-tool #pl-right-status b {
+    background: #3885ff;
+  }
+
+  @media (max-width: 760px) {
+    #particle-lab-tool {
+      width: min(100%, 520px);
+      padding: 10px;
+    }
+
+    #particle-lab-tool .pl-palette {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #particle-lab-tool .pl-controls {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #particle-lab-tool .pl-control-wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 420px) {
+    #particle-lab-tool {
+      padding: 8px;
+    }
+
+    #particle-lab-tool .pl-titlebar {
+      font-size: 11px;
+    }
+
+    #particle-lab-tool #pl-stats {
+      min-width: 92px;
+      font-size: 10px;
+    }
+
+    #particle-lab-tool .pl-tool,
+    #particle-lab-tool .pl-button,
+    #particle-lab-tool .pl-control,
+    #particle-lab-tool .pl-status {
+      font-size: 10px;
+    }
+  }
+</style>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function () {
+  var root = document.getElementById('particle-lab-tool');
+  var canvas = document.getElementById('particle-canvas');
+  if (!root || !canvas) return;
+
+  var ctx = canvas.getContext('2d', { alpha: false });
+  var W = canvas.width;
+  var H = canvas.height;
+  var SIZE = W * H;
+
+  var EMPTY = 0;
+  var SAND = 1;
+  var WATER = 2;
+  var FLAME = 3;
+  var SPORE = 4;
+  var WOOD = 5;
+  var BLAST_DUST = 6;
+  var OIL = 7;
+  var STONE = 8;
+  var LAVA = 9;
+  var GAS = 10;
+  var VAPOR = 11;
+  var ACID = 12;
+  var METAL = 13;
+  var WALL = 14;
+  var GUST = 15;
+  var WIPE = 16;
+  var ICE = 17;
+  var SNOW = 18;
+  var SALT = 19;
+  var PLANT = 20;
+  var ARC = 21;
+  var CHARGE = 22;
+  var GLASS = 23;
+  var SINK = 24;
+
+  var materials = [
+    { key: 'sand', id: SAND, label: 'SAND', color: [220, 205, 74], text: '#e7da50' },
+    { key: 'water', id: WATER, label: 'WATER', color: [42, 126, 230], text: '#58a8ff' },
+    { key: 'flame', id: FLAME, label: 'FLAME', color: [255, 84, 32], text: '#ff5d44' },
+    { key: 'spore', id: SPORE, label: 'SPORE', color: [105, 207, 80], text: '#9ee46d' },
+    { key: 'wood', id: WOOD, label: 'WOOD', color: [130, 88, 45], text: '#c08a4a' },
+    { key: 'blast', id: BLAST_DUST, label: 'BLAST', color: [196, 88, 52], text: '#f58452' },
+    { key: 'oil', id: OIL, label: 'OIL', color: [84, 65, 42], text: '#c3a16d' },
+    { key: 'stone', id: STONE, label: 'STONE', color: [128, 128, 128], text: '#b9b9b9' },
+    { key: 'lava', id: LAVA, label: 'LAVA', color: [230, 74, 22], text: '#ff793b' },
+    { key: 'gas', id: GAS, label: 'GAS', color: [170, 212, 130], text: '#b8ec8c' },
+    { key: 'vapor', id: VAPOR, label: 'VAPOR', color: [180, 190, 198], text: '#d5dde4' },
+    { key: 'acid', id: ACID, label: 'ACID', color: [114, 230, 50], text: '#7cff54' },
+    { key: 'metal', id: METAL, label: 'METAL', color: [146, 154, 164], text: '#ccd2d8' },
+    { key: 'wall', id: WALL, label: 'WALL', color: [92, 98, 105], text: '#9ca4ad' },
+    { key: 'gust', id: GUST, label: 'GUST', color: [135, 170, 255], text: '#9bb8ff' },
+    { key: 'wipe', id: WIPE, label: 'WIPE', color: [245, 245, 245], text: '#fff' },
+    { key: 'ice', id: ICE, label: 'ICE', color: [158, 225, 255], text: '#a8e6ff' },
+    { key: 'snow', id: SNOW, label: 'SNOW', color: [236, 248, 255], text: '#f0fbff' },
+    { key: 'salt', id: SALT, label: 'SALT', color: [230, 230, 220], text: '#f2efde' },
+    { key: 'plant', id: PLANT, label: 'PLANT', color: [62, 184, 76], text: '#56df70' },
+    { key: 'arc', id: ARC, label: 'ARC', color: [255, 242, 92], text: '#ffe95c' },
+    { key: 'charge', id: CHARGE, label: 'CHARGE', color: [214, 42, 54], text: '#ff5a66' },
+    { key: 'glass', id: GLASS, label: 'GLASS', color: [126, 214, 224], text: '#90e8ee' },
+    { key: 'sink', id: SINK, label: 'SINK', color: [186, 93, 255], text: '#c589ff' }
+  ];
+  var byKey = {};
+  var byId = {};
+  materials.forEach(function (item) {
+    byKey[item.key] = item;
+    byId[item.id] = item;
+    var button = root.querySelector('[data-material="' + item.key + '"]');
+    if (button) button.style.setProperty('--tool-color', item.text);
+  });
+
+  var cells = new Uint8Array(SIZE);
+  var life = new Uint8Array(SIZE);
+  var shade = new Int8Array(SIZE);
+  var moved = new Uint8Array(SIZE);
+  var image = ctx.createImageData(W, H);
+  var pixels = image.data;
+  var effects = [];
+  var glowCells = [];
+  var shake = 0;
+  var flash = 0;
+
+  var leftMaterial = SAND;
+  var rightMaterial = GUST;
+  var brush = 4;
+  var speedLevels = [1, 2, 4, 8];
+  var speedIndex = 0;
+  var speed = speedLevels[speedIndex];
+  var paused = false;
+  var sideLoop = false;
+  var showGrid = false;
+  var bgModes = ['FLAT', 'SHADE', 'DARK'];
+  var bgIndex = 0;
+  var drawing = false;
+  var drawMaterial = SAND;
+  var lastPoint = null;
+  var frame = 0;
+  var lastStatTime = 0;
+  var fpsFrames = 0;
+  var fps = 0;
+
+  var statsEl = document.getElementById('pl-stats');
+  var penInput = document.getElementById('pl-pen-size');
+  var penValue = document.getElementById('pl-pen-size-value');
+  var speedButton = document.getElementById('pl-speed');
+  var stopButton = document.getElementById('pl-stop');
+  var sideButton = document.getElementById('pl-side');
+  var gridButton = document.getElementById('pl-grid');
+  var bgButton = document.getElementById('pl-bg');
+  var demoButton = document.getElementById('pl-demo');
+  var clearButton = document.getElementById('pl-clear');
+  var resetButton = document.getElementById('pl-reset');
+  var leftStatus = document.getElementById('pl-left-status');
+  var rightStatus = document.getElementById('pl-right-status');
+  var toolButtons = root.querySelectorAll('[data-material]');
+
+  function clampByte(value) {
+    return value < 0 ? 0 : value > 255 ? 255 : value;
+  }
+
+  function wrapX(x) {
+    if (!sideLoop) return x;
+    if (x < 0) return W - 1;
+    if (x >= W) return 0;
+    return x;
+  }
+
+  function indexAt(x, y) {
+    if (y < 0 || y >= H) return -1;
+    x = wrapX(x);
+    if (x < 0 || x >= W) return -1;
+    return y * W + x;
+  }
+
+  function randomShade() {
+    return Math.floor(Math.random() * 25) - 12;
+  }
+
+  function setCell(index, material) {
+    if (index < 0 || index >= SIZE) return;
+    if (material === WIPE || material === EMPTY) {
+      cells[index] = EMPTY;
+      life[index] = 0;
+      shade[index] = 0;
+      return;
+    }
+    if (material === GUST) return;
+    cells[index] = material;
+    shade[index] = randomShade();
+    if (material === FLAME) life[index] = 14 + Math.floor(Math.random() * 28);
+    else if (material === GAS) life[index] = 120 + Math.floor(Math.random() * 90);
+    else if (material === VAPOR) life[index] = 70 + Math.floor(Math.random() * 75);
+    else if (material === LAVA) life[index] = 180 + Math.floor(Math.random() * 60);
+    else if (material === ARC) life[index] = 8 + Math.floor(Math.random() * 10);
+    else if (material === SINK) life[index] = 180 + Math.floor(Math.random() * 90);
+    else life[index] = 0;
+  }
+
+  function moveCell(from, to) {
+    if (to < 0 || to >= SIZE || from === to) return false;
+    cells[to] = cells[from];
+    life[to] = life[from];
+    shade[to] = shade[from];
+    cells[from] = EMPTY;
+    life[from] = 0;
+    shade[from] = 0;
+    moved[to] = 1;
+    return true;
+  }
+
+  function swapCells(a, b) {
+    var c = cells[a];
+    var l = life[a];
+    var s = shade[a];
+    cells[a] = cells[b];
+    life[a] = life[b];
+    shade[a] = shade[b];
+    cells[b] = c;
+    life[b] = l;
+    shade[b] = s;
+    moved[a] = 1;
+    moved[b] = 1;
+    return true;
+  }
+
+  function isFlammable(material) {
+    return material === WOOD || material === OIL || material === BLAST_DUST || material === GAS || material === SPORE || material === PLANT || material === CHARGE;
+  }
+
+  function canDisplace(moving, target) {
+    if (target === EMPTY) return true;
+    if (moving === STONE && (target === WATER || target === OIL || target === ACID || target === GAS || target === VAPOR || target === SNOW)) return true;
+    if ((moving === SAND || moving === BLAST_DUST || moving === SPORE || moving === SALT || moving === SNOW) && (target === WATER || target === OIL || target === GAS || target === VAPOR)) return true;
+    if (moving === WATER && (target === OIL || target === GAS || target === VAPOR || target === SNOW || target === SALT)) return true;
+    if (moving === ACID && (target === WATER || target === OIL || target === GAS || target === VAPOR || target === SNOW || target === SALT)) return true;
+    if (moving === LAVA && (target === WATER || target === OIL || target === GAS || target === VAPOR || target === SNOW || target === ICE)) return true;
+    if (moving === ARC && (target === GAS || target === VAPOR || target === WATER || target === OIL)) return true;
+    return false;
+  }
+
+  function tryMove(x, y, index, dx, dy) {
+    var to = indexAt(x + dx, y + dy);
+    if (to < 0) return false;
+    var target = cells[to];
+    if (target === EMPTY) return moveCell(index, to);
+    if (canDisplace(cells[index], target)) return swapCells(index, to);
+    return false;
+  }
+
+  function ignite(index) {
+    if (index < 0) return;
+    if (isFlammable(cells[index])) setCell(index, FLAME);
+  }
+
+  function addEffect(type, x, y, radius, color, lifeSpan) {
+    effects.push({
+      type: type,
+      x: x,
+      y: y,
+      radius: radius,
+      color: color,
+      life: lifeSpan,
+      maxLife: lifeSpan
+    });
+    if (effects.length > 80) effects.shift();
+  }
+
+  function explode(cx, cy, radius) {
+    var r2 = radius * radius;
+    addEffect('blast', cx, cy, radius, '255, 176, 68', 18);
+    shake = Math.max(shake, Math.min(8, radius * 0.35));
+    flash = Math.max(flash, 0.26);
+    for (var yy = -radius; yy <= radius; yy += 1) {
+      for (var xx = -radius; xx <= radius; xx += 1) {
+        if (xx * xx + yy * yy > r2) continue;
+        var x = cx + xx;
+        var y = cy + yy;
+        var index = indexAt(x, y);
+        if (index < 0 || cells[index] === WALL || cells[index] === METAL) continue;
+        if (Math.random() < 0.42) setCell(index, FLAME);
+        else if (Math.random() < 0.18) setCell(index, GAS);
+        else setCell(index, EMPTY);
+      }
+    }
+  }
+
+  function burnAround(x, y, index) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        if (xx === 0 && yy === 0) continue;
+        var n = indexAt(x + xx, y + yy);
+        if (n < 0) continue;
+        var material = cells[n];
+        if (material === WATER || material === ACID || material === ICE || material === SNOW) {
+          setCell(n, VAPOR);
+          setCell(index, VAPOR);
+          addEffect('spark', x, y, 6, '160, 230, 255', 9);
+          return true;
+        }
+        if (material === CHARGE && Math.random() < 0.18) {
+          explode(x + xx, y + yy, 18);
+        } else if (material === BLAST_DUST && Math.random() < 0.08) {
+          explode(x + xx, y + yy, 10);
+        } else if (isFlammable(material) && Math.random() < 0.14) {
+          ignite(n);
+        }
+      }
+    }
+    return false;
+  }
+
+  function updateGranular(x, y, index, dir) {
+    if (tryMove(x, y, index, 0, 1)) return;
+    if (tryMove(x, y, index, dir, 1)) return;
+    tryMove(x, y, index, -dir, 1);
+  }
+
+  function updateBlastDust(x, y, index, dir) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n >= 0 && (cells[n] === FLAME || cells[n] === LAVA)) {
+          explode(x, y, 9);
+          return;
+        }
+      }
+    }
+    updateGranular(x, y, index, dir);
+  }
+
+  function updateSpore(x, y, index, dir) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n >= 0 && cells[n] === WATER && Math.random() < 0.18) {
+          setCell(n, EMPTY);
+          setCell(index, WOOD);
+          for (var grow = 1; grow < 8; grow += 1) {
+            var g = indexAt(x + Math.floor(Math.random() * 5) - 2, y - grow);
+            if (g >= 0 && cells[g] === EMPTY) setCell(g, WOOD);
+          }
+          return;
+        }
+      }
+    }
+    updateGranular(x, y, index, dir);
+  }
+
+  function updateSnow(x, y, index, dir) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n >= 0 && (cells[n] === FLAME || cells[n] === LAVA)) {
+          setCell(index, WATER);
+          addEffect('spark', x, y, 5, '180, 235, 255', 8);
+          return;
+        }
+      }
+    }
+    updateGranular(x, y, index, dir);
+  }
+
+  function updateSalt(x, y, index, dir) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n >= 0 && cells[n] === WATER && Math.random() < 0.18) {
+          setCell(index, WATER);
+          if (Math.random() < 0.28) setCell(n, EMPTY);
+          addEffect('spark', x, y, 4, '235, 240, 210', 7);
+          return;
+        }
+      }
+    }
+    updateGranular(x, y, index, dir);
+  }
+
+  function updateLiquid(x, y, index, dir, spread) {
+    if (tryMove(x, y, index, 0, 1)) return;
+    if (tryMove(x, y, index, dir, 1)) return;
+    if (tryMove(x, y, index, -dir, 1)) return;
+    for (var step = 1; step <= spread; step += 1) {
+      if (tryMove(x, y, index, dir * step, 0)) return;
+    }
+    for (var back = 1; back <= spread; back += 1) {
+      if (tryMove(x, y, index, -dir * back, 0)) return;
+    }
+  }
+
+  function updateWater(x, y, index, dir) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n >= 0 && (cells[n] === FLAME || cells[n] === LAVA)) {
+          setCell(index, VAPOR);
+          if (cells[n] === FLAME) setCell(n, VAPOR);
+          else if (Math.random() < 0.5) setCell(n, STONE);
+          return;
+        }
+        if (n >= 0 && cells[n] === ICE && Math.random() < 0.015) {
+          setCell(index, ICE);
+          return;
+        }
+      }
+    }
+    updateLiquid(x, y, index, dir, 4);
+  }
+
+  function updateOil(x, y, index, dir) {
+    burnAround(x, y, index);
+    updateLiquid(x, y, index, dir, 3);
+  }
+
+  function updateAcid(x, y, index, dir) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n < 0 || n === index) continue;
+        var material = cells[n];
+        if (material !== EMPTY && material !== WALL && material !== ACID && material !== WATER && Math.random() < 0.08) {
+          setCell(n, EMPTY);
+          if (Math.random() < 0.12) setCell(index, EMPTY);
+          return;
+        }
+      }
+    }
+    updateLiquid(x, y, index, dir, 4);
+  }
+
+  function updateLava(x, y, index, dir) {
+    if (life[index] > 0) life[index] -= 1;
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n < 0 || n === index) continue;
+        if (cells[n] === WATER || cells[n] === ICE || cells[n] === SNOW) {
+          setCell(n, VAPOR);
+          if (Math.random() < 0.28) setCell(index, STONE);
+          return;
+        }
+        if ((cells[n] === SAND || cells[n] === STONE) && Math.random() < 0.035) {
+          setCell(n, GLASS);
+          addEffect('spark', x + xx, y + yy, 5, '120, 230, 240', 8);
+        }
+        if (isFlammable(cells[n]) && Math.random() < 0.2) ignite(n);
+      }
+    }
+    if (life[index] === 0 && Math.random() < 0.025) {
+      setCell(index, STONE);
+      return;
+    }
+    updateLiquid(x, y, index, dir, 2);
+  }
+
+  function updateFlame(x, y, index, dir) {
+    if (burnAround(x, y, index)) return;
+    if (life[index] > 0) life[index] -= 1;
+    if (life[index] === 0 || Math.random() < 0.045) {
+      setCell(index, Math.random() < 0.4 ? GAS : EMPTY);
+      return;
+    }
+    if (tryMove(x, y, index, dir, -1)) return;
+    if (tryMove(x, y, index, 0, -1)) return;
+    if (Math.random() < 0.35) tryMove(x, y, index, -dir, 0);
+  }
+
+  function updateGas(x, y, index, dir) {
+    if (burnAround(x, y, index) && Math.random() < 0.12) {
+      explode(x, y, 7);
+      return;
+    }
+    if (life[index] > 0) life[index] -= 1;
+    if (life[index] === 0 && Math.random() < 0.08) {
+      setCell(index, EMPTY);
+      return;
+    }
+    if (tryMove(x, y, index, dir, -1)) return;
+    if (tryMove(x, y, index, 0, -1)) return;
+    if (tryMove(x, y, index, -dir, -1)) return;
+    if (Math.random() < 0.45) tryMove(x, y, index, dir, 0);
+  }
+
+  function updateVapor(x, y, index, dir) {
+    if (life[index] > 0) life[index] -= 1;
+    if (life[index] === 0) {
+      setCell(index, WATER);
+      return;
+    }
+    if (tryMove(x, y, index, dir, -1)) return;
+    if (tryMove(x, y, index, 0, -1)) return;
+    if (tryMove(x, y, index, -dir, -1)) return;
+    if (Math.random() < 0.25) tryMove(x, y, index, dir, 0);
+  }
+
+  function updateIce(x, y, index) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n < 0) continue;
+        if (cells[n] === FLAME || cells[n] === LAVA) {
+          setCell(index, WATER);
+          addEffect('spark', x, y, 7, '150, 225, 255', 9);
+          return;
+        }
+        if (cells[n] === WATER && Math.random() < 0.012) {
+          setCell(n, ICE);
+          return;
+        }
+      }
+    }
+  }
+
+  function updatePlant(x, y, index) {
+    updateStaticFireContact(x, y, index);
+    if (cells[index] !== PLANT) return;
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n < 0) continue;
+        if (cells[n] === WATER && Math.random() < 0.08) {
+          setCell(n, PLANT);
+          var up = indexAt(x + Math.floor(Math.random() * 3) - 1, y - 1);
+          if (up >= 0 && cells[up] === EMPTY && Math.random() < 0.5) setCell(up, PLANT);
+          addEffect('spark', x, y, 5, '75, 230, 105', 8);
+          return;
+        }
+      }
+    }
+  }
+
+  function updateArc(x, y, index, dir) {
+    glowCells.push({ x: x, y: y, color: '255, 238, 88', radius: 9 });
+    if (life[index] > 0) life[index] -= 1;
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        if (xx === 0 && yy === 0) continue;
+        var n = indexAt(x + xx, y + yy);
+        if (n < 0) continue;
+        var material = cells[n];
+        if (material === CHARGE) {
+          explode(x + xx, y + yy, 20);
+          setCell(index, EMPTY);
+          return;
+        }
+        if (material === BLAST_DUST || isFlammable(material)) ignite(n);
+        if (material === METAL && Math.random() < 0.24) {
+          var jump = indexAt(x + xx + (Math.random() < 0.5 ? -1 : 1), y + yy + (Math.random() < 0.5 ? -1 : 1));
+          if (jump >= 0 && cells[jump] === EMPTY) setCell(jump, ARC);
+        }
+      }
+    }
+    if (life[index] === 0 || Math.random() < 0.08) {
+      setCell(index, EMPTY);
+      return;
+    }
+    if (tryMove(x, y, index, dir, Math.random() < 0.5 ? -1 : 1)) return;
+    if (tryMove(x, y, index, -dir, Math.random() < 0.5 ? -1 : 1)) return;
+    tryMove(x, y, index, dir, 0);
+  }
+
+  function updateCharge(x, y, index) {
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n >= 0 && (cells[n] === FLAME || cells[n] === LAVA || cells[n] === ARC)) {
+          explode(x, y, 20);
+          return;
+        }
+      }
+    }
+  }
+
+  function updateSink(x, y, index) {
+    if (life[index] > 0) life[index] -= 1;
+    if (life[index] === 0 && Math.random() < 0.05) {
+      setCell(index, EMPTY);
+      return;
+    }
+    glowCells.push({ x: x, y: y, color: '186, 93, 255', radius: 12 });
+    for (var yy = -2; yy <= 2; yy += 1) {
+      for (var xx = -2; xx <= 2; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n < 0 || n === index || cells[n] === WALL || cells[n] === SINK) continue;
+        if (Math.random() < 0.16) {
+          setCell(n, EMPTY);
+          addEffect('spark', x + xx, y + yy, 3, '190, 110, 255', 5);
+        }
+      }
+    }
+  }
+
+  function updateStaticFireContact(x, y, index) {
+    if (!isFlammable(cells[index])) return;
+    for (var yy = -1; yy <= 1; yy += 1) {
+      for (var xx = -1; xx <= 1; xx += 1) {
+        var n = indexAt(x + xx, y + yy);
+        if (n >= 0 && (cells[n] === FLAME || cells[n] === LAVA) && Math.random() < 0.05) {
+          setCell(index, FLAME);
+          return;
+        }
+      }
+    }
+  }
+
+  function stepSimulation() {
+    frame += 1;
+    moved.fill(0);
+    var leftFirst = (frame & 1) === 0;
+    for (var y = H - 1; y >= 0; y -= 1) {
+      for (var xi = 0; xi < W; xi += 1) {
+        var x = leftFirst ? xi : W - 1 - xi;
+        var index = y * W + x;
+        if (moved[index]) continue;
+        var material = cells[index];
+        if (material === EMPTY || material === WALL || material === METAL || material === GLASS) continue;
+        var dir = ((x + y + frame) & 1) === 0 ? 1 : -1;
+        if (material === SAND) updateGranular(x, y, index, dir);
+        else if (material === BLAST_DUST) updateBlastDust(x, y, index, dir);
+        else if (material === SPORE) updateSpore(x, y, index, dir);
+        else if (material === SNOW) updateSnow(x, y, index, dir);
+        else if (material === SALT) updateSalt(x, y, index, dir);
+        else if (material === STONE) updateGranular(x, y, index, dir);
+        else if (material === WATER) updateWater(x, y, index, dir);
+        else if (material === OIL) updateOil(x, y, index, dir);
+        else if (material === ACID) updateAcid(x, y, index, dir);
+        else if (material === LAVA) updateLava(x, y, index, dir);
+        else if (material === FLAME) updateFlame(x, y, index, dir);
+        else if (material === GAS) updateGas(x, y, index, dir);
+        else if (material === VAPOR) updateVapor(x, y, index, dir);
+        else if (material === ICE) updateIce(x, y, index);
+        else if (material === PLANT) updatePlant(x, y, index);
+        else if (material === ARC) updateArc(x, y, index, dir);
+        else if (material === CHARGE) updateCharge(x, y, index);
+        else if (material === SINK) updateSink(x, y, index);
+        else if (material === WOOD) updateStaticFireContact(x, y, index);
+      }
+    }
+  }
+
+  function colorFor(material, index) {
+    if (material === EMPTY) {
+      if (bgModes[bgIndex] === 'DARK') return [0, 0, 0];
+      if (bgModes[bgIndex] === 'SHADE') return [8, 10, 14];
+      return [0, 0, 0];
+    }
+    var item = byId[material] || byId[SAND];
+    var base = item.color;
+    var jitter = shade[index];
+    if (material === FLAME) {
+      var pulse = (frame + index) & 7;
+      return [255, 70 + life[index] * 3, 22 + pulse * 5];
+    }
+    if (material === LAVA) {
+      return [230 + ((frame + index) & 7), 62 + Math.max(0, life[index] - 140), 18];
+    }
+    if (material === ARC) {
+      var flicker = (frame + index) & 15;
+      return [255, 225 + flicker, 70 + flicker * 3];
+    }
+    if (material === SINK) {
+      var voidPulse = (frame + index) & 31;
+      return [76 + voidPulse * 2, 28, 116 + voidPulse * 3];
+    }
+    if (material === GLASS) {
+      var glint = ((index + frame) & 11) === 0 ? 26 : 0;
+      return [126 + glint, 214 + glint, 224 + glint];
+    }
+    if (material === GAS) {
+      var gasFade = Math.min(80, life[index]);
+      return [90 + gasFade, 128 + gasFade, 72 + Math.floor(gasFade * 0.7)];
+    }
+    if (material === VAPOR) {
+      var fade = Math.min(70, life[index]);
+      return [120 + fade, 126 + fade, 134 + fade];
+    }
+    return [
+      clampByte(base[0] + jitter),
+      clampByte(base[1] + jitter),
+      clampByte(base[2] + jitter)
+    ];
+  }
+
+  function render() {
+    var count = 0;
+    glowCells = [];
+    for (var index = 0; index < SIZE; index += 1) {
+      var material = cells[index];
+      if (material !== EMPTY) count += 1;
+      if ((material === FLAME || material === LAVA || material === ARC || material === SINK) && glowCells.length < 120 && ((index + frame) % 9 === 0)) {
+        glowCells.push({
+          x: index % W,
+          y: Math.floor(index / W),
+          color: material === SINK ? '186, 93, 255' : material === ARC ? '255, 238, 88' : '255, 120, 42',
+          radius: material === SINK ? 12 : material === ARC ? 9 : 7
+        });
+      }
+      var color = colorFor(material, index);
+      var offset = index * 4;
+      pixels[offset] = color[0];
+      pixels[offset + 1] = color[1];
+      pixels[offset + 2] = color[2];
+      pixels[offset + 3] = 255;
+    }
+    ctx.putImageData(image, 0, 0);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (var glowIndex = 0; glowIndex < glowCells.length; glowIndex += 1) {
+      var glow = glowCells[glowIndex];
+      var gradient = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, glow.radius);
+      gradient.addColorStop(0, 'rgba(' + glow.color + ', 0.45)');
+      gradient.addColorStop(1, 'rgba(' + glow.color + ', 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(glow.x, glow.y, glow.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    for (var effectIndex = effects.length - 1; effectIndex >= 0; effectIndex -= 1) {
+      var effect = effects[effectIndex];
+      var t = effect.life / effect.maxLife;
+      ctx.strokeStyle = 'rgba(' + effect.color + ', ' + (0.75 * t).toFixed(3) + ')';
+      ctx.fillStyle = 'rgba(' + effect.color + ', ' + (0.16 * t).toFixed(3) + ')';
+      ctx.lineWidth = Math.max(1, 3 * t);
+      ctx.beginPath();
+      ctx.arc(effect.x, effect.y, effect.radius * (1.15 - t * 0.15), 0, Math.PI * 2);
+      if (effect.type === 'blast') ctx.fill();
+      ctx.stroke();
+      effect.life -= 1;
+      if (effect.life <= 0) effects.splice(effectIndex, 1);
+    }
+    if (flash > 0) {
+      ctx.globalCompositeOperation = 'screen';
+      ctx.fillStyle = 'rgba(255, 220, 140, ' + flash.toFixed(3) + ')';
+      ctx.fillRect(0, 0, W, H);
+      flash *= 0.72;
+    }
+    ctx.restore();
+
+    if (showGrid) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(120, 120, 120, 0.35)';
+      ctx.lineWidth = 1;
+      for (var gx = 0; gx <= W; gx += 16) {
+        ctx.beginPath();
+        ctx.moveTo(gx + 0.5, 0);
+        ctx.lineTo(gx + 0.5, H);
+        ctx.stroke();
+      }
+      for (var gy = 0; gy <= H; gy += 16) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy + 0.5);
+        ctx.lineTo(W, gy + 0.5);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    var now = performance.now();
+    fpsFrames += 1;
+    if (now - lastStatTime > 350) {
+      fps = Math.round(fpsFrames * 1000 / Math.max(1, now - lastStatTime));
+      fpsFrames = 0;
+      lastStatTime = now;
+      statsEl.textContent = count.toLocaleString() + ' dots / ' + fps + ' fps';
+    }
+    if (shake > 0.1) {
+      canvas.style.transform = 'translate(' + ((Math.random() - 0.5) * shake).toFixed(2) + 'px, ' + ((Math.random() - 0.5) * shake).toFixed(2) + 'px)';
+      shake *= 0.78;
+    } else {
+      canvas.style.transform = '';
+      shake = 0;
+    }
+  }
+
+  function getCanvasPoint(event) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: Math.floor((event.clientX - rect.left) * W / rect.width),
+      y: Math.floor((event.clientY - rect.top) * H / rect.height)
+    };
+  }
+
+  function applyWind(cx, cy, dx, dy) {
+    if (dx === 0 && dy === 0) dx = 1;
+    var ax = Math.abs(dx);
+    var ay = Math.abs(dy);
+    var sx = ax >= ay ? (dx < 0 ? -1 : 1) : 0;
+    var sy = ay > ax ? (dy < 0 ? -1 : 1) : 0;
+    var radius = brush * 3;
+    var r2 = radius * radius;
+    for (var yy = -radius; yy <= radius; yy += 1) {
+      for (var xx = -radius; xx <= radius; xx += 1) {
+        if (xx * xx + yy * yy > r2) continue;
+        if (Math.random() > 0.36) continue;
+        var x = cx + xx;
+        var y = cy + yy;
+        var index = indexAt(x, y);
+        if (index < 0) continue;
+        var material = cells[index];
+        if (material === EMPTY || material === WALL || material === METAL || material === WOOD || material === GLASS || material === ICE || material === PLANT || material === CHARGE || material === SINK) continue;
+        var target = indexAt(x + sx, y + sy);
+        if (target >= 0 && cells[target] === EMPTY) moveCell(index, target);
+      }
+    }
+  }
+
+  function stamp(cx, cy, material, prev) {
+    if (material === GUST) {
+      var dx = prev ? cx - prev.x : 1;
+      var dy = prev ? cy - prev.y : 0;
+      applyWind(cx, cy, dx, dy);
+      return;
+    }
+    var radius = brush;
+    var r2 = radius * radius;
+    var solid = material === WALL || material === WOOD || material === METAL || material === WIPE || material === ICE || material === PLANT || material === CHARGE || material === GLASS || material === SINK;
+    for (var yy = -radius; yy <= radius; yy += 1) {
+      for (var xx = -radius; xx <= radius; xx += 1) {
+        if (xx * xx + yy * yy > r2) continue;
+        if (!solid && Math.random() > 0.72) continue;
+        var index = indexAt(cx + xx, cy + yy);
+        if (index >= 0) setCell(index, material);
+      }
+    }
+  }
+
+  function drawBetween(from, to, material) {
+    var dx = to.x - from.x;
+    var dy = to.y - from.y;
+    var steps = Math.max(Math.abs(dx), Math.abs(dy), 1);
+    for (var i = 0; i <= steps; i += 1) {
+      var t = i / steps;
+      var point = {
+        x: Math.round(from.x + dx * t),
+        y: Math.round(from.y + dy * t)
+      };
+      stamp(point.x, point.y, material, from);
+    }
+  }
+
+  function updateSelectionUI() {
+    toolButtons.forEach(function (button) {
+      var item = byKey[button.getAttribute('data-material')];
+      var id = item ? item.id : EMPTY;
+      button.classList.toggle('is-left', id === leftMaterial);
+      button.classList.toggle('is-right', id === rightMaterial);
+    });
+    leftStatus.lastChild.textContent = ' L: ' + (byId[leftMaterial] ? byId[leftMaterial].label : 'SAND');
+    rightStatus.lastChild.textContent = ' R: ' + (byId[rightMaterial] ? byId[rightMaterial].label : 'GUST');
+  }
+
+  toolButtons.forEach(function (button) {
+    button.addEventListener('mousedown', function (event) {
+      var item = byKey[button.getAttribute('data-material')];
+      if (!item) return;
+      if (event.button === 2 || event.ctrlKey) rightMaterial = item.id;
+      else leftMaterial = item.id;
+      updateSelectionUI();
+      event.preventDefault();
+    });
+    button.addEventListener('contextmenu', function (event) {
+      event.preventDefault();
+    });
+  });
+
+  penInput.addEventListener('input', function () {
+    brush = Number(penInput.value);
+    penValue.textContent = String(brush);
+  });
+
+  speedButton.addEventListener('click', function () {
+    speedIndex = (speedIndex + 1) % speedLevels.length;
+    speed = speedLevels[speedIndex];
+    speedButton.textContent = 'RATE x' + speed;
+  });
+
+  stopButton.addEventListener('click', function () {
+    paused = !paused;
+    stopButton.textContent = paused ? 'START' : 'STOP';
+  });
+
+  sideButton.addEventListener('click', function () {
+    sideLoop = !sideLoop;
+    sideButton.textContent = sideLoop ? 'WRAP ON' : 'WRAP OFF';
+  });
+
+  gridButton.addEventListener('click', function () {
+    showGrid = !showGrid;
+    gridButton.textContent = showGrid ? 'GRID ON' : 'GRID OFF';
+  });
+
+  bgButton.addEventListener('click', function () {
+    bgIndex = (bgIndex + 1) % bgModes.length;
+    bgButton.textContent = 'BG ' + bgModes[bgIndex];
+  });
+
+  function clearDots() {
+    for (var i = 0; i < SIZE; i += 1) {
+      if (cells[i] !== WALL) setCell(i, EMPTY);
+    }
+    effects = [];
+    shake = 0;
+    flash = 0;
+  }
+
+  function resetWorld() {
+    cells.fill(EMPTY);
+    life.fill(0);
+    shade.fill(0);
+    effects = [];
+    shake = 0;
+    flash = 0;
+  }
+
+  function loadDemo() {
+    resetWorld();
+    var unit = SIZE / (280 * 210);
+    var margin = Math.max(16, Math.round(W * 0.045));
+    var floorY = H - margin;
+    var basinTop = Math.round(H * 0.72);
+    var leftShelfY = Math.round(H * 0.56);
+    var rightShelfY = Math.round(H * 0.66);
+    var dividerX = Math.round(W * 0.49);
+
+    function put(x, y, material) {
+      if (x >= 0 && x < W && y >= 0 && y < H) setCell(y * W + x, material);
+    }
+
+    function lineH(y, x1, x2, material) {
+      var start = Math.max(0, Math.min(x1, x2));
+      var end = Math.min(W - 1, Math.max(x1, x2));
+      for (var x = start; x <= end; x += 1) put(x, y, material);
+    }
+
+    function lineV(x, y1, y2, material) {
+      var start = Math.max(0, Math.min(y1, y2));
+      var end = Math.min(H - 1, Math.max(y1, y2));
+      for (var y = start; y <= end; y += 1) put(x, y, material);
+    }
+
+    function rand(min, max) {
+      return min + Math.floor(Math.random() * Math.max(1, max - min));
+    }
+
+    function fillNoise(material, count, x1, x2, y1, y2) {
+      for (var i = 0; i < count; i += 1) {
+        put(rand(x1, x2), rand(y1, y2), material);
+      }
+    }
+
+    lineH(floorY, margin, W - margin, WALL);
+    lineV(margin, basinTop, floorY, WALL);
+    lineV(W - margin - 1, basinTop, floorY, WALL);
+    lineH(leftShelfY, Math.round(W * 0.16), Math.round(W * 0.43), METAL);
+    lineH(rightShelfY, Math.round(W * 0.56), W - Math.round(W * 0.09), METAL);
+    lineV(dividerX, Math.round(H * 0.45), rightShelfY, METAL);
+
+    for (var wx = Math.round(W * 0.43); wx < Math.round(W * 0.57); wx += 1) {
+      put(wx, Math.round(H * 0.79), WOOD);
+    }
+
+    fillNoise(SAND, Math.round(2300 * unit), Math.round(W * 0.19), Math.round(W * 0.38), Math.round(H * 0.17), Math.round(H * 0.34));
+    fillNoise(WATER, Math.round(1700 * unit), Math.round(W * 0.63), Math.round(W * 0.82), Math.round(H * 0.19), Math.round(H * 0.38));
+    fillNoise(OIL, Math.round(520 * unit), Math.round(W * 0.54), Math.round(W * 0.67), Math.round(H * 0.46), Math.round(H * 0.58));
+    fillNoise(GAS, Math.round(460 * unit), Math.round(W * 0.08), Math.round(W * 0.28), Math.round(H * 0.07), Math.round(H * 0.15));
+    fillNoise(FLAME, Math.round(38 * unit), Math.round(W * 0.47), Math.round(W * 0.57), Math.round(H * 0.74), Math.round(H * 0.79));
+    fillNoise(SNOW, Math.round(620 * unit), Math.round(W * 0.03), Math.round(W * 0.18), Math.round(H * 0.05), Math.round(H * 0.12));
+    fillNoise(SALT, Math.round(360 * unit), Math.round(W * 0.34), Math.round(W * 0.47), Math.round(H * 0.1), Math.round(H * 0.18));
+    fillNoise(PLANT, Math.round(180 * unit), Math.round(W * 0.18), Math.round(W * 0.32), Math.round(H * 0.78), Math.round(H * 0.84));
+    for (var ix = Math.round(W * 0.12); ix < Math.round(W * 0.24); ix += 1) put(ix, Math.round(H * 0.41), ICE);
+    for (var bx = Math.round(W * 0.78); bx < Math.round(W * 0.82); bx += 1) put(bx, Math.round(H * 0.52), CHARGE);
+    for (var sx = Math.round(W * 0.72); sx < Math.round(W * 0.76); sx += 1) put(sx, Math.round(H * 0.49), ARC);
+    for (var gx2 = Math.round(W * 0.49); gx2 < Math.round(W * 0.57); gx2 += 1) put(gx2, Math.round(H * 0.32), GLASS);
+    put(Math.round(W * 0.9), Math.round(H * 0.82), SINK);
+  }
+
+  demoButton.addEventListener('click', loadDemo);
+  clearButton.addEventListener('click', clearDots);
+  resetButton.addEventListener('click', resetWorld);
+
+  canvas.addEventListener('contextmenu', function (event) {
+    event.preventDefault();
+  });
+
+  canvas.addEventListener('pointerdown', function (event) {
+    drawing = true;
+    drawMaterial = event.button === 2 || event.ctrlKey ? rightMaterial : leftMaterial;
+    lastPoint = getCanvasPoint(event);
+    stamp(lastPoint.x, lastPoint.y, drawMaterial, null);
+    canvas.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+
+  canvas.addEventListener('pointermove', function (event) {
+    if (!drawing || !lastPoint) return;
+    var point = getCanvasPoint(event);
+    drawBetween(lastPoint, point, drawMaterial);
+    lastPoint = point;
+    event.preventDefault();
+  });
+
+  canvas.addEventListener('pointerup', function (event) {
+    drawing = false;
+    lastPoint = null;
+    canvas.releasePointerCapture(event.pointerId);
+  });
+
+  canvas.addEventListener('pointercancel', function () {
+    drawing = false;
+    lastPoint = null;
+  });
+
+  function loop() {
+    var visible = root.offsetParent !== null && !document.hidden;
+    if (visible) {
+      if (!paused) {
+        for (var i = 0; i < speed; i += 1) stepSimulation();
+      }
+      render();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  updateSelectionUI();
+  resetWorld();
+  lastStatTime = performance.now();
+  render();
+  requestAnimationFrame(loop);
+});
+</script>

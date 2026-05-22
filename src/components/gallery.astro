@@ -1443,8 +1443,9 @@ const photos = piwigoPhotos;
     // each map to a `data-fx-<name>` attribute on the wrap. The CSS
     // rules under `.gallery-wrap[data-fx-X="off"]` short-circuit the
     // matching effect path. JS persists the choice per-toggle to
-    // localStorage and can recompute "recommended" defaults from the
-    // current device's media-query state.
+    // localStorage and falls back to fixed defaults for any unset key.
+    // A defaults version marker prevents older saved "recommended" states
+    // from preserving the old desktop-heavy default mix after this change.
     //
     // Effect catalogue, ordered by visual impact:
     //   frame   — polaroid chin + per-tile rotation/scale.
@@ -1454,6 +1455,7 @@ const photos = piwigoPhotos;
     //   drift   — ambient autoscroll (read by computeVel below).
     const wrap = document.querySelector('.gallery-wrap');
     const FX_KEYS = ['frame', 'shimmer', 'grain', 'hover', 'drift'];
+    const FX_DEFAULTS_VERSION = 2;
     // Icon library for effect rows. Tiny, unfilled SVGs at 16×16 — same
     // visual weight as the column they sit in, with a stroke style that
     // matches the gear button so the panel feels of-a-piece.
@@ -1476,34 +1478,30 @@ const photos = piwigoPhotos;
       hover:   { label: '3D parallax',    help: 'Tile tilts toward your cursor on hover.', icon: FX_ICONS.hover },
       drift:   { label: 'Auto-scroll',    help: 'Carousel drifts on its own when you’re not interacting.', icon: FX_ICONS.drift },
     };
-    // "Recommended" = on for fine-pointer / wide-screen devices; off for
-    // anything coarse-pointer or narrow. Drift stays on across the board
-    // (it's cheap, and most visitors expect a moving carousel).
-    function recommendedFx() {
-      const coarse = matchMedia('(hover: none)').matches;
-      const narrow = matchMedia('(max-width: 520px)').matches;
-      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const heavy  = !(coarse || narrow || reduce);
+    // Defaults are deliberately device-independent: the only selected
+    // effects on first load are the polaroid frame and ambient auto-scroll.
+    function defaultFx() {
       return {
-        frame:   true,                // cheap; always recommended
-        shimmer: heavy,
-        grain:   heavy,
-        hover:   !coarse,             // hover doesn't apply on touch anyway
-        drift:   !reduce,             // motion-sensitive users get a still carousel
+        frame:   true,
+        shimmer: false,
+        grain:   false,
+        hover:   false,
+        drift:   true,
       };
     }
     function loadFx() {
       let saved = null;
       try { saved = JSON.parse(localStorage.getItem('gallery-fx') || 'null'); } catch (_) {}
-      if (!saved || typeof saved !== 'object') return recommendedFx();
-      const rec = recommendedFx();
+      if (!saved || typeof saved !== 'object') return defaultFx();
+      if (saved._defaultsVersion !== FX_DEFAULTS_VERSION) return defaultFx();
+      const defaults = defaultFx();
       const out = {};
-      // Honour every saved key; fall through to recommended for unknown.
-      for (const k of FX_KEYS) out[k] = (typeof saved[k] === 'boolean') ? saved[k] : rec[k];
+      // Honour every saved key; fall through to fixed defaults for unknown.
+      for (const k of FX_KEYS) out[k] = (typeof saved[k] === 'boolean') ? saved[k] : defaults[k];
       return out;
     }
     function saveFx(state) {
-      try { localStorage.setItem('gallery-fx', JSON.stringify(state)); } catch (_) {}
+      try { localStorage.setItem('gallery-fx', JSON.stringify({ ...state, _defaultsVersion: FX_DEFAULTS_VERSION })); } catch (_) {}
     }
     function applyFx(state) {
       if (!wrap) return;
@@ -1514,7 +1512,7 @@ const photos = piwigoPhotos;
     applyFx(fxState);
 
     // Build the settings UI: a gear button + popover with one switch per
-    // effect + a "Reset to recommended" footer. Mirrors common settings-
+    // effect + a "Reset to defaults" footer. Mirrors common settings-
     // popover conventions (aria-expanded on trigger, aria-labelled panel,
     // click-outside + Escape to close, focus trap inside while open).
     if (wrap) {
@@ -1633,11 +1631,11 @@ const photos = piwigoPhotos;
           '<path d="M13 8a5 5 0 0 1-8.5 3.5L3 13"></path>' +
           '<path d="M3 13v-3.5h3.5"></path>' +
         '</svg>' +
-        '<span>Reset to recommended</span>';
+        '<span>Reset to defaults</span>';
       footer.appendChild(resetBtn);
       panel.appendChild(footer);
       resetBtn.addEventListener('click', () => {
-        fxState = recommendedFx();
+        fxState = defaultFx();
         applyFx(fxState);
         saveFx(fxState);
         for (const k of FX_KEYS) switches[k].checked = fxState[k];
