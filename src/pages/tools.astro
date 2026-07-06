@@ -36,7 +36,7 @@ import ParticleLab from '../components/tools/ParticleLab.astro';
              motion-reduce:opacity-100 motion-reduce:translate-y-0"
       data-fade
     >
-      <a href="/tools/cullpix" class="tool-card tool-card-featured" data-tool-link="cullpix">
+      <a href="/tools/cullpix" class="tool-card tool-card-link" data-tool-link="cullpix">
         <span class="tool-card-appicon" aria-hidden="true">
           <svg viewBox="0 0 48 48" fill="none">
             <defs>
@@ -54,7 +54,7 @@ import ParticleLab from '../components/tools/ParticleLab.astro';
         </span>
         <div>
           <span class="tool-card-title">CullPix <span class="tool-card-badge">App</span></span>
-          <span class="tool-card-desc">A fast photo culling app for macOS and Windows. Free download.</span>
+          <span class="tool-card-desc">Fast photo culling app for macOS and Windows</span>
         </div>
         <svg class="tool-card-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6" />
@@ -199,29 +199,18 @@ import ParticleLab from '../components/tools/ParticleLab.astro';
     opacity: 0.85;
   }
 
-  /* ── Featured app card (links out to a product page) ── */
-  .tool-card-featured {
-    text-decoration: none;
-    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
-    background:
-      linear-gradient(120deg,
-        color-mix(in srgb, var(--color-accent) 10%, transparent),
-        transparent 60%),
-      var(--card-bg);
-    padding-right: 14px;
-  }
-  .tool-card-featured:hover {
-    border-color: var(--color-accent);
-    box-shadow: 0 8px 24px -10px color-mix(in srgb, var(--color-accent) 60%, transparent);
-  }
+  /* ── App card: links out to the product page, but styled as a modest peer tab ── */
+  .tool-card-link { text-decoration: none; }
+
   .tool-card-appicon {
     display: inline-flex;
-    width: 34px;
-    height: 34px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
   }
-  .tool-card-appicon svg { width: 100%; height: 100%; border-radius: 9px; }
+  .tool-card-appicon svg { width: 100%; height: 100%; border-radius: 7px; }
 
+  /* Modest, neutral tag — signals "downloadable app" without shouting */
   .tool-card-badge {
     display: inline-block;
     vertical-align: middle;
@@ -231,19 +220,22 @@ import ParticleLab from '../components/tools/ParticleLab.astro';
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    color: #fff;
-    background: var(--color-accent);
+    color: var(--card-tag-text);
+    background: var(--card-tag-bg);
     border-radius: var(--radius-pill);
   }
+
+  /* Subtle affordance that this card opens a separate page */
   .tool-card-arrow {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
-    margin-left: 4px;
-    color: var(--color-accent);
-    transition: transform 0.2s ease;
+    margin-left: 2px;
+    color: var(--color-text-soft);
+    opacity: 0.55;
+    transition: transform 0.2s ease, opacity 0.2s ease;
   }
-  .tool-card-featured:hover .tool-card-arrow { transform: translateX(3px); }
+  .tool-card-link:hover .tool-card-arrow { transform: translateX(3px); opacity: 0.9; }
 </style>
 
 <script is:inline>

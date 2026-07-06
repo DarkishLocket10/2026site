@@ -1,208 +1,252 @@
 ---
 ---
 
-<div id="ss-tool" class="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-5 items-start">
-  <!-- ──────────── Controls Panel ──────────── -->
-  <div class="ss-controls rounded-2xl p-5 space-y-5">
+<div id="ss-tool" class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-5 items-start">
+  <!-- ──────────── Controls Panel (inspector) ──────────── -->
+  <div class="ss-controls">
+    <!-- Scrollable body: every group is the same primitive (details + summary head) -->
+    <div class="ss-scroll scrollbar">
 
-    <!-- Images -->
-    <div>
-      <h3 class="ss-section-title">Images</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <!-- Old image drop zone -->
-        <div class="ss-dropzone" id="ss-drop-old" tabindex="0" role="button" aria-label="Upload old image">
-          <input id="ss-old-file" type="file" accept="image/*" class="ss-dropzone-input" tabindex="-1" />
-          <div class="ss-dropzone-empty" id="ss-drop-old-empty">
-            <svg xmlns="http://www.w3.org/2000/svg" class="ss-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-            </svg>
-            <span class="ss-dropzone-label">Old</span>
-            <span class="ss-dropzone-hint">Drop, paste, or click</span>
+      <!-- ── Images ── -->
+      <details class="ss-group" open>
+        <summary class="ss-group-head">
+          <svg class="ss-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <span class="ss-group-title">Images</span>
+          <svg class="ss-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </summary>
+        <div class="ss-group-body">
+          <div class="ss-grid-2">
+            <!-- Old image drop zone -->
+            <div class="ss-dropzone" id="ss-drop-old" tabindex="0" role="button" aria-label="Upload old image">
+              <input id="ss-old-file" type="file" accept="image/*" class="ss-dropzone-input" tabindex="-1" />
+              <div class="ss-dropzone-empty" id="ss-drop-old-empty">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ss-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                <span class="ss-dropzone-label">Old</span>
+                <span class="ss-dropzone-hint">Drop, paste, or click</span>
+              </div>
+              <div class="ss-dropzone-filled" id="ss-drop-old-filled" style="display:none">
+                <img id="ss-thumb-old" class="ss-dropzone-thumb" alt="Old image preview" />
+                <span class="ss-dropzone-name" id="ss-name-old"></span>
+                <span class="ss-dropzone-replace">Click to replace</span>
+                <button type="button" class="ss-dropzone-remove" id="ss-remove-old" aria-label="Remove old image">&times;</button>
+              </div>
+            </div>
+            <!-- New image drop zone -->
+            <div class="ss-dropzone" id="ss-drop-new" tabindex="0" role="button" aria-label="Upload new image">
+              <input id="ss-new-file" type="file" accept="image/*" class="ss-dropzone-input" tabindex="-1" />
+              <div class="ss-dropzone-empty" id="ss-drop-new-empty">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ss-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                <span class="ss-dropzone-label">New</span>
+                <span class="ss-dropzone-hint">Drop, paste, or click</span>
+              </div>
+              <div class="ss-dropzone-filled" id="ss-drop-new-filled" style="display:none">
+                <img id="ss-thumb-new" class="ss-dropzone-thumb" alt="New image preview" />
+                <span class="ss-dropzone-name" id="ss-name-new"></span>
+                <span class="ss-dropzone-replace">Click to replace</span>
+                <button type="button" class="ss-dropzone-remove" id="ss-remove-new" aria-label="Remove new image">&times;</button>
+              </div>
+            </div>
           </div>
-          <div class="ss-dropzone-filled" id="ss-drop-old-filled" style="display:none">
-            <img id="ss-thumb-old" class="ss-dropzone-thumb" alt="Old image preview" />
-            <span class="ss-dropzone-name" id="ss-name-old"></span>
-            <span class="ss-dropzone-replace">Click to replace</span>
-            <button type="button" class="ss-dropzone-remove" id="ss-remove-old" aria-label="Remove old image">&times;</button>
+
+          <button id="ss-swap-images" class="ss-btn-ghost" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4L3 8l4 4"/><path d="M3 8h13a4 4 0 014 4"/><path d="M17 20l4-4-4-4"/><path d="M21 16H8a4 4 0 01-4-4"/></svg>
+            Swap old / new
+          </button>
+
+          <div class="ss-row-split">
+            <span class="ss-inline-label">Fit</span>
+            <div class="ss-segmented" id="ss-fit-seg" role="group" aria-label="Fit mode">
+              <button type="button" class="ss-seg is-active" data-val="fit" aria-pressed="true">Fit</button>
+              <button type="button" class="ss-seg" data-val="fill" aria-pressed="false">Fill</button>
+            </div>
           </div>
         </div>
-        <!-- New image drop zone -->
-        <div class="ss-dropzone" id="ss-drop-new" tabindex="0" role="button" aria-label="Upload new image">
-          <input id="ss-new-file" type="file" accept="image/*" class="ss-dropzone-input" tabindex="-1" />
-          <div class="ss-dropzone-empty" id="ss-drop-new-empty">
-            <svg xmlns="http://www.w3.org/2000/svg" class="ss-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-            </svg>
-            <span class="ss-dropzone-label">New</span>
-            <span class="ss-dropzone-hint">Drop, paste, or click</span>
+      </details>
+
+      <!-- ── Labels ── -->
+      <details class="ss-group" open>
+        <summary class="ss-group-head">
+          <svg class="ss-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5V4a1 1 0 011-1h7.5a1 1 0 01.7.3l8 8a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0l-8-8a1 1 0 01-.3-.7z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>
+          <span class="ss-group-title">Labels</span>
+          <svg class="ss-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </summary>
+        <div class="ss-group-body">
+          <div class="ss-grid-2">
+            <div class="ss-field"><label for="ss-old-label">Old label</label><input id="ss-old-label" type="text" value="OLD" /></div>
+            <div class="ss-field"><label for="ss-new-label">New label</label><input id="ss-new-label" type="text" value="NEW" /></div>
           </div>
-          <div class="ss-dropzone-filled" id="ss-drop-new-filled" style="display:none">
-            <img id="ss-thumb-new" class="ss-dropzone-thumb" alt="New image preview" />
-            <span class="ss-dropzone-name" id="ss-name-new"></span>
-            <span class="ss-dropzone-replace">Click to replace</span>
-            <button type="button" class="ss-dropzone-remove" id="ss-remove-new" aria-label="Remove new image">&times;</button>
+          <div class="ss-row-split">
+            <span class="ss-inline-label">Position</span>
+            <div class="ss-corner-grid" id="ss-corner-grid" role="group" aria-label="Label position">
+              <button type="button" class="ss-corner c-tl is-active" data-val="top-left" aria-label="Top left" aria-pressed="true"></button>
+              <button type="button" class="ss-corner c-tr" data-val="top-right" aria-label="Top right" aria-pressed="false"></button>
+              <button type="button" class="ss-corner c-bl" data-val="bottom-left" aria-label="Bottom left" aria-pressed="false"></button>
+              <button type="button" class="ss-corner c-br" data-val="bottom-right" aria-label="Bottom right" aria-pressed="false"></button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="ss-field" style="margin-top:8px; margin-bottom: 0;">
-        <button id="ss-swap-images" class="ss-btn-secondary w-full" type="button">Swap old/new images</button>
-      </div>
-      <div class="ss-field" style="margin-top:10px">
-        <label for="ss-fit-mode">Fit mode</label>
-        <select id="ss-fit-mode">
-          <option value="fit" selected>Fit (letterbox)</option>
-          <option value="fill">Fill (crop)</option>
-        </select>
-      </div>
+      </details>
+
+      <!-- ── Canvas ── -->
+      <details class="ss-group" open>
+        <summary class="ss-group-head">
+          <svg class="ss-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 011-1h3M20 8V5a1 1 0 00-1-1h-3M4 16v3a1 1 0 001 1h3M20 16v3a1 1 0 01-1 1h-3"/></svg>
+          <span class="ss-group-title">Canvas</span>
+          <svg class="ss-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </summary>
+        <div class="ss-group-body">
+          <div class="ss-field">
+            <label for="ss-preset">Preset size</label>
+            <select id="ss-preset">
+              <option value="custom">Custom</option>
+              <option value="1600x900" selected>Blog Banner (1600&times;900)</option>
+              <option value="1920x1080">Presentation (1920&times;1080)</option>
+              <option value="1200x630">Social Media (1200&times;630)</option>
+              <option value="1080x1080">Square (1080&times;1080)</option>
+              <option value="750x1334">Mobile (750&times;1334)</option>
+            </select>
+          </div>
+          <div class="ss-grid-3">
+            <div class="ss-field"><label for="ss-width">Width</label><div class="ss-num"><input id="ss-width" type="number" min="400" step="10" value="1600" /><span class="ss-unit">px</span></div></div>
+            <div class="ss-field"><label for="ss-height">Height</label><div class="ss-num"><input id="ss-height" type="number" min="200" step="10" value="900" /><span class="ss-unit">px</span></div></div>
+            <div class="ss-field"><label for="ss-gap">Gap</label><div class="ss-num"><input id="ss-gap" type="number" min="0" step="1" value="32" /><span class="ss-unit">px</span></div></div>
+          </div>
+          <label class="ss-toggle-row">
+            <span>Auto height from images</span>
+            <input id="ss-auto-height" type="checkbox" class="ss-switch" checked />
+          </label>
+          <div class="ss-grid-2">
+            <div class="ss-field"><label for="ss-padding">Padding</label><div class="ss-num"><input id="ss-padding" type="number" min="0" step="1" value="32" /><span class="ss-unit">px</span></div></div>
+            <div class="ss-field"><label for="ss-radius">Radius</label><div class="ss-num"><input id="ss-radius" type="number" min="0" step="1" value="18" /><span class="ss-unit">px</span></div></div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ── Appearance ── -->
+      <details class="ss-group" open>
+        <summary class="ss-group-head">
+          <svg class="ss-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-4.97 0-9 3.8-9 8.5S6.9 20 12 20a2 2 0 002-2 1.9 1.9 0 00-.5-1.3 1.9 1.9 0 01-.5-1.2 1.5 1.5 0 011.5-1.5H16c2.76 0 5-2 5-4.5C21 6.3 16.97 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="11" r="1"/></svg>
+          <span class="ss-group-title">Appearance</span>
+          <svg class="ss-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </summary>
+        <div class="ss-group-body">
+          <div class="ss-field">
+            <label>Theme</label>
+            <div class="ss-segmented" role="group" aria-label="Theme preset">
+              <button type="button" class="ss-seg ss-preset-btn is-active" data-preset="light" aria-pressed="true">Light</button>
+              <button type="button" class="ss-seg ss-preset-btn" data-preset="dark" aria-pressed="false">Dark</button>
+              <button type="button" class="ss-seg ss-preset-btn" data-preset="transparent" aria-pressed="false">Transparent</button>
+            </div>
+          </div>
+
+          <label class="ss-toggle-row">
+            <span>Image shadow</span>
+            <input id="ss-shadow" type="checkbox" class="ss-switch" checked />
+          </label>
+          <label class="ss-toggle-row">
+            <span>Transparent background</span>
+            <input id="ss-transparent-bg" type="checkbox" class="ss-switch" />
+          </label>
+
+          <details class="ss-subgroup">
+            <summary class="ss-subgroup-head">
+              <span>Custom colors</span>
+              <svg class="ss-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+            </summary>
+            <div class="ss-subgroup-body">
+              <div class="ss-grid-2">
+                <div class="ss-field">
+                  <label for="ss-bg-color">Background</label>
+                  <div class="ss-color-row">
+                    <input id="ss-bg-color" type="color" value="#ffffff" class="ss-color-swatch" />
+                    <input id="ss-bg-color-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
+                  </div>
+                </div>
+                <div class="ss-field">
+                  <label for="ss-img-bg">Image fill</label>
+                  <div class="ss-color-row">
+                    <input id="ss-img-bg" type="color" value="#ffffff" class="ss-color-swatch" />
+                    <input id="ss-img-bg-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
+                  </div>
+                </div>
+                <div class="ss-field">
+                  <label for="ss-label-bg">Label bg</label>
+                  <div class="ss-color-row">
+                    <input id="ss-label-bg" type="color" value="#111827" class="ss-color-swatch" />
+                    <input id="ss-label-bg-hex" type="text" value="#111827" maxlength="7" class="ss-color-hex" spellcheck="false" />
+                  </div>
+                </div>
+                <div class="ss-field">
+                  <label for="ss-label-text">Label text</label>
+                  <div class="ss-color-row">
+                    <input id="ss-label-text" type="color" value="#ffffff" class="ss-color-swatch" />
+                    <input id="ss-label-text-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <!-- ── Zoom & pan (advanced, collapsed) ── -->
+      <details class="ss-group">
+        <summary class="ss-group-head">
+          <svg class="ss-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/><path d="M11 8v6M8 11h6"/></svg>
+          <span class="ss-group-title">Zoom &amp; pan</span>
+          <svg class="ss-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </summary>
+        <div class="ss-group-body">
+          <div class="ss-field">
+            <div class="ss-slider-head"><label for="ss-zoom-old">Old zoom</label><span class="ss-slider-val"><span id="ss-zoom-old-val">100</span>%</span></div>
+            <input id="ss-zoom-old" type="range" min="25" max="400" value="100" step="5" />
+            <button id="ss-reset-old" class="ss-btn-ghost ss-btn-ghost-sm" type="button">Reset old zoom &amp; pan</button>
+          </div>
+          <div class="ss-field">
+            <div class="ss-slider-head"><label for="ss-zoom-new">New zoom</label><span class="ss-slider-val"><span id="ss-zoom-new-val">100</span>%</span></div>
+            <input id="ss-zoom-new" type="range" min="25" max="400" value="100" step="5" />
+            <button id="ss-reset-new" class="ss-btn-ghost ss-btn-ghost-sm" type="button">Reset new zoom &amp; pan</button>
+          </div>
+          <p class="ss-hint">Drag on the preview to pan zoomed images.</p>
+        </div>
+      </details>
     </div>
 
-    <!-- Zoom & Position -->
-    <div>
-      <h3 class="ss-section-title">Zoom &amp; Position</h3>
-      <div class="ss-field">
-        <label for="ss-zoom-old">Old zoom: <span id="ss-zoom-old-val">100</span>%</label>
-        <input id="ss-zoom-old" type="range" min="25" max="400" value="100" step="5" />
-        <button id="ss-reset-old" class="ss-mini-btn w-full" type="button">Reset old zoom &amp; pan</button>
+    <!-- ── Sticky export footer (primary actions always reachable) ── -->
+    <div class="ss-footer">
+      <div class="ss-row-split">
+        <span class="ss-inline-label">Format</span>
+        <div class="ss-segmented" id="ss-format-seg" role="group" aria-label="Export format">
+          <button type="button" class="ss-seg is-active" data-val="png" aria-pressed="true">PNG</button>
+          <button type="button" class="ss-seg" data-val="jpeg" aria-pressed="false">JPEG</button>
+        </div>
       </div>
-      <div class="ss-field">
-        <label for="ss-zoom-new">New zoom: <span id="ss-zoom-new-val">100</span>%</label>
-        <input id="ss-zoom-new" type="range" min="25" max="400" value="100" step="5" />
-        <button id="ss-reset-new" class="ss-mini-btn w-full" type="button">Reset new zoom &amp; pan</button>
+      <div class="ss-field" id="ss-quality-wrap" style="display:none">
+        <div class="ss-slider-head"><label for="ss-quality">Quality</label><span class="ss-slider-val"><span id="ss-quality-val">92</span>%</span></div>
+        <input id="ss-quality" type="range" min="10" max="100" step="5" value="92" />
       </div>
-      <p class="ss-hint" style="margin-top:6px">Drag on the preview to pan zoomed images.</p>
+      <div class="ss-actions">
+        <button id="ss-download" class="ss-btn-primary" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download
+        </button>
+        <button id="ss-copy" class="ss-btn-secondary" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+          Copy
+        </button>
+      </div>
+      <div id="ss-status" class="ss-status" aria-live="polite">Ready.</div>
     </div>
-
-    <!-- Labels -->
-    <div>
-      <h3 class="ss-section-title">Labels</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="ss-field"><label for="ss-old-label">Old label</label><input id="ss-old-label" type="text" value="OLD" /></div>
-        <div class="ss-field"><label for="ss-new-label">New label</label><input id="ss-new-label" type="text" value="NEW" /></div>
-      </div>
-    </div>
-
-    <!-- Canvas -->
-    <div>
-      <h3 class="ss-section-title">Canvas</h3>
-      <div class="ss-field">
-        <label for="ss-preset">Preset size</label>
-        <select id="ss-preset">
-          <option value="custom">Custom</option>
-          <option value="1600x900" selected>Blog Banner (1600&times;900)</option>
-          <option value="1920x1080">Presentation (1920&times;1080)</option>
-          <option value="1200x630">Social Media (1200&times;630)</option>
-          <option value="1080x1080">Square (1080&times;1080)</option>
-          <option value="750x1334">Mobile (750&times;1334)</option>
-        </select>
-      </div>
-      <div class="grid grid-cols-3 gap-3">
-        <div class="ss-field"><label for="ss-width">Width</label><input id="ss-width" type="number" min="400" step="10" value="1600" /></div>
-        <div class="ss-field"><label for="ss-height">Height</label><input id="ss-height" type="number" min="200" step="10" value="900" /></div>
-        <div class="ss-field"><label for="ss-gap">Gap</label><input id="ss-gap" type="number" min="0" step="1" value="32" /></div>
-      </div>
-      <div class="ss-field">
-        <label class="ss-check-label">
-          <input id="ss-auto-height" type="checkbox" checked />
-          <span>Auto height from images</span>
-        </label>
-      </div>
-      <div class="grid grid-cols-3 gap-3">
-        <div class="ss-field"><label for="ss-padding">Padding</label><input id="ss-padding" type="number" min="0" step="1" value="32" /></div>
-        <div class="ss-field"><label for="ss-radius">Radius</label><input id="ss-radius" type="number" min="0" step="1" value="18" /></div>
-        <div class="ss-field">
-          <label for="ss-corner">Label pos</label>
-          <select id="ss-corner">
-            <option value="top-left" selected>Top left</option>
-            <option value="top-right">Top right</option>
-            <option value="bottom-left">Bottom left</option>
-            <option value="bottom-right">Bottom right</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Style -->
-    <div>
-      <h3 class="ss-section-title">Style</h3>
-      <div class="ss-color-presets">
-        <button type="button" class="ss-preset-btn" data-preset="light" title="Light theme">Light</button>
-        <button type="button" class="ss-preset-btn" data-preset="dark" title="Dark theme">Dark</button>
-        <button type="button" class="ss-preset-btn" data-preset="transparent" title="Transparent background">Transparent</button>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="ss-field">
-          <label for="ss-bg-color">Background</label>
-          <div class="ss-color-row">
-            <input id="ss-bg-color" type="color" value="#ffffff" class="ss-color-swatch" />
-            <input id="ss-bg-color-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
-          </div>
-        </div>
-        <div class="ss-field">
-          <label for="ss-img-bg">Image fill</label>
-          <div class="ss-color-row">
-            <input id="ss-img-bg" type="color" value="#ffffff" class="ss-color-swatch" />
-            <input id="ss-img-bg-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
-          </div>
-        </div>
-        <div class="ss-field">
-          <label for="ss-label-bg">Label bg</label>
-          <div class="ss-color-row">
-            <input id="ss-label-bg" type="color" value="#111827" class="ss-color-swatch" />
-            <input id="ss-label-bg-hex" type="text" value="#111827" maxlength="7" class="ss-color-hex" spellcheck="false" />
-          </div>
-        </div>
-        <div class="ss-field">
-          <label for="ss-label-text">Label text</label>
-          <div class="ss-color-row">
-            <input id="ss-label-text" type="color" value="#ffffff" class="ss-color-swatch" />
-            <input id="ss-label-text-hex" type="text" value="#ffffff" maxlength="7" class="ss-color-hex" spellcheck="false" />
-          </div>
-        </div>
-      </div>
-      <div class="ss-field">
-        <label class="ss-check-label">
-          <input id="ss-transparent-bg" type="checkbox" />
-          <span>Transparent background</span>
-        </label>
-      </div>
-      <div class="ss-field">
-        <label class="ss-check-label">
-          <input id="ss-shadow" type="checkbox" checked />
-          <span>Image shadow</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- Export -->
-    <div>
-      <h3 class="ss-section-title">Export</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="ss-field">
-          <label for="ss-format">Format</label>
-          <select id="ss-format">
-            <option value="png" selected>PNG</option>
-            <option value="jpeg">JPEG</option>
-          </select>
-        </div>
-        <div class="ss-field" id="ss-quality-wrap" style="display:none">
-          <label for="ss-quality">Quality: <span id="ss-quality-val">92</span>%</label>
-          <input id="ss-quality" type="range" min="10" max="100" step="5" value="92" />
-        </div>
-      </div>
-      <div class="grid grid-cols-3 gap-3" style="margin-top:8px">
-        <button id="ss-render"   class="ss-btn-primary"   type="button">Render</button>
-        <button id="ss-download" class="ss-btn-secondary" type="button">Download</button>
-        <button id="ss-copy"     class="ss-btn-secondary" type="button">Copy</button>
-      </div>
-    </div>
-
-    <div id="ss-status" class="ss-hint" aria-live="polite">Ready.</div>
   </div>
 
   <!-- ──────────── Preview Panel ──────────── -->
-  <div class="ss-preview rounded-2xl p-5">
+  <div class="ss-preview">
     <canvas id="ss-canvas" width="1600" height="900"></canvas>
-    <p class="ss-hint" style="margin-top:10px">
+    <p class="ss-hint" style="margin-top:12px">
       Drag on either image panel to reposition when zoomed. Use images with similar aspect ratios for the cleanest result.
     </p>
   </div>
@@ -210,126 +254,319 @@
 
 <!-- ──────────── Styles ──────────── -->
 <style is:global>
+  /* Local tokens so both themes read from one place */
+  #ss-tool {
+    --ss-hairline: rgba(0,0,0,0.09);
+    --ss-border: rgba(0,0,0,0.14);
+    --ss-track: rgba(0,0,0,0.045);
+    --ss-track-strong: rgba(0,0,0,0.07);
+    --ss-tag-muted: rgba(17,24,39,0.28);
+    --ss-ink: #06313a;              /* dark text used on the teal fill */
+    --ss-accent-soft: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    --ss-ring: color-mix(in srgb, var(--color-accent) 26%, transparent);
+  }
+  .dark #ss-tool {
+    --ss-hairline: rgba(255,255,255,0.08);
+    --ss-border: rgba(255,255,255,0.14);
+    --ss-track: rgba(255,255,255,0.05);
+    --ss-track-strong: rgba(255,255,255,0.09);
+    --ss-tag-muted: rgba(255,255,255,0.32);
+  }
+
+  /* Panels share one calm surface + hairline; no glass, no glow */
   #ss-tool .ss-controls,
   #ss-tool .ss-preview {
     background: var(--card-bg);
-    border: 1px solid rgba(0,0,0,0.1);
-  }
-  .dark #ss-tool .ss-controls,
-  .dark #ss-tool .ss-preview {
-    border-color: rgba(255,255,255,0.08);
+    border: 1px solid var(--ss-hairline);
+    border-radius: var(--radius-2xl);
   }
 
-  #ss-tool .ss-section-title {
-    font-size: 12px;
+  /* Controls = flex column so the footer can pin under a scrolling body */
+  #ss-tool .ss-controls {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #ss-tool .ss-scroll {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Group primitive: one shape, repeated everywhere ── */
+  #ss-tool .ss-group { border-top: 1px solid var(--ss-hairline); }
+  #ss-tool .ss-scroll > .ss-group:first-child { border-top: none; }
+
+  #ss-tool .ss-group-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 16px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    transition: background 0.15s;
+  }
+  #ss-tool .ss-group-head::-webkit-details-marker { display: none; }
+  #ss-tool .ss-group-head:hover { background: var(--ss-track); }
+  #ss-tool .ss-group-head:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--ss-ring);
+  }
+  #ss-tool .ss-group-icon {
+    width: 15px; height: 15px;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+  #ss-tool .ss-group-title {
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 10px;
+    letter-spacing: 0.07em;
     color: var(--color-text-soft);
   }
-
-  #ss-tool .ss-field {
-    margin-bottom: 10px;
+  #ss-tool .ss-chevron {
+    width: 14px; height: 14px;
+    margin-left: auto;
+    color: var(--color-text-soft);
+    opacity: 0.6;
+    transition: transform 0.2s var(--ease-spring);
   }
-  #ss-tool .ss-field label {
-    display: block;
-    font-size: 13px;
+  #ss-tool .ss-group[open] > .ss-group-head .ss-chevron { transform: rotate(90deg); }
+
+  #ss-tool .ss-group-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 2px 16px 16px;
+  }
+
+  /* ── Layout helpers ── */
+  #ss-tool .ss-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  #ss-tool .ss-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  #ss-tool .ss-row-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  #ss-tool .ss-inline-label,
+  #ss-tool .ss-field > label {
+    font-size: 12px;
     font-weight: 600;
-    margin-bottom: 4px;
+    color: var(--text);
   }
+  #ss-tool .ss-field { display: flex; flex-direction: column; gap: 6px; }
 
+  /* ── Inputs & selects ── */
   #ss-tool input[type="text"],
   #ss-tool input[type="number"],
   #ss-tool select {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid rgba(0,0,0,0.15);
+    padding: 9px 11px;
+    border: 1px solid var(--ss-border);
     border-radius: var(--radius-lg);
     font: inherit;
-    font-size: 14px;
+    font-size: 13.5px;
     background: var(--card-bg);
     color: var(--text);
-    transition: border-color 0.15s;
-  }
-  .dark #ss-tool input[type="text"],
-  .dark #ss-tool input[type="number"],
-  .dark #ss-tool select {
-    border-color: rgba(255,255,255,0.15);
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
   #ss-tool input[type="text"]:focus,
   #ss-tool input[type="number"]:focus,
   #ss-tool select:focus {
     outline: none;
     border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--ss-ring);
   }
 
-  #ss-tool input[type="color"] {
-    width: 100%;
-    height: 40px;
-    border: 1px solid rgba(0,0,0,0.15);
+  /* Custom select chevron */
+  #ss-tool select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+    padding-right: 32px;
+  }
+
+  /* Hide number spinners; add unit hint instead (design-tool feel) */
+  #ss-tool input[type="number"] { -moz-appearance: textfield; }
+  #ss-tool input[type="number"]::-webkit-outer-spin-button,
+  #ss-tool input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  #ss-tool .ss-num { position: relative; }
+  #ss-tool .ss-num input { padding-right: 30px; }
+  #ss-tool .ss-num .ss-unit {
+    position: absolute;
+    right: 11px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: var(--color-text-soft);
+    pointer-events: none;
+  }
+
+  /* ── Segmented control (macOS-style neutral pill) ── */
+  #ss-tool .ss-segmented {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    background: var(--ss-track);
+    border: 1px solid var(--ss-hairline);
     border-radius: var(--radius-lg);
+  }
+  #ss-tool .ss-seg {
+    flex: 1;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    border-radius: calc(var(--radius-lg) - 3px);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-soft);
     cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  }
+  #ss-tool .ss-seg:hover { color: var(--text); }
+  #ss-tool .ss-seg.is-active {
+    background: var(--card-bg);
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  }
+  .dark #ss-tool .ss-seg.is-active { background: var(--ss-track-strong); }
+  #ss-tool .ss-seg:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ss-ring); }
+  /* Theme segmented gets a small width so it stays on one line */
+  #ss-tool .ss-row-split > .ss-segmented { flex: 0 0 auto; }
+
+  /* ── Corner picker: control mirrors the artboard ── */
+  #ss-tool .ss-corner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    width: 76px;
+    height: 54px;
     padding: 4px;
+    background: var(--ss-track);
+    border: 1px solid var(--ss-border);
+    border-radius: var(--radius-md);
+    flex: 0 0 auto;
+  }
+  #ss-tool .ss-corner {
+    position: relative;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  #ss-tool .ss-corner:hover { background: var(--ss-accent-soft); }
+  #ss-tool .ss-corner::after {
+    content: "";
+    position: absolute;
+    width: 13px; height: 7px;
+    border-radius: 2px;
+    background: var(--ss-tag-muted);
+    transition: background 0.15s;
+  }
+  #ss-tool .ss-corner.c-tl::after { top: 3px; left: 3px; }
+  #ss-tool .ss-corner.c-tr::after { top: 3px; right: 3px; }
+  #ss-tool .ss-corner.c-bl::after { bottom: 3px; left: 3px; }
+  #ss-tool .ss-corner.c-br::after { bottom: 3px; right: 3px; }
+  #ss-tool .ss-corner.is-active::after { background: var(--color-accent); }
+  #ss-tool .ss-corner:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ss-ring); }
+
+  /* ── Toggle switch ── */
+  #ss-tool .ss-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  #ss-tool .ss-switch {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    width: 36px; height: 21px;
+    flex-shrink: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ss-track-strong);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #ss-tool .ss-switch::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    transition: transform 0.2s var(--ease-spring);
+  }
+  #ss-tool .ss-switch:checked { background: var(--color-accent); }
+  #ss-tool .ss-switch:checked::after { transform: translateX(15px); }
+  #ss-tool .ss-switch:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ss-ring); }
+
+  /* ── Color rows ── */
+  #ss-tool input[type="color"] {
+    height: 34px;
+    border: 1px solid var(--ss-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    padding: 3px;
     background: var(--card-bg);
   }
-  .dark #ss-tool input[type="color"] {
-    border-color: rgba(255,255,255,0.15);
-  }
-
-  /* Color row: swatch + hex input */
-  #ss-tool .ss-color-row {
-    display: flex;
-    gap: 6px;
-    align-items: stretch;
-  }
-  #ss-tool .ss-color-swatch {
-    width: 42px !important;
-    min-width: 42px;
-    height: 36px;
-    flex-shrink: 0;
-    border-radius: var(--radius-lg);
-    padding: 3px;
-  }
+  #ss-tool .ss-color-row { display: flex; gap: 6px; align-items: stretch; }
+  #ss-tool .ss-color-swatch { width: 40px !important; min-width: 40px; flex-shrink: 0; }
   #ss-tool .ss-color-hex {
     flex: 1;
     min-width: 0;
     padding: 6px 8px !important;
-    font-family: 'Courier New', monospace;
-    font-size: 13px !important;
-    letter-spacing: 0.02em;
+    font-family: var(--font-mono);
+    font-size: 12px !important;
     text-transform: lowercase;
   }
+  #ss-tool .ss-color-disabled { opacity: 0.5; }
 
-  #ss-tool .ss-color-disabled {
-    opacity: 0.55;
-  }
-
-  /* Preset buttons */
-  #ss-tool .ss-color-presets {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-  #ss-tool .ss-preset-btn {
-    flex: 1;
-    padding: 6px 8px;
+  /* ── Sub-group (nested disclosure) ── */
+  #ss-tool .ss-subgroup {
+    border: 1px solid var(--ss-hairline);
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(0,0,0,0.12);
-    background: transparent;
-    color: var(--text);
-    font: inherit;
+    background: var(--ss-track);
+  }
+  #ss-tool .ss-subgroup-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
     font-size: 12px;
     font-weight: 600;
+    color: var(--text);
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    list-style: none;
   }
-  .dark #ss-tool .ss-preset-btn {
-    border-color: rgba(255,255,255,0.12);
+  #ss-tool .ss-subgroup-head::-webkit-details-marker { display: none; }
+  #ss-tool .ss-subgroup-head .ss-chevron { width: 13px; height: 13px; margin-left: 0; }
+  #ss-tool .ss-subgroup[open] > .ss-subgroup-head .ss-chevron { transform: rotate(90deg); }
+  #ss-tool .ss-subgroup-body { padding: 0 12px 12px; }
+
+  /* ── Sliders ── */
+  #ss-tool .ss-slider-head { display: flex; align-items: baseline; justify-content: space-between; }
+  #ss-tool .ss-slider-val {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-soft);
+    font-variant-numeric: tabular-nums;
   }
-  #ss-tool .ss-preset-btn:hover {
-    border-color: var(--color-accent);
-    background: rgba(136,90,156,0.06);
+  #ss-tool input[type="range"] {
+    width: 100%;
+    accent-color: var(--color-accent);
+    cursor: pointer;
   }
 
   /* ── Drop zones ── */
@@ -339,209 +576,142 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 130px;
-    border: 2px solid rgba(0,0,0,0.15);
+    min-height: 118px;
+    border: 1.5px dashed var(--ss-border);
     border-radius: var(--radius-xl);
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     overflow: hidden;
     outline: none;
   }
-  .dark #ss-tool .ss-dropzone {
-    border-color: rgba(255,255,255,0.12);
-  }
   #ss-tool .ss-dropzone:hover,
   #ss-tool .ss-dropzone:focus-visible {
     border-color: var(--color-accent);
-    background: rgba(136,90,156,0.04);
-  }
-  .dark #ss-tool .ss-dropzone:hover,
-  .dark #ss-tool .ss-dropzone:focus-visible {
-    background: rgba(172,95,207,0.06);
+    background: var(--ss-accent-soft);
   }
   #ss-tool .ss-dropzone.ss-drag-over {
     border-color: var(--color-accent);
-    background: rgba(136,90,156,0.1);
+    border-style: solid;
+    background: color-mix(in srgb, var(--color-accent) 16%, transparent);
   }
   #ss-tool .ss-dropzone-input {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
   }
   #ss-tool .ss-dropzone-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    pointer-events: none;
-    z-index: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    pointer-events: none; z-index: 0;
   }
-  #ss-tool .ss-dropzone-icon {
-    width: 28px;
-    height: 28px;
-    color: var(--color-text-soft);
-    opacity: 0.5;
-  }
-  #ss-tool .ss-dropzone-label {
-    font-size: 14px;
-    font-weight: 700;
-  }
-  #ss-tool .ss-dropzone-hint {
-    font-size: 11px;
-    color: var(--color-text-soft);
-    opacity: 0.7;
-  }
+  #ss-tool .ss-dropzone-icon { width: 26px; height: 26px; color: var(--color-accent); opacity: 0.6; }
+  #ss-tool .ss-dropzone-label { font-size: 13px; font-weight: 700; }
+  #ss-tool .ss-dropzone-hint { font-size: 11px; color: var(--color-text-soft); opacity: 0.75; }
   #ss-tool .ss-dropzone-filled {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 8px;
-    width: 100%;
-    z-index: 2;
-    position: relative;
-    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px; width: 100%; z-index: 2; position: relative; cursor: pointer;
   }
-  #ss-tool .ss-dropzone-thumb {
-    max-width: 100%;
-    max-height: 80px;
-    border-radius: var(--radius-lg);
-    object-fit: contain;
-  }
+  #ss-tool .ss-dropzone-thumb { max-width: 100%; max-height: 72px; border-radius: var(--radius-md); object-fit: contain; }
   #ss-tool .ss-dropzone-name {
-    font-size: 11px;
-    color: var(--color-text-soft);
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 11px; color: var(--color-text-soft);
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
-  #ss-tool .ss-dropzone-replace {
-    font-size: 11px;
-    color: var(--color-accent);
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
-  #ss-tool .ss-dropzone:hover .ss-dropzone-replace {
-    opacity: 0.8;
-  }
+  #ss-tool .ss-dropzone-replace { font-size: 11px; color: var(--color-accent); opacity: 0; transition: opacity 0.15s; }
+  #ss-tool .ss-dropzone:hover .ss-dropzone-replace { opacity: 0.85; }
   #ss-tool .ss-dropzone-remove {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-pill);
-    border: none;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    font-size: 16px;
-    line-height: 1;
-    display: flex;
+    position: absolute; top: 6px; right: 6px; width: 22px; height: 22px;
+    border-radius: var(--radius-pill); border: none;
+    background: rgba(0,0,0,0.5); color: #fff; font-size: 15px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10; opacity: 0; transition: opacity 0.15s; padding: 0;
+  }
+  #ss-tool .ss-dropzone:hover .ss-dropzone-remove { opacity: 1; }
+
+  /* ── Buttons ── */
+  #ss-tool .ss-btn-primary,
+  #ss-tool .ss-btn-secondary,
+  #ss-tool .ss-btn-ghost {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    opacity: 0;
-    transition: opacity 0.15s;
-    padding: 0;
-  }
-  #ss-tool .ss-dropzone:hover .ss-dropzone-remove {
-    opacity: 1;
-  }
-
-  #ss-tool input[type="range"] {
-    width: 100%;
-    accent-color: var(--color-accent);
-    cursor: pointer;
-  }
-
-  #ss-tool input[type="checkbox"] {
-    width: auto;
-    accent-color: var(--color-accent);
-    cursor: pointer;
-  }
-
-  #ss-tool .ss-check-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 7px;
+    font: inherit;
     font-weight: 600;
-    font-size: 13px;
     cursor: pointer;
+    border-radius: var(--radius-lg);
+    transition: background 0.15s, border-color 0.15s, opacity 0.15s, transform 0.06s;
   }
+  #ss-tool .ss-btn-primary:active,
+  #ss-tool .ss-btn-secondary:active,
+  #ss-tool .ss-btn-ghost:active { transform: scale(0.98); }
+  #ss-tool .ss-btn-primary svg,
+  #ss-tool .ss-btn-secondary svg,
+  #ss-tool .ss-btn-ghost svg { width: 16px; height: 16px; }
 
   #ss-tool .ss-btn-primary {
-    background: var(--color-accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-lg);
-    padding: 10px 16px;
-    font: inherit;
-    font-weight: 700;
+    flex: 2;
+    padding: 10px 14px;
     font-size: 14px;
-    cursor: pointer;
-    transition: opacity 0.15s;
+    font-weight: 700;
+    background: var(--color-accent);
+    color: var(--ss-ink);
+    border: none;
   }
-  #ss-tool .ss-btn-primary:hover { opacity: 0.85; }
+  #ss-tool .ss-btn-primary:hover { background: var(--color-accent-hover); }
 
   #ss-tool .ss-btn-secondary {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid rgba(0,0,0,0.15);
-    border-radius: var(--radius-lg);
-    padding: 10px 16px;
-    font: inherit;
-    font-weight: 600;
+    flex: 1;
+    padding: 10px 14px;
     font-size: 14px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .dark #ss-tool .ss-btn-secondary {
-    border-color: rgba(255,255,255,0.15);
+    background: var(--ss-track);
     color: var(--text);
+    border: 1px solid var(--ss-border);
   }
-  #ss-tool .ss-btn-secondary:hover {
-    background: rgba(0,0,0,0.05);
-  }
-  .dark #ss-tool .ss-btn-secondary:hover {
-    background: rgba(255,255,255,0.07);
-  }
+  #ss-tool .ss-btn-secondary:hover { background: var(--ss-track-strong); }
 
-  #ss-tool .ss-mini-btn {
-    margin-top: 4px;
-    padding: 6px 10px;
-    font-size: 12px;
+  #ss-tool .ss-btn-ghost {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 12.5px;
     background: transparent;
     color: var(--text);
-    border: 1px solid rgba(0,0,0,0.15);
-    border-radius: var(--radius-lg);
-    font-family: inherit;
-    font-weight: 600;
-    cursor: pointer;
+    border: 1px solid var(--ss-border);
   }
-  .dark #ss-tool .ss-mini-btn {
-    border-color: rgba(255,255,255,0.15);
+  #ss-tool .ss-btn-ghost:hover { background: var(--ss-track); border-color: var(--color-accent); }
+  #ss-tool .ss-btn-ghost-sm { font-size: 12px; padding: 6px 10px; color: var(--color-text-soft); }
+  #ss-tool .ss-btn-ghost-sm:hover { color: var(--text); }
+
+  #ss-tool .ss-btn-primary:focus-visible,
+  #ss-tool .ss-btn-secondary:focus-visible,
+  #ss-tool .ss-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ss-ring); }
+
+  /* ── Sticky footer ── */
+  #ss-tool .ss-footer {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--ss-hairline);
+    background: var(--card-bg);
+    box-shadow: 0 -8px 20px -12px rgba(0,0,0,0.18);
   }
-  #ss-tool .ss-mini-btn:hover {
-    background: rgba(0,0,0,0.05);
-  }
-  .dark #ss-tool .ss-mini-btn:hover {
-    background: rgba(255,255,255,0.07);
+  #ss-tool .ss-actions { display: flex; gap: 8px; }
+  #ss-tool .ss-status {
+    font-size: 11.5px;
+    color: var(--color-text-soft);
+    line-height: 1.4;
+    min-height: 1.4em;
+    text-align: center;
   }
 
+  /* ── Preview ── */
+  #ss-tool .ss-preview { padding: 20px; }
   #ss-tool #ss-canvas {
     width: 100%;
     height: auto;
     display: block;
     border-radius: var(--radius-xl);
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid var(--ss-hairline);
     background: transparent;
     cursor: grab;
   }
@@ -554,22 +724,26 @@
     background-size: 16px 16px;
     background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   }
-  .dark #ss-tool #ss-canvas {
-    border-color: rgba(255,255,255,0.08);
-  }
+  #ss-tool .ss-hint { font-size: 12px; color: var(--color-text-soft); line-height: 1.5; }
 
-  #ss-tool .ss-hint {
-    font-size: 12px;
-    color: var(--color-text-soft);
-    line-height: 1.5;
-  }
-
-  /* Sticky preview on desktop */
+  /* ── Desktop: pin both columns; controls scroll internally, footer stays ── */
   @media (min-width: 1024px) {
-    #ss-tool .ss-preview {
+    #ss-tool .ss-controls {
       position: sticky;
       top: 6rem;
+      max-height: calc(100vh - 7.5rem);
     }
+    #ss-tool .ss-scroll { flex: 1; overflow-y: auto; }
+    #ss-tool .ss-preview { position: sticky; top: 6rem; }
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    #ss-tool .ss-chevron,
+    #ss-tool .ss-switch::after,
+    #ss-tool .ss-btn-primary,
+    #ss-tool .ss-btn-secondary,
+    #ss-tool .ss-btn-ghost { transition-duration: 1ms !important; }
   }
 </style>
 
@@ -594,7 +768,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var removeOldBtn   = $('ss-remove-old');
   var removeNewBtn   = $('ss-remove-new');
   var swapImagesBtn  = $('ss-swap-images');
-  var fitModeInput   = $('ss-fit-mode');
+  var fitSeg         = $('ss-fit-seg');
 
   var zoomOldInput   = $('ss-zoom-old');
   var zoomNewInput   = $('ss-zoom-new');
@@ -605,6 +779,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var oldLabelInput  = $('ss-old-label');
   var newLabelInput  = $('ss-new-label');
+  var cornerGrid     = $('ss-corner-grid');
 
   var presetInput    = $('ss-preset');
   var widthInput     = $('ss-width');
@@ -613,7 +788,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var autoHeightInput = $('ss-auto-height');
   var paddingInput   = $('ss-padding');
   var radiusInput    = $('ss-radius');
-  var cornerInput    = $('ss-corner');
 
   var bgColorInput   = $('ss-bg-color');
   var bgColorHex     = $('ss-bg-color-hex');
@@ -626,11 +800,10 @@ document.addEventListener('DOMContentLoaded', function () {
   var shadowInput    = $('ss-shadow');
   var transparentBgInput = $('ss-transparent-bg');
 
-  var formatInput    = $('ss-format');
+  var formatSeg      = $('ss-format-seg');
   var qualityWrap    = $('ss-quality-wrap');
   var qualityInput   = $('ss-quality');
   var qualityVal     = $('ss-quality-val');
-  var renderBtn      = $('ss-render');
   var downloadBtn    = $('ss-download');
   var copyBtn        = $('ss-copy');
 
@@ -647,6 +820,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var newOffsetX = 0, newOffsetY = 0;
   var isDragging = false, dragTarget = null;
   var dragStartX = 0, dragStartY = 0;
+  var fitMode = 'fit';          // 'fit' | 'fill'
+  var labelCorner = 'top-left'; // corner picker value
+  var format = 'png';           // 'png' | 'jpeg'
 
   // ── Helpers ──
   function setStatus(msg) { statusEl.textContent = msg; }
@@ -731,7 +907,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function drawImagePanel(img, px, py, pw, ph, label, zoom, offX, offY) {
     var r = Number(radiusInput.value);
-    var corner = cornerInput.value;
+    var corner = labelCorner;
 
     // Shadow
     if (shadowInput.checked && img) {
@@ -760,7 +936,6 @@ document.addEventListener('DOMContentLoaded', function () {
     ctx.fillStyle = imgBgInput.value;
     ctx.fillRect(px, py, pw, ph);
 
-    var fitMode = fitModeInput.value;
     var baseScale = fitMode === 'fill'
       ? Math.max(pw / img.width, ph / img.height)
       : Math.min(pw / img.width, ph / img.height);
@@ -810,6 +985,27 @@ document.addEventListener('DOMContentLoaded', function () {
     drawImagePanel(newImg, pad + panelW + gap, pad, panelW, innerH,
       newLabelInput.value || 'NEW', Number(zoomNewInput.value), newOffsetX, newOffsetY);
   }
+
+  // ── Segmented control helper ──
+  function initSegmented(container, cb) {
+    if (!container) return;
+    var opts = container.querySelectorAll('[data-val]');
+    opts.forEach(function (o) {
+      o.addEventListener('click', function () {
+        opts.forEach(function (x) { x.classList.remove('is-active'); x.setAttribute('aria-pressed', 'false'); });
+        o.classList.add('is-active');
+        o.setAttribute('aria-pressed', 'true');
+        cb(o.getAttribute('data-val'));
+      });
+    });
+  }
+
+  initSegmented(fitSeg, function (v) { fitMode = v; render(); });
+  initSegmented(cornerGrid, function (v) { labelCorner = v; render(); });
+  initSegmented(formatSeg, function (v) {
+    format = v;
+    qualityWrap.style.display = v === 'jpeg' ? '' : 'none';
+  });
 
   // ── Preset ──
   presetInput.addEventListener('change', function () {
@@ -1065,26 +1261,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // ── Format / quality ──
-  formatInput.addEventListener('change', function () {
-    qualityWrap.style.display = formatInput.value === 'jpeg' ? '' : 'none';
-  });
+  // ── Quality display ──
   qualityInput.addEventListener('input', function () {
     qualityVal.textContent = qualityInput.value;
   });
 
   // ── Export ──
-  renderBtn.addEventListener('click', function () { render(); setStatus('Preview updated.'); });
-
   downloadBtn.addEventListener('click', function () {
-    var fmt  = formatInput.value;
-    if (fmt === 'jpeg' && transparentBgInput.checked) {
-      setStatus('JPEG does not support transparency. Switch to PNG or disable transparent background.');
+    if (format === 'jpeg' && transparentBgInput.checked) {
+      setStatus('JPEG has no transparency. Switch to PNG or turn off transparent background.');
       return;
     }
-    var ext  = fmt === 'jpeg' ? 'jpg' : 'png';
-    var mime = fmt === 'jpeg' ? 'image/jpeg' : 'image/png';
-    var q    = fmt === 'jpeg' ? Number(qualityInput.value) / 100 : undefined;
+    var ext  = format === 'jpeg' ? 'jpg' : 'png';
+    var mime = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+    var q    = format === 'jpeg' ? Number(qualityInput.value) / 100 : undefined;
     var link = document.createElement('a');
     link.download = 'comparison.' + ext;
     link.href = canvas.toDataURL(mime, q);
@@ -1111,12 +1301,14 @@ document.addEventListener('DOMContentLoaded', function () {
   function linkColor(swatch, hex) {
     swatch.addEventListener('input', function () {
       hex.value = swatch.value;
+      clearThemeActive();
       render();
     });
     hex.addEventListener('input', function () {
       var v = hex.value.trim();
       if (/^#[0-9a-f]{6}$/i.test(v)) {
         swatch.value = v;
+        clearThemeActive();
         render();
       }
     });
@@ -1130,13 +1322,17 @@ document.addEventListener('DOMContentLoaded', function () {
   linkColor(labelTextInput, labelTextHex);
 
   // ── Style presets ──
+  var themeBtns = document.querySelectorAll('#ss-tool .ss-preset-btn');
+  function clearThemeActive() {
+    themeBtns.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-pressed', 'false'); });
+  }
   var stylePresets = {
     light:       { bg: '#ffffff', imgBg: '#ffffff', labelBg: '#111827', labelText: '#ffffff', transparent: false },
     dark:        { bg: '#1e1e1e', imgBg: '#2a2a2a', labelBg: '#ffffff', labelText: '#111827', transparent: false },
     transparent: { bg: '#ffffff', imgBg: '#ffffff', labelBg: '#111827', labelText: '#ffffff', transparent: true }
   };
 
-  document.querySelectorAll('#ss-tool .ss-preset-btn').forEach(function (btn) {
+  themeBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       var p = stylePresets[btn.getAttribute('data-preset')];
       if (!p) return;
@@ -1145,6 +1341,9 @@ document.addEventListener('DOMContentLoaded', function () {
       labelBgInput.value = p.labelBg;  labelBgHex.value = p.labelBg;
       labelTextInput.value = p.labelText; labelTextHex.value = p.labelText;
       transparentBgInput.checked = p.transparent;
+      clearThemeActive();
+      btn.classList.add('is-active');
+      btn.setAttribute('aria-pressed', 'true');
       syncTransparentUi();
       render();
       setStatus('Applied ' + btn.getAttribute('data-preset') + ' theme.');
@@ -1154,8 +1353,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // ── Live update on any control change ──
   var liveControls = [
     oldLabelInput, newLabelInput, widthInput, heightInput, gapInput,
-    paddingInput, radiusInput, cornerInput, autoHeightInput, fitModeInput, shadowInput,
-    transparentBgInput
+    paddingInput, radiusInput, autoHeightInput, shadowInput
   ];
   liveControls.forEach(function (el) {
     el.addEventListener('input', render);
