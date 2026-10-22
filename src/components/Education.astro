@@ -1,4 +1,5 @@
 ---
+import { imageSize } from '../lib/homepage-images';
 /*
   Props:
     - title?: string           // section heading (defaults to "Education")
@@ -36,6 +37,8 @@ const {items = [] }: { title?: string; items?: EducationItem[] } = Astro.props;
               src={crest}
               alt={crestAlt ?? `${institution} crest`}
               loading="lazy"
+              decoding="async"
+              {...imageSize(crest, 192, 192)}
               class="education-crest-img"
             />
           </figure>

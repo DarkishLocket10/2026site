@@ -5,7 +5,7 @@ pubDate: 2025-09-17
 description: 'Building my very own app'
 author: 'Yash Patel'
 image:
-    url: '/postphotos/post 7 - cullpix/app.png'
+    url: '/postphotos/post 7 - cullpix/app.webp'
     alt: 'Screenshot of CullPix'
 tags: ["Blog", "Photography", "Computer Science"]
 showHero: false

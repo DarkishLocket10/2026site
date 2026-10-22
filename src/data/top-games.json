@@ -10,9 +10,9 @@
       "sub": "2013",
       "url": "https://www.playstation.com/en-us/games/the-last-of-us/",
       "accent": "#6a3a2a",
-      "image": "/games/the last of us.jpg",
-      "logo": "/game icons and logos/the last of us logo.png",
-      "icon": "/game icons and logos/the last of us icon.png",
+      "image": "/games/the last of us.webp",
+      "logo": "/game icons and logos/the last of us logo.webp",
+      "icon": "/game icons and logos/the last of us icon.webp",
       "logoScale": 0.85
     },
     {
@@ -22,9 +22,9 @@
       "sub": "2000",
       "url": "https://www.zelda.com/majoras-mask-3d/",
       "accent": "#6a3a8a",
-      "image": "/games/majoras mask.png",
-      "logo": "/game icons and logos/legend of zelda majoras mask logo.png",
-      "icon": "/game icons and logos/legend of zelda majoras mask icon.png"
+      "image": "/games/majoras mask.webp",
+      "logo": "/game icons and logos/legend of zelda majoras mask logo.webp",
+      "icon": "/game icons and logos/legend of zelda majoras mask icon.webp"
     },
     {
       "rank": 3,
@@ -33,9 +33,9 @@
       "sub": "2014",
       "url": "https://www.playstation.com/en-us/games/infamous-second-son/",
       "accent": "#d44419",
-      "image": "/games/infamous second son.png",
-      "logo": "/game icons and logos/infamous second son logo.png",
-      "icon": "/game icons and logos/infamous second son icon.png"
+      "image": "/games/infamous second son.webp",
+      "logo": "/game icons and logos/infamous second son logo.webp",
+      "icon": "/game icons and logos/infamous second son icon.webp"
     },
     {
       "rank": 4,
@@ -44,9 +44,9 @@
       "sub": "2011",
       "url": "https://www.playstation.com/en-us/games/uncharted-the-nathan-drake-collection/",
       "accent": "#c2884a",
-      "image": "/games/uncharted 3.png",
-      "logo": "/game icons and logos/uncharted 3 logo.png",
-      "icon": "/game icons and logos/uncharted 3 icon.png",
+      "image": "/games/uncharted 3.webp",
+      "logo": "/game icons and logos/uncharted 3 logo.webp",
+      "icon": "/game icons and logos/uncharted 3 icon.webp",
       "logoScale": 0.85
     },
     {
@@ -56,9 +56,9 @@
       "sub": "2020",
       "url": "https://www.playstation.com/en-us/games/ghost-of-tsushima/",
       "accent": "#c4475a",
-      "image": "/games/ghost of tsushima.png",
-      "logo": "/game icons and logos/ghost of tsushima logo.png",
-      "icon": "/game icons and logos/ghost of tsushima icon.png",
+      "image": "/games/ghost of tsushima.webp",
+      "logo": "/game icons and logos/ghost of tsushima logo.webp",
+      "icon": "/game icons and logos/ghost of tsushima icon.webp",
       "logoScale": 0.85
     },
     {
@@ -68,9 +68,9 @@
       "sub": "2011",
       "url": "https://www.minecraft.net/",
       "accent": "#3a7a3a",
-      "image": "/games/minecraft.jpg",
-      "logo": "/game icons and logos/minecraft logo.png",
-      "icon": "/game icons and logos/minecraft icon.png",
+      "image": "/games/minecraft.webp",
+      "logo": "/game icons and logos/minecraft logo.webp",
+      "icon": "/game icons and logos/minecraft icon.webp",
       "logoScale": 0.85
     },
     {
@@ -80,9 +80,9 @@
       "sub": "2020",
       "url": "https://www.playstation.com/en-us/games/the-last-of-us-part-ii/",
       "accent": "#3a4a3a",
-      "image": "/games/the last of us part 2.png",
-      "logo": "/game icons and logos/the last of us part 2 logo.png",
-      "icon": "/game icons and logos/the last of us part 2 icon.png",
+      "image": "/games/the last of us part 2.webp",
+      "logo": "/game icons and logos/the last of us part 2 logo.webp",
+      "icon": "/game icons and logos/the last of us part 2 icon.webp",
       "logoScale": 0.85
     },
     {
@@ -92,9 +92,9 @@
       "sub": "2019",
       "url": "https://www.kojimaproductions.jp/en/death_stranding",
       "accent": "#bcc4cc",
-      "image": "/games/death stranding.png",
-      "logo": "/game icons and logos/death stranding logo.png",
-      "icon": "/game icons and logos/death stranding icon.png",
+      "image": "/games/death stranding.webp",
+      "logo": "/game icons and logos/death stranding logo.webp",
+      "icon": "/game icons and logos/death stranding icon.webp",
       "logoScale": 0.85
     },
     {
@@ -104,9 +104,9 @@
       "sub": "2013",
       "url": "https://www.nintendo.com/us/store/products/pikmin-3-deluxe-switch/",
       "accent": "#5a8a3a",
-      "image": "/games/pikmin 3.png",
-      "logo": "/game icons and logos/pikmin 3 logo.png",
-      "icon": "/game icons and logos/pikmin 3 icon.png",
+      "image": "/games/pikmin 3.webp",
+      "logo": "/game icons and logos/pikmin 3 logo.webp",
+      "icon": "/game icons and logos/pikmin 3 icon.webp",
       "logoScale": 0.85
     },
     {
@@ -116,9 +116,9 @@
       "sub": "2010",
       "url": "https://www.nintendo.com/us/store/products/super-mario-galaxy-2-wii/",
       "accent": "#d4a83a",
-      "image": "/games/super mario galaxy 2.png",
-      "logo": "/game icons and logos/super mario galaxy 2 logo.png",
-      "icon": "/game icons and logos/super mario galaxy 2 icon.png",
+      "image": "/games/super mario galaxy 2.webp",
+      "logo": "/game icons and logos/super mario galaxy 2 logo.webp",
+      "icon": "/game icons and logos/super mario galaxy 2 icon.webp",
       "logoScale": 0.85
     }
   ]

@@ -48,7 +48,12 @@ const PIWIGO_BUILD_API =
 //             at `medium` (~792 px) so the click reveals a clear quality
 //             jump. Falls back upward through the size ladder if `medium`
 //             isn't present.
-function pickPiwigoSources(raw) {
+type PiwigoDerivative = { url?: string; width?: number; height?: number };
+type PiwigoImage = {
+  derivatives?: Record<string, PiwigoDerivative>;
+  element_url?: string; width?: number; height?: number; name?: string; file?: string;
+};
+function pickPiwigoSources(raw: PiwigoImage) {
   const d = raw.derivatives || {};
   const tilePick = d.xsmall || d.xs || d['2small'] || d.xxs
                  || d.small  || d.medium || d.large || d.xlarge || d.xxlarge;
@@ -77,10 +82,10 @@ async function fetchPiwigoAtBuild() {
     if (!res.ok) return [];
     const data = await res.json();
     if (!data || data.stat !== 'ok') return [];
-    const apiImages = (data.result && data.result.images) || [];
-    return apiImages.map(pickPiwigoSources).filter(Boolean);
+    const apiImages: PiwigoImage[] = (data.result && data.result.images) || [];
+    return apiImages.map(pickPiwigoSources).filter((photo): photo is NonNullable<typeof photo> => photo !== null);
   } catch (err) {
-    console.warn('[gallery] Piwigo build-time fetch failed:', err?.message || err);
+    console.warn('[gallery] Piwigo build-time fetch failed:', err instanceof Error ? err.message : err);
     return [];
   }
 }
@@ -178,13 +183,7 @@ const photos = piwigoPhotos;
   </svg>
 
   {/* Loading strategy:
-       i <  12            : src set + loading="eager" + fetchpriority="high"
-                            — initial paint priority, browser ranks these first
-                            when the HTTP/2 connection opens.
-       i <  24            : src set + loading="eager"
-                            — still above-the-fold for most viewports (3 rows
-                            × ~5 visible cells = 15 visible, 24 gives ~1.5
-                            viewports of immediate availability).
+       i <  24            : src set + loading="lazy"; the gallery is below the fold.
        i >= 24            : NO src at render — only `data-src`. A tiny inline
                             SVG is the visible placeholder so no broken-image
                             icons show and width/height still reserves layout.
@@ -214,11 +213,10 @@ const photos = piwigoPhotos;
               src={eager ? p.src : "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201%201'%2F%3E"}
               data-src={eager ? undefined : p.src}
               alt={p.alt}
-              loading={eager ? 'eager' : 'lazy'}
-              fetchpriority={i < 12 ? 'high' : undefined}
+              loading="lazy"
               decoding="async"
-              width={p.width || undefined}
-              height={p.height || undefined}
+              width={p.width || 432}
+              height={p.height || 432}
             />
             <span class="gallery-tile-cursor" aria-hidden="true"></span>
           </button>
@@ -238,7 +236,7 @@ const photos = piwigoPhotos;
   >
     <div class="gallery-lightbox-backdrop" data-close></div>
     <figure class="gallery-lightbox-figure">
-      <img data-lightbox-img src="" alt="" />
+      <img data-lightbox-img src="" alt="" loading="lazy" decoding="async" width="792" height="792" />
     </figure>
     <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" data-prev aria-label="Previous photo">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -2299,7 +2297,18 @@ const photos = piwigoPhotos;
     // that moves, not the page — and the observer is cheap to re-run on
     // each layout pass because it dedupes observations internally.
     let lazyIO = null;
+    let galleryNear = typeof IntersectionObserver === 'undefined';
+    if (!galleryNear) {
+      const pageIO = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        galleryNear = true;
+        pageIO.disconnect();
+        setupLazyLoader();
+      }, { rootMargin: '800px 0px' });
+      pageIO.observe(viewport);
+    }
     function setupLazyLoader() {
+      if (!galleryNear) return;
       if (typeof IntersectionObserver === 'undefined') {
         // Ancient browser: eagerly promote everything and move on. The
         // user preferred "load more" over "load perfectly"; a rare fallback
@@ -2791,6 +2800,8 @@ const photos = piwigoPhotos;
       img.alt = photo.alt || 'Photograph';
       img.loading = 'lazy';
       img.decoding = 'async';
+      img.width = photo.width || 432;
+      img.height = photo.height || 432;
       applyScope(img);
       btn.appendChild(img);
 
@@ -3021,6 +3032,8 @@ const photos = piwigoPhotos;
       boxImg.style.transition = '';
       boxImg.src = nextSrc;
       boxImg.alt = srcImg.alt;
+      boxImg.width = srcImg.width || 792;
+      boxImg.height = srcImg.height || 792;
       const reveal = () => { boxImg.style.opacity = '1'; };
       if (boxImg.complete && boxImg.naturalWidth > 0) {
         reveal();

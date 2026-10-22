@@ -10,8 +10,8 @@
       "sub": "2017",
       "url": "https://letterboxd.com/film/baby-driver/",
       "accent": "#c2381a",
-      "image": "/movies/Baby Driver (2017).jpeg",
-      "logo": "/movie logos/baby driver.png",
+      "image": "/movies/Baby Driver (2017).webp",
+      "logo": "/movie logos/baby driver.webp",
       "crop": "50% 60%"
     },
     {
@@ -21,8 +21,8 @@
       "sub": "2022",
       "url": "https://letterboxd.com/film/everything-everywhere-all-at-once/",
       "accent": "#c54a8a",
-      "image": "/movies/Everything Everywhere All at Once (2022).jpg",
-      "logo": "/movie logos/everything everywhere all at once.png",
+      "image": "/movies/Everything Everywhere All at Once (2022).webp",
+      "logo": "/movie logos/everything everywhere all at once.webp",
       "crop": "50% 50%"
     },
     {
@@ -32,8 +32,8 @@
       "sub": "2010",
       "url": "https://letterboxd.com/film/black-swan/",
       "accent": "#1a0e10",
-      "image": "/movies/Black Swan (2010).jpeg",
-      "logo": "/movie logos/black swan.png",
+      "image": "/movies/Black Swan (2010).webp",
+      "logo": "/movie logos/black swan.webp",
       "crop": "50% 50%"
     },
     {
@@ -43,8 +43,8 @@
       "sub": "1985",
       "url": "https://letterboxd.com/film/back-to-the-future/",
       "accent": "#d97a1c",
-      "image": "/movies/Back to the Future (1985).jpeg",
-      "logo": "/movie logos/back to the futue.png",
+      "image": "/movies/Back to the Future (1985).webp",
+      "logo": "/movie logos/back to the futue.webp",
       "crop": "50% 0%"
     },
     {
@@ -54,8 +54,8 @@
       "sub": "2019",
       "url": "https://letterboxd.com/film/guava-island/",
       "accent": "#d8576a",
-      "image": "/movies/Guava Island (2019).jpg",
-      "logo": "/movie logos/guava island.png"
+      "image": "/movies/Guava Island (2019).webp",
+      "logo": "/movie logos/guava island.webp"
     },
     {
       "rank": 6,
@@ -64,8 +64,8 @@
       "sub": "1982",
       "url": "https://letterboxd.com/film/blade-runner/",
       "accent": "#1a2e58",
-      "image": "/movies/Blade Runner (1982).jpeg",
-      "logo": "/movie logos/blade runner.png"
+      "image": "/movies/Blade Runner (1982).webp",
+      "logo": "/movie logos/blade runner.webp"
     },
     {
       "rank": 7,
@@ -74,8 +74,8 @@
       "sub": "1994",
       "url": "https://letterboxd.com/film/the-shawshank-redemption/",
       "accent": "#3a4a5a",
-      "image": "/movies/The Shawshank Redemption (1994).jpeg",
-      "logo": "/movie logos/the shawshank redemption.png"
+      "image": "/movies/The Shawshank Redemption (1994).webp",
+      "logo": "/movie logos/the shawshank redemption.webp"
     },
     {
       "rank": 8,
@@ -84,8 +84,8 @@
       "sub": "2016",
       "url": "https://letterboxd.com/film/your-name/",
       "accent": "#2a8ac8",
-      "image": "/movies/Your Name. (2016).png",
-      "logo": "/movie logos/your name.png",
+      "image": "/movies/Your Name. (2016).webp",
+      "logo": "/movie logos/your name.webp",
       "crop": "50% 0%"
     },
     {
@@ -95,8 +95,8 @@
       "sub": "2024",
       "url": "https://letterboxd.com/film/civil-war-2024/",
       "accent": "#4a5a3a",
-      "image": "/movies/Civil War (2024).png",
-      "logo": "/movie logos/civil war.png",
+      "image": "/movies/Civil War (2024).webp",
+      "logo": "/movie logos/civil war.webp",
       "crop": "50% 0%"
     },
     {
@@ -106,8 +106,8 @@
       "sub": "2024",
       "url": "https://letterboxd.com/film/a-real-pain/",
       "accent": "#5a6a7a",
-      "image": "/movies/A Real Pain (2024).png",
-      "logo": "/movie logos/a real pain.png"
+      "image": "/movies/A Real Pain (2024).webp",
+      "logo": "/movie logos/a real pain.webp"
     }
   ]
 }

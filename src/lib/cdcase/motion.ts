@@ -124,6 +124,14 @@ export class Motion {
     }
   }
   isOpen(): boolean { return this.phase === 'opening' || this.phase === 'open' || this.openAfterClose; }
+  /** Idle bob and steady disc spin can draw at 30 fps; interaction and settling cannot. */
+  isInteracting(): boolean {
+    return this.dragging || this.overCase || this.switching || this.phase === 'opening' || this.phase === 'closing'
+      || this.coast > 0 || Math.abs(this.vx) + Math.abs(this.vy) > 0.01
+      || Math.abs(this.dragX) + Math.abs(this.dragY - this.yawTarget) > 0.002
+      || Math.abs(this.hoverX - this.hoverTargetX) + Math.abs(this.hoverY - this.hoverTargetY) > 0.002
+      || Math.abs(this.spinRate - (this.spinOn ? Math.PI / 10 : 0)) > 0.005;
+  }
   goTo(index: number): void {
     if (!Number.isInteger(index) || index < 0 || index >= this.discCount || index === this.current) return;
     if (this.switching) { this.queue = index; return; }

@@ -5,7 +5,7 @@ pubDate: 2025-09-20
 description: 'Revisiting .NET and C#'
 author: 'Yash Patel'
 image:
-    url: '/postphotos/post 8 - devops/devops.png'
+    url: '/postphotos/post 8 - devops/devops.webp'
     alt: 'Screenshot of the DevOps Guard dashboard'
 tags: ["Computer Science"]
 showHero: false

@@ -1,4 +1,5 @@
 ---
+import { imageSize } from '../lib/homepage-images';
 import { Icon } from 'astro-icon/components';
 
 type WorkItem = {
@@ -101,6 +102,8 @@ function visitMeta(item: WorkItem) {
                           src={imageSrc}
                           alt={altText}
                           loading="lazy"
+                          decoding="async"
+                          {...imageSize(imageSrc)}
                           class="w-full h-full object-cover"
                         />
                       </div>
@@ -667,16 +670,17 @@ function visitMeta(item: WorkItem) {
 
 <script>
   import Swiper from 'swiper';
+  import type { SwiperOptions } from 'swiper/types';
   import { EffectCards, Navigation, Pagination, Keyboard, Mousewheel, FreeMode, A11y } from 'swiper/modules';
   import 'swiper/css';
   import 'swiper/css/effect-cards';
   import 'swiper/css/free-mode';
 
-  const el = document.querySelector('.work-swiper');
+  const el = document.querySelector<HTMLElement>('.work-swiper');
   if (el) {
     const mq = window.matchMedia('(min-width: 1024px)');
 
-    const baseConfig = {
+    const baseConfig: SwiperOptions = {
       modules: [EffectCards, Navigation, Pagination, Keyboard, Mousewheel, FreeMode, A11y],
       grabCursor: true,
       loop: false,
@@ -694,7 +698,7 @@ function visitMeta(item: WorkItem) {
       },
     };
 
-    const mobileConfig = {
+    const mobileConfig: SwiperOptions = {
       ...baseConfig,
       effect: 'cards',
       cardsEffect: {
@@ -705,18 +709,18 @@ function visitMeta(item: WorkItem) {
     };
 
     // Smooth S-curve: 0 → 1 with eased acceleration/deceleration
-    const smoothstep = (t) => {
+    const smoothstep = (t: number) => {
       const c = Math.max(0, Math.min(1, t));
       return c * c * (3 - 2 * c);
     };
 
-    const updateSlidePresentation = function () {
+    const updateSlidePresentation = function (this: Swiper) {
       // Compute effective perView from actual measurements so this works
       // whether slidesPerView is numeric or 'auto'.
       let perView = Number(this.params.slidesPerView);
       if (!isFinite(perView) || perView <= 0) {
         const first = this.slides && this.slides[0];
-        const gap = this.params.spaceBetween || 0;
+        const gap = Number(this.params.spaceBetween) || 0;
         perView = first && first.offsetWidth
           ? this.width / (first.offsetWidth + gap)
           : 1;
@@ -728,7 +732,7 @@ function visitMeta(item: WorkItem) {
       const fadeLength = 0.55;
 
       this.slides.forEach((slide) => {
-        const P = slide.progress;
+        const P = (slide as HTMLElement & { progress?: number }).progress ?? 0;
 
         // How far past the fully-visible band this slide is (0 if inside).
         let edgeDist = 0;
@@ -796,7 +800,7 @@ function visitMeta(item: WorkItem) {
         } else {
           slide.removeAttribute('data-flat');
         }
-        const frame = slide.querySelector('.card-frame');
+        const frame = slide.querySelector<HTMLElement>('.card-frame');
         if (frame) {
           // NOTE: no blur() here — blur forces CSS-pixel rasterization of the
           // 3D layer which looks low-res at HiDPI. The receded look is carried
@@ -806,23 +810,23 @@ function visitMeta(item: WorkItem) {
       });
     };
 
-    const progressBar = document.querySelector('.work-progress-bar');
-    const updateProgressBar = function () {
+    const progressBar = document.querySelector<HTMLElement>('.work-progress-bar');
+    const updateProgressBar = function (this: Swiper) {
       if (!progressBar) return;
       const pos = Math.max(0, Math.min(1, this.progress));
       progressBar.style.setProperty('--pos', pos.toFixed(4));
     };
 
-    const onInit = function () {
+    const onInit = function (this: Swiper) {
       updateSlidePresentation.call(this);
       updateProgressBar.call(this);
     };
-    const onTick = function () {
+    const onTick = function (this: Swiper) {
       updateSlidePresentation.call(this);
       updateProgressBar.call(this);
     };
 
-    const desktopConfig = {
+    const desktopConfig: SwiperOptions = {
       ...baseConfig,
       // Fixed card width (set in CSS) → card count scales with viewport.
       // Consistent smaller size across all desktop sizes.
@@ -860,8 +864,8 @@ function visitMeta(item: WorkItem) {
       },
     };
 
-    let instance = null;
-    let currentDesktop = null;
+    let instance: Swiper | null = null;
+    let currentDesktop: boolean | null = null;
     const wrap = document.querySelector('.work-carousel-wrap');
 
     const updateNavVisibility = () => {
@@ -869,7 +873,7 @@ function visitMeta(item: WorkItem) {
       let perView = Number(instance.params.slidesPerView);
       if (!isFinite(perView) || perView <= 0) {
         const first = instance.slides && instance.slides[0];
-        const gap = instance.params.spaceBetween || 0;
+        const gap = Number(instance.params.spaceBetween) || 0;
         perView = first && first.offsetWidth
           ? instance.width / (first.offsetWidth + gap)
           : 1;
@@ -884,8 +888,8 @@ function visitMeta(item: WorkItem) {
     // activation band extends BEYOND the wrap horizontally (up to viewport
     // edges) so the scroll keeps going if the mouse drifts past the cards.
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let edgeHoverCleanup = null;
-    const setupEdgeHover = (swiper) => {
+    let edgeHoverCleanup: (() => void) | null = null;
+    const setupEdgeHover = (swiper: Swiper) => {
       if (!wrap || prefersReducedMotion) return () => {};
       const EDGE_SIZE = 220;     // px band inside the wrap where speed ramps 0→MAX
       const MAX_SPEED = 3.2;     // px per frame inside the band (≈192 px/s @60fps)
@@ -894,16 +898,16 @@ function visitMeta(item: WorkItem) {
       const EASE_POW = 1.3;
       const V_PADDING = 24;      // vertical slack above/below wrap to stay active
 
-      let mouseX = null;          // relative to wrap left
+      let mouseX: number | null = null;          // relative to wrap left
       let mouseYOk = false;       // mouse is inside wrap's Y range (+ padding)
-      let rect = null;
-      let rafId = null;
+      let rect: DOMRect | null = null;
+      let rafId: number | null = null;
       let isDragging = false;
 
       const recalcRect = () => { rect = wrap.getBoundingClientRect(); };
 
-      const onMove = (e) => {
-        if (!rect) recalcRect();
+      const onMove = (e: MouseEvent) => {
+        if (!rect) rect = wrap.getBoundingClientRect();
         mouseX = e.clientX - rect.left;
         mouseYOk = e.clientY >= rect.top - V_PADDING && e.clientY <= rect.bottom + V_PADDING;
         if (rafId == null) rafId = requestAnimationFrame(step);
@@ -980,7 +984,9 @@ function visitMeta(item: WorkItem) {
       if (instance) instance.destroy(true, true);
       instance = new Swiper(el, isDesktop ? desktopConfig : mobileConfig);
       currentDesktop = isDesktop;
-      instance.on('init resize update', updateNavVisibility);
+      instance.on('init', updateNavVisibility);
+      instance.on('resize', updateNavVisibility);
+      instance.on('update', updateNavVisibility);
       updateNavVisibility();
       if (isDesktop) {
         edgeHoverCleanup = setupEdgeHover(instance);

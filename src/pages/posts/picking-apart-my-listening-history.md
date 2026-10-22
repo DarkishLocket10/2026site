@@ -5,7 +5,7 @@ pubDate: 2025-08-23
 description: 'Doing sick things with my data'
 author: 'Yash Patel'
 image:
-    url: '/postphotos/post 6 - spotify/gambino.jpg'
+    url: '/postphotos/post 6 - spotify/gambino.webp'
     alt: 'Childish Gambino at Scotiabank Arena, shot by me'
 tags: ["Blog", "Computer Science"]
 showHero: false
