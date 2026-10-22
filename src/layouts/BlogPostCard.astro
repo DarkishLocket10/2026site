@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { imageSize } from '../lib/homepage-images';
 
 interface Frontmatter {
   title: string;
@@ -43,6 +44,7 @@ const displayDate = dateObj.toLocaleDateString(undefined, {
           alt={image.alt || title}
           loading="lazy"
           decoding="async"
+          {...imageSize(image.url)}
           class="card-image"
         />
       </div>

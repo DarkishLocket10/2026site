@@ -137,8 +137,18 @@ Optical constants in `pipeline.ts` retain polystyrene IOR 1.59, per-mm absorptio
 
 Pause cancels animation frames; resume starts with a zero time step. Hidden
 documents also stop rendering. Resize waits until the next active frame.
-A 120-frame median can reduce DPR in quarter steps, down to one. Disc, cover, back and spine
-textures resolve before compilation/rendering and `onReady`.
+`maxPixelRatio` defaults to 1.5. Every 30 animation frames, a median interval over
+20 ms reduces DPR by 0.25, down to one. Rods use one sample at DPR ≥ 1.5 (also on
+coarse pointers). Idle motion draws at 30 fps; hover, drag, transitions and settling
+draw at up to 60 fps. `setScrolling(true)` skips alternate animation frames.
+Pointer moves are coalesced per frame and canvas bounds are cached until resize/scroll.
+Artwork uses ImageBitmap decoding, with async HTML decoding as a compatibility
+fallback. A shared frame queue uploads one texture per frame across mounts;
+`compileAsync` prepares all programs, and studio faces are warmed separately.
+The initial still frame precedes `onReady`, even for paused mounts. The shelf glue
+starts mounting in idle time within 800 px, keeps flat previews until ready, and
+animates only the intersecting case nearest the viewport's vertical centre.
+Side-by-side ties follow pointer/focus; scrolling yields until 150 ms after its last event.
 Shader link failures and context loss call `onFail`; restored contexts rebuild
 the studio and recompile before resuming. Dispose disconnects observers and
 listeners, releases capture, disposes geometry/materials/targets and all owned

@@ -10,6 +10,7 @@
   />
 */
 import {Icon} from 'astro-icon/components';
+import { imageSize } from '../lib/homepage-images';
 const { title, subtitle, description, image, alt } = Astro.props;
 ---
 
@@ -127,7 +128,10 @@ const { title, subtitle, description, image, alt } = Astro.props;
     id="parallax-img"
     src={image}
     alt={alt}
-    loading="lazy"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+    {...imageSize(image)}
     class="w-full aspect-[4/3] rounded-3xl object-cover
            transition-transform duration-200 ease-out
            will-change-transform"

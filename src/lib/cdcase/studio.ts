@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { fullVert, studioFrag } from './shaders';
+import { frameWork } from './frame-work';
 
 export function pictureFormat(renderer: THREE.WebGLRenderer): THREE.TextureDataType {
   return renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float')
@@ -29,18 +30,23 @@ export class Studio {
     const mesh = new THREE.Mesh(this.geometry, this.material);
     mesh.frustumCulled = false; this.scene.add(mesh);
   }
-  render(): void {
-    const renderer = this.renderer, previous = renderer.getRenderTarget();
-    renderer.compile(this.scene, this.camera);
+  async prepare(cancelled: () => boolean): Promise<void> {
+    const renderer = this.renderer;
+    await frameWork(() => cancelled() ? undefined : renderer.compileAsync(this.scene, this.camera));
+    if (cancelled()) return;
     // Generate mipmaps only once all six faces are complete.
     this.target.texture.generateMipmaps = false;
     for (let face = 0; face < 6; face++) {
-      if (face === 5) this.target.texture.generateMipmaps = true;
-      this.material.uniforms.uFace.value = face;
-      renderer.setRenderTarget(this.target, face);
-      renderer.clear(); renderer.render(this.scene, this.camera);
+      await frameWork(() => {
+        if (cancelled()) return;
+        const previous = renderer.getRenderTarget();
+        if (face === 5) this.target.texture.generateMipmaps = true;
+        this.material.uniforms.uFace.value = face;
+        renderer.setRenderTarget(this.target, face);
+        renderer.clear(); renderer.render(this.scene, this.camera);
+        renderer.setRenderTarget(previous);
+      });
     }
-    renderer.setRenderTarget(previous);
   }
   dispose(): void { this.geometry.dispose(); this.material.dispose(); this.target.dispose(); }
 }

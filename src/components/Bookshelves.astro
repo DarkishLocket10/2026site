@@ -4,6 +4,7 @@ import topMusicData  from '../data/top-music.json';
 import topMoviesData from '../data/top-movies.json';
 import topGamesData  from '../data/top-games.json';
 import type { CaseKind, CdDisc } from '../lib/cdcase/types';
+import { imageSize } from '../lib/homepage-images';
 
 type ShelfItem = {
   rank: number;
@@ -106,9 +107,9 @@ const shelves: Shelf[] = [
                           aria-label={`#${it.rank}: ${it.title} — ${it.creator}. Pull out case.`}
                           style={it.logoScale != null ? `--logo-scale: ${it.logoScale};` : undefined}>
                           <span class="spine-body" aria-hidden="true">
-                            {it.logo && <img class="spine-logo" src={it.logo} alt="" loading="lazy" decoding="async" />}
+                            {it.logo && <img class="spine-logo" src={it.logo} alt="" loading="lazy" decoding="async" {...imageSize(it.logo)} />}
                             {shelf.id === 'games' && it.icon && (
-                              <img class="spine-icon" src={it.icon} alt="" loading="lazy" decoding="async" />
+                              <img class="spine-icon" src={it.icon} alt="" loading="lazy" decoding="async" {...imageSize(it.icon)} />
                             )}
                             <span class="spine-text">{it.title}</span>
                             <span class="spine-top"></span>
@@ -151,6 +152,7 @@ const shelves: Shelf[] = [
                         alt=""
                         loading="lazy"
                         decoding="async"
+                        {...imageSize(shelf.items[0].image, shelf.id === 'music' ? 900 : 600, 900)}
                         style={shelf.items[0].crop
                           ? `object-position: ${shelf.items[0].crop}`
                           : undefined}
@@ -164,6 +166,7 @@ const shelves: Shelf[] = [
                           alt=""
                           loading="lazy"
                           decoding="async"
+                          {...imageSize(shelf.items[0].logo)}
                           aria-hidden="true"
                         />
                       )}

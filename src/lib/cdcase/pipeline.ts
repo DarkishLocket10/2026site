@@ -7,6 +7,7 @@ import * as shaders from './shaders';
 import * as portrait from './portrait-shaders';
 import { CASE_SPECS, buildKeepPanel, buildKeepShell, buildKeepSpine, buildSteelTray, bluRayBanner } from './formats';
 import type { Parts } from './geometry';
+import { frameWork } from './frame-work';
 
 type Uniforms = Record<string, THREE.IUniform>;
 export interface CaseArtwork { art: THREE.Texture; cover: THREE.Texture; back: THREE.Texture | null; bookletInside?: THREE.Texture | null; inside?: THREE.Texture | null; relief?: THREE.Texture | null; hasBanner?: boolean; scan: boolean }
@@ -224,15 +225,27 @@ export class Pipeline {
     this.rtOpaque.setSize(this.width, this.height);
     for (const target of this.rtPlastic) target.setSize(this.width, this.height);
   }
-  compile(): void {
-    this.studio.render();
-    this.renderer.compile(this.opaque, this.camera);
+  setPixelRatio(ratio: number): void {
+    const samples = ratio >= 1.5 || matchMedia('(pointer: coarse)').matches ? 1 : 2;
+    for (const c of this.cases) for (const group of [c.tray, c.lid]) group.rods.material.uniforms.uSamples.value = samples;
+  }
+  async compile(cancelled: () => boolean): Promise<void> {
+    await this.studio.prepare(cancelled);
+    if (cancelled()) return;
+    if (this.banner) await frameWork(() => { if (!cancelled()) this.renderer.initTexture(this.banner!); });
+    await frameWork(() => cancelled() ? undefined : this.renderer.compileAsync(this.opaque, this.camera));
+    if (cancelled()) return;
     // Include pane/rod programs and opaque depth occluders even before animation.
     for (const c of this.cases) { for (const f of c.fittings) f.depth.visible = true; c.depth.visible = true; c.booklet.depth.visible = true; c.spine.depth.visible = true; c.inlay.depth.visible = true; c.tray.rods.visible = true; c.tray.sheets.visible = true; c.lid.rods.visible = true; c.lid.sheets.visible = true; }
-    this.renderer.compile(this.plastic, this.camera);
+    await frameWork(() => cancelled() ? undefined : this.renderer.compileAsync(this.plastic, this.camera));
     for (const material of [this.copy, this.composite]) {
-      this.screenMesh.material = material; this.renderer.compile(this.screen, this.screenCamera);
+      await frameWork(() => {
+        if (cancelled()) return;
+        this.screenMesh.material = material;
+        return this.renderer.compileAsync(this.screen, this.screenCamera);
+      });
     }
+    if (cancelled()) return;
     const gl = this.renderer.getContext();
     for (const program of this.renderer.info.programs ?? []) {
       if (!gl.getProgramParameter(program.program as WebGLProgram, gl.LINK_STATUS)) throw new Error(`CD shader link failed: ${gl.getProgramInfoLog(program.program as WebGLProgram)}`);

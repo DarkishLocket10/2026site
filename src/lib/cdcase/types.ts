@@ -71,6 +71,8 @@ export interface CdDisc {
 }
 
 export interface CdCaseOptions {
+  /** Maximum device pixel ratio. Default 1.5; adaptive quality never goes below 1. */
+  maxPixelRatio?: number;
   /** Physical case format. Defaults to the original jewel case. */
   kind?: CaseKind;
   /** Default wear and panel warp, 0–1; 0 is pristine. Default 0.35. */
@@ -132,6 +134,8 @@ export interface CdCaseController {
   setSpin(on: boolean): void;
   /** Freeze the simulation and stop rendering (e.g. while off screen). */
   setPaused(paused: boolean): void;
+  /** Give page scrolling priority by drawing at most every other animation frame. */
+  setScrolling(scrolling: boolean): void;
   setAutoDemo(on: boolean): void;
   /** Change the page colour (theme switch). `null` = transparent. */
   setPage(colour: string | null, transparent?: boolean): void;

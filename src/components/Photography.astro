@@ -1,6 +1,7 @@
 ---
 
 import {Icon} from 'astro-icon/components';
+import { imageSize } from '../lib/homepage-images';
 const { title, subtitle, description, image, alt } = Astro.props;
 ---
 <section
@@ -26,6 +27,8 @@ const { title, subtitle, description, image, alt } = Astro.props;
       src={image}
       alt={alt}
       loading="lazy"
+      decoding="async"
+      {...imageSize(image)}
       class="w-full rounded-3xl object-cover
              transition-transform duration-200 ease-out
              will-change-transform"

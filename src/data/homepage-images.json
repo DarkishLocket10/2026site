@@ -1,0 +1,506 @@
+{
+  "/artists/childish-gambino.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/artists/childish-gambino.png",
+    "beforeBytes": 194863,
+    "afterBytes": 36436
+  },
+  "/artists/death-stranding.webp": {
+    "width": 480,
+    "height": 128,
+    "source": "/artists/death-stranding.png",
+    "beforeBytes": 98164,
+    "afterBytes": 3560
+  },
+  "/artists/don-toliver.webp": {
+    "width": 400,
+    "height": 155,
+    "source": "/artists/don-toliver.png",
+    "beforeBytes": 31988,
+    "afterBytes": 17530
+  },
+  "/artists/lyn-lapid.webp": {
+    "width": 451,
+    "height": 200,
+    "source": "/artists/lyn-lapid.png",
+    "beforeBytes": 11733,
+    "afterBytes": 19566
+  },
+  "/artists/madeon.webp": {
+    "width": 400,
+    "height": 155,
+    "source": "/artists/madeon.png",
+    "beforeBytes": 46883,
+    "afterBytes": 11260
+  },
+  "/artists/magdalena-bay.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/artists/magdalena-bay.png",
+    "beforeBytes": 105327,
+    "afterBytes": 22536
+  },
+  "/artists/remi-wolf.webp": {
+    "width": 480,
+    "height": 288,
+    "source": "/artists/remi-wolf.png",
+    "beforeBytes": 800341,
+    "afterBytes": 40916
+  },
+  "/artists/tate-mcrae.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/artists/tate-mcrae.png",
+    "beforeBytes": 994427,
+    "afterBytes": 5630
+  },
+  "/artists/the-marias.webp": {
+    "width": 400,
+    "height": 155,
+    "source": "/artists/the-marias.png",
+    "beforeBytes": 26604,
+    "afterBytes": 9850
+  },
+  "/artists/twenty-one-pilots.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/artists/twenty-one-pilots.png",
+    "beforeBytes": 96894,
+    "afterBytes": 25004
+  },
+  "/crests/korah.webp": {
+    "width": 192,
+    "height": 192,
+    "source": "/crests/korah.png",
+    "beforeBytes": 113669,
+    "afterBytes": 15578
+  },
+  "/game icons and logos/death stranding icon.webp": {
+    "width": 480,
+    "height": 480,
+    "source": "/game icons and logos/death stranding icon.png",
+    "beforeBytes": 396688,
+    "afterBytes": 15606
+  },
+  "/game icons and logos/death stranding logo.webp": {
+    "width": 480,
+    "height": 17,
+    "source": "/game icons and logos/death stranding logo.png",
+    "beforeBytes": 25670,
+    "afterBytes": 2216
+  },
+  "/game icons and logos/ghost of tsushima icon.webp": {
+    "width": 256,
+    "height": 256,
+    "source": "/game icons and logos/ghost of tsushima icon.png",
+    "beforeBytes": 10861,
+    "afterBytes": 8004
+  },
+  "/game icons and logos/ghost of tsushima logo.webp": {
+    "width": 480,
+    "height": 134,
+    "source": "/game icons and logos/ghost of tsushima logo.png",
+    "beforeBytes": 22008,
+    "afterBytes": 10830
+  },
+  "/game icons and logos/infamous second son icon.webp": {
+    "width": 64,
+    "height": 64,
+    "source": "/game icons and logos/infamous second son icon.png",
+    "beforeBytes": 4809,
+    "afterBytes": 3190
+  },
+  "/game icons and logos/infamous second son logo.webp": {
+    "width": 480,
+    "height": 129,
+    "source": "/game icons and logos/infamous second son logo.png",
+    "beforeBytes": 1189041,
+    "afterBytes": 23058
+  },
+  "/game icons and logos/legend of zelda majoras mask icon.webp": {
+    "width": 256,
+    "height": 256,
+    "source": "/game icons and logos/legend of zelda majoras mask icon.png",
+    "beforeBytes": 59607,
+    "afterBytes": 12956
+  },
+  "/game icons and logos/legend of zelda majoras mask logo.webp": {
+    "width": 480,
+    "height": 291,
+    "source": "/game icons and logos/legend of zelda majoras mask logo.png",
+    "beforeBytes": 642801,
+    "afterBytes": 39072
+  },
+  "/game icons and logos/minecraft icon.webp": {
+    "width": 256,
+    "height": 256,
+    "source": "/game icons and logos/minecraft icon.png",
+    "beforeBytes": 77457,
+    "afterBytes": 7530
+  },
+  "/game icons and logos/minecraft logo.webp": {
+    "width": 480,
+    "height": 80,
+    "source": "/game icons and logos/minecraft logo.png",
+    "beforeBytes": 93453,
+    "afterBytes": 8502
+  },
+  "/game icons and logos/pikmin 3 icon.webp": {
+    "width": 128,
+    "height": 128,
+    "source": "/game icons and logos/pikmin 3 icon.png",
+    "beforeBytes": 42269,
+    "afterBytes": 9684
+  },
+  "/game icons and logos/pikmin 3 logo.webp": {
+    "width": 480,
+    "height": 108,
+    "source": "/game icons and logos/pikmin 3 logo.png",
+    "beforeBytes": 11545826,
+    "afterBytes": 34960
+  },
+  "/game icons and logos/super mario galaxy 2 icon.webp": {
+    "width": 32,
+    "height": 32,
+    "source": "/game icons and logos/super mario galaxy 2 icon.png",
+    "beforeBytes": 1622,
+    "afterBytes": 900
+  },
+  "/game icons and logos/super mario galaxy 2 logo.webp": {
+    "width": 480,
+    "height": 226,
+    "source": "/game icons and logos/super mario galaxy 2 logo.png",
+    "beforeBytes": 7982309,
+    "afterBytes": 36480
+  },
+  "/game icons and logos/the last of us icon.webp": {
+    "width": 480,
+    "height": 480,
+    "source": "/game icons and logos/the last of us icon.png",
+    "beforeBytes": 9373,
+    "afterBytes": 9490
+  },
+  "/game icons and logos/the last of us logo.webp": {
+    "width": 480,
+    "height": 106,
+    "source": "/game icons and logos/the last of us logo.png",
+    "beforeBytes": 26497,
+    "afterBytes": 4912
+  },
+  "/game icons and logos/the last of us part 2 icon.webp": {
+    "width": 480,
+    "height": 480,
+    "source": "/game icons and logos/the last of us part 2 icon.png",
+    "beforeBytes": 64563,
+    "afterBytes": 59708
+  },
+  "/game icons and logos/the last of us part 2 logo.webp": {
+    "width": 480,
+    "height": 68,
+    "source": "/game icons and logos/the last of us part 2 logo.png",
+    "beforeBytes": 6695898,
+    "afterBytes": 13616
+  },
+  "/game icons and logos/uncharted 3 icon.webp": {
+    "width": 128,
+    "height": 128,
+    "source": "/game icons and logos/uncharted 3 icon.png",
+    "beforeBytes": 29042,
+    "afterBytes": 7158
+  },
+  "/game icons and logos/uncharted 3 logo.webp": {
+    "width": 480,
+    "height": 104,
+    "source": "/game icons and logos/uncharted 3 logo.png",
+    "beforeBytes": 2199034,
+    "afterBytes": 44570
+  },
+  "/games/death stranding.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/death stranding.png",
+    "beforeBytes": 574409,
+    "afterBytes": 62968
+  },
+  "/games/ghost of tsushima.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/ghost of tsushima.png",
+    "beforeBytes": 884661,
+    "afterBytes": 104252
+  },
+  "/games/infamous second son.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/infamous second son.png",
+    "beforeBytes": 745271,
+    "afterBytes": 104598
+  },
+  "/games/majoras mask.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/majoras mask.png",
+    "beforeBytes": 1395173,
+    "afterBytes": 107806
+  },
+  "/games/minecraft.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/minecraft.jpg",
+    "beforeBytes": 187145,
+    "afterBytes": 76996
+  },
+  "/games/pikmin 3.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/pikmin 3.png",
+    "beforeBytes": 1017059,
+    "afterBytes": 128986
+  },
+  "/games/super mario galaxy 2.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/super mario galaxy 2.png",
+    "beforeBytes": 885195,
+    "afterBytes": 113736
+  },
+  "/games/the last of us part 2.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/the last of us part 2.png",
+    "beforeBytes": 895654,
+    "afterBytes": 102944
+  },
+  "/games/the last of us.webp": {
+    "width": 639,
+    "height": 900,
+    "source": "/games/the last of us.jpg",
+    "beforeBytes": 297216,
+    "afterBytes": 116314
+  },
+  "/games/uncharted 3.webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/games/uncharted 3.png",
+    "beforeBytes": 956398,
+    "afterBytes": 116796
+  },
+  "/mainphotos/Professional.webp": {
+    "width": 1656,
+    "height": 1104,
+    "source": "/mainphotos/Professional.jpg",
+    "beforeBytes": 79234,
+    "afterBytes": 93248
+  },
+  "/mainphotos/about.webp": {
+    "width": 1236,
+    "height": 1058,
+    "source": "/mainphotos/about.jpg",
+    "beforeBytes": 40758,
+    "afterBytes": 46564
+  },
+  "/mainphotos/bruce.webp": {
+    "width": 811,
+    "height": 258,
+    "source": "/mainphotos/bruce.png",
+    "beforeBytes": 13050,
+    "afterBytes": 14142
+  },
+  "/mainphotos/devops.webp": {
+    "width": 1114,
+    "height": 477,
+    "source": "/mainphotos/devops.png",
+    "beforeBytes": 60294,
+    "afterBytes": 20934
+  },
+  "/mainphotos/nowplaying.webp": {
+    "width": 1031,
+    "height": 702,
+    "source": "/mainphotos/nowplaying.png",
+    "beforeBytes": 330579,
+    "afterBytes": 32736
+  },
+  "/mainphotos/pro2.webp": {
+    "width": 1800,
+    "height": 771,
+    "source": "/mainphotos/pro2.jpg",
+    "beforeBytes": 5081338,
+    "afterBytes": 105364
+  },
+  "/mainphotos/triage.webp": {
+    "width": 1800,
+    "height": 610,
+    "source": "/mainphotos/triage.png",
+    "beforeBytes": 1069427,
+    "afterBytes": 63208
+  },
+  "/mainphotos/uhubs.webp": {
+    "width": 800,
+    "height": 253,
+    "source": "/mainphotos/uhubs.png",
+    "beforeBytes": 17215,
+    "afterBytes": 2296
+  },
+  "/movie logos/a real pain.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/a real pain.png",
+    "beforeBytes": 18216,
+    "afterBytes": 11126
+  },
+  "/movie logos/baby driver.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/baby driver.png",
+    "beforeBytes": 995244,
+    "afterBytes": 18434
+  },
+  "/movie logos/back to the futue.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/back to the futue.png",
+    "beforeBytes": 995244,
+    "afterBytes": 33104
+  },
+  "/movie logos/black swan.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/black swan.png",
+    "beforeBytes": 995244,
+    "afterBytes": 22302
+  },
+  "/movie logos/blade runner.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/blade runner.png",
+    "beforeBytes": 38854,
+    "afterBytes": 14210
+  },
+  "/movie logos/civil war.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/civil war.png",
+    "beforeBytes": 39477,
+    "afterBytes": 16266
+  },
+  "/movie logos/everything everywhere all at once.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/everything everywhere all at once.png",
+    "beforeBytes": 59343,
+    "afterBytes": 26084
+  },
+  "/movie logos/guava island.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/guava island.png",
+    "beforeBytes": 237301,
+    "afterBytes": 30818
+  },
+  "/movie logos/the shawshank redemption.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/the shawshank redemption.png",
+    "beforeBytes": 65517,
+    "afterBytes": 20890
+  },
+  "/movie logos/your name.webp": {
+    "width": 480,
+    "height": 186,
+    "source": "/movie logos/your name.png",
+    "beforeBytes": 71358,
+    "afterBytes": 25014
+  },
+  "/movies/A Real Pain (2024).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/A Real Pain (2024).png",
+    "beforeBytes": 1592707,
+    "afterBytes": 33600
+  },
+  "/movies/Baby Driver (2017).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Baby Driver (2017).jpeg",
+    "beforeBytes": 1071611,
+    "afterBytes": 92778
+  },
+  "/movies/Back to the Future (1985).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Back to the Future (1985).jpeg",
+    "beforeBytes": 3467002,
+    "afterBytes": 121244
+  },
+  "/movies/Black Swan (2010).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Black Swan (2010).jpeg",
+    "beforeBytes": 813115,
+    "afterBytes": 24280
+  },
+  "/movies/Blade Runner (1982).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Blade Runner (1982).jpeg",
+    "beforeBytes": 4470419,
+    "afterBytes": 44006
+  },
+  "/movies/Civil War (2024).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Civil War (2024).png",
+    "beforeBytes": 2350686,
+    "afterBytes": 84204
+  },
+  "/movies/Everything Everywhere All at Once (2022).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Everything Everywhere All at Once (2022).jpg",
+    "beforeBytes": 626837,
+    "afterBytes": 175702
+  },
+  "/movies/Guava Island (2019).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Guava Island (2019).jpg",
+    "beforeBytes": 196736,
+    "afterBytes": 38050
+  },
+  "/movies/The Shawshank Redemption (1994).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/The Shawshank Redemption (1994).jpeg",
+    "beforeBytes": 326235,
+    "afterBytes": 133216
+  },
+  "/movies/Your Name. (2016).webp": {
+    "width": 600,
+    "height": 900,
+    "source": "/movies/Your Name. (2016).png",
+    "beforeBytes": 1922317,
+    "afterBytes": 70126
+  },
+  "/postphotos/post 6 - spotify/gambino.webp": {
+    "width": 1200,
+    "height": 514,
+    "source": "/postphotos/post 6 - spotify/gambino.jpg",
+    "beforeBytes": 7487102,
+    "afterBytes": 95262
+  },
+  "/postphotos/post 7 - cullpix/app.webp": {
+    "width": 1200,
+    "height": 804,
+    "source": "/postphotos/post 7 - cullpix/app.png",
+    "beforeBytes": 1290577,
+    "afterBytes": 64748
+  },
+  "/postphotos/post 8 - devops/devops.webp": {
+    "width": 1005,
+    "height": 1200,
+    "source": "/postphotos/post 8 - devops/devops.png",
+    "beforeBytes": 172952,
+    "afterBytes": 55554
+  }
+}

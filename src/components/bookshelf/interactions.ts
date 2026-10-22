@@ -2,6 +2,37 @@ import type { CaseKind, CdCaseController, CdCaseOptions, CdDisc } from '../../li
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
+// Only one shelf owns the animation budget. Distance is along the page's
+// scrolling axis; side-by-side shelves tie, so pointer/focus can break the tie.
+type ShelfRenderer = { panel: HTMLElement; scroll: (scrolling: boolean) => void; sync: (active: boolean, scrolling: boolean) => void };
+const renderers = new Set<ShelfRenderer>();
+let preferred: ShelfRenderer | undefined;
+let coordinateFrame = 0, scrollTimer = 0, scrolling = false;
+function coordinate() {
+  coordinateFrame = 0;
+  let nearest: ShelfRenderer | undefined, distance = Infinity;
+  if (!document.hidden) for (const shelf of renderers) {
+    const rect = shelf.panel.getBoundingClientRect();
+    if (rect.bottom <= 0 || rect.top >= innerHeight || rect.right <= 0 || rect.left >= innerWidth) continue;
+    const next = Math.abs((rect.top + rect.bottom) / 2 - innerHeight / 2);
+    if (next < distance - 1 || (Math.abs(next - distance) <= 1 && shelf === preferred)) { nearest = shelf; distance = next; }
+  }
+  renderers.forEach(shelf => shelf.sync(shelf === nearest, scrolling));
+}
+function scheduleCoordinator() {
+  if (!coordinateFrame) coordinateFrame = requestAnimationFrame(coordinate);
+}
+window.addEventListener('scroll', () => {
+  scrolling = true;
+  // Notify immediately so a renderer already queued in this frame also yields.
+  renderers.forEach(shelf => shelf.scroll(true));
+  scheduleCoordinator();
+  clearTimeout(scrollTimer);
+  scrollTimer = window.setTimeout(() => { scrolling = false; scheduleCoordinator(); }, 150);
+}, { passive: true });
+window.addEventListener('resize', scheduleCoordinator, { passive: true });
+document.addEventListener('visibilitychange', scheduleCoordinator);
+
 document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col => {
   const spines = Array.from(col.querySelectorAll<HTMLButtonElement>('[data-spine]'));
   const panel = col.querySelector<HTMLElement>('[data-cover-panel]');
@@ -36,6 +67,9 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
   let mounted = false;
   let disposed = false;
   let explored = false;
+  let idleMount: number | undefined;
+  let mountTimer: number | undefined;
+  let activeRenderer = false;
   let reportedFace: 'front' | 'back' | undefined;
   const animations = new Map<HTMLElement, Animation>();
   const wrap = (index: number) => (index + spines.length) % spines.length;
@@ -144,7 +178,7 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
       link.setAttribute('aria-label', `${link === cover ? 'Details' : col.dataset.kind === 'music' ? 'Last.fm' : 'Details'} for ${item.title} (opens in a new tab)`);
     });
     if (changed) {
-      updateFallback();
+      if (!ready) updateFallback();
       animate(info, [{ opacity: .2, transform: 'translateY(3px)' }, { opacity: 1, transform: 'translateY(0)' }]);
       if (!ready) animate(panel, [
         { opacity: .2, transform: 'translate(-12px, 6px) rotate(-2deg)' },
@@ -249,7 +283,7 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
     if (performance.now() < suppressClickUntil) { event.preventDefault(); event.stopImmediatePropagation(); }
   }, true);
 
-  // The existing PNG still responds when WebGL is unavailable.
+  // The flat preview still responds when WebGL is unavailable.
   panel.addEventListener('pointermove', event => {
     if (ready || reducedMotion.matches || !inView || event.pointerType !== 'mouse') return;
     const rect = panel.getBoundingClientRect();
@@ -262,16 +296,27 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
   const pageColour = () => getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#dddddd';
   const syncPage = () => controller?.setPage(pageColour(), true);
   window.addEventListener('themechange', () => { syncPage(); window.setTimeout(syncPage, 60); });
-  const syncPaused = () => {
-    const active = inView && !document.hidden;
-    col.toggleAttribute('data-in-view', active);
+  const rendererSlot: ShelfRenderer = { panel, scroll: value => controller?.setScrolling(value), sync: (active, isScrolling) => {
+    activeRenderer = active;
+    controller?.setScrolling(isScrolling);
     controller?.setPaused(!active);
+    col.toggleAttribute('data-in-view', inView && active);
     if (!active || reducedMotion.matches) {
       animations.forEach(animation => animation.cancel());
       animations.clear();
       cover.classList.remove('cover-case--tilting');
     }
+  } };
+  renderers.add(rendererSlot);
+  const syncPaused = scheduleCoordinator;
+  const preferThisShelf = () => {
+    preferred = rendererSlot;
+    if (coordinateFrame) cancelAnimationFrame(coordinateFrame);
+    coordinate();
   };
+  col.addEventListener('pointerenter', preferThisShelf, { passive: true });
+  col.addEventListener('pointerdown', preferThisShelf, { passive: true, capture: true });
+  col.addEventListener('focusin', preferThisShelf);
   const syncMotion = () => {
     controller?.setSpin(kind === 'jewel' && !reducedMotion.matches);
     syncPaused();
@@ -289,6 +334,7 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
     reportedFace = undefined;
     controller?.dispose();
     controller = undefined;
+    updateFallback();
     configureCase();
     if (hadFocus) cover!.focus({ preventScroll: true });
   }
@@ -303,7 +349,7 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
       const options: CdCaseOptions & { onFace?: (value: unknown) => void } = {
         kind, page: pageColour(), transparent: true, eventTarget: hitArea!,
         spin: kind === 'jewel' && !reducedMotion.matches, autoDemo: false,
-        initialIndex: selected, reducedMotion: 'auto',
+        initialIndex: selected, reducedMotion: 'auto', maxPixelRatio: 1.5,
         ariaLabel: `Interactive ${col.dataset.kind} case`,
         onReady: () => {
           if (failed || disposed) return;
@@ -326,6 +372,8 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
         },
       };
       controller = createCdCase(stage!, discs, options);
+      controller.setPaused(!activeRenderer);
+      controller.setScrolling(scrolling);
       // Both onFail and onReady may run synchronously during creation.
       if (failed) showFallback();
       else { configureCase(); syncMotion(); }
@@ -340,8 +388,9 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
   const lazyMount = new IntersectionObserver(entries => {
     if (!entries.some(entry => entry.isIntersecting)) return;
     lazyMount.disconnect();
-    void mount();
-  }, { rootMargin: '400px 0px' });
+    if (typeof window.requestIdleCallback === 'function') idleMount = window.requestIdleCallback(() => { void mount(); }, { timeout: 1000 });
+    else mountTimer = window.setTimeout(() => { void mount(); }, 0);
+  }, { rootMargin: '800px 0px' });
   lazyMount.observe(col);
   updateFallback();
   configureCase();
@@ -351,6 +400,10 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
     controller?.setPaused(true);
     if (event.persisted) return;
     disposed = true;
+    if (idleMount !== undefined) window.cancelIdleCallback(idleMount);
+    if (mountTimer !== undefined) clearTimeout(mountTimer);
+    renderers.delete(rendererSlot);
+    scheduleCoordinator();
     visibility.disconnect();
     lazyMount.disconnect();
     controller?.dispose();
