@@ -1,0 +1,221 @@
+{
+  "updatedAt": "2026-10-22",
+  "items": {
+    "baby-driver": {
+      "title": "Baby Driver",
+      "edition": "US — Sony, 2017 standard Blu-ray + Digital; disc photo from US 2017 UHD combo",
+      "front": "/cases/film/baby-driver/front-clean.webp",
+      "back": "/cases/film/baby-driver/back.webp",
+      "spine": "/cases/film/baby-driver/spine.webp",
+      "disc": "/cases/film/baby-driver/disc.webp",
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/Baby-Driver-Blu-ray/181023/",
+        "https://images.static-bluray.com/movies/covers/181023_front.jpg?t=1504033627",
+        "https://dvdcover.com/wp-content/uploads/2017/10/2017-10-16_59e51fedc296c_BabyDriver-BDCoverMod-950x525.jpg",
+        "https://dvdcover.com/baby-driver-2017-r1-blu-ray-cover-label/",
+        "https://www.ebay.com/itm/166757343412",
+        "https://i.ebayimg.com/images/g/1wgAAOSwHuZmP9aE/s-l1200.jpg",
+        "https://www.themoviedb.org/movie/339403-baby-driver/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/tYzFuYXmT8LOYASlFCkaPiAFAl0.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. Title only in the promotional typography; incidental lettering within the original street scene remains.",
+      "frontPackaging": "/cases/film/baby-driver/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/tYzFuYXmT8LOYASlFCkaPiAFAl0.jpg",
+      "packagingNote": "Front cropped from official package artwork; printed blue Blu-ray + Digital banner retained. Back from a 950×525 retail-derived preview (low resolution; source filename says CoverMod, so modifications to the supplied scan cannot be excluded). Spine flattened from the same official package rendering as the front. Disc is the 1080p Blu-ray, photographed in the US UHD combo; exact standard-package pressing not independently confirmed. Inside scan advertised on DVDcover but inaccessible without membership. No visible watermark on selected crops. Disc is a photographed fallback with residual glare/perspective; outer rim ellipse corrected to a circle, background and tray hub masked with antialiased transparency, 1200×1200 PNG. No reconstructed artwork. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "everything-everywhere-all-at-once": {
+      "title": "Everything Everywhere All at Once",
+      "edition": "US — Lionsgate, 2022 standard Blu-ray + Digital",
+      "front": "/cases/film/everything-everywhere-all-at-once/front-clean.webp",
+      "back": "/cases/film/everything-everywhere-all-at-once/back.webp",
+      "spine": "/cases/film/everything-everywhere-all-at-once/spine.webp",
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/Everything-Everywhere-All-At-Once-Blu-ray/315733/",
+        "https://images.static-bluray.com/movies/covers/315733_front.jpg?t=1651006925",
+        "https://images.static-bluray.com/movies/covers/315733_back.jpg?t=1657219735",
+        "https://www.themoviedb.org/movie/545611-everything-everywhere-all-at-once/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/eTYBrL8lVcaG6AySocVe4eNltih.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. Same red character-montage key art, with compact title below the characters so the complete title fits the panel. Upscaled from 1000×1426 source.",
+      "frontPackaging": "/cases/film/everything-everywhere-all-at-once/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/eTYBrL8lVcaG6AySocVe4eNltih.jpg",
+      "packagingNote": "Front/spine cropped and flattened from publisher package artwork. Back is a flat 840×985 image. No blue printed banner. Disc photo found, but rim is clipped and hub obscured; rejected. No usable reverse-insert scan found. DVDcover alternative was membership-restricted and labeled UK without reliable edition confirmation. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "black-swan": {
+      "title": "Black Swan",
+      "edition": "US — 20th Century Fox, 2011 standard Blu-ray",
+      "front": "/cases/film/black-swan/front-clean.webp",
+      "back": "/cases/film/black-swan/back.webp",
+      "spine": "/cases/film/black-swan/spine.webp",
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/Black-Swan-Blu-ray/20029/",
+        "https://images.static-bluray.com/movies/covers/20029_front.jpg?t=1397718266",
+        "https://images.static-bluray.com/movies/covers/20029_back.jpg?t=1301368863",
+        "https://www.themoviedb.org/movie/44214-black-swan/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/yN1MTK9idaoxx4cMjoI4XnmDt6Q.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork.  Upscaled from 1000×1500 source.",
+      "frontPackaging": "/cases/film/black-swan/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/yN1MTK9idaoxx4cMjoI4XnmDt6Q.jpg",
+      "packagingNote": "Front/spine cropped and flattened from package artwork; plastic header removed. Back available only at 343×399 pixels. No verified unobscured US disc face or reverse-insert scan found. DVDcover illustrated wrap was rejected as custom art; German disc photos and Target-exclusive packaging were rejected as edition mismatches. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "back-to-the-future": {
+      "title": "Back to the Future",
+      "edition": "UK — Universal, 2011 standard single-disc Blu-ray (5050582769128)",
+      "front": "/cases/film/back-to-the-future/front-clean.webp",
+      "back": "/cases/film/back-to-the-future/back.webp",
+      "spine": null,
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/Back-to-the-Future-Blu-ray/27014/",
+        "https://images.static-bluray.com/movies/covers/27014_front.jpg?t=1315413372",
+        "https://images.static-bluray.com/movies/covers/27014_back.jpg?t=1359084184",
+        "https://www.themoviedb.org/movie/105-back-to-the-future/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. Classic theatrical DeLorean key art replaces the later clock-motif packaging.",
+      "frontPackaging": "/cases/film/back-to-the-future/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/fNOH9f1aA7XRTzl1sAOx9iF553Q.jpg",
+      "packagingNote": "Front and back cropped to insert edges, removing blue plastic case. Back has mild scan glare. No complete spine, matching UK disc face, or reverse-insert scan found. A clean US Collector’s Edition disc photo was found but rejected because it does not match this UK edition. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "guava-island": {
+      "title": "Guava Island",
+      "edition": null,
+      "front": "/cases/film/guava-island/front-clean.webp",
+      "back": null,
+      "spine": null,
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/Guava-Island/1134935/",
+        "https://www.primevideo.com/detail/Guava-Island/0L4A4FWWJ9CV7XX1TAQLIRVAY6",
+        "https://www.reddit.com/r/donaldglover/comments/smt3vc/",
+        "https://www.reddit.com/r/donaldglover/comments/d3lljo/",
+        "https://www.themoviedb.org/movie/543343-guava-island/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/oQ5OnvNNGUYOPh3iTjmqx6GPsdc.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. Illustrated face key art with title. No verified physical Blu-ray packaging exists; frontPackaging remains null. Upscaled from 1200×1800 source.",
+      "frontPackaging": null,
+      "frontSource": "https://image.tmdb.org/t/p/original/oQ5OnvNNGUYOPh3iTjmqx6GPsdc.jpg",
+      "packagingNote": "No official US/UK Blu-ray edition could be verified. Searches covered Blu-ray.com, web release/retail listings, Prime Video, and physical-release discussions. All artwork fields remain null; posters and fan-made covers were not substituted. hasBanner=false means no verified front is available."
+    },
+    "blade-runner": {
+      "title": "Blade Runner",
+      "edition": "US — Warner, 2010 standard single-disc Blu-ray, The Final Cut",
+      "front": "/cases/film/blade-runner/front-clean.webp",
+      "back": "/cases/film/blade-runner/back.webp",
+      "spine": null,
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/Blade-Runner-Blu-ray/18392/",
+        "https://images.static-bluray.com/movies/covers/18392_front.jpg?t=1292341024",
+        "https://images.static-bluray.com/movies/covers/18392_back.jpg?t=1410978131",
+        "https://www.themoviedb.org/movie/78-blade-runner/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/2ky5RmsjIgyco1HbnoyE97Vpiux.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. Title only in the promotional typography; original neon signs within the artwork remain. Upscaled from 1000×1500 source.",
+      "frontPackaging": "/cases/film/blade-runner/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/2ky5RmsjIgyco1HbnoyE97Vpiux.jpg",
+      "packagingNote": "Front cropped from package artwork; back is a clean flat scan. Plastic blue header removed. No complete matching spine, main-feature disc face, or reverse-insert scan found. UK five-disc collector packaging and custom/French disc designs were rejected. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "the-shawshank-redemption": {
+      "title": "The Shawshank Redemption",
+      "edition": "US — Warner, 2010 standard Blu-ray (883929085156); disc photo from US digibook",
+      "front": "/cases/film/the-shawshank-redemption/front-clean.webp",
+      "back": "/cases/film/the-shawshank-redemption/back.webp",
+      "spine": "/cases/film/the-shawshank-redemption/spine.webp",
+      "disc": "/cases/film/the-shawshank-redemption/disc.webp",
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.covercentury.com/index.php?p=blu-ray&l=s&f=Shawshank_Redemption_The_Blu-ray.jpg",
+        "https://www.covercentury.com/covers/blu-ray/s/Shawshank_Redemption_The_Blu-ray.jpg",
+        "https://www.booksamillion.com/p/Shawshank-Redemption/Tim-Robbins/K883929085156",
+        "https://www.kupindo.com/Filmovi/72621213_The-Shawshank-redemption-Blu-ray-digibook",
+        "https://static.kupindoslike.com/The-Shawshank-redemption-Blu-ray-digibook_slika_XL_141066961.jpg",
+        "https://www.themoviedb.org/movie/278-the-shawshank-redemption/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/20f2GThu22hp5MgCA4dg3bZ3gTS.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. ",
+      "frontPackaging": "/cases/film/the-shawshank-redemption/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/20f2GThu22hp5MgCA4dg3bZ3gTS.jpg",
+      "packagingNote": "Front/back/spine from a clean 3118×1748 retail insert scan. Disc photo is a genuine US Blu-ray in digibook packaging; correspondence to the 2010 standard pressing is not independently confirmed. Disc native diameter is approximately 315 pixels and is upscaled. No matching reverse-insert scan found; digibook interior artwork was not substituted. Disc is a photographed fallback with residual glare/perspective; outer rim ellipse corrected to a circle, background and tray hub masked with antialiased transparency, 1200×1200 PNG. No reconstructed artwork. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "your-name": {
+      "title": "Your Name.",
+      "edition": "US — Funimation, 2017 standard Blu-ray + DVD (704400023910)",
+      "front": "/cases/film/your-name/front-clean.webp",
+      "back": "/cases/film/your-name/back.webp",
+      "spine": "/cases/film/your-name/spine.webp",
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/Your-Name-Blu-ray/181273/",
+        "https://dvdcover.com/wp-content/uploads/2017/12/2017-12-19_5a3862e411ebc_YourName-BDCoverScan-950x528.jpg",
+        "https://dvdcover.com/your-name-2016-r1-blu-ray-cover-labels/",
+        "https://www.themoviedb.org/movie/372058-your-name/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/vfJFJPepRKapMd5G2ro7klIRysq.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. Title only in the promotional typography; incidental city signage within the original artwork remains.",
+      "frontPackaging": "/cases/film/your-name/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/vfJFJPepRKapMd5G2ro7klIRysq.jpg",
+      "packagingNote": "All insert panels cropped from a flat 950×528 retail wrap preview. Front upscaled from 455×528 to meet the requested output height; detail remains limited by source. Printed blue header occurs on the slipcover, not this paper insert, so hasBanner=false. Disc photo has a clipped rim and was rejected. Reversible artwork exists, but available images were obscured or membership-restricted. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "civil-war": {
+      "title": "Civil War",
+      "edition": "US — Lionsgate, 2024 standard Blu-ray + DVD + Digital",
+      "front": "/cases/film/civil-war/front-clean.webp",
+      "back": "/cases/film/civil-war/back.webp",
+      "spine": "/cases/film/civil-war/spine.webp",
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/Civil-War-Blu-ray/359451/",
+        "https://images.static-bluray.com/movies/covers/359451_front.jpg?t=1713557584",
+        "https://images.static-bluray.com/movies/covers/359451_back.jpg?t=1776655315",
+        "https://www.themoviedb.org/movie/929590-civil-war/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/lhaVFq4WHhxpTOoBfzATiE5vSEG.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. ",
+      "frontPackaging": "/cases/film/civil-war/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/lhaVFq4WHhxpTOoBfzATiE5vSEG.jpg",
+      "packagingNote": "Front/spine cropped and flattened from publisher package artwork; back is a flat scan. No blue printed banner. No verified unobscured US Blu-ray disc face or reverse-insert scan found. Canadian bilingual wrap and German/Polish disc editions were rejected. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    },
+    "a-real-pain": {
+      "title": "A Real Pain",
+      "edition": "US — Searchlight / Sony, 2025 standard Blu-ray + Digital",
+      "front": "/cases/film/a-real-pain/front-clean.webp",
+      "back": "/cases/film/a-real-pain/back.webp",
+      "spine": "/cases/film/a-real-pain/spine.webp",
+      "disc": null,
+      "inside": null,
+      "hasBanner": false,
+      "sources": [
+        "https://www.blu-ray.com/movies/A-Real-Pain-Blu-ray/377783/",
+        "https://images.static-bluray.com/movies/covers/377783_front.jpg",
+        "https://images.static-bluray.com/movies/covers/377783_back.jpg",
+        "https://www.themoviedb.org/movie/1013850-a-real-pain/images/posters?image_language=en",
+        "https://image.tmdb.org/t/p/original/x5J60sTQySeKwBDzsA6jDbLYRY3.jpg"
+      ],
+      "note": "Front: title only; existing key art from TMDB. Cropped and uniformly resized to 1259×1600 (135:171.5 at nearest whole-pixel width), WebP quality 88. No text removal, repainting, inpainting, or generated artwork. Same sky-and-city key art as the previous cover; cream packaging border absent.",
+      "frontPackaging": "/cases/film/a-real-pain/front.webp",
+      "frontSource": "https://image.tmdb.org/t/p/original/x5J60sTQySeKwBDzsA6jDbLYRY3.jpg",
+      "packagingNote": "Front/spine cropped and flattened from package artwork; back is a flat scan. Blue plastic header removed; white Blu-ray + Digital Code lettering is printed on the insert, but there is no blue banner. No verified unobscured US disc face or reverse-insert scan found. Public promo images show only the closed case; foreign editions were rejected. Front panel resampled to the requested 135:171.5 aspect without adding or repainting content."
+    }
+  }
+}
