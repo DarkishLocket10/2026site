@@ -16,6 +16,7 @@
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@types/three": "^0.186.0",
     "astro": "^5.11.1",
     "astro-carousel": "^3.0.2",
     "astro-click-to-source": "^0.1.5",
@@ -34,6 +35,7 @@
     "rehype-mermaid": "^3.0.0",
     "remark-math": "^6.0.0",
     "swiper": "^11.2.10",
+    "three": "^0.186.1",
     "typescript": "^5.8.3"
   },
   "devDependencies": {

@@ -1,0 +1,2751 @@
+{
+  "updatedAt": "2026-10-22",
+  "userAgent": "yash-portfolio/1.0 (https://yashnilay.ca)",
+  "method": "Downloaded with curl; host-aware delay of at least 1.15 seconds between requests, exponential retry backoff on 429/5xx. Search also used web search/image index discovery. Source photos/renders/scans manually reviewed. Pillow/numpy perspective correction and Lanczos resizing; no generative reconstruction, repainting, watermark removal, or invented embossing.",
+  "dimensions": {
+    "frontBack": [
+      1350,
+      1700
+    ],
+    "spine": [
+      120,
+      1700
+    ],
+    "inside": [
+      2700,
+      1700
+    ],
+    "disc": [
+      1200,
+      1200
+    ]
+  },
+  "interpretation": "official means a verified G2 SteelBook for the selected game/edition, not the existence of any differently shaped package in the franchise. False is a documented research result, not proof of universal absence. Finish is visually inferred; fallback matte is a display default. Output resolution is distinct from native sampled detail; small sources are explicitly recorded. Photos retain tray hardware, wear, glare and source watermarks where disclosed.",
+  "items": {
+    "the-last-of-us": {
+      "searchScope": [
+        "The Last of Us Survival Post Pandemic steelbook front back inside spine scan",
+        "The Last of Us Remastered steelbook",
+        "The Last of Us PS3 disc scan"
+      ],
+      "gaps": {
+        "inside": "Searched PS3 Survival/Post-Pandemic unboxings, Saint-ism, RetroNorth and retailer/eBay photos. Selected unboxing shows only a partly exposed interior; no complete clean spread verified.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/the-last-of-us/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_1.jpg",
+          "sourcePixels": [
+            1200,
+            1600
+          ],
+          "quadTLTRBRBL": [
+            [
+              94.0,
+              234.0
+            ],
+            [
+              1058.0,
+              208.0
+            ],
+            [
+              1106.0,
+              1484.0
+            ],
+            [
+              90.0,
+              1482.0
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            990,
+            1262
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "cdd78ce1044be65c31147e987b8112d6c2cfc3d2f35c68e9c88fa32be8579740",
+          "visuallyReviewed": true
+        },
+        "back": {
+          "path": "/cases/games/the-last-of-us/back.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_2.jpg",
+          "sourcePixels": [
+            1200,
+            1600
+          ],
+          "quadTLTRBRBL": [
+            [
+              106.0,
+              190.0
+            ],
+            [
+              1086.0,
+              176.0
+            ],
+            [
+              1124.0,
+              1470.0
+            ],
+            [
+              92.0,
+              1472.0
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            1006,
+            1288
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "bf7a3cf035623966dacb1fe2bd8dd11e9d82ec39d38102ee777a6de8ea27ac80",
+          "visuallyReviewed": true
+        },
+        "spine": {
+          "path": "/cases/games/the-last-of-us/spine.jpg",
+          "outputPixels": [
+            120,
+            1700
+          ],
+          "source": "https://i.ebayimg.com/images/g/4JEAAOSw7jNmk0Gn/s-l1200.jpg",
+          "sourcePixels": [
+            1200,
+            900
+          ],
+          "quadTLTRBRBL": [
+            [
+              124.5,
+              472.5
+            ],
+            [
+              1066.5,
+              480.0
+            ],
+            [
+              1062.0,
+              520.5
+            ],
+            [
+              127.5,
+              514.5
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            938,
+            41
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background; rotated clockwise 90 degrees",
+          "upscaled": true,
+          "sha256": "811b929e273f1382965239b717556582808e6683ebc65cfec5d6db8e08b32300",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/the-last-of-us/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://images.launchbox-app.com/9531c70b-c263-4ca3-9254-251a76b85327.png",
+          "sourcePixels": [
+            720,
+            720
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": true,
+          "sha256": "eef4e540c991cdaaa3076b170e2331e5e3cb67aef6a3917d056efdf35dbed0ff",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "majora-s-mask": {
+      "searchScope": [
+        "Majoras Mask N64 official steelbook",
+        "Majoras Mask 3D special edition steelbook",
+        "Majoras Mask Japanese box art high resolution"
+      ],
+      "gaps": {
+        "back, spine, inside": "Searched N64 and Majora’s Mask 3D special/limited editions, Nintendo coverage and collector listings. The verified 3DS SteelBook is square, not G2; no G2 panels supplied.",
+        "disc": "Not applicable: N64 cartridge.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/majora-s-mask/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://images.launchbox-app.com/ac02b5fd-6f1c-4193-bfe9-7372ae22b58e.jpg",
+          "sourcePixels": [
+            1598,
+            2239
+          ],
+          "initialCrop": [
+            150,
+            315,
+            1345,
+            1820
+          ],
+          "aspectCropRelative": [
+            0,
+            0.09259259259260944,
+            1195,
+            1504.9074074074074
+          ],
+          "operation": "Official box art cropped to 135:170 without distortion; resized with Lanczos",
+          "upscaled": true,
+          "sha256": "456b76ab1f8d3802ec6cc683bcc8b8783e26cb4a22dd4389288073e33353c8fc",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "infamous-second-son": {
+      "searchScope": [
+        "Infamous Second Son official steelbook special collector edition",
+        "Infamous Second Son steelbook Zavvi",
+        "Infamous Second Son foil cover steelbook"
+      ],
+      "gaps": {
+        "back, spine, inside": "Searched official PS4 Special/Limited/Collector editions, regional collector announcements, release-era collector forum, Zavvi offers and modern steelbook listings. Foil sleeves, denim covers, unrelated free steelbooks and custom FantasyBox products do not establish an official G2 case.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/infamous-second-son/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://images.launchbox-app.com/e010c903-085e-483a-b156-0bc2cde12c41.jpg",
+          "sourcePixels": [
+            1204,
+            1500
+          ],
+          "initialCrop": [
+            0,
+            0,
+            1204,
+            1500
+          ],
+          "aspectCropRelative": [
+            6.4117647058823195,
+            0,
+            1197.5882352941176,
+            1500
+          ],
+          "operation": "Official box art cropped to 135:170 without distortion; resized with Lanczos",
+          "upscaled": true,
+          "sha256": "49c7ce4f8b3e746b257d8d1adf690f6963abbab560bc26ae7b6dedb80d44cb94",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/infamous-second-son/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://images.launchbox-app.com/r2_2e217146-a29d-4b9e-8212-d3d469db4d67.png",
+          "sourcePixels": [
+            960,
+            960
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": true,
+          "sha256": "98e589496ad9f67af32cfdc8290e4f31544553c076033e1747f9ae1b09a1ddf1",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "uncharted-3": {
+      "searchScope": [
+        "Uncharted 3 collectors edition steelbook front back inside spine",
+        "Uncharted 3 steelbook ring high resolution scan",
+        "Uncharted 3 PS3 disc scan"
+      ],
+      "gaps": {
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/uncharted-3/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://retrogamefan.com/cdn/shop/files/PS3-Uncharted-3-Drakes-Deception-Steelbook-Edition-Very-Good-CIB-1-Case-Front.webp?v=1767974201",
+          "sourcePixels": [
+            2000,
+            2000
+          ],
+          "quadTLTRBRBL": [
+            [
+              320.0,
+              120.0
+            ],
+            [
+              1675.0,
+              122.5
+            ],
+            [
+              1705.0,
+              1842.5
+            ],
+            [
+              312.5,
+              1850.0
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            1374,
+            1725
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": false,
+          "sha256": "098a6946da4087337432b65d9e3c9451237b6da821d85c512b082ce01f3a013f",
+          "visuallyReviewed": true
+        },
+        "back": {
+          "path": "/cases/games/uncharted-3/back.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhC_rP50ebB6lFV9wLR2hEcVgGRBcQFYLFxGdWUh0K9uTgY5KZxCISzCVo2B9f_75GdDNK-G6IP1adGCNK2NRVY9QUxsnLqtk24FA3vvOfBWpjjz2352F-uPOFTOVgBZL-HiB2-/s0/100_2697.JPG",
+          "sourcePixels": [
+            1728,
+            2304
+          ],
+          "quadTLTRBRBL": [
+            [
+              339.84,
+              838.08
+            ],
+            [
+              1405.44,
+              852.48
+            ],
+            [
+              1641.6,
+              2004.48
+            ],
+            [
+              169.92,
+              2004.48
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            1269,
+            1177
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "e631468b40cc9b91830dbeed43c43049738c2b8870c1e8c0eff9229c94b1a0c4",
+          "visuallyReviewed": true
+        },
+        "spine": {
+          "path": "/cases/games/uncharted-3/spine.jpg",
+          "outputPixels": [
+            120,
+            1700
+          ],
+          "source": "https://i.ebayimg.com/images/g/PREAAOSwFqVji3~y/s-l1200.jpg",
+          "sourcePixels": [
+            502,
+            996
+          ],
+          "quadTLTRBRBL": [
+            [
+              229.08,
+              54.78
+            ],
+            [
+              278.88,
+              56.025
+            ],
+            [
+              277.635,
+              944.955
+            ],
+            [
+              226.59,
+              943.71
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            50,
+            889
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "b5b4d44abefd8be8dcabc2ea64bb2fb0110e80836038610f981082f626775eac",
+          "visuallyReviewed": true
+        },
+        "inside": {
+          "path": "/cases/games/uncharted-3/inside.jpg",
+          "outputPixels": [
+            2700,
+            1700
+          ],
+          "source": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgLd9chFjmWEDDhn75aBy1lQvEt8SlXelAphyaITyktLjbTeoIRbjVwgZDUTeqG-I4J3Bv_zXoHyPwVEmixdO03qjq3XA7jzJnSYnTDPw5otKDI1QEHhQm3bH7sloA751tBwJaU/s0/100_2699.JPG",
+          "sourcePixels": [
+            2304,
+            1728
+          ],
+          "panelQuadsTLTRBRBL": [
+            [
+              [
+                305.28,
+                273.6
+              ],
+              [
+                1126.08,
+                285.12
+              ],
+              [
+                1120.32,
+                1307.52
+              ],
+              [
+                241.92,
+                1293.12
+              ]
+            ],
+            [
+              [
+                1252.8,
+                290.88
+              ],
+              [
+                2047.68,
+                305.28
+              ],
+              [
+                2102.4,
+                1310.4
+              ],
+              [
+                1258.56,
+                1304.64
+              ]
+            ]
+          ],
+          "operation": "Perspective-correct inner panels separately, join left/right; plastic trays and reflections retained; hinge excluded",
+          "upscaled": true,
+          "sha256": "fe8c3757fba02f856ab2ceed9c40ab5b3f06298340ea5ce4fcc11ebe594ea669",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/uncharted-3/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://images.launchbox-app.com/r2_d3902062-98ca-49a1-82f9-947255b2e70e.png",
+          "sourcePixels": [
+            798,
+            800
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": true,
+          "sha256": "3bcc6f52511165bed1ffc49b5b025e63d97a7f59fa20e82c7e2b6a40e0dbd05b",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "ghost-of-tsushima": {
+      "searchScope": [
+        "Ghost of Tsushima special edition steelbook front back inside spine",
+        "Ghost of Tsushima steelbook empty case",
+        "Ghost of Tsushima PS4 disc scan"
+      ],
+      "gaps": {
+        "clean inside": "Searched Special/Collector edition unboxings, SteelbookJeuxVideo, eBay, retailer and Shopee images. Only the watermarked empty spread was usable; retained and disclosed.",
+        "native high-resolution back": "Back panel sourced from an 800×800 opened-case photo; approximately 450 px panel height, enlarged to output size.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/ghost-of-tsushima/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://i.ebayimg.com/images/g/9XsAAOSwrrlfEjxL/s-l1600.jpg",
+          "sourcePixels": [
+            1368,
+            1600
+          ],
+          "quadTLTRBRBL": [
+            [
+              212.0,
+              130.0
+            ],
+            [
+              1154.0,
+              114.0
+            ],
+            [
+              1218.0,
+              1376.0
+            ],
+            [
+              178.0,
+              1378.0
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            991,
+            1256
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "a9708fa1ec9d8570eb609c7be5b5c285a2b37f2fc38f027aacf68c8df459d0f9",
+          "visuallyReviewed": true
+        },
+        "back": {
+          "path": "/cases/games/ghost-of-tsushima/back.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://down-ph.img.susercontent.com/file/ph-11134207-7r98o-lkxwx2lj1q1za9",
+          "sourcePixels": [
+            800,
+            800
+          ],
+          "quadTLTRBRBL": [
+            [
+              32.0,
+              178.0
+            ],
+            [
+              387.0,
+              179.0
+            ],
+            [
+              388.0,
+              625.0
+            ],
+            [
+              36.0,
+              626.0
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            354,
+            447
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "eaf5d6db795842ad6d38881e3a0a2c211247267e69944a7867e81c423e2b1317",
+          "visuallyReviewed": true
+        },
+        "spine": {
+          "path": "/cases/games/ghost-of-tsushima/spine.jpg",
+          "outputPixels": [
+            120,
+            1700
+          ],
+          "source": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-10_8692844.jpg",
+          "sourcePixels": [
+            1072,
+            712
+          ],
+          "quadTLTRBRBL": [
+            [
+              75.04,
+              371.18
+            ],
+            [
+              1000.98,
+              361.8
+            ],
+            [
+              1000.98,
+              403.34
+            ],
+            [
+              77.72,
+              411.38
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            925,
+            41
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background; rotated clockwise 90 degrees",
+          "upscaled": true,
+          "sha256": "95efc9a0e29553e64fb54a257f83acab6683c9293eb3e3c67d04ba23e582866a",
+          "visuallyReviewed": true
+        },
+        "inside": {
+          "path": "/cases/games/ghost-of-tsushima/inside.jpg",
+          "outputPixels": [
+            2700,
+            1700
+          ],
+          "source": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-9_8692843.jpg",
+          "sourcePixels": [
+            1072,
+            712
+          ],
+          "panelQuadsTLTRBRBL": [
+            [
+              [
+                46.9,
+                75.04
+              ],
+              [
+                490.44,
+                76.38
+              ],
+              [
+                489.1,
+                608.36
+              ],
+              [
+                61.64,
+                651.24
+              ]
+            ],
+            [
+              [
+                541.36,
+                77.72
+              ],
+              [
+                971.5,
+                76.38
+              ],
+              [
+                952.74,
+                652.58
+              ],
+              [
+                541.36,
+                609.7
+              ]
+            ]
+          ],
+          "operation": "Perspective-correct inner panels separately, join left/right; plastic trays and reflections retained; hinge excluded",
+          "upscaled": true,
+          "sha256": "c03172eb97dff1f330ad8250a49b9abe9b575296638fb9b199855bc68934d3c6",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/ghost-of-tsushima/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://images.launchbox-app.com/r2_06002a48-8304-47b5-9356-196943fcfe92.png",
+          "sourcePixels": [
+            762,
+            766
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": true,
+          "sha256": "c4d4f4f420c62f13eedd483c97e45bab1d5a9ef4a9aead576dc3337580cc40ca",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "minecraft": {
+      "searchScope": [
+        "Minecraft PS4 Amazon Germany exclusive steelbook",
+        "Minecraft Playstation 4 steelbook back spine inside",
+        "Minecraft PS4 2014 disc CUSA 00265"
+      ],
+      "gaps": {
+        "spine": "Searched Amazon.de exclusive product renders, Blu-ray-disc.de/HiDefNinja collector threads and retailer/eBay images. Only a very narrow, oblique spine is present; no legible complete strip verified.",
+        "inside": "Available official open-case render contains an insert and disc covering the panels; no complete empty spread verified.",
+        "native front/back ≥1000 px": "Largest useful render is 1001×1500, but the panel itself occupies only about 900 px vertically; output is transparently upscaled.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/minecraft/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://bluray-disc.de/forum/attachment.php?id=182529",
+          "sourcePixels": [
+            1001,
+            1500
+          ],
+          "quadTLTRBRBL": [
+            [
+              183.75,
+              163.125
+            ],
+            [
+              883.125,
+              168.75
+            ],
+            [
+              883.125,
+              1053.75
+            ],
+            [
+              183.75,
+              1095.0
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            700,
+            908
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "825646f4a0c56dd090c29d6af8061d97df137888279e09412e3d4c67f3e4690d",
+          "visuallyReviewed": true
+        },
+        "back": {
+          "path": "/cases/games/minecraft/back.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://bluray-disc.de/forum/attachment.php?id=182533",
+          "sourcePixels": [
+            1001,
+            1500
+          ],
+          "quadTLTRBRBL": [
+            [
+              181.875,
+              157.5
+            ],
+            [
+              883.125,
+              165.0
+            ],
+            [
+              881.25,
+              1050.0
+            ],
+            [
+              181.875,
+              1093.125
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            701,
+            910
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "f3644ac506e70e9e23e395f743482d0aee072dd42209bdbb6bf663212e6d0e08",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/minecraft/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://i.ebayimg.com/images/g/re0AAeSwSVZpzYjM/s-l1200.webp",
+          "sourcePixels": [
+            1200,
+            1200
+          ],
+          "operation": "Crop photographed disc ellipse, normalize to circle, mask outside and photographed centre hole, rotate 10 degrees clockwise",
+          "upscaled": true,
+          "sourceCrop": [
+            81,
+            120,
+            1122,
+            1146
+          ],
+          "sampledPanelPixelsApprox": [
+            1041,
+            1026
+          ],
+          "sha256": "147e9da418b4bc75473bb196491cf78d671ade99917f5a86bafb7d4d5cc87fdd",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "the-last-of-us-part-ii": {
+      "searchScope": [
+        "The Last of Us Part II steelbook front back inside spine",
+        "The Last of Us Part II steelbook empty interior",
+        "The Last of Us Part II steelbook front Ellie collector case only"
+      ],
+      "gaps": {
+        "clean inside": "Searched GAMERGEN, GamerGirl, Video Game Shelf, SteelbookJeuxVideo and eBay. Most interiors retain discs/inserts; the complete empty spread is watermarked and retained as such.",
+        "native front ≥1000 px": "Compared 1920×1280 unboxing photographs and eBay 909×1101 / 1600×1046 photos. Selected clearer unboxing crop is about 965 px tall; enlarged to 1700.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/the-last-of-us-part-ii/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-13_0000955759.jpg",
+          "sourcePixels": [
+            1920,
+            1280
+          ],
+          "quadTLTRBRBL": [
+            [
+              590.4,
+              163.2
+            ],
+            [
+              1356.0,
+              160.8
+            ],
+            [
+              1401.6,
+              1125.6
+            ],
+            [
+              542.4,
+              1125.6
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            812,
+            965
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "890b9b1b4739b32427b6a461b6ef9901d47422573ea5859a336cf454b5201a5e",
+          "visuallyReviewed": true
+        },
+        "back": {
+          "path": "/cases/games/the-last-of-us-part-ii/back.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-14_0000955760.jpg",
+          "sourcePixels": [
+            1920,
+            1280
+          ],
+          "quadTLTRBRBL": [
+            [
+              136.8,
+              187.2
+            ],
+            [
+              919.2,
+              165.6
+            ],
+            [
+              919.2,
+              1156.8
+            ],
+            [
+              64.8,
+              1154.4
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            819,
+            981
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "5276e6e011978d4e9e2f1970ba15b754af96d71a07dc77a0e8fee2977fe4ddee",
+          "visuallyReviewed": true
+        },
+        "spine": {
+          "path": "/cases/games/the-last-of-us-part-ii/spine.jpg",
+          "outputPixels": [
+            120,
+            1700
+          ],
+          "source": "https://www.videogameshelf.com/wp-content/uploads/2020/06/The-Last-of-Us-Part-II-Special-Edition-Steelbook-Spine.jpg",
+          "sourcePixels": [
+            1500,
+            448
+          ],
+          "quadTLTRBRBL": [
+            [
+              116.25,
+              307.5
+            ],
+            [
+              1404.375,
+              311.25
+            ],
+            [
+              1400.625,
+              369.375
+            ],
+            [
+              116.25,
+              369.375
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            1286,
+            60
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background; rotated clockwise 90 degrees",
+          "upscaled": true,
+          "sha256": "5031cd1c99e5d1832cb9c5077c4c661c789350945471804a10ecc5e8ab1d9654",
+          "visuallyReviewed": true
+        },
+        "inside": {
+          "path": "/cases/games/the-last-of-us-part-ii/inside.jpg",
+          "outputPixels": [
+            2700,
+            1700
+          ],
+          "source": "https://static.blog4ever.com/2018/09/848202/big_steelbook-the-last-of-us-part-2-9_8668747.jpg",
+          "sourcePixels": [
+            1072,
+            712
+          ],
+          "panelQuadsTLTRBRBL": [
+            [
+              [
+                93.8,
+                81.74
+              ],
+              [
+                498.48,
+                84.42
+              ],
+              [
+                491.78,
+                582.9
+              ],
+              [
+                109.88,
+                639.18
+              ]
+            ],
+            [
+              [
+                549.4,
+                88.44
+              ],
+              [
+                968.82,
+                92.46
+              ],
+              [
+                938.0,
+                640.52
+              ],
+              [
+                548.06,
+                585.58
+              ]
+            ]
+          ],
+          "operation": "Perspective-correct inner panels separately, join left/right; plastic trays and reflections retained; hinge excluded",
+          "upscaled": true,
+          "sha256": "aaf5bd825d335e2d8af9cfcd7189e5def023b747611a588e8ad4b585f1283bac",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/the-last-of-us-part-ii/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://images.launchbox-app.com/r2_07ae4afc-4b0b-4f49-a24c-c7d94914ecef.png",
+          "sourcePixels": [
+            760,
+            755
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": true,
+          "sha256": "a5893b22682bada3b83bb8c6512cc35e91ddc702034432439e0c3e6ed37989ce",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "death-stranding": {
+      "searchScope": [
+        "Death Stranding official steelbook artwork front back",
+        "Death Stranding special edition steelbook inside spine",
+        "Death Stranding PS4 disc scan"
+      ],
+      "gaps": {
+        "native high-resolution back/spine/disc": "Searched official reveal, Video Game Shelf, RFGeneration, eBay and LaunchBox. Official front is high resolution; usable back/spine are small and the flat disc scan is 499×500. RFGeneration watermarked scans and clipped back photos were rejected.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/death-stranding/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://www.gematsu.com/wp-content/uploads/2019/07/zp-252722_Death-Stranding_2019_07-20-19_002.png",
+          "sourcePixels": [
+            1802,
+            2485
+          ],
+          "quadTLTRBRBL": [
+            [
+              136.675,
+              127.356
+            ],
+            [
+              1661.844,
+              127.356
+            ],
+            [
+              1661.844,
+              2059.444
+            ],
+            [
+              136.675,
+              2059.444
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            1525,
+            1932
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": false,
+          "sha256": "151a96825386e100479e5ab11495411e5b4f222b60f21425843d6b5beb6d0ee2",
+          "visuallyReviewed": true
+        },
+        "back": {
+          "path": "/cases/games/death-stranding/back.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://i.ebayimg.com/images/g/2T0AAOSwWI1eRqlP/s-l1200.jpg",
+          "sourcePixels": [
+            1200,
+            675
+          ],
+          "quadTLTRBRBL": [
+            [
+              219.0,
+              111.0
+            ],
+            [
+              588.0,
+              96.0
+            ],
+            [
+              600.0,
+              591.0
+            ],
+            [
+              196.5,
+              598.5
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            386,
+            492
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "f206fb3cccdf8fbe789342460e23a2078377c734a3831e14f7e25eef7a1f4352",
+          "visuallyReviewed": true
+        },
+        "spine": {
+          "path": "/cases/games/death-stranding/spine.jpg",
+          "outputPixels": [
+            120,
+            1700
+          ],
+          "source": "https://i.ebayimg.com/images/g/2T0AAOSwWI1eRqlP/s-l1200.jpg",
+          "sourcePixels": [
+            1200,
+            675
+          ],
+          "quadTLTRBRBL": [
+            [
+              607.5,
+              114.0
+            ],
+            [
+              622.5,
+              111.0
+            ],
+            [
+              636.0,
+              573.0
+            ],
+            [
+              621.0,
+              574.5
+            ]
+          ],
+          "sampledPanelPixelsApprox": [
+            15,
+            461
+          ],
+          "operation": "Four-point perspective correction; small inset to exclude rounded case edges/background",
+          "upscaled": true,
+          "sha256": "182c360c5481162b7893f10382747abe5866c3a9738744104a91eee236961460",
+          "visuallyReviewed": true
+        },
+        "inside": {
+          "path": "/cases/games/death-stranding/inside.jpg",
+          "outputPixels": [
+            2700,
+            1700
+          ],
+          "source": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook-Inside.jpg",
+          "sourcePixels": [
+            1500,
+            1001
+          ],
+          "panelQuadsTLTRBRBL": [
+            [
+              [
+                161.25,
+                457.5
+              ],
+              [
+                575.625,
+                279.375
+              ],
+              [
+                963.75,
+                605.625
+              ],
+              [
+                521.25,
+                892.5
+              ]
+            ],
+            [
+              [
+                643.125,
+                258.75
+              ],
+              [
+                937.5,
+                103.125
+              ],
+              [
+                1331.25,
+                339.375
+              ],
+              [
+                1023.75,
+                560.625
+              ]
+            ]
+          ],
+          "operation": "Perspective-correct inner panels separately, join left/right; plastic trays and reflections retained; hinge excluded",
+          "upscaled": true,
+          "sha256": "df022755cf6d6e56bd9b959a191b58e0e0124a267f20bc4814a004b86f905731",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/death-stranding/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://images.launchbox-app.com/5fa37ccb-407c-45e8-a42b-4f4447de391a.png",
+          "sourcePixels": [
+            499,
+            500
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": true,
+          "sha256": "204b7ba38e0fce72f4b0373e04e5961198ae7480721b6c9ad8ada9492368cef2",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "pikmin-3": {
+      "searchScope": [
+        "Pikmin 3 official steelbook Wii U",
+        "Pikmin 3 Deluxe steelbook limited collector edition",
+        "Pikmin 3 Wii U box front scan Launchbox"
+      ],
+      "gaps": {
+        "back, spine, inside": "Searched Pikmin 3 Wii U/Deluxe official steelbook, special/limited/collector edition and retailer listings. No qualifying G2 release verified, so no metal-panel substitutes created.",
+        "high-resolution disc": "GameTDB and LaunchBox provide a 500×500 US disc scan; enlarged to 1200.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/pikmin-3/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://images.launchbox-app.com/f2c32cd8-66d2-4bb0-80a0-e7403b51d337.jpg",
+          "sourcePixels": [
+            1785,
+            2519
+          ],
+          "initialCrop": [
+            0,
+            205,
+            1785,
+            2519
+          ],
+          "aspectCropRelative": [
+            0,
+            33.111111111111086,
+            1785,
+            2280.8888888888887
+          ],
+          "operation": "Official box art cropped to 135:170 without distortion; resized with Lanczos",
+          "upscaled": false,
+          "sha256": "66566f351dcff52139437d80fba78962ac046c6bf5d87cd0dcd265a012907fe7",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/pikmin-3/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://art.gametdb.com/wiiu/discM/US/AC3E01.png",
+          "sourcePixels": [
+            500,
+            500
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": true,
+          "sha256": "65990380daaf832464a6cc4ee734eb15a05c95e03962569d7a0baf9b2a7f6777",
+          "visuallyReviewed": true
+        }
+      }
+    },
+    "super-mario-galaxy-2": {
+      "searchScope": [
+        "Super Mario Galaxy 2 official steelbook",
+        "Super Mario Galaxy 2 Limited Tin Edition",
+        "Super Mario Galaxy 2 Wii disc scan"
+      ],
+      "gaps": {
+        "back, spine, inside": "Searched Super Mario Galaxy 2 Wii steelbook, Limited Tin Edition, collector/retailer and custom listings. No qualifying G2 case verified; no fabricated metal panels.",
+        "relief": "No clean independent embossing/debossing height reference found in edition/product/unboxing images; null rather than synthesized."
+      },
+      "assets": {
+        "front": {
+          "path": "/cases/games/super-mario-galaxy-2/front.jpg",
+          "outputPixels": [
+            1350,
+            1700
+          ],
+          "source": "https://images.launchbox-app.com/60fbd79c-0a48-4690-8504-0b9dcdf3c9b8.jpg",
+          "sourcePixels": [
+            1017,
+            1431
+          ],
+          "initialCrop": [
+            0,
+            150,
+            1017,
+            1431
+          ],
+          "aspectCropRelative": [
+            0,
+            0.16666666666662877,
+            1017,
+            1280.8333333333335
+          ],
+          "operation": "Official box art cropped to 135:170 without distortion; resized with Lanczos",
+          "upscaled": true,
+          "sha256": "75149fe1fc360a9efe1d27f7be38b98db55b81ecd072f6ada8ad7f6e1107d4a2",
+          "visuallyReviewed": true
+        },
+        "disc": {
+          "path": "/cases/games/super-mario-galaxy-2/disc.png",
+          "outputPixels": [
+            1200,
+            1200
+          ],
+          "source": "https://images.launchbox-app.com/372a698f-48b9-450b-ba25-3b41530a38bd.png",
+          "sourcePixels": [
+            1280,
+            1280
+          ],
+          "operation": "Resize scan, preserve transparency and centre hole, antialiased outer circular mask",
+          "upscaled": false,
+          "sha256": "30c823a5d72f6b015e26d27a1dc93e9526850bbd5fff1b22437ce7ad9063ccc6",
+          "visuallyReviewed": true
+        }
+      }
+    }
+  },
+  "downloadLog": [
+    {
+      "url": "https://www.google.com/search?q=infamous+second+son+steelbook",
+      "host": "www.google.com",
+      "time": 1792651789.766295,
+      "status": "200"
+    },
+    {
+      "url": "https://www.google.com/search?q=pikmin+3+steelbook",
+      "host": "www.google.com",
+      "time": 1792651791.038584,
+      "status": "200"
+    },
+    {
+      "url": "https://www.google.com/search?q=infamous%20second%20son%20steelbook",
+      "host": "www.google.com",
+      "time": 1792651797.067848,
+      "status": "200"
+    },
+    {
+      "url": "https://www.google.com/search?q=pikmin%203%20steelbook",
+      "host": "www.google.com",
+      "time": 1792651798.3353589,
+      "status": "200"
+    },
+    {
+      "url": "https://www.google.com/search?q=Minecraft%20steelbook%20PS4%20official",
+      "host": "www.google.com",
+      "time": 1792651799.5971892,
+      "status": "200"
+    },
+    {
+      "url": "https://www.videogameshelf.com/close-up-death-stranding-special-edition/",
+      "host": "www.videogameshelf.com",
+      "time": 1792651828.934765,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/cgi-bin/getinfo.pl?ID=E-215-S-05910-B",
+      "host": "www.rfgeneration.com",
+      "time": 1792651830.052362,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/cgi-bin/getinfo.pl?type=ex&ID=E-215-S-05910-B&number=08",
+      "host": "www.rfgeneration.com",
+      "time": 1792651844.062293,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/cgi-bin/getinfo.pl?type=ex&ID=E-215-S-05910-B&number=09",
+      "host": "www.rfgeneration.com",
+      "time": 1792651846.103728,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/cgi-bin/getinfo.pl?type=ex&ID=E-215-S-05910-B&number=12",
+      "host": "www.rfgeneration.com",
+      "time": 1792651848.1302211,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/cgi-bin/getinfo.pl?ID=E-215-S-05910-B&type=gs",
+      "host": "www.rfgeneration.com",
+      "time": 1792651850.28379,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/images/games/E-215/ex/E-215-S-05910-B_08.jpg",
+      "host": "www.rfgeneration.com",
+      "time": 1792651859.823642,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/images/games/E-215/ex/E-215-S-05910-B_09.jpg",
+      "host": "www.rfgeneration.com",
+      "time": 1792651861.2178051,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/images/games/E-215/ex/E-215-S-05910-B_12.jpg",
+      "host": "www.rfgeneration.com",
+      "time": 1792651862.6054661,
+      "status": "200"
+    },
+    {
+      "url": "https://www.rfgeneration.com/images/games/E-215/gs/E-215-S-05910-B.jpg",
+      "host": "www.rfgeneration.com",
+      "time": 1792651864.0032132,
+      "status": "200"
+    },
+    {
+      "url": "https://www.steelbookjeuxvideo.fr/presentation-du-steelbook-ghost-of-tsushima-edition-speciale",
+      "host": "www.steelbookjeuxvideo.fr",
+      "time": 1792651873.905437,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/2011/11/uncharted-3-collectors-edition-unboxing/",
+      "host": "www.saint-ism.com",
+      "time": 1792651874.454924,
+      "status": "200"
+    },
+    {
+      "url": "https://gameidealist.com/sony/ps4/take-a-look-at-the-steelbook-edition-of-minecraft-playstation-4-edition-144/",
+      "host": "gameidealist.com",
+      "time": 1792651875.022722,
+      "status": "200"
+    },
+    {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook.jpg",
+      "host": "www.videogameshelf.com",
+      "time": 1792651885.1040561,
+      "status": "200"
+    },
+    {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook-Back.jpg",
+      "host": "www.videogameshelf.com",
+      "time": 1792651887.156831,
+      "status": "200"
+    },
+    {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook-Inside.jpg",
+      "host": "www.videogameshelf.com",
+      "time": 1792651889.2239308,
+      "status": "200"
+    },
+    {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook-Opened.jpg",
+      "host": "www.videogameshelf.com",
+      "time": 1792651891.2894468,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_front.jpg",
+      "host": "www.saint-ism.com",
+      "time": 1792651891.4437382,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_back.jpg",
+      "host": "www.saint-ism.com",
+      "time": 1792651892.766315,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_open_2.jpg",
+      "host": "www.saint-ism.com",
+      "time": 1792651894.0873349,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_1.jpg",
+      "host": "www.saint-ism.com",
+      "time": 1792651895.398879,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-3_8692837.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651896.2113862,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-4_8692838.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651898.014167,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-5_8692839.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651899.855917,
+      "status": "200"
+    },
+    {
+      "url": "https://collectorsedition.org/forums/archive/index.php/f-30-p-2.html",
+      "host": "collectorsedition.org",
+      "time": 1792651901.203559,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-7_8692841.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651901.763105,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-9_8692843.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651903.737086,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-10_8692844.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651905.552129,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-11_8692845.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651907.358434,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-12_8692846.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792651909.151974,
+      "status": "200"
+    },
+    {
+      "url": "https://collectorsedition.org/forums/archive/index.php/t-15547.html",
+      "host": "collectorsedition.org",
+      "time": 1792651916.708459,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/2013/07/the-last-of-us-post-pandemic-edition-unboxing/",
+      "host": "www.saint-ism.com",
+      "time": 1792651917.100806,
+      "status": "200"
+    },
+    {
+      "url": "https://www.naughtydogmag.fr/unboxing-the-last-of-us-part-ii-edition-collector/",
+      "host": "www.naughtydogmag.fr",
+      "time": 1792651929.503538,
+      "status": "200"
+    },
+    {
+      "url": "https://anubisgamehobby.com/products/minecraft-steelbook-edition-pal-playstation-21",
+      "host": "anubisgamehobby.com",
+      "time": 1792651929.8639538,
+      "status": "200"
+    },
+    {
+      "url": "https://jesuisungameur.com/2020/07/22/unboxing-edition-speciale-ghost-of-tsushima-ps4/",
+      "host": "jesuisungameur.com",
+      "time": 1792651931.788943,
+      "status": "200"
+    },
+    {
+      "url": "https://www.hidefninja.com/community/threads/minecraft-amazon-exclusive-germany.55488/",
+      "host": "www.hidefninja.com",
+      "time": 1792651951.079849,
+      "status": "403"
+    },
+    {
+      "url": "https://blog.playstation.com/2019/07/21/death-stranding-official-box-art-revealed/",
+      "host": "blog.playstation.com",
+      "time": 1792651951.4537961,
+      "status": "404"
+    },
+    {
+      "url": "https://gamergen.com/actualites/unboxing-the-last-of-us-part-ii-nos-photos-maison-edition-collector-313354-2",
+      "host": "gamergen.com",
+      "time": 1792651952.721741,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_1.jpg",
+      "host": "www.saint-ism.com",
+      "time": 1792651953.116666,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_2.jpg",
+      "host": "www.saint-ism.com",
+      "time": 1792651954.409267,
+      "status": "200"
+    },
+    {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_3.jpg",
+      "host": "www.saint-ism.com",
+      "time": 1792651955.702202,
+      "status": "200"
+    },
+    {
+      "url": "https://jesuisungameur.com/wp-content/uploads/2020/07/unboxing-ghost-of-tsushima-ps4-scaled.jpg",
+      "host": "jesuisungameur.com",
+      "time": 1792651956.5690298,
+      "status": "200"
+    },
+    {
+      "url": "https://jesuisungameur.com/wp-content/uploads/2020/07/unboxing-ghost-of-tsushima-edition-speciale-ps4.jpg",
+      "host": "jesuisungameur.com",
+      "time": 1792651958.5286,
+      "status": "200"
+    },
+    {
+      "url": "https://www.gematsu.com/2019/07/death-stranding-box-art-steelbook-art",
+      "host": "www.gematsu.com",
+      "time": 1792651960.208992,
+      "status": "200"
+    },
+    {
+      "url": "https://jesuisungameur.com/wp-content/uploads/2020/07/unboxing-ghost-of-tsushima-edition-speciale.jpg",
+      "host": "jesuisungameur.com",
+      "time": 1792651960.4278169,
+      "status": "200"
+    },
+    {
+      "url": "https://www.naughtydogmag.fr/wp-content/uploads/2020/06/unboxing-collector-the-last-of-us-part-ii-steelbook.jpg",
+      "host": "www.naughtydogmag.fr",
+      "time": 1792651961.47107,
+      "status": "200"
+    },
+    {
+      "url": "https://bluray-disc.de/forum/ps3-ps4-xbox-one-sondereditionen/105632-ps-4-deutsche-steelbooks.html",
+      "host": "bluray-disc.de",
+      "time": 1792651968.792811,
+      "status": "200"
+    },
+    {
+      "url": "https://bluray-disc.de/forum/attachment.php?id=182529",
+      "host": "bluray-disc.de",
+      "time": 1792651980.6077518,
+      "status": "200"
+    },
+    {
+      "url": "https://bluray-disc.de/forum/attachment.php?id=182531",
+      "host": "bluray-disc.de",
+      "time": 1792651982.631101,
+      "status": "200"
+    },
+    {
+      "url": "https://bluray-disc.de/forum/attachment.php?id=182533",
+      "host": "bluray-disc.de",
+      "time": 1792651984.58733,
+      "status": "200"
+    },
+    {
+      "url": "https://www.gematsu.com/wp-content/uploads/2019/07/zp-252721_Death-Stranding_2019_07-20-19_001.png",
+      "host": "www.gematsu.com",
+      "time": 1792651984.7990882,
+      "status": "200"
+    },
+    {
+      "url": "https://www.gematsu.com/wp-content/uploads/2019/07/zp-252722_Death-Stranding_2019_07-20-19_002.png",
+      "host": "www.gematsu.com",
+      "time": 1792651986.187961,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/18960-infamous-second-son",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792651986.8529642,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-5_0000955751.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792651987.130261,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/22656-minecraft-playstation-4-edition",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792651988.1180842,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-6_0000955752.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792651989.010366,
+      "status": "200"
+    },
+    {
+      "url": "https://www.gametdb.com/WiiU/AC3E01",
+      "host": "www.gametdb.com",
+      "time": 1792651989.423359,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-7_0000955753.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792651990.965865,
+      "status": "200"
+    },
+    {
+      "url": "https://www.gametdb.com/Wii/SB4E01",
+      "host": "www.gametdb.com",
+      "time": 1792651991.858458,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-8_0000955754.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792651992.93154,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-9_0000955755.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792651994.815535,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-10_0000955756.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792651996.778789,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/167-the-legend-of-zelda-majoras-mask",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652009.664117,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/122172-death-stranding",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652010.9558542,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/10001",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652012.327158,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/e010c903-085e-483a-b156-0bc2cde12c41.jpg",
+      "host": "images.launchbox-app.com",
+      "time": 1792652022.7572181,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/r2_2e217146-a29d-4b9e-8212-d3d469db4d67.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652023.977241,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/ac02b5fd-6f1c-4193-bfe9-7372ae22b58e.jpg",
+      "host": "images.launchbox-app.com",
+      "time": 1792652025.214147,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/1c277b77-666d-4368-9d17-52a46c020ca4.jpg",
+      "host": "images.launchbox-app.com",
+      "time": 1792652026.443032,
+      "status": "200"
+    },
+    {
+      "url": "https://art.gametdb.com/wiiu/coverHQ/US/AC3E01.jpg",
+      "host": "art.gametdb.com",
+      "time": 1792652027.754854,
+      "status": "200"
+    },
+    {
+      "url": "https://art.gametdb.com/wiiu/discM/US/AC3E01.png",
+      "host": "art.gametdb.com",
+      "time": 1792652030.22717,
+      "status": "200"
+    },
+    {
+      "url": "https://www.ebay.com/itm/236322723690",
+      "host": "www.ebay.com",
+      "time": 1792652031.917022,
+      "status": "403"
+    },
+    {
+      "url": "https://art.gametdb.com/wii/coverfullHQ/US/SB4E01.png",
+      "host": "art.gametdb.com",
+      "time": 1792652032.8643892,
+      "status": "200"
+    },
+    {
+      "url": "https://art.gametdb.com/wii/disc/US/SB4E01.png",
+      "host": "art.gametdb.com",
+      "time": 1792652034.861656,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/5fa37ccb-407c-45e8-a42b-4f4447de391a.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652034.952752,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/9531c70b-c263-4ca3-9254-251a76b85327.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652036.171743,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/developers/games/43-naughty-dog",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652038.951398,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/71823-the-last-of-us-part-ii",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652040.2227142,
+      "status": "200"
+    },
+    {
+      "url": "https://www.retrofixgames.com/products/ghost-of-tsushima-special-edition-steelbook",
+      "host": "www.retrofixgames.com",
+      "time": 1792652046.737817,
+      "status": "200"
+    },
+    {
+      "url": "https://freaktoyz.com/products/ghost-of-tsushima-steelbook",
+      "host": "freaktoyz.com",
+      "time": 1792652047.2320561,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/2152-uncharted-3-drakes-deception",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652047.553675,
+      "status": "200"
+    },
+    {
+      "url": "https://www.retrofixgames.com/cdn/shop/products/ghost-of-tsushima-special-edition-steelbookvideo-games-games-ps4retrofix-games-379332.png",
+      "host": "www.retrofixgames.com",
+      "time": 1792652056.707548,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/113727-super-mario-galaxy-2",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652057.4618392,
+      "status": "200"
+    },
+    {
+      "url": "https://www.retrofixgames.com/cdn/shop/products/ghost-of-tsushima-special-edition-steelbookvideo-games-games-ps4retrofix-games-196932.png",
+      "host": "www.retrofixgames.com",
+      "time": 1792652058.334008,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-11_0000955757.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792652059.157381,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-12_0000955758.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792652061.134115,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-13_0000955759.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792652063.100459,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-14_0000955760.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792652065.0604749,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-15_0000955761.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792652066.942334,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/r2_a350da5f-9e1d-490b-bd5b-6be224216d7d.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652067.050574,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/r2_07ae4afc-4b0b-4f49-a24c-c7d94914ecef.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652068.2888188,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/r2_d3902062-98ca-49a1-82f9-947255b2e70e.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652069.529414,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/60fbd79c-0a48-4690-8504-0b9dcdf3c9b8.jpg",
+      "host": "images.launchbox-app.com",
+      "time": 1792652087.711332,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/372a698f-48b9-450b-ba25-3b41530a38bd.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652088.958901,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-16_0000955762.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792652089.7023392,
+      "status": "200"
+    },
+    {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-17_0000955763.jpg",
+      "host": "global-img.gamergen.com",
+      "time": 1792652091.5821471,
+      "status": "200"
+    },
+    {
+      "url": "https://www.xplacegames.com.br/jogo-ghost-of-tsushima-edicao-especial-ps4-usado",
+      "host": "www.xplacegames.com.br",
+      "time": 1792652095.547165,
+      "status": "200"
+    },
+    {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/b29bdc4e796bd77a6c5139c9debe8081-0i877u2vof.jpg",
+      "host": "cdn.awsli.com.br",
+      "time": 1792652103.191414,
+      "status": "200"
+    },
+    {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/5475f77d9cc8c27c5d7ee9aa3dd7ab51-bv6bq16b09.jpg",
+      "host": "cdn.awsli.com.br",
+      "time": 1792652104.459763,
+      "status": "200"
+    },
+    {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/437d3b9abc69cacf2e27473eb7585d82-h0zxcinlwc.jpg",
+      "host": "cdn.awsli.com.br",
+      "time": 1792652105.7333078,
+      "status": "200"
+    },
+    {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/647801df2bdecba5d26b12fa71a5f7d2-7dcr45ekbx.jpg",
+      "host": "cdn.awsli.com.br",
+      "time": 1792652107.0481012,
+      "status": "200"
+    },
+    {
+      "url": "https://retronorthgames.com/products/the-last-of-us-steelbook-case-ps3",
+      "host": "retronorthgames.com",
+      "time": 1792652115.692092,
+      "status": "200"
+    },
+    {
+      "url": "https://www.gamergirl.fr/unboxing-the-last-of-us-part-ii-ellie-edition/",
+      "host": "www.gamergirl.fr",
+      "time": 1792652124.63423,
+      "status": "200"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/9XsAAOSwrrlfEjxL/s-l1600.jpg",
+      "host": "i.ebayimg.com",
+      "time": 1792652142.442564,
+      "status": "200"
+    },
+    {
+      "url": "https://down-ph.img.susercontent.com/file/ph-11134207-7r98o-lkxwx2lj1q1za9",
+      "host": "down-ph.img.susercontent.com",
+      "time": 1792652143.2211149,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost_8528557.png?rev=1591202128",
+      "host": "static.blog4ever.com",
+      "time": 1792652144.1587892,
+      "status": "200"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/2T0AAOSwWI1eRqlP/s-l1200.jpg",
+      "host": "i.ebayimg.com",
+      "time": 1792652144.442392,
+      "status": "200"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/4JEAAOSw7jNmk0Gn/s-l1200.jpg",
+      "host": "i.ebayimg.com",
+      "time": 1792652145.887063,
+      "status": "200"
+    },
+    {
+      "url": "https://retrogamefan.com/products/uncharted-3-drakes-deception-steelbook-edition-playstation-3-very-good",
+      "host": "retrogamefan.com",
+      "time": 1792652160.285114,
+      "status": "404"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/PREAAOSwFqVji3~y/s-l1200.jpg",
+      "host": "i.ebayimg.com",
+      "time": 1792652171.2607949,
+      "status": "200"
+    },
+    {
+      "url": "https://retrogamefan.com/cdn/shop/files/PS3-Uncharted-3-Drakes-Deception-Steelbook-Edition-Very-Good-CIB-4-Case-Spine.webp?v=1767974201",
+      "host": "retrogamefan.com",
+      "time": 1792652171.618943,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/134978-ghost-of-tsushima",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652189.2343109,
+      "status": "200"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/re0AAeSwSVZpzYjM/s-l1200.webp",
+      "host": "i.ebayimg.com",
+      "time": 1792652189.9802082,
+      "status": "200"
+    },
+    {
+      "url": "https://img115.xooimage.com/files/d/4/d/15-57877e4.jpg",
+      "host": "img115.xooimage.com",
+      "time": 1792652191.491466,
+      "status": "200"
+    },
+    {
+      "url": "https://img115.xooimage.com/files/4/b/e/17-57877ea.jpg",
+      "host": "img115.xooimage.com",
+      "time": 1792652193.321815,
+      "status": "200"
+    },
+    {
+      "url": "https://img113.xooimage.com/files/6/1/3/16-57877ee.jpg",
+      "host": "img113.xooimage.com",
+      "time": 1792652194.0960279,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/r2_0f36ff19-a7ee-4854-8f0b-f77245795460.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652210.997809,
+      "status": "200"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/aBgAAOSwu6tkrwKM/s-l1600.jpg",
+      "host": "i.ebayimg.com",
+      "time": 1792652211.194463,
+      "status": "200"
+    },
+    {
+      "url": "https://retrogamefan.com/cdn/shop/files/PS3-Uncharted-3-Drakes-Deception-Steelbook-Edition-Very-Good-CIB-1-Case-Front.webp?v=1767974201",
+      "host": "retrogamefan.com",
+      "time": 1792652345.161865,
+      "status": "200"
+    },
+    {
+      "url": "https://radewagon.blogspot.com/2011/11/uncharted-3-collectors-edition-review.html",
+      "host": "radewagon.blogspot.com",
+      "time": 1792652359.2501178,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/r2_06002a48-8304-47b5-9356-196943fcfe92.png",
+      "host": "images.launchbox-app.com",
+      "time": 1792652364.4065201,
+      "status": "200"
+    },
+    {
+      "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhC_rP50ebB6lFV9wLR2hEcVgGRBcQFYLFxGdWUh0K9uTgY5KZxCISzCVo2B9f_75GdDNK-G6IP1adGCNK2NRVY9QUxsnLqtk24FA3vvOfBWpjjz2352F-uPOFTOVgBZL-HiB2-/s0/100_2697.JPG",
+      "host": "blogger.googleusercontent.com",
+      "time": 1792652378.5052469,
+      "status": "200"
+    },
+    {
+      "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgLd9chFjmWEDDhn75aBy1lQvEt8SlXelAphyaITyktLjbTeoIRbjVwgZDUTeqG-I4J3Bv_zXoHyPwVEmixdO03qjq3XA7jzJnSYnTDPw5otKDI1QEHhQm3bH7sloA751tBwJaU/s0/100_2699.JPG",
+      "host": "blogger.googleusercontent.com",
+      "time": 1792652380.357022,
+      "status": "200"
+    },
+    {
+      "url": "https://gamesdb.launchbox-app.com/games/images/15575-pikmin-3",
+      "host": "gamesdb.launchbox-app.com",
+      "time": 1792652383.78572,
+      "status": "200"
+    },
+    {
+      "url": "https://www.videogameshelf.com/the-last-of-us-part-ii-special-edition/",
+      "host": "www.videogameshelf.com",
+      "time": 1792652396.993045,
+      "status": "200"
+    },
+    {
+      "url": "https://images.launchbox-app.com/f2c32cd8-66d2-4bb0-80a0-e7403b51d337.jpg",
+      "host": "images.launchbox-app.com",
+      "time": 1792652405.558781,
+      "status": "200"
+    },
+    {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2020/06/The-Last-of-Us-Part-II-Special-Edition-Steelbook-Spine.jpg",
+      "host": "www.videogameshelf.com",
+      "time": 1792652413.0533671,
+      "status": "200"
+    },
+    {
+      "url": "https://www.steelbookjeuxvideo.fr/presentation-du-steelbook-the-last-of-us-part-2-edition-ellie-collector-et-speciale-1",
+      "host": "www.steelbookjeuxvideo.fr",
+      "time": 1792652418.830189,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-the-last-of-us-part-2-7_8668745.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792652429.3653271,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-the-last-of-us-part-2-8_8668746.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792652431.177286,
+      "status": "200"
+    },
+    {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-the-last-of-us-part-2-9_8668747.jpg",
+      "host": "static.blog4ever.com",
+      "time": 1792652432.978198,
+      "status": "200"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/qeIAAOSwoYtj~S7C/s-l1600.jpg",
+      "host": "i.ebayimg.com",
+      "time": 1792652614.801972,
+      "status": "200"
+    },
+    {
+      "url": "https://i.ebayimg.com/images/g/2IcAAOSwEQpfI-rq/s-l1600.jpg",
+      "host": "i.ebayimg.com",
+      "time": 1792652616.115212,
+      "status": "200"
+    }
+  ],
+  "candidateImageSources": {
+    "ds-front": {
+      "url": "https://www.rfgeneration.com/images/games/E-215/ex/E-215-S-05910-B_08.jpg",
+      "pixels": [
+        550,
+        691
+      ]
+    },
+    "ds-back": {
+      "url": "https://www.rfgeneration.com/images/games/E-215/ex/E-215-S-05910-B_09.jpg",
+      "pixels": [
+        550,
+        689
+      ]
+    },
+    "ds-inside": {
+      "url": "https://www.rfgeneration.com/images/games/E-215/ex/E-215-S-05910-B_12.jpg",
+      "pixels": [
+        909,
+        550
+      ]
+    },
+    "ds-disc": {
+      "url": "https://www.rfgeneration.com/images/games/E-215/gs/E-215-S-05910-B.jpg",
+      "pixels": [
+        550,
+        550
+      ]
+    },
+    "ds-photo-front": {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook.jpg",
+      "pixels": [
+        1500,
+        1001
+      ]
+    },
+    "ds-photo-back": {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook-Back.jpg",
+      "pixels": [
+        1500,
+        1001
+      ]
+    },
+    "ds-photo-inside": {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook-Inside.jpg",
+      "pixels": [
+        1500,
+        1001
+      ]
+    },
+    "ds-photo-open": {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2019/11/Death-Stranding-Special-Edition-Steelbook-Opened.jpg",
+      "pixels": [
+        1500,
+        741
+      ]
+    },
+    "uc-front": {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_front.jpg",
+      "pixels": [
+        979,
+        1306
+      ]
+    },
+    "uc-back": {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_back.jpg",
+      "pixels": [
+        979,
+        1306
+      ]
+    },
+    "uc-inside": {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_open_2.jpg",
+      "pixels": [
+        1306,
+        979
+      ]
+    },
+    "uc-spine": {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2011/11/uncharted_3_collectors_edition_steelbook_1.jpg",
+      "pixels": [
+        979,
+        1306
+      ]
+    },
+    "ghost-3": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-3_8692837.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "ghost-4": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-4_8692838.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "ghost-5": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-5_8692839.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "ghost-7": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-7_8692841.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "ghost-9": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-9_8692843.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "ghost-10": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-10_8692844.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "ghost-11": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-11_8692845.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "ghost-12": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost-of-tsushima-12_8692846.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "tlou-front": {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_1.jpg",
+      "pixels": [
+        1200,
+        1600
+      ]
+    },
+    "tlou-back": {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_2.jpg",
+      "pixels": [
+        1200,
+        1600
+      ]
+    },
+    "tlou-inside": {
+      "url": "https://www.saint-ism.com/wp-content/uploads/2013/07/last_of_us_post_panedmic_edition_steelbook_3.jpg",
+      "pixels": [
+        1600,
+        1200
+      ]
+    },
+    "ghost-clean-front": {
+      "url": "https://jesuisungameur.com/wp-content/uploads/2020/07/unboxing-ghost-of-tsushima-ps4-scaled.jpg",
+      "pixels": [
+        1706,
+        2560
+      ]
+    },
+    "ghost-clean-back": {
+      "url": "https://jesuisungameur.com/wp-content/uploads/2020/07/unboxing-ghost-of-tsushima-edition-speciale-ps4.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "ghost-clean-spine": {
+      "url": "https://jesuisungameur.com/wp-content/uploads/2020/07/unboxing-ghost-of-tsushima-edition-speciale.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-photo": {
+      "url": "https://www.naughtydogmag.fr/wp-content/uploads/2020/06/unboxing-collector-the-last-of-us-part-ii-steelbook.jpg",
+      "pixels": [
+        1440,
+        1440
+      ]
+    },
+    "mc-1": {
+      "url": "https://bluray-disc.de/forum/attachment.php?id=182529",
+      "pixels": [
+        1001,
+        1500
+      ]
+    },
+    "mc-2": {
+      "url": "https://bluray-disc.de/forum/attachment.php?id=182531",
+      "pixels": [
+        1500,
+        1240
+      ]
+    },
+    "mc-3": {
+      "url": "https://bluray-disc.de/forum/attachment.php?id=182533",
+      "pixels": [
+        1001,
+        1500
+      ]
+    },
+    "ds-render": {
+      "url": "https://www.gematsu.com/wp-content/uploads/2019/07/zp-252721_Death-Stranding_2019_07-20-19_001.png",
+      "pixels": [
+        1712,
+        2154
+      ]
+    },
+    "ds-render2": {
+      "url": "https://www.gematsu.com/wp-content/uploads/2019/07/zp-252722_Death-Stranding_2019_07-20-19_002.png",
+      "pixels": [
+        1802,
+        2485
+      ]
+    },
+    "tlou2-5": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-5_0000955751.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-6": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-6_0000955752.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-7": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-7_0000955753.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-8": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-8_0000955754.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-9": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-9_0000955755.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-10": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-10_0000955756.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "infamous-front": {
+      "url": "https://images.launchbox-app.com/e010c903-085e-483a-b156-0bc2cde12c41.jpg",
+      "pixels": [
+        1204,
+        1500
+      ]
+    },
+    "infamous-disc": {
+      "url": "https://images.launchbox-app.com/r2_2e217146-a29d-4b9e-8212-d3d469db4d67.png",
+      "pixels": [
+        960,
+        960
+      ]
+    },
+    "majoras-jp": {
+      "url": "https://images.launchbox-app.com/ac02b5fd-6f1c-4193-bfe9-7372ae22b58e.jpg",
+      "pixels": [
+        1598,
+        2239
+      ]
+    },
+    "majoras-us": {
+      "url": "https://images.launchbox-app.com/1c277b77-666d-4368-9d17-52a46c020ca4.jpg",
+      "pixels": [
+        2100,
+        1532
+      ]
+    },
+    "pikmin-front": {
+      "url": "https://art.gametdb.com/wiiu/coverHQ/US/AC3E01.jpg",
+      "pixels": [
+        768,
+        1080
+      ]
+    },
+    "pikmin-disc": {
+      "url": "https://art.gametdb.com/wiiu/discM/US/AC3E01.png",
+      "pixels": [
+        500,
+        500
+      ]
+    },
+    "mario-box": {
+      "url": "https://art.gametdb.com/wii/coverfullHQ/US/SB4E01.png",
+      "pixels": [
+        1024,
+        680
+      ]
+    },
+    "mario-disc": {
+      "url": "https://art.gametdb.com/wii/disc/US/SB4E01.png",
+      "pixels": [
+        160,
+        160
+      ]
+    },
+    "ds-disc-clean": {
+      "url": "https://images.launchbox-app.com/5fa37ccb-407c-45e8-a42b-4f4447de391a.png",
+      "pixels": [
+        499,
+        500
+      ]
+    },
+    "tlou-disc": {
+      "url": "https://images.launchbox-app.com/9531c70b-c263-4ca3-9254-251a76b85327.png",
+      "pixels": [
+        720,
+        720
+      ]
+    },
+    "ghost-retro-front": {
+      "url": "https://www.retrofixgames.com/cdn/shop/products/ghost-of-tsushima-special-edition-steelbookvideo-games-games-ps4retrofix-games-379332.png",
+      "pixels": [
+        1307,
+        1307
+      ]
+    },
+    "ghost-retro-back": {
+      "url": "https://www.retrofixgames.com/cdn/shop/products/ghost-of-tsushima-special-edition-steelbookvideo-games-games-ps4retrofix-games-196932.png",
+      "pixels": [
+        1307,
+        1307
+      ]
+    },
+    "tlou2-11": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-11_0000955757.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-12": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-12_0000955758.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-13": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-13_0000955759.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-14": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-14_0000955760.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-15": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-15_0000955761.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-disc1": {
+      "url": "https://images.launchbox-app.com/r2_a350da5f-9e1d-490b-bd5b-6be224216d7d.png",
+      "pixels": [
+        757,
+        755
+      ]
+    },
+    "tlou2-disc2": {
+      "url": "https://images.launchbox-app.com/r2_07ae4afc-4b0b-4f49-a24c-c7d94914ecef.png",
+      "pixels": [
+        760,
+        755
+      ]
+    },
+    "uc-disc": {
+      "url": "https://images.launchbox-app.com/r2_d3902062-98ca-49a1-82f9-947255b2e70e.png",
+      "pixels": [
+        798,
+        800
+      ]
+    },
+    "mario-front": {
+      "url": "https://images.launchbox-app.com/60fbd79c-0a48-4690-8504-0b9dcdf3c9b8.jpg",
+      "pixels": [
+        1017,
+        1431
+      ]
+    },
+    "mario-disc-hq": {
+      "url": "https://images.launchbox-app.com/372a698f-48b9-450b-ba25-3b41530a38bd.png",
+      "pixels": [
+        1280,
+        1280
+      ]
+    },
+    "tlou2-16": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-16_0000955762.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "tlou2-17": {
+      "url": "https://global-img.gamergen.com/the-last-of-us-part-ii-tlou2-collector-unboxing-17_0000955763.jpg",
+      "pixels": [
+        1920,
+        1280
+      ]
+    },
+    "ghost-br-front": {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/b29bdc4e796bd77a6c5139c9debe8081-0i877u2vof.jpg",
+      "pixels": [
+        1200,
+        1200
+      ]
+    },
+    "ghost-br-back": {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/5475f77d9cc8c27c5d7ee9aa3dd7ab51-bv6bq16b09.jpg",
+      "pixels": [
+        800,
+        800
+      ]
+    },
+    "ghost-br-4": {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/437d3b9abc69cacf2e27473eb7585d82-h0zxcinlwc.jpg",
+      "pixels": [
+        800,
+        800
+      ]
+    },
+    "ghost-br-5": {
+      "url": "https://cdn.awsli.com.br/2500x2500/417/417035/produto/378746312/647801df2bdecba5d26b12fa71a5f7d2-7dcr45ekbx.jpg",
+      "pixels": [
+        800,
+        800
+      ]
+    },
+    "ghost-ebay": {
+      "url": "https://i.ebayimg.com/images/g/9XsAAOSwrrlfEjxL/s-l1600.jpg",
+      "pixels": [
+        1368,
+        1600
+      ]
+    },
+    "ghost-spread": {
+      "url": "https://down-ph.img.susercontent.com/file/ph-11134207-7r98o-lkxwx2lj1q1za9",
+      "pixels": [
+        800,
+        800
+      ]
+    },
+    "ghost-render": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-ghost_8528557.png?rev=1591202128",
+      "pixels": [
+        640,
+        1000
+      ]
+    },
+    "ds-spread": {
+      "url": "https://i.ebayimg.com/images/g/2T0AAOSwWI1eRqlP/s-l1200.jpg",
+      "pixels": [
+        1200,
+        675
+      ]
+    },
+    "tlou-spine-photo": {
+      "url": "https://i.ebayimg.com/images/g/4JEAAOSw7jNmk0Gn/s-l1200.jpg",
+      "pixels": [
+        1200,
+        900
+      ]
+    },
+    "uc-spine-clean": {
+      "url": "https://i.ebayimg.com/images/g/PREAAOSwFqVji3~y/s-l1200.jpg",
+      "pixels": [
+        502,
+        996
+      ]
+    },
+    "uc-spine-retro": {
+      "url": "https://retrogamefan.com/cdn/shop/files/PS3-Uncharted-3-Drakes-Deception-Steelbook-Edition-Very-Good-CIB-4-Case-Spine.webp?v=1767974201",
+      "pixels": [
+        2000,
+        2000
+      ]
+    },
+    "mc-disc-photo": {
+      "url": "https://i.ebayimg.com/images/g/re0AAeSwSVZpzYjM/s-l1200.webp",
+      "pixels": [
+        1200,
+        1200
+      ]
+    },
+    "tlou2-girl15": {
+      "url": "https://img115.xooimage.com/files/d/4/d/15-57877e4.jpg",
+      "pixels": [
+        720,
+        540
+      ]
+    },
+    "tlou2-girl17": {
+      "url": "https://img115.xooimage.com/files/4/b/e/17-57877ea.jpg",
+      "pixels": [
+        720,
+        540
+      ]
+    },
+    "tlou2-girl16": {
+      "url": "https://img113.xooimage.com/files/6/1/3/16-57877ee.jpg",
+      "pixels": [
+        720,
+        540
+      ]
+    },
+    "ghost-disc": {
+      "url": "https://images.launchbox-app.com/r2_0f36ff19-a7ee-4854-8f0b-f77245795460.png",
+      "pixels": [
+        1074,
+        1078
+      ]
+    },
+    "uc-front-ebay": {
+      "url": "https://i.ebayimg.com/images/g/aBgAAOSwu6tkrwKM/s-l1600.jpg",
+      "pixels": [
+        1200,
+        1600
+      ]
+    },
+    "uc-front-retro": {
+      "url": "https://retrogamefan.com/cdn/shop/files/PS3-Uncharted-3-Drakes-Deception-Steelbook-Edition-Very-Good-CIB-1-Case-Front.webp?v=1767974201",
+      "pixels": [
+        2000,
+        2000
+      ]
+    },
+    "ghost-disc-original": {
+      "url": "https://images.launchbox-app.com/r2_06002a48-8304-47b5-9356-196943fcfe92.png",
+      "pixels": [
+        762,
+        766
+      ]
+    },
+    "uc-blog-back": {
+      "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhC_rP50ebB6lFV9wLR2hEcVgGRBcQFYLFxGdWUh0K9uTgY5KZxCISzCVo2B9f_75GdDNK-G6IP1adGCNK2NRVY9QUxsnLqtk24FA3vvOfBWpjjz2352F-uPOFTOVgBZL-HiB2-/s0/100_2697.JPG",
+      "pixels": [
+        1728,
+        2304
+      ]
+    },
+    "uc-blog-inlay": {
+      "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgLd9chFjmWEDDhn75aBy1lQvEt8SlXelAphyaITyktLjbTeoIRbjVwgZDUTeqG-I4J3Bv_zXoHyPwVEmixdO03qjq3XA7jzJnSYnTDPw5otKDI1QEHhQm3bH7sloA751tBwJaU/s0/100_2699.JPG",
+      "pixels": [
+        2304,
+        1728
+      ]
+    },
+    "pikmin-front-hq": {
+      "url": "https://images.launchbox-app.com/f2c32cd8-66d2-4bb0-80a0-e7403b51d337.jpg",
+      "pixels": [
+        1785,
+        2519
+      ]
+    },
+    "tlou2-spine-shelf": {
+      "url": "https://www.videogameshelf.com/wp-content/uploads/2020/06/The-Last-of-Us-Part-II-Special-Edition-Steelbook-Spine.jpg",
+      "pixels": [
+        1500,
+        448
+      ]
+    },
+    "tlou2-gallery7": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-the-last-of-us-part-2-7_8668745.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "tlou2-gallery8": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-the-last-of-us-part-2-8_8668746.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "tlou2-gallery9": {
+      "url": "https://static.blog4ever.com/2018/09/848202/big_steelbook-the-last-of-us-part-2-9_8668747.jpg",
+      "pixels": [
+        1072,
+        712
+      ]
+    },
+    "tlou2-front-ebay": {
+      "url": "https://i.ebayimg.com/images/g/qeIAAOSwoYtj~S7C/s-l1600.jpg",
+      "pixels": [
+        909,
+        1101
+      ]
+    },
+    "tlou2-spread-ebay": {
+      "url": "https://i.ebayimg.com/images/g/2IcAAOSwEQpfI-rq/s-l1600.jpg",
+      "pixels": [
+        1600,
+        1046
+      ]
+    }
+  }
+}
