@@ -2,22 +2,39 @@ import type { CaseKind, CdCaseController, CdCaseOptions, CdDisc } from '../../li
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-// Only one shelf owns the animation budget. Distance is along the page's
-// scrolling axis; side-by-side shelves tie, so pointer/focus can break the tie.
-type ShelfRenderer = { panel: HTMLElement; scroll: (scrolling: boolean) => void; sync: (active: boolean, scrolling: boolean) => void };
+/**
+ * How much 3-D this device and connection get.
+ *   full  the interactive cases, artwork prefetched in idle time
+ *   lite  cases at a lower resolution, smaller textures, only neighbours prefetched
+ *   flat  no WebGL; the drawn preview is the display (Save-Data, 2G, very weak devices)
+ * `?cases=full|lite|flat` overrides it for testing.
+ */
+type Tier = 'full' | 'lite' | 'flat';
+function detectTier(): Tier {
+  const forced = new URLSearchParams(location.search).get('cases');
+  if (forced === 'full' || forced === 'lite' || forced === 'flat') return forced;
+  const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean; effectiveType?: string } };
+  const network = nav.connection?.effectiveType ?? '';
+  const cores = nav.hardwareConcurrency || 8, memory = nav.deviceMemory ?? 8;
+  if (nav.connection?.saveData || network === '2g' || network === 'slow-2g' || cores <= 2 || memory <= 1) return 'flat';
+  if (network === '3g' || cores <= 4 || memory <= 4) return 'lite';
+  return 'full';
+}
+const tier = detectTier();
+const tierOptions: Record<Exclude<Tier, 'flat'>, Partial<CdCaseOptions>> = {
+  full: { maxPixelRatio: 1.5, idleFps: 30 },
+  lite: { maxPixelRatio: 1.25, idleFps: 24, maxTextureSize: 768, prefetch: 2 },
+};
+
+// Every shelf on screen keeps animating; off-screen shelves pause. Idle motion
+// draws at a reduced rate and scrolling halves it, so three visible cases cost
+// about what one did at full rate.
+type ShelfRenderer = { visible: () => boolean; scroll: (scrolling: boolean) => void; sync: (active: boolean, scrolling: boolean) => void };
 const renderers = new Set<ShelfRenderer>();
-let preferred: ShelfRenderer | undefined;
 let coordinateFrame = 0, scrollTimer = 0, scrolling = false;
 function coordinate() {
   coordinateFrame = 0;
-  let nearest: ShelfRenderer | undefined, distance = Infinity;
-  if (!document.hidden) for (const shelf of renderers) {
-    const rect = shelf.panel.getBoundingClientRect();
-    if (rect.bottom <= 0 || rect.top >= innerHeight || rect.right <= 0 || rect.left >= innerWidth) continue;
-    const next = Math.abs((rect.top + rect.bottom) / 2 - innerHeight / 2);
-    if (next < distance - 1 || (Math.abs(next - distance) <= 1 && shelf === preferred)) { nearest = shelf; distance = next; }
-  }
-  renderers.forEach(shelf => shelf.sync(shelf === nearest, scrolling));
+  renderers.forEach(shelf => shelf.sync(!document.hidden && shelf.visible(), scrolling));
 }
 function scheduleCoordinator() {
   if (!coordinateFrame) coordinateFrame = requestAnimationFrame(coordinate);
@@ -54,8 +71,7 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
   const help = query('[data-case-help]');
   const external = query<HTMLAnchorElement>('[data-case-url]');
   const coverImage = query<HTMLImageElement>('[data-cover-image]');
-  const coverLogo = query<HTMLImageElement>('[data-cover-spine-logo]');
-  const fallback = query('[data-cover-fallback]');
+  const load3d = query<HTMLButtonElement>('[data-case-load3d]');
   const kind = (stage.dataset.caseKind || 'jewel') as CaseKind;
   const discs: CdDisc[] = JSON.parse(stage.dataset.discs || '[]');
   let controller: CdCaseController | undefined;
@@ -67,6 +83,7 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
   let mounted = false;
   let disposed = false;
   let explored = false;
+  let allow3d = tier !== 'flat';
   let idleMount: number | undefined;
   let mountTimer: number | undefined;
   let activeRenderer = false;
@@ -106,23 +123,24 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
     cover!.setAttribute('aria-hidden', String(ready));
     if (help) help.textContent = ready
       ? 'Tap to open · drag to turn · swipe to browse'
-      : failed ? 'Cover preview · use the arrows to browse' : 'Choose a spine or use the arrows.';
+      : failed || !allow3d ? 'Use the arrows or spines to browse.' : 'Choose a spine or use the arrows.';
+    if (load3d) load3d.hidden = ready || failed || allow3d;
   }
 
   function showLoadedCover() {
-    if (!coverImage || !fallback) return;
-    const loaded = !!coverImage.getAttribute('src') && coverImage.complete && coverImage.naturalWidth > 0;
-    coverImage.hidden = !loaded;
-    fallback.hidden = loaded;
+    if (!coverImage) return;
+    const src = coverImage.getAttribute('src');
+    cover!.dataset.art = !src ? 'missing' : !coverImage.complete ? 'loading' : coverImage.naturalWidth > 0 ? 'loaded' : 'missing';
   }
   coverImage?.addEventListener('load', showLoadedCover);
   coverImage?.addEventListener('error', showLoadedCover);
-  coverLogo?.addEventListener('error', () => { coverLogo.hidden = true; });
   // A failed wordmark should expose the existing printed title.
   col.querySelectorAll<HTMLImageElement>('.spine-logo').forEach(logo => {
     const revealTitle = () => logo.remove();
+    const showLogo = () => logo.setAttribute('data-loaded', '');
     logo.addEventListener('error', revealTitle, { once: true });
-    if (logo.complete && !logo.naturalWidth) revealTitle();
+    logo.addEventListener('load', showLogo, { once: true });
+    if (logo.complete) { if (logo.naturalWidth) showLogo(); else revealTitle(); }
   });
 
   function updateFallback() {
@@ -133,19 +151,16 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
     };
     setText('[data-cover-title]', item.title);
     setText('[data-cover-creator]', item.creator);
-    setText('[data-cover-meta]', item.sub);
-    cover!.style.setProperty('--spine-color', item.accent || '#2a2a2a');
     cover!.style.setProperty('--accent', item.accent || '#2a2a2a');
+    if (item.lqip) cover!.style.setProperty('--lqip', `url(${item.lqip})`);
+    else cover!.style.removeProperty('--lqip');
+    cover!.toggleAttribute('data-lqip', !!item.lqip);
     if (coverImage) {
-      if (item.image) coverImage.src = item.image;
-      else coverImage.removeAttribute('src');
-      coverImage.style.objectPosition = item.crop || '';
+      const src = item.thumb || item.image;
+      if (!src) coverImage.removeAttribute('src');
+      else if (coverImage.getAttribute('src') !== src) coverImage.src = src;
+      coverImage.style.objectPosition = item.thumb ? '' : item.crop || '';
       showLoadedCover();
-    }
-    if (coverLogo) {
-      coverLogo.hidden = !item.logo;
-      if (item.logo) coverLogo.src = item.logo;
-      else coverLogo.removeAttribute('src');
     }
   }
 
@@ -296,11 +311,11 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
   const pageColour = () => getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#dddddd';
   const syncPage = () => controller?.setPage(pageColour(), true);
   window.addEventListener('themechange', () => { syncPage(); window.setTimeout(syncPage, 60); });
-  const rendererSlot: ShelfRenderer = { panel, scroll: value => controller?.setScrolling(value), sync: (active, isScrolling) => {
+  const rendererSlot: ShelfRenderer = { visible: () => inView, scroll: value => controller?.setScrolling(value), sync: (active, isScrolling) => {
     activeRenderer = active;
     controller?.setScrolling(isScrolling);
     controller?.setPaused(!active);
-    col.toggleAttribute('data-in-view', inView && active);
+    col.toggleAttribute('data-in-view', active);
     if (!active || reducedMotion.matches) {
       animations.forEach(animation => animation.cancel());
       animations.clear();
@@ -309,14 +324,6 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
   } };
   renderers.add(rendererSlot);
   const syncPaused = scheduleCoordinator;
-  const preferThisShelf = () => {
-    preferred = rendererSlot;
-    if (coordinateFrame) cancelAnimationFrame(coordinateFrame);
-    coordinate();
-  };
-  col.addEventListener('pointerenter', preferThisShelf, { passive: true });
-  col.addEventListener('pointerdown', preferThisShelf, { passive: true, capture: true });
-  col.addEventListener('focusin', preferThisShelf);
   const syncMotion = () => {
     controller?.setSpin(kind === 'jewel' && !reducedMotion.matches);
     syncPaused();
@@ -339,17 +346,30 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
     if (hadFocus) cover!.focus({ preventScroll: true });
   }
 
+  /** The 3-D case's downloads wait for the placeholder art, so a slow link shows a real cover first. */
+  function placeholderSettled(): Promise<void> {
+    if (!coverImage || cover!.dataset.art !== 'loading') return Promise.resolve();
+    return new Promise(resolve => {
+      const done = () => { clearTimeout(timer); coverImage.removeEventListener('load', done); coverImage.removeEventListener('error', done); resolve(); };
+      const timer = window.setTimeout(done, 6000);
+      coverImage.addEventListener('load', done); coverImage.addEventListener('error', done);
+    });
+  }
+
   async function mount() {
     if (mounted || disposed) return;
     mounted = true;
     try {
+      await placeholderSettled();
+      if (disposed) return;
       const { createCdCase } = await import('../../lib/cdcase');
       if (disposed) return;
       // Older engines simply ignore onFace. Never show a guessed face label.
       const options: CdCaseOptions & { onFace?: (value: unknown) => void } = {
+        ...tierOptions[tier === 'full' ? 'full' : 'lite'],
         kind, page: pageColour(), transparent: true, eventTarget: hitArea!,
         spin: kind === 'jewel' && !reducedMotion.matches, autoDemo: false,
-        initialIndex: selected, reducedMotion: 'auto', maxPixelRatio: 1.5,
+        initialIndex: selected, reducedMotion: 'auto',
         ariaLabel: `Interactive ${col.dataset.kind} case`,
         onReady: () => {
           if (failed || disposed) return;
@@ -385,13 +405,20 @@ document.querySelectorAll<HTMLElement>('#bookshelves .shelf-col').forEach(col =>
     syncPaused();
   });
   visibility.observe(panel);
+  // Start a little ahead of the viewport: enough for the first case to be
+  // ready on arrival, not so far that all three compete during page load.
   const lazyMount = new IntersectionObserver(entries => {
     if (!entries.some(entry => entry.isIntersecting)) return;
     lazyMount.disconnect();
     if (typeof window.requestIdleCallback === 'function') idleMount = window.requestIdleCallback(() => { void mount(); }, { timeout: 1000 });
     else mountTimer = window.setTimeout(() => { void mount(); }, 0);
-  }, { rootMargin: '800px 0px' });
-  lazyMount.observe(col);
+  }, { rootMargin: tier === 'lite' ? '250px 0px' : '600px 0px' });
+  if (allow3d) lazyMount.observe(col);
+  load3d?.addEventListener('click', () => {
+    allow3d = true; configureCase();
+    if (help) help.textContent = 'Loading the 3-D case…';
+    void mount();
+  });
   updateFallback();
   configureCase();
 

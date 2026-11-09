@@ -138,17 +138,26 @@ Optical constants in `pipeline.ts` retain polystyrene IOR 1.59, per-mm absorptio
 Pause cancels animation frames; resume starts with a zero time step. Hidden
 documents also stop rendering. Resize waits until the next active frame.
 `maxPixelRatio` defaults to 1.5. Every 30 animation frames, a median interval over
-20 ms reduces DPR by 0.25, down to one. Rods use one sample at DPR ≥ 1.5 (also on
-coarse pointers). Idle motion draws at 30 fps; hover, drag, transitions and settling
-draw at up to 60 fps. `setScrolling(true)` skips alternate animation frames.
+20 ms reduces DPR by 0.25, down to one; still over 30 ms at DPR 1 drops the idle rate
+to 20 fps. Rods use one sample at DPR ≥ 1.5 (also on coarse pointers). Idle motion
+draws at `idleFps` (default 30); hover, drag, transitions and settling draw at up to
+60 fps. `setScrolling(true)` skips alternate animation frames.
 Pointer moves are coalesced per frame and canvas bounds are cached until resize/scroll.
-Artwork uses ImageBitmap decoding, with async HTML decoding as a compatibility
-fallback. A shared frame queue uploads one texture per frame across mounts;
-`compileAsync` prepares all programs, and studio faces are warmed separately.
+Artwork loads per item: the first draw waits only for the shown item; the others
+download in idle time, nearest first (`prefetch` limits how many), at low fetch
+priority. Choosing an item that hasn't arrived holds its flight up to 700 ms, then
+flies with the typographic label and swaps the art in when it lands. Artwork uses
+ImageBitmap decoding (downscaled to `maxTextureSize` when set), with async HTML
+decoding as a compatibility fallback. A shared frame queue uploads one texture per
+frame across mounts; `compileAsync` prepares all programs, and studio faces are
+warmed separately. Software WebGL (SwiftShader, llvmpipe) fails fast to `onFail`.
 The initial still frame precedes `onReady`, even for paused mounts. The shelf glue
-starts mounting in idle time within 800 px, keeps flat previews until ready, and
-animates only the intersecting case nearest the viewport's vertical centre.
-Side-by-side ties follow pointer/focus; scrolling yields until 150 ms after its last event.
+(bookshelf/interactions.ts) picks a tier (full / lite / flat, from Save-Data, network
+type, cores and memory; `?cases=` overrides), mounts once the drawn preview's art has
+arrived, crossfades from that preview, and animates every case on screen.
+Off-screen cases pause; scrolling yields until 150 ms after its last event.
+Shelf artwork is served from public/cases/web (≤1024 px) and thumb (≤480 px), made by
+scripts/build-case-art.mjs from the masters; re-run it after changing artwork.
 Shader link failures and context loss call `onFail`; restored contexts rebuild
 the studio and recompile before resuming. Dispose disconnects observers and
 listeners, releases capture, disposes geometry/materials/targets and all owned

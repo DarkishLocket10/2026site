@@ -5,6 +5,7 @@ import topMoviesData from '../data/top-movies.json';
 import topGamesData  from '../data/top-games.json';
 import type { CaseKind, CdDisc } from '../lib/cdcase/types';
 import { imageSize } from '../lib/homepage-images';
+import webArtManifest from '../data/case-art-web.json';
 
 type ShelfItem = {
   rank: number;
@@ -38,25 +39,30 @@ type Artwork = {
 type ArtManifest = { items?: Record<string, Artwork> };
 const artModules = import.meta.glob<ArtManifest>('../data/*-art.json', { eager: true, import: 'default' });
 const manifest = (name: string) => artModules[`../data/${name}-art.json`]?.items ?? {};
+// Web-sized copies from scripts/build-case-art.mjs; the masters stay as sources.
+type WebArt = { web: string; thumb?: string; thumbWidth?: number; thumbHeight?: number; lqip?: string };
+const webArt: Record<string, WebArt> = webArtManifest;
+const web = (url: string | null | undefined) => url ? webArt[url]?.web ?? url : null;
 const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const musicItems: ShelfItem[] = topMusicData.items.slice(0, 10);
 const movieItems: ShelfItem[] = topMoviesData.items.slice(0, 10);
 const gameItems: ShelfItem[] = topGamesData.items.slice(0, 10);
 const hiRes = (url: string | null) => url ? url.replace(/\/i\/u\/\d+x\d+\//, '/i/u/770x0/') : null;
 const caseKinds: Record<Shelf['id'], CaseKind> = { music: 'jewel', film: 'bluray', games: 'steelbook' };
+const artFor = (entries: Record<string, Artwork>, item: ShelfItem) => entries[slug(item.title)] ?? entries[slug(`${item.title}-${item.creator}`)]
+  ?? Object.values(entries).find(entry => entry.title === item.title && (!entry.creator || entry.creator === item.creator));
 function caseItems(items: ShelfItem[], name: string): CdDisc[] {
   const entries = manifest(name);
   return items.map(item => {
-    const art = entries[slug(item.title)] ?? entries[slug(`${item.title}-${item.creator}`)]
-      ?? Object.values(entries).find(entry => entry.title === item.title && (!entry.creator || entry.creator === item.creator));
+    const art = artFor(entries, item);
     const fallback = name === 'cd' ? hiRes(item.image) : item.image;
     return {
       id: slug(`${item.title}-${item.creator}`), name: `${item.title} — ${item.creator}`,
-      art: art?.disc ?? art?.front ?? fallback, cover: art?.front ?? fallback,
-      fallback, discIsScan: !!art?.disc, back: art?.back ?? null,
-      bookletInside: art?.bookletInside ?? null, inside: art?.inside ?? null,
-      spine: art?.spine ?? null, hasBanner: art?.hasBanner ?? false,
-      finish: art?.finish ?? 'matte', relief: art?.relief ?? null,
+      art: web(art?.disc ?? art?.front) ?? fallback, cover: web(art?.front) ?? fallback,
+      fallback, discIsScan: !!art?.disc, back: web(art?.back),
+      bookletInside: web(art?.bookletInside), inside: web(art?.inside),
+      spine: web(art?.spine), hasBanner: art?.hasBanner ?? false,
+      finish: art?.finish ?? 'matte', relief: web(art?.relief),
       discType: art?.discType ?? (name === 'cd' ? 'cd' : 'bluray'),
       accent: item.accent, spineColour: item.accent,
       spineLogo: item.logo ?? undefined, label: item.title, base: 'print',
@@ -66,6 +72,15 @@ function caseItems(items: ShelfItem[], name: string): CdDisc[] {
 const cases: Record<Shelf['id'], CdDisc[]> = {
   music: caseItems(musicItems, 'cd'), film: caseItems(movieItems, 'bluray'), games: caseItems(gameItems, 'steelbook'),
 };
+/** The case's own front at placeholder size, so the preview matches the 3-D case. */
+const manifestNames: Record<Shelf['id'], string> = { music: 'cd', film: 'bluray', games: 'steelbook' };
+function thumbFor(shelf: Shelf['id'], item: ShelfItem) {
+  const front = artFor(manifest(manifestNames[shelf]), item)?.front;
+  const entry = front ? webArt[front] : undefined;
+  return entry?.thumb
+    ? { src: entry.thumb, width: entry.thumbWidth ?? 480, height: entry.thumbHeight ?? 480, lqip: entry.lqip ?? '' }
+    : { src: item.image, ...imageSize(item.image, 600, 600), lqip: '' };
+}
 const shelves: Shelf[] = [
   { id: 'music', label: 'Music', empty: 'No albums yet.', items: musicItems },
   { id: 'film', label: 'Film', empty: 'Add your top films in top-movies.json.', items: movieItems },
@@ -98,7 +113,7 @@ const shelves: Shelf[] = [
                       <li class="spine-slot" style={`--accent: ${it.accent};`}>
                         <button type="button" class="spine" data-spine data-idx={i}
                           data-title={it.title} data-creator={it.creator} data-sub={it.sub}
-                          data-rank={it.rank} data-image={it.image ?? ''} data-accent={it.accent}
+                          data-rank={it.rank} data-image={it.image ?? ''} data-thumb={thumbFor(shelf.id, it).src ?? ''} data-lqip={thumbFor(shelf.id, it).lqip} data-accent={it.accent}
                           data-logo={it.logo ?? ''} data-crop={it.crop ?? ''} data-url={it.url}
                           data-active={i === 0 ? 'true' : undefined}
                           tabindex={i === 0 ? 0 : -1} aria-pressed={i === 0}
@@ -107,9 +122,9 @@ const shelves: Shelf[] = [
                           aria-label={`#${it.rank}: ${it.title} — ${it.creator}. Pull out case.`}
                           style={it.logoScale != null ? `--logo-scale: ${it.logoScale};` : undefined}>
                           <span class="spine-body" aria-hidden="true">
-                            {it.logo && <img class="spine-logo" src={it.logo} alt="" loading="lazy" decoding="async" {...imageSize(it.logo)} />}
+                            {it.logo && <img class="spine-logo" src={it.logo} alt="" loading="lazy" decoding="async" fetchpriority="low" {...imageSize(it.logo)} />}
                             {shelf.id === 'games' && it.icon && (
-                              <img class="spine-icon" src={it.icon} alt="" loading="lazy" decoding="async" {...imageSize(it.icon)} />
+                              <img class="spine-icon" src={it.icon} alt="" loading="lazy" decoding="async" fetchpriority="low" {...imageSize(it.icon)} />
                             )}
                             <span class="spine-text">{it.title}</span>
                             <span class="spine-top"></span>
@@ -130,58 +145,22 @@ const shelves: Shelf[] = [
                     <button class="cd3d-hit" data-cd3d-hit type="button" tabindex="-1" aria-hidden="true"
                       aria-describedby={`shelf-${shelf.id}-case-help`}
                       aria-label={`${shelf.label} case: ${shelf.items[0].title}. Enter to open or close.`}></button>
-                    <a
-                      class="cover-case cover-link"
-                      data-cover-case
-                      data-cover-link
-                      href={shelf.items[0].url || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    {(() => { const thumb = thumbFor(shelf.id, shelf.items[0]); return (
+                    <a class="cover-case cover-link" data-cover-case data-cover-link data-art={thumb.src ? 'loading' : 'missing'} data-lqip={thumb.lqip ? '' : undefined}
+                      href={shelf.items[0].url || '#'} target="_blank" rel="noopener noreferrer"
                       aria-label={`Details for ${shelf.items[0].title} (opens in a new tab)`}
-                      style={shelf.id === 'music'
-                        ? `--spine-color: ${shelf.items[0].accent || '#2a2a2a'}`
-                        : undefined}
-                    >
-
-                      <span class="cover-shine" aria-hidden="true"></span>
-
-                      <img
-                        class="cover-image"
-                        data-cover-image
-                        src={shelf.items[0].image || undefined}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        {...imageSize(shelf.items[0].image, shelf.id === 'music' ? 900 : 600, 900)}
-                        style={shelf.items[0].crop
-                          ? `object-position: ${shelf.items[0].crop}`
-                          : undefined}
-                      />
-
-                      {shelf.id === 'music' && (
-                        <img
-                          class="cover-spine-logo"
-                          data-cover-spine-logo
-                          src={shelf.items[0].logo || undefined}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          {...imageSize(shelf.items[0].logo)}
-                          aria-hidden="true"
-                        />
-                      )}
-
-                      <div class="cover-fallback" data-cover-fallback hidden={!!shelf.items[0].image}>
-                        <span class="cover-band cover-band--top" aria-hidden="true"></span>
-                        <span class="cover-body">
+                      style={`--accent: ${shelf.items[0].accent || '#2a2a2a'};${thumb.lqip ? ` --lqip: url(${thumb.lqip});` : ''}`}>
+                      <span class="cover-art">
+                        <span class="cover-fallback" data-cover-fallback>
                           <span class="cover-title" data-cover-title>{shelf.items[0].title}</span>
                           <span class="cover-creator" data-cover-creator>{shelf.items[0].creator}</span>
                         </span>
-                        <span class="cover-band cover-band--bottom">
-                          <span class="cover-meta" data-cover-meta>{shelf.items[0].sub}</span>
-                        </span>
-                      </div>
+                        <img class="cover-image" data-cover-image src={thumb.src || undefined} alt=""
+                          loading="lazy" decoding="async" fetchpriority="high" width={thumb.width} height={thumb.height} />
+                      </span>
+                      <span class="cover-shell" aria-hidden="true"></span>
                     </a>
+                    ); })()}
                   </div>
                   <div class="case-controls" role="group" aria-label={`${shelf.label} case navigation`}>
                     <button class="case-step" data-case-prev type="button" aria-label={`Previous ${shelf.label.toLowerCase()} item`}
@@ -192,6 +171,7 @@ const shelves: Shelf[] = [
                   </div>
                   <p class="case-help" id={`shelf-${shelf.id}-case-help`}>
                     <span data-case-help>Choose a spine or use the arrows.</span>
+                    <button type="button" class="case-load3d" data-case-load3d hidden>Show the 3-D case</button>
                     <span class="shelf-sr-only">When the interactive case is ready, Enter opens or closes it;
                       Left and Right change items. Escape returns to the shelf.</span>
                   </p>
@@ -338,6 +318,9 @@ const shelves: Shelf[] = [
   .spine-gutter { position: absolute; top: 0; bottom: 0; width: 1px; }
   .spine-gutter--l { left: 0; background: #00000047; }
   .spine-gutter--r { right: 0; background: #00000038; }
+  /* Printed titles stay until the wordmark has arrived, then it fades in. */
+  .spine-logo { opacity: 0; transition: opacity 240ms ease; }
+  .spine-logo[data-loaded] { opacity: 1; }
   .spine-shine { position: absolute; top: 0; bottom: 0; left: 35%; width: 1px; opacity: .6;
     background: linear-gradient(180deg, transparent, #ffffff59 18%, #ffffff1f 60%, transparent); }
   .shelf-board {
@@ -358,7 +341,8 @@ const shelves: Shelf[] = [
     width: var(--cd);
     height: var(--cd);
     max-width: 100%;
-    perspective: 700px;
+    /* Matches the renderer's 28° camera at the canvas height. */
+    perspective: 740px;
     touch-action: pan-y;
   }
   .cover-link { color: inherit; text-decoration: none; cursor: pointer; }
@@ -368,8 +352,9 @@ const shelves: Shelf[] = [
     width: calc(var(--cd) * 2);
     height: calc(var(--cd) * 1.42);
     transform: translate(-50%, -50%);
-    visibility: hidden;
+    opacity: 0;
     pointer-events: none;
+    transition: opacity 420ms ease;
   }
   [data-kind="film"] .shelf-cover-panel, [data-kind="games"] .shelf-cover-panel { width: calc(var(--cd) * .79); }
   [data-kind="film"] .cd3d, [data-kind="games"] .cd3d { width: calc(var(--cd) * 1.58); height: calc(var(--cd) / .7); }
@@ -380,7 +365,7 @@ const shelves: Shelf[] = [
     touch-action: pan-y !important;
   }
   [data-kind="music"] .cd3d-hit { top: 6%; bottom: 6%; }
-  [data-cd3d-ready] .cd3d { visibility: visible; }
+  [data-cd3d-ready] .cd3d { opacity: 1; }
   [data-cd3d-ready] .cd3d-hit { pointer-events: auto; }
   .case-controls { display: flex; align-items: center; gap: 8px; margin-top: 34px; position: relative; z-index: 2; }
   .case-step {
@@ -430,447 +415,114 @@ const shelves: Shelf[] = [
     .info-announcement { flex-basis: 100%; }
     .case-external { margin-left: 42px; }
   }
+  /* Flat case preview. It stands in while the 3-D case loads (same size, pose
+     and front art, so the swap is a crossfade, not a jump) and is the final
+     view without WebGL or on low-power / Save-Data connections. */
   .cover-case {
+    --pose: rotateX(5.5deg) rotateY(-8deg) rotateZ(-1.1deg);
     position: relative;
+    display: block;
     width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow:
-      0 14px 22px -8px rgba(0, 0, 0, 0.55),
-      0 5px 10px -3px rgba(0, 0, 0, 0.42);
-    transform-origin: 50% 100%;
+    aspect-ratio: 142 / 125;
+    border-radius: 3px;
+    transform: var(--pose);
     transform-style: preserve-3d;
-
-    animation: ps2-float-case 5.7s cubic-bezier(.45, 0, .55, 1) infinite;
-    will-change: auto;
+    box-shadow: 0 24px 34px -16px rgb(0 0 0 / .5), 0 8px 14px -8px rgb(0 0 0 / .32);
+    animation: case-idle 9s ease-in-out infinite paused;
+    transition: opacity 420ms ease, visibility 0s linear 0s;
   }
-
-  [data-kind="music"] .cover-case { animation-delay: 0s; }
-  [data-kind="film"]  .cover-case { animation-delay: -1.9s; animation-duration: 6.3s; }
-
-  [data-kind="games"] .cover-case {
-    animation-name: ps2-float-case-games;
-    animation-delay: -3.4s;
-    animation-duration: 5.1s;
-    box-shadow: none;
+  [data-kind="film"] .cover-case { aspect-ratio: 135 / 171.5; border-radius: 6px; animation-delay: -3s; }
+  [data-kind="games"] .cover-case { aspect-ratio: 135 / 170; border-radius: 5px; animation-delay: -6s; }
+  .shelf-col[data-in-view] .cover-case { animation-play-state: running; }
+  @keyframes case-idle {
+    0%, 100% { transform: var(--pose) translateY(0); }
+    50% { transform: rotateX(4.5deg) rotateY(-4.5deg) rotateZ(-.6deg) translateY(-3px); }
   }
-
-  @keyframes ps2-float-case {
-    0%   { transform: rotateY(-3deg) rotateX(1deg)  translateY(0);
-           box-shadow: 0 8px 14px -6px rgba(0,0,0,.6),
-                       0 3px 6px -2px rgba(0,0,0,.4); }
-    25%  { transform: rotateY(-1deg) rotateX(-1deg) translateY(-2px);
-           box-shadow: 0 12px 18px -6px rgba(0,0,0,.55),
-                       0 5px 10px -3px rgba(0,0,0,.38); }
-    50%  { transform: rotateY(2deg)  rotateX(1.5deg) translateY(-3px);
-           box-shadow: 0 16px 24px -6px rgba(0,0,0,.5),
-                       0 7px 14px -3px rgba(0,0,0,.36); }
-    75%  { transform: rotateY(1deg)  rotateX(-0.5deg) translateY(-1px);
-           box-shadow: 0 10px 16px -6px rgba(0,0,0,.55),
-                       0 4px 8px -3px rgba(0,0,0,.4); }
-    100% { transform: rotateY(-3deg) rotateX(1deg)  translateY(0);
-           box-shadow: 0 8px 14px -6px rgba(0,0,0,.6),
-                       0 3px 6px -2px rgba(0,0,0,.4); }
-  }
-
-  @keyframes ps2-float-case-games {
-    0%   { transform: rotateY(-3deg) rotateX(1deg)  translateY(0); }
-    25%  { transform: rotateY(-1deg) rotateX(-1deg) translateY(-2px); }
-    50%  { transform: rotateY(2deg)  rotateX(1.5deg) translateY(-3px); }
-    75%  { transform: rotateY(1deg)  rotateX(-0.5deg) translateY(-1px); }
-    100% { transform: rotateY(-3deg) rotateX(1deg)  translateY(0); }
-  }
-
   .shelf-col .cover-case--tilting {
     animation: none;
-    transform:
-      rotateY(calc(var(--tilt-x, 0) * 16deg))
-      rotateX(calc(var(--tilt-y, 0) * -12deg))
-      translateY(-4px)
-      translateZ(8px);
-    transition: transform 80ms ease-out, box-shadow 200ms ease;
-    box-shadow:
-      0 22px 32px -8px rgba(0, 0, 0, .55),
-      0 10px 18px -4px rgba(0, 0, 0, .42);
+    transform: rotateX(calc(5deg + var(--tilt-y, 0) * -10deg)) rotateY(calc(-6deg + var(--tilt-x, 0) * 14deg)) translateY(-3px);
+    transition: transform 120ms ease-out;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .cover-case { animation: none; transform: rotateY(-2deg); }
+
+  /* The printed artwork sits under the clear lid / sleeve / lacquer. */
+  .cover-art {
+    position: absolute;
+    inset: 2.5% 2.5% 2.5% 6.5%;
+    overflow: hidden;
+    border-radius: 1px;
+    background: linear-gradient(160deg,
+      color-mix(in srgb, var(--accent, #555) 80%, white 20%),
+      color-mix(in srgb, var(--accent, #555) 70%, black 30%));
   }
+  [data-kind="film"] .cover-art { inset: 9.5% 3.4% 2.4% 3.4%; }
+  [data-kind="games"] .cover-art { inset: 1.4%; border-radius: 4px; }
   .cover-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    z-index: 2;
-    transition: opacity 220ms ease;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block; opacity: 0;
+    transition: opacity 260ms ease;
   }
-  .cover-image:not([src]),
-  .cover-image[src=""] {
-    display: none;
-  }
-
+  .cover-case[data-art="loaded"] .cover-image { opacity: 1; }
+  .cover-case[data-art="missing"] .cover-image { display: none; }
   .cover-fallback {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: inherit;
-    padding: 10px 9px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+    gap: 3px; padding: 10%; color: #fff; text-shadow: 0 1px 2px rgb(0 0 0 / .4);
   }
-  .cover-band {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
+  .cover-case[data-art="loaded"] .cover-fallback,
+  .cover-case[data-lqip]:not([data-art="missing"]) .cover-fallback { visibility: hidden; }
+  /* Blur-up: the inlined 24 px preview has the cover's colours from first paint. */
+  .cover-case[data-lqip] .cover-art::before {
+    content: ""; position: absolute; inset: -12%;
+    background: var(--lqip) center / cover no-repeat;
+    filter: blur(9px) saturate(1.1);
   }
-  .cover-band--top {
-    height: 6px;
-    margin: -10px -9px 8px;
+  .cover-title { font-size: 14px; font-weight: 800; line-height: 1.12; overflow-wrap: anywhere; text-wrap: balance; }
+  .cover-creator { font-size: 11px; line-height: 1.2; opacity: .8; overflow-wrap: anywhere; }
+  [data-kind="film"] .cover-title { font-family: Georgia, "Times New Roman", serif; }
+  /* Loading: a slow light sweep over the accent card, no layout change. */
+  .cover-case[data-art="loading"] .cover-art::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 25%, rgb(255 255 255 / .2) 50%, transparent 75%);
+    transform: translateX(-100%);
+    animation: case-shimmer 1.5s ease-in-out infinite;
   }
-  .cover-band--bottom {
-    margin: auto -9px -10px;
-    padding: 5px 9px;
-    justify-content: space-between;
-    font-size: 10px;
-    letter-spacing: 0.05em;
-  }
-  .cover-body {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    min-width: 0;
-  }
-  .cover-title {
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1.12;
-    letter-spacing: -0.005em;
-    overflow-wrap: anywhere;
-    text-wrap: balance;
-  }
-  .cover-creator {
-    font-size: 10px;
-    line-height: 1.2;
-    font-style: italic;
-    opacity: 0.78;
-    overflow-wrap: anywhere;
-  }
-  .cover-meta { font-variant-numeric: tabular-nums; }
+  @keyframes case-shimmer { to { transform: translateX(100%); } }
 
-  [data-kind="music"] .cover-case {
-    width: min(100%, 224px);
-    height: auto;
-    aspect-ratio: 224 / 203;
-
-    background-color: transparent;
-    background-image: linear-gradient(
-      var(--spine-color, #2a2a2a),
-      var(--spine-color, #2a2a2a)
-    );
-    background-position: 2px 5px;
-
-    background-size: 11px calc(100% - 10px);
-    background-repeat: no-repeat;
-    border-radius: 0;
-    overflow: visible;
-    transition: background-image 320ms ease;
+  /* Plastic, sleeve or metal over the art, plus one soft studio reflection. */
+  .cover-shell {
+    position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(115deg, rgb(255 255 255 / .22) 0%, rgb(255 255 255 / .06) 30%, transparent 46%, transparent 78%, rgb(255 255 255 / .07) 100%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / .3), inset 0 0 0 2px rgb(0 0 0 / .18);
   }
-
-  [data-kind="music"] .cover-spine-logo {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: calc(100% - 10px);
-    height: 11px;
-    object-fit: contain;
-    object-position: center;
-    z-index: 4;
-    pointer-events: none;
-
-    transform-origin: 0 0;
-    transform: translate(13px, 5px) rotate(90deg);
-
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
-    transition: opacity 220ms ease;
-  }
-  [data-kind="music"] .cover-spine-logo:not([src]),
-  [data-kind="music"] .cover-spine-logo[src=""] {
-    display: none;
-  }
-
-  [data-kind="music"] .cover-image {
-    top: 4px;
-    left: 17px;
-    right: auto;
-    bottom: auto;
-    width: calc(100% - 21px);
-    height: calc(100% - 8px);
-    border-radius: 1px;
-    object-fit: cover;
-    z-index: 2;
-  }
-
-  [data-kind="music"] .cover-shine {
-    position: absolute;
-    inset: 4px 5px 4px 17px;
-    border-radius: 1px;
-    pointer-events: none;
-    z-index: 3;
-    overflow: hidden;
-
-  }
-  [data-kind="music"] .cover-shine::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
+  [data-kind="music"] .cover-case { background: rgb(205 212 220 / .14); }
+  [data-kind="music"] .cover-shell::before {
+    /* Hinge and the tray-card spine visible through the clear back. */
+    content: ""; position: absolute; top: 2.5%; bottom: 2.5%; left: 1.5%; width: 4.5%;
     background:
-      radial-gradient(
-        ellipse 14% 36% at 38% 34%,
-        rgba(255, 255, 255, 0.38) 0%,
-        rgba(255, 255, 255, 0.10) 35%,
-        rgba(255, 255, 255, 0) 65%
-      );
-    opacity: 0.85;
-    transform: translate3d(
-      calc(var(--tilt-x, 0) * -26%),
-      calc(var(--tilt-y, 0) * -22%),
-      0
-    );
-    will-change: auto;
-    transition: opacity 220ms ease;
-  }
-
-  [data-kind="music"] .cover-case::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url("/cases/cd-jewel-case.png") center / 100% 100% no-repeat;
-    z-index: 5;
-    pointer-events: none;
-
-    mix-blend-mode: multiply;
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
-  }
-
-  :global(:root:not(.dark)) [data-kind="music"] .cover-case::after {
-    mix-blend-mode: normal;
-    opacity: 0.92;
-  }
-
-  [data-kind="music"] .cover-fallback {
-    background: linear-gradient(180deg, #f5efe1 0%, #e8e0c8 100%);
-    color: #1a1408;
-    margin: 5px 7px 5px 5px;
-    border-radius: 2px;
-  }
-  [data-kind="music"] .cover-band--top { background: var(--accent); }
-  [data-kind="music"] .cover-band--bottom {
-    background: rgba(0, 0, 0, 0.05);
-    color: rgba(26, 20, 8, 0.7);
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  [data-kind="film"] .cover-case {
-    width: min(100%, 180px);
-    height: auto;
-    aspect-ratio: 180 / 229;
-    background: #0a0a0a;
-
-    border-radius: 8px 11px 4px 4px;
-  }
-
-  [data-kind="film"] .cover-image {
-    top: 18px;
-    left: 4px;
-    right: auto;
-    bottom: auto;
-    width: calc(100% - 8px);
-    height: calc(100% - 24px);
-    z-index: 2;
+      repeating-linear-gradient(180deg, rgb(255 255 255 / .1) 0 1px, transparent 1px 7px),
+      linear-gradient(90deg, rgb(0 0 0 / .45), color-mix(in srgb, var(--accent, #333) 70%, black 30%) 40%, rgb(0 0 0 / .4));
     border-radius: 1px;
-    object-fit: cover;
-    object-position: 50% 75%;
+  }
+  [data-kind="film"] .cover-case { background: linear-gradient(180deg, #1d5fd6, #0d3a9a); }
+  [data-kind="film"] .cover-shell::before {
+    content: "BLU-RAY DISC"; position: absolute; top: 2.4%; left: 3.4%; right: 3.4%; height: 7.1%;
+    display: grid; place-items: center; color: #fff; font: 700 7.5px/1 Arial, sans-serif; letter-spacing: .14em;
+    background: linear-gradient(180deg, #2a6ef0, #1748b8);
+  }
+  [data-kind="games"] .cover-case { background: linear-gradient(135deg, #7c8188, #d8dce1 42%, #5f646b); }
+  [data-kind="games"] .cover-shell {
+    background:
+      linear-gradient(115deg, rgb(255 255 255 / .28) 0%, rgb(255 255 255 / .08) 26%, transparent 42%, transparent 80%, rgb(255 255 255 / .1) 100%),
+      linear-gradient(90deg, rgb(0 0 0 / .18), transparent 5%);
   }
 
-  [data-kind="film"] .cover-shine {
-    position: absolute;
-    top: 18px;
-    left: 4px;
-    width: calc(100% - 8px);
-    height: calc(100% - 24px);
-    border-radius: 1px;
-    pointer-events: none;
-    z-index: 3;
-    overflow: hidden;
-
+  /* Hand over to the canvas with a crossfade. */
+  [data-cd3d-ready] .cover-case {
+    opacity: 0; visibility: hidden; pointer-events: none; animation-play-state: paused;
+    transition: opacity 420ms ease, visibility 0s linear 420ms;
   }
-  [data-kind="film"] .cover-shine::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background: radial-gradient(
-      ellipse 38% 28% at 18% 22%,
-      rgba(255, 255, 255, 0.32) 0%,
-      rgba(255, 255, 255, 0.06) 45%,
-      rgba(255, 255, 255, 0) 75%
-    );
-    opacity: 0.85;
-    transform: translate3d(
-      calc(var(--tilt-x, 0) * -14%),
-      calc(var(--tilt-y, 0) * -12%),
-      0
-    );
-    will-change: auto;
-    transition: opacity 220ms ease;
-  }
-
-  [data-kind="film"] .cover-case::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url("/cases/blu-ray-case.png") center / 100% 100% no-repeat;
-    z-index: 5;
-    pointer-events: none;
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
-  }
-  [data-kind="film"] .cover-fallback {
-    color: #f4f7fb;
-    top: 18px;
-    left: 4px;
-    width: calc(100% - 8px);
-    height: calc(100% - 24px);
-    background: #0a0a0a;
-    border-radius: 1px;
-    padding: 8px 6px;
-    z-index: 1;
-  }
-  [data-kind="film"] .cover-band--top {
-    height: 0;
-    margin: 0 0 0;
-    background: transparent;
-  }
-  [data-kind="film"] .cover-title {
-    font-family: Georgia, "Times New Roman", serif;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-  }
-  [data-kind="film"] .cover-creator { color: rgba(255, 255, 255, 0.78); }
-  [data-kind="film"] .cover-band--bottom {
-    color: rgba(255, 255, 255, 0.78);
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
-    padding-top: 5px;
-    margin: 6px 0 0;
-  }
-
-  [data-kind="games"] .cover-case {
-    width: min(100%, 212px);
-    height: auto;
-    aspect-ratio: 212 / 230;
-    background: transparent;
-    border-radius: 0;
-
-    overflow: visible;
-  }
-
-  [data-kind="games"] .cover-image {
-    top: 9%;
-    left: 41%;
-    right: auto;
-    bottom: auto;
-    width: 39%;
-    height: 56%;
-    border-radius: 1px;
-    box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.45),
-      0 1px 2px rgba(0, 0, 0, 0.35);
-    z-index: 6;
-    object-fit: cover;
-  }
-
-  [data-kind="games"] .cover-shine {
-    position: absolute;
-    top: 9%;
-    left: 41%;
-    width: 39%;
-    height: 56%;
-    pointer-events: none;
-    z-index: 7;
-    overflow: hidden;
-
-  }
-  [data-kind="games"] .cover-shine::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background: radial-gradient(
-      ellipse 35% 26% at 22% 24%,
-      rgba(255, 255, 255, 0.30) 0%,
-      rgba(255, 255, 255, 0.05) 45%,
-      rgba(255, 255, 255, 0) 75%
-    );
-    opacity: 0.8;
-    transform: translate3d(
-      calc(var(--tilt-x, 0) * -12%),
-      calc(var(--tilt-y, 0) * -10%),
-      0
-    );
-    will-change: auto;
-    transition: opacity 220ms ease;
-  }
-
-  [data-kind="games"] .cover-case::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url("/cases/nes-cartridge.png") center / 100% 100% no-repeat;
-    z-index: 5;
-    pointer-events: none;
-    filter:
-      drop-shadow(0 8px 12px rgba(0, 0, 0, 0.50))
-      drop-shadow(0 3px 5px rgba(0, 0, 0, 0.38));
-  }
-
-  [data-kind="games"] .cover-fallback {
-    top: 9%;
-    left: 41%;
-    width: 39%;
-    height: 56%;
-    background: linear-gradient(180deg, #f6efe2 0%, #e9e0cc 100%);
-    color: #1a1208;
-    border-radius: 1px;
-    padding: 6px 6px 8px;
-    z-index: 6;
-    box-shadow:
-      inset 0 0 0 1px rgba(0, 0, 0, 0.18),
-      0 1px 0 rgba(0, 0, 0, 0.3);
-  }
-  [data-kind="games"] .cover-band--top {
-    height: 0;
-    margin: 0;
-    background: transparent;
-    display: none;
-  }
-  [data-kind="games"] .cover-body {
-    color: #1a1208;
-    padding: 0;
-    background: transparent;
-  }
-  [data-kind="games"] .cover-title { font-weight: 900; }
-  [data-kind="games"] .cover-creator { color: rgba(26, 18, 8, 0.65); }
-  [data-kind="games"] .cover-band--bottom {
-    margin: auto 0 0;
-    padding: 0;
-    color: rgba(26, 18, 8, 0.65);
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
-    padding-top: 4px;
-    text-shadow: none;
+  .case-load3d {
+    display: block; margin: 4px auto 0; padding: 2px 0; border: 0; background: none; color: inherit;
+    font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
   }
 
   [data-kind="music"] .spine-body {
@@ -909,7 +561,7 @@ const shelves: Shelf[] = [
     z-index: 2;
   }
 
-  [data-kind="music"] .spine-body:has(.spine-logo) .spine-text {
+  [data-kind="music"] .spine-body:has(.spine-logo[data-loaded]) .spine-text {
     display: none;
   }
   [data-kind="music"] .spine-gutter--l {
@@ -959,7 +611,7 @@ const shelves: Shelf[] = [
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
     z-index: 2;
   }
-  [data-kind="film"] .spine-body:has(.spine-logo) .spine-text {
+  [data-kind="film"] .spine-body:has(.spine-logo[data-loaded]) .spine-text {
     display: none;
   }
 
@@ -1042,7 +694,7 @@ const shelves: Shelf[] = [
     z-index: 2;
   }
 
-  [data-kind="games"] .spine-body:has(.spine-logo) .spine-text {
+  [data-kind="games"] .spine-body:has(.spine-logo[data-loaded]) .spine-text {
     display: none;
   }
 
@@ -1066,19 +718,16 @@ const shelves: Shelf[] = [
   }
 
 
-  /* Fallbacks move only while their own display is visible. */
-  .shelf-col .cover-case { animation-play-state: paused; }
-  .shelf-col[data-in-view] .cover-case { animation-play-state: running; }
-  .shelf-col[data-cd3d-ready] .cover-case { visibility: hidden; animation: none; pointer-events: none; }
   .shelf-col:not([data-in-view]) .spine-body { transition: none; }
   @media (prefers-reduced-motion: reduce) {
     .shelf-inner { transform: none; }
     .shelf-col .spine-body, .shelf-col .spine:hover .spine-body,
-    .shelf-col .spine:focus-visible .spine-body, .shelf-col .cover-case {
-      animation: none; transform: none; transition: none;
-    }
+    .shelf-col .spine:focus-visible .spine-body { transform: none; transition: none; }
+    .shelf-col .cover-case, .shelf-col .cover-case--tilting { animation: none; transform: var(--pose); }
+    .cover-case[data-art] .cover-art::after { animation: none; display: none; }
+    .cd3d, .cover-case, [data-cd3d-ready] .cover-case { transition: none; }
     .shelf-col .spine[data-active="true"] .spine-body { transform: translateY(-12px); }
-    .case-step, .cover-image, .cover-spine-logo, .spine-slot::before { transition: none; }
+    .case-step, .cover-image, .spine-slot::before { transition: none; }
   }
 </style>
 

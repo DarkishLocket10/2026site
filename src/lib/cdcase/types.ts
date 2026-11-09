@@ -73,6 +73,15 @@ export interface CdDisc {
 export interface CdCaseOptions {
   /** Maximum device pixel ratio. Default 1.5; adaptive quality never goes below 1. */
   maxPixelRatio?: number;
+  /** Downscale decoded artwork so its longest side is at most this many pixels. Default: no limit. */
+  maxTextureSize?: number;
+  /** Frame rate for idle motion (bob, disc spin). Interaction always gets up to 60. Default 30. */
+  idleFps?: number;
+  /**
+   * How many other items to download in idle time after the first draw, nearest
+   * first. Default: all. Items outside it load when they are chosen.
+   */
+  prefetch?: number;
   /** Physical case format. Defaults to the original jewel case. */
   kind?: CaseKind;
   /** Default wear and panel warp, 0–1; 0 is pristine. Default 0.35. */
