@@ -61,13 +61,17 @@ export class Pipeline {
   private readonly steelTray: Parts | null;
   private readonly banner: THREE.CanvasTexture | null;
   private readonly hitMatrix = new THREE.Matrix4();
+  /** Bound until an item's artwork is resolved by the getters. */
+  private readonly blank = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1);
   private width = 1; private height = 1;
   private rx = 0; private ry = 0; private rw = 1; private rh = 1;
   private groupCount = 0;
   openScale = 1;
 
-  constructor(private readonly renderer: THREE.WebGLRenderer, private readonly discs: readonly CdDisc[], private readonly textures: readonly CaseArtwork[], private readonly spineTextures: readonly THREE.Texture[], coarse: boolean, private readonly kind: CaseKind = 'jewel', private readonly wear = 0.35) {
+  constructor(private readonly renderer: THREE.WebGLRenderer, private readonly discs: readonly CdDisc[], private readonly artworkFor: (index: number) => CaseArtwork, private readonly spineFor: (index: number) => THREE.Texture, coarse: boolean, private readonly kind: CaseKind = 'jewel', private readonly wear = 0.35) {
     const spec = CASE_SPECS[kind], jewel = kind === 'jewel';
+    this.blank.needsUpdate = true;
+    const blank = this.blank;
     this.trays = jewel ? [buildTray(), buildTray({ clearCentre: true })]
       : [buildKeepShell(kind, false), buildKeepShell(kind, false, true)];
     this.lidGeometry = jewel ? buildLid() : buildKeepShell(kind, true);
@@ -129,7 +133,7 @@ export class Pipeline {
       const geometry = lid ? this.lidGeometry : this.trays[0];
       const rodsMaterial = this.material(jewel ? shaders.rodVert : shaders.paperVert, jewel ? shaders.rodFrag : portrait.edgeFrag, {
         ...this.shared, uSize: { value: new THREE.Vector2(spec.width, spec.height) },
-        uMetal: { value: kind === 'steelbook' }, uGloss: { value: false }, uLid: { value: lid }, uArt: { value: textures[0].cover },
+        uMetal: { value: kind === 'steelbook' }, uGloss: { value: false }, uLid: { value: lid }, uArt: { value: blank },
         uBehind: { value: this.rtOpaque.texture }, uDepth: { value: 14 }, uIor: { value: 1.59 },
         uSamples: { value: coarse ? 1 : 2 }, uFade: { value: 1 }, uAbsorb: { value: new THREE.Vector3(0.0042, 0.003, 0.0026) },
       });
@@ -150,7 +154,7 @@ export class Pipeline {
       const matrices = new PoseMatrices(kind);
       const tray = group(matrices.tray, false), lid = group(matrices.lid, true);
       const discMaterial = this.material(shaders.discVert, shaders.discFrag, {
-        uArt: { value: textures[0].art }, uDiscType: { value: 0 }, uBase: { value: 0 }, uArtIn: { value: 18 }, uPrintOut: { value: 58 }, uScan: { value: false },
+        uArt: { value: blank }, uDiscType: { value: 0 }, uBase: { value: 0 }, uArtIn: { value: 18 }, uPrintOut: { value: 58 }, uScan: { value: false },
         uFade: { value: 1 }, uTagScale: this.shared.uTagScale,
       });
       const disc = this.mesh(this.discsGeometry[0], discMaterial), depth = this.mesh(this.discsGeometry[0], depthMaterial);
@@ -168,18 +172,18 @@ export class Pipeline {
         return { mesh, depth };
       };
       const panelUniforms = (lid: boolean): Uniforms => ({
-        uArt: { value: textures[0].cover }, uInside: { value: textures[0].cover }, uHasInside: { value: false },
+        uArt: { value: blank }, uInside: { value: blank }, uHasInside: { value: false },
         uSize: { value: new THREE.Vector2(spec.width - 2.4, spec.height - 2.4) },
         uMetal: { value: kind === 'steelbook' }, uGloss: { value: false }, uLid: { value: lid },
         uWarpKind: { value: jewel ? 0 : kind === 'steelbook' ? 4 : 2 },
         uHasArt: { value: true }, uHasBanner: { value: false }, uBanner: { value: this.banner },
-        uRelief: { value: textures[0].cover }, uHasRelief: { value: false },
+        uRelief: { value: blank }, uHasRelief: { value: false },
         uSpineColour: { value: new THREE.Color() },
       });
       const booklet = paper(this.bookletGeometry, jewel ? shaders.bookletFrag : portrait.panelFrag, panelUniforms(true));
-      const spine = paper(this.spineGeometry, shaders.spineFrag, { uSpine: { value: spineTextures[0] } });
+      const spine = paper(this.spineGeometry, shaders.spineFrag, { uSpine: { value: blank } });
       const inlay = paper(this.inlayGeometry, jewel ? shaders.inlayFrag : portrait.panelFrag, {
-        ...panelUniforms(false), uBack: { value: textures[0].back }, uHasBack: { value: false },
+        ...panelUniforms(false), uBack: { value: null }, uHasBack: { value: false },
       });
       const fittings = this.steelTray ? [this.steelTray.rods, this.steelTray.sheets].map(geometry => paper(geometry, portrait.trayFrag, { uHasDisc: { value: true } })) : [];
       const trayHit = this.mesh(this.hitGeometry, hitMaterial), lidHit = this.mesh(this.hitGeometry, hitMaterial);
@@ -207,6 +211,10 @@ export class Pipeline {
     return mesh;
   }
   private matrix(mesh: THREE.Mesh, matrix: THREE.Matrix4): void { mesh.matrix.copy(matrix); mesh.matrixWorld.copy(matrix); }
+  /** Rebind an item's textures on its next update (its artwork has arrived). */
+  invalidate(index: number): void {
+    for (const c of this.cases) if (c.index === index) c.index = -1;
+  }
   setPage(colour: string | null, transparent = colour === null): void {
     this.page.set(colour ?? '#ffffff'); this.composite.uniforms.uTransparent.value = transparent;
   }
@@ -273,7 +281,7 @@ export class Pipeline {
         c.disc.geometry = this.discsGeometry[variant]; c.depth.geometry = c.disc.geometry;
         const trayVariant = this.kind === 'jewel' ? variant : disc.discType === 'none' ? 0 : variant;
         c.tray.rods.geometry = this.trays[trayVariant].rods; c.tray.sheets.geometry = this.trays[trayVariant].sheets;
-        const artwork = this.textures[moving.index];
+        const artwork = this.artworkFor(moving.index);
         const value = disc.wear ?? this.wear;
         const wear = Number.isFinite(value) ? THREE.MathUtils.clamp(value, 0, 1) : 0.35;
         for (const mesh of [c.tray.rods, c.tray.sheets, c.lid.rods, c.lid.sheets, c.booklet.mesh, c.inlay.mesh]) {
@@ -304,7 +312,7 @@ export class Pipeline {
           c.lid.rods.material.uniforms.uGloss.value = disc.finish === 'gloss';
           c.tray.rods.material.uniforms.uGloss.value = disc.finish === 'gloss';
         }
-        c.spine.mesh.material.uniforms.uSpine.value = this.spineTextures[moving.index];
+        c.spine.mesh.material.uniforms.uSpine.value = this.spineFor(moving.index);
         c.inlay.mesh.material.uniforms.uBack.value = artwork.back;
         c.inlay.mesh.material.uniforms.uHasBack.value = artwork.back !== null;
         c.inlay.mesh.material.uniforms.uSpineColour.value.set(disc.spineColour ?? disc.accent ?? '#444');
@@ -392,7 +400,7 @@ export class Pipeline {
     this.pass(this.composite, null);
   }
   dispose(): void {
-    this.studio.dispose(); this.banner?.dispose();
+    this.studio.dispose(); this.banner?.dispose(); this.blank.dispose();
     for (const geometry of this.geometries) geometry.dispose();
     for (const material of this.materials) material.dispose();
     this.rtOpaque.dispose(); this.rtPlastic[0].dispose(); this.rtPlastic[1].dispose();

@@ -1,0 +1,591 @@
+{
+  "/cases/music/because-the-internet-childish-gambino/booklet-inside.webp": {
+    "web": "/cases/web/music/because-the-internet-childish-gambino/booklet-inside.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/music/because-the-internet-childish-gambino/front.webp": {
+    "web": "/cases/web/music/because-the-internet-childish-gambino/front.webp",
+    "width": 1024,
+    "height": 1024,
+    "thumb": "/cases/thumb/music/because-the-internet-childish-gambino/front.webp",
+    "lqip": "data:image/webp;base64,UklGRuQAAABXRUJQVlA4INgAAABwBgCdASoYABgAPu1wsVKppiSiqAgBMB2JbACdMoSCv49hq7oANlWQr7nYrAWe1nVsN01L+65aZbOBfVAA/svRXkufPMmZ46w63hCHOfi1vkj+a1+1SdM3goJeN3TbdAcwBZ6IU2CvZGaSJths/C2jJkXEKWS7Q6UfWZ17cPreV7/Y2d9wZK5+sRTeQrDtlRV/WLGVmk+GcPnejXOTx31CbHgTNL6y8sOTf0FJu3t1092Fe52+VOxIYrq32mJDJTJ9t1n8rkuonEmcadcy4LCwdAxQB0ZLAAA=",
+    "thumbWidth": 480,
+    "thumbHeight": 480
+  },
+  "/cases/music/good-faith-madeon/front.webp": {
+    "web": "/cases/web/music/good-faith-madeon/front.webp",
+    "width": 1024,
+    "height": 1024,
+    "thumb": "/cases/thumb/music/good-faith-madeon/front.webp",
+    "lqip": "data:image/webp;base64,UklGRtAAAABXRUJQVlA4IMQAAABQBQCdASoYABgAPu1sqlEppaOiqAqpMB2JbACdMoR/UA8BdmySGWlDmA/PRoa1qNfSWcAA/B4O5TG7+P+TfzPo1AUZtWU2YkNA9gyA9KL0k9vXlt+UzihjypfphJUwC0GQV03AKoC8OWF1TLe97q6AF32yBHEjpxXEpMrbWoG9yTAt4DpfORH5KWpVOuR6zotR3myDJXE68GCGFoTWWoSkyGK2JHukOf0MzdUeN9anfi73x6ViGTdctCPbiYg9GN/7AAAA",
+    "thumbWidth": 480,
+    "thumbHeight": 480
+  },
+  "/cases/music/imaginal-disk-magdalena-bay/back.webp": {
+    "web": "/cases/web/music/imaginal-disk-magdalena-bay/back.webp",
+    "width": 598,
+    "height": 593
+  },
+  "/cases/music/imaginal-disk-magdalena-bay/booklet-inside.webp": {
+    "web": "/cases/web/music/imaginal-disk-magdalena-bay/booklet-inside.webp",
+    "width": 591,
+    "height": 591
+  },
+  "/cases/music/imaginal-disk-magdalena-bay/disc.webp": {
+    "web": "/cases/web/music/imaginal-disk-magdalena-bay/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/music/imaginal-disk-magdalena-bay/front.webp": {
+    "web": "/cases/web/music/imaginal-disk-magdalena-bay/front.webp",
+    "width": 1024,
+    "height": 1024,
+    "thumb": "/cases/thumb/music/imaginal-disk-magdalena-bay/front.webp",
+    "lqip": "data:image/webp;base64,UklGRt4AAABXRUJQVlA4INIAAAAQBgCdASoYABgAPu1qrFEppaQiqAqpMB2JbACdMzQwABVquuwTl3BpKyYblm8365X8tykJBL3Gq4AAzhHQ4Ni0BbpF3VWan79ExGWWZ6tVTw2/Gmpg67BcqpQAhdySzZIHrAy6fFXQhTxoNeHbIMeXL0D628adzT401xb0XjG1UJ1YWZFrdGRdK7aSFo9MCE90OYtuFP+6l43iK9U7BJ8G6EkXoTW3joWXE2NMGY3jzRsW9TXJCemzx16T9mUORANdCosIJIqVpaJnyCJuhYgAAAA=",
+    "thumbWidth": 480,
+    "thumbHeight": 480
+  },
+  "/cases/music/octane-don-toliver/back.webp": {
+    "web": "/cases/web/music/octane-don-toliver/back.webp",
+    "width": 1024,
+    "height": 882
+  },
+  "/cases/music/octane-don-toliver/front.webp": {
+    "web": "/cases/web/music/octane-don-toliver/front.webp",
+    "width": 1024,
+    "height": 1024,
+    "thumb": "/cases/thumb/music/octane-don-toliver/front.webp",
+    "lqip": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAACQBACdASoYABgAPu1usFIppiSiqAgBMB2JaQAALnXEiD+EHUL2ZUAeebf5cAAA/vQbJyNHM7cEAVoQb6XTtYDa76MraTCufJQs0Icdwm/HDt6HzYFzJCmiuj3iRz/LF7cznZLhHnrbpWPwubhz4cI4AAA=",
+    "thumbWidth": 480,
+    "thumbHeight": 480
+  },
+  "/cases/music/so-close-to-what-tate-mcrae/back.webp": {
+    "web": "/cases/web/music/so-close-to-what-tate-mcrae/back.webp",
+    "width": 599,
+    "height": 460
+  },
+  "/cases/music/so-close-to-what-tate-mcrae/booklet-inside.webp": {
+    "web": "/cases/web/music/so-close-to-what-tate-mcrae/booklet-inside.webp",
+    "width": 590,
+    "height": 590
+  },
+  "/cases/music/so-close-to-what-tate-mcrae/disc.webp": {
+    "web": "/cases/web/music/so-close-to-what-tate-mcrae/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/music/so-close-to-what-tate-mcrae/front.webp": {
+    "web": "/cases/web/music/so-close-to-what-tate-mcrae/front.webp",
+    "width": 1024,
+    "height": 1024,
+    "thumb": "/cases/thumb/music/so-close-to-what-tate-mcrae/front.webp",
+    "lqip": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADwBACdASoYABgAPu1kqk4ppaQiMAgBMB2JZQC4MCFsehJ0UCY4eeHPmOp/KX4USwAA/uMVZ9mheWm8bCxF751LFgitLqI6JPr8ND/msOl0rezIy1rdBUrb5fdhM80/9nRj9fX97+07/Llg24OZbaygAAA=",
+    "thumbWidth": 480,
+    "thumbHeight": 480
+  },
+  "/cases/music/submarine-the-mar-as/front.webp": {
+    "web": "/cases/web/music/submarine-the-mar-as/front.webp",
+    "width": 1024,
+    "height": 1024,
+    "thumb": "/cases/thumb/music/submarine-the-mar-as/front.webp",
+    "lqip": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAACwBACdASoYABgAPtVUoU2oJKMiN+gBABqJYgCdM2QE5WMtdC3+9tMrrbFw3LRwAP7r5/HUwlZnyGqeVKbCHZ6jEcKILmnatKd4WrEFWMynSu1Uk/MfCgoweJQwi0enqHkZmBmIOVWMgfk1+P9N+chkKckawzYYfcTSY8GE+PJbuxM4T+VufoEmPiYAAA==",
+    "thumbWidth": 480,
+    "thumbHeight": 480
+  },
+  "/cases/music/trench-twenty-one-pilots/back.webp": {
+    "web": "/cases/web/music/trench-twenty-one-pilots/back.webp",
+    "width": 1024,
+    "height": 797
+  },
+  "/cases/music/trench-twenty-one-pilots/booklet-inside.webp": {
+    "web": "/cases/web/music/trench-twenty-one-pilots/booklet-inside.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/music/trench-twenty-one-pilots/disc.webp": {
+    "web": "/cases/web/music/trench-twenty-one-pilots/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/music/trench-twenty-one-pilots/front.webp": {
+    "web": "/cases/web/music/trench-twenty-one-pilots/front.webp",
+    "width": 1024,
+    "height": 1024,
+    "thumb": "/cases/thumb/music/trench-twenty-one-pilots/front.webp",
+    "lqip": "data:image/webp;base64,UklGRvIAAABXRUJQVlA4IOYAAACQBQCdASoYABgAPu1kq1AppSOisBgIATAdiWwAuwAQpuqmcPA6KjIaSubYyM3JtIb3FYjAQAD+8MxDXoRapUzNzuFiELj6w9Srpy9wmq7CXoWNt0HpLkw1GNJtOzPS9XYmeR8HcZpkY/5dRQDJaNYIKkkKo/z9x8zpHy8xzpgw4MXw2uX8FxtH2NHD+P9MsvuOG1cIdNwyQ4GTvkWHD/mCTTpEtruu8NZJ92jF104mxyWB4XA5IfPH1lIb414M31C0Kr6f06Sz+DfVzIiAzNpobKrhs/6K+VOLUwMrY3O2g1uN5gAAAA==",
+    "thumbWidth": 480,
+    "thumbHeight": 480
+  },
+  "/cases/film/a-real-pain/back.webp": {
+    "web": "/cases/web/film/a-real-pain/back.webp",
+    "width": 882,
+    "height": 1024
+  },
+  "/cases/film/a-real-pain/front-clean.webp": {
+    "web": "/cases/web/film/a-real-pain/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/a-real-pain/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAADwBACdASoTABgAPu1mq0+ppSOiMBgIATAdiWgAnTKEddckhRFhKmnr+5Z/mPwpyAAA/NWF2rYyBMNqk92u6yR+DPo9QSylaayP+3dcy2z10OV5vbb5cAklsTkb96KpmoG4bD9ksNYYo6TTQDOQRXpBFZAtcJNJ1mdzeAhiZY9l9/585izWTE0RPxPeJYnMDmshR5BlCycaJVVfpDcBAAAA",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/a-real-pain/front.webp": {
+    "web": "/cases/web/film/a-real-pain/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/a-real-pain/front.webp",
+    "lqip": "data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAADwBACdASoTABgAPu1qrFCppaQiqAqpMB2JYgC1GoABqh0SH99DJfujB/I6VNQLdQAA/rQPNvUNkqDkUTgo84hnNVk8k9EZfW0mVGXWbOEo6udi/QmMkXyBZrEAzV/WUnIPUtj44I2aW+XY3XF5YWRKT71c7gypAfOYmhWzJGGEts4y7/5GsYIAYFJY8FtSEsIUNw5ReQubP5mNV30L64qaTs7uddLgM4tQ5em7l+FA/hHSWAAAAA==",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/a-real-pain/spine.webp": {
+    "web": "/cases/web/film/a-real-pain/spine.webp",
+    "width": 61,
+    "height": 1024
+  },
+  "/cases/film/baby-driver/back.webp": {
+    "web": "/cases/web/film/baby-driver/back.webp",
+    "width": 453,
+    "height": 525
+  },
+  "/cases/film/baby-driver/disc.webp": {
+    "web": "/cases/web/film/baby-driver/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/film/baby-driver/front-clean.webp": {
+    "web": "/cases/web/film/baby-driver/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/baby-driver/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAAAwBQCdASoTABgAPu1ur1IppiQiqAgBMB2JbACdMy/lywYR8VIM0X0L5Jhjt45zhyWdwADIdhl3Zw31v6gfy6e7pfznOb4ALWxl2MF71aYxlTMxjMaZXfOugFBFSzoqYlezGpKpA3Qa74Jkfq0khX5nrmS3x4W6GUKfWxc023OYFPVj22hY+XC6SsEyCxm7Tb7gaUSBy2M625pb4UFBkFGQnGH7UBSnVhA+NTK/J9o0P51Bci0XMH6IVNbEqvLCjiCZXamAGeo/oAAA",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/baby-driver/front.webp": {
+    "web": "/cases/web/film/baby-driver/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/baby-driver/front.webp",
+    "lqip": "data:image/webp;base64,UklGRvYAAABXRUJQVlA4IOoAAADwBQCdASoTABgAPu1ur1IppiQiqAgBMB2JbACdMzRA7fxi1+jXL6+Dv6wy9J2zwHTSj1OAMxdf9ADF8lj4AhlWgOGWGkNxwISLFnoqUfilXRK3HTf8EL+228ykswsEAWJ9faQQpaiDgjE3FZB4D58f2m4//Kq1IchT+Ua05WK5CX15RL8G63eYVS2vV190zFU9iVdDYDbO0ayovn115mWHFTmEOf35D+GMaHWcBClYurZlPmhaThjGXMx9nsMBSLj48UrCdurFHaDvBbvn/tYctk7FrLH+us+CzKqFZbA3IUoq3v+J1tTQAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/baby-driver/spine.webp": {
+    "web": "/cases/web/film/baby-driver/spine.webp",
+    "width": 73,
+    "height": 1024
+  },
+  "/cases/film/back-to-the-future/back.webp": {
+    "web": "/cases/web/film/back-to-the-future/back.webp",
+    "width": 883,
+    "height": 1024
+  },
+  "/cases/film/back-to-the-future/front-clean.webp": {
+    "web": "/cases/web/film/back-to-the-future/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/back-to-the-future/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRvYAAABXRUJQVlA4IOoAAABQBgCdASoTABgAPu1qrlCppaQiqAqpMB2JbACsMoR+MN+51qrb/4tmM5uDUUnv7/nWzoX8KfUtJyDMAAD+0gOIf4i8UJVO2Etq8OT835nbqhzyUjUIid39AmE4cYGqML093+3owkJQJGFzxOy1JV/Q+lkvjh7g10/HnZvYjm7w0t3P5IstugZYw8Fsixp4pvqII6MiiXg4XnOODnxbJrPdFcuIhxr2SuaRAgrTb7ZqgYdpw3sCVSMCs2FrvT5TJ+71VqHGO4D8lU7f7IakJovdiVr5hWnYm0ve1rxsMsLXiM5HAeKaefWwAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/back-to-the-future/front.webp": {
+    "web": "/cases/web/film/back-to-the-future/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/back-to-the-future/front.webp",
+    "lqip": "data:image/webp;base64,UklGRuYAAABXRUJQVlA4INoAAAAwBQCdASoTABgAPu1qsFAppaSiqAqpMB2JbACdAA9roIHx8MQ8ycMIA8wm5Aj17eBxgAD+7MENR+EeIBMlpcoBV47XoARQ+TgmCJAUFUD0vDm5BZX34cqTYb0kj/V8yUOrHBh/eCyqAFdtQdbvexXdWNMeVkoODFeWBSXm/JV7Pc7yUXtsCNqNIC0l7QIVxHgZY1TPW0U4InHZIu4QSUDAy1R13yH5ahpmT5u0oRjiTYioEQ3IxLLhH9+Q+V675HeWgY57Y4MQMmDTqBzrAVmE6VIKMsyHtKAAAA==",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/black-swan/back.webp": {
+    "web": "/cases/web/film/black-swan/back.webp",
+    "width": 343,
+    "height": 399
+  },
+  "/cases/film/black-swan/front-clean.webp": {
+    "web": "/cases/web/film/black-swan/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/black-swan/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBACdASoTABgAPu1srFEppaQiqAqpMB2JZwDGBAo43NLtEFPE1uEmUAAA/vBAuR4rEIQ2ZCbCX0ev8P0nfUFfie4E4W9XgQ/MXxqykrnfquieAgeCPYGJqqYTNFjJ7LOmY32VleOsUfWF6j+I1ZtOu9Ha5MfzooWFkZr0opyrR4fh7lhRtsEKzEUibPpi57eOf4gVoAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/black-swan/front.webp": {
+    "web": "/cases/web/film/black-swan/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/black-swan/front.webp",
+    "lqip": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAADwBACdASoTABgAPu1qrFEppaQjqAqpMB2JZwDGQYwIcyZLEy3IINSPGQZZa+GSBAAA/u3gN4fB3BKs5iZ6EcKgQsNijk0irxBcGTPiHIrtEpOBoe6ON/4DH/6YLg3pYk56o2zPdYijON+0D1oLdwrFmgD2pZSBBeGVMEZ6acWpmDoDGt2bq/BzAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/black-swan/spine.webp": {
+    "web": "/cases/web/film/black-swan/spine.webp",
+    "width": 74,
+    "height": 1024
+  },
+  "/cases/film/blade-runner/back.webp": {
+    "web": "/cases/web/film/blade-runner/back.webp",
+    "width": 877,
+    "height": 1024
+  },
+  "/cases/film/blade-runner/front-clean.webp": {
+    "web": "/cases/web/film/blade-runner/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/blade-runner/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRgIBAABXRUJQVlA4IPYAAADwBQCdASoTABgAPu1orVCppaQiqAqpMB2JbACxHzLnWcAIIwL+YAcAHNwYAD0LtDER2TsUcEsUAAD+8YB/2LckMnbFh2FMtViz/8swEcrMuGoeDJVIPaJWm8xqJOjW6qG/jnF+qNs+HdtuVoYKeKpESvlo/UjLeNFf6i0RSx0TKUv4TKLBgCQPgrYX9zXkB5V9A2F7BM+OL6tcwhz6ZEVPeEAgIviFxpCGs+7oINAAwr0LKVx0ZticbP8gnTZKYoumfobBtQCbfI3uC1+JnJeVnLn0gAWJ5ao7JjijDaTOGgU3xKpfMKLp+2LqfYY2qdVeaggAAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/blade-runner/front.webp": {
+    "web": "/cases/web/film/blade-runner/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/blade-runner/front.webp",
+    "lqip": "data:image/webp;base64,UklGRvQAAABXRUJQVlA4IOgAAAAwBgCdASoTABgAPu1oqVAppaOiqA1RMB2JbACxDHIH+a8yaCdHCtXIf3VMtLl/sRFutIwe6XFQ7VbgAP7xNeTF6zIFKZAfdGrp7W7O83ZQl+1zK72K5CiKuyv+80UVfNg5KYgOhNwoPt4p0Swak+fRiQgZeG23UPfs9Vr/pkXrY9jM6ObcS/ujv5gg8cCXKg3PzKAS7mABywEZQCpHUrU9nJGrXqh5XHpfZujCfZyNFXnauUOsj/KEJdbbGV4wJZfCE2GiU5NZMm2ve+r344TJQO3GI2Uzi+qjlfwNDGlibUDvSTe7gAAA",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/civil-war/back.webp": {
+    "web": "/cases/web/film/civil-war/back.webp",
+    "width": 862,
+    "height": 1024
+  },
+  "/cases/film/civil-war/front-clean.webp": {
+    "web": "/cases/web/film/civil-war/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/civil-war/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAADwBACdASoTABgAPu1oqk+ppaOiKA1RMB2JagC7AA8Qxobd5vu7UjUppqZgjL6Zf2AA/qjjuaOCfng1mz0yvevdH2oi0KZxXCLDfUhh7/be3tjZ5zG3kK19vt/IbO4YigmK/+R2/Amoo0sPAXbHkoL2vZJRcom41uylsfvkE+M25FXYzL9GK3b6yWw9tvNQAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/civil-war/front.webp": {
+    "web": "/cases/web/film/civil-war/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/civil-war/front.webp",
+    "lqip": "data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAABQBQCdASoTABgAPu1mqk8ppaOiKA1RMB2JbACdAA9/SERsOnvL2eZXBzkb/EvwSC0qAAAA/nXSOFeCiDU9t8A7KZibWMAOL1i4vq9unBQi5qls9H1UYDhb6PKn2Jfc8V32tDfKDX0RQ4/F3YkEmz2+o5cZ2N+kw6J5uBwwqzVm0t1oZCt/k8bYa4TgT+JBXwRSFL8Fk6PUB1bW56USuh0KwTjVj/iGEzNshyzcshX1kQXJP4/DWsW+S/CjpzAAAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/civil-war/spine.webp": {
+    "web": "/cases/web/film/civil-war/spine.webp",
+    "width": 76,
+    "height": 1024
+  },
+  "/cases/film/everything-everywhere-all-at-once/back.webp": {
+    "web": "/cases/web/film/everything-everywhere-all-at-once/back.webp",
+    "width": 840,
+    "height": 985
+  },
+  "/cases/film/everything-everywhere-all-at-once/front-clean.webp": {
+    "web": "/cases/web/film/everything-everywhere-all-at-once/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/everything-everywhere-all-at-once/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAADQBACdASoTABgAPu1srFEppaQiqAqpMB2JbACw7YvMUEpJKgpqJyqTR62NkSbNwAD+6/6mNq09Dq+aHiuy7QwqrFhmVEZgbTf4Gj2EXBrMstFfI5G2ob+30dZzT4eUkT4T8oYk5vVlcTeRyFfBNTiRFsnOAfqYU7HliWKEPVkWB0eeiIY3uNm9QOfbZYcIHB3rQ6Y+E+4oQ0eeQTXLDFkFE8Qubscjjmz2yyouwSSlCn3Tar4AAA==",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/everything-everywhere-all-at-once/front.webp": {
+    "web": "/cases/web/film/everything-everywhere-all-at-once/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/everything-everywhere-all-at-once/front.webp",
+    "lqip": "data:image/webp;base64,UklGRuoAAABXRUJQVlA4IN4AAAAwBQCdASoTABgAPu1srFEppaQiqAqpMB2JZgAL4A/2BWofFdrSc02Og1KA/ZZs3MUUoAD+6jECJU3vJKM0MM9fmqvztV1RVJkydWJM9ye3YiEo+L2Qjvvulb+O1u+jW9XJmIAzaJZpjMhIbuV9/NXmZLaSK/VNh7MIa98jgPnZDlsdzRHuBgHF0Fp1Kjlpw153kbMRdcauSpRB3T/kY6/HghdOJma3GYg7s3cdLit+/CpOxOyYWbka5Hy4r7iQVPz6zxoV7w/cnl9xmgQaXltP9G83JeGVdi24+1oAAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/everything-everywhere-all-at-once/spine.webp": {
+    "web": "/cases/web/film/everything-everywhere-all-at-once/spine.webp",
+    "width": 69,
+    "height": 1024
+  },
+  "/cases/film/guava-island/front-clean.webp": {
+    "web": "/cases/web/film/guava-island/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/guava-island/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAACQBACdASoTABgAPu1srlIppaQiqAgBMB2JQBjPv7ALWPE/SRr/9BJntvKB5oAA/vM0mEWQh5ZulFrTqwTa5ysxFQAxX5vGxoYc7pMxpUD4k4htm0E0EvZ15L2ineilVRUObX87lJmZJENOwygzgYv8qe9wb+n8JaSVWNL/vg9yq5svTbIO3HC+YjJeRE0ZLdfeClhZeGIMUi49VZsLuHRQvCtzsB4N/O1z6lPxBMVjjDAA",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/the-shawshank-redemption/back.webp": {
+    "web": "/cases/web/film/the-shawshank-redemption/back.webp",
+    "width": 873,
+    "height": 1024
+  },
+  "/cases/film/the-shawshank-redemption/disc.webp": {
+    "web": "/cases/web/film/the-shawshank-redemption/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/film/the-shawshank-redemption/front-clean.webp": {
+    "web": "/cases/web/film/the-shawshank-redemption/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/the-shawshank-redemption/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAADQBACdASoTABgAPu1qrVCppaQiqAqpMB2JYwC06BEWysA0SS1N+A+NQAt5V7SYsAD+8R9lS7GXT6I0s/i23I1H/2kH/20wHhO+aKr30S3q9BRCYzx+mjwyG71OtNQx77Moso5/xsICC2jn8Z2cS5HtghCYKCCIjovFw8NVD+evXuzubf1NNNPwmaJoHoAs7nIXGmBuLkZwM7//rjc9a7JMCIgIF8zgaTqkbl2tcw4s2GvxTaYgZZr4AAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/the-shawshank-redemption/front.webp": {
+    "web": "/cases/web/film/the-shawshank-redemption/front.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/the-shawshank-redemption/front.webp",
+    "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAABQBACdASoTABgAPu1qr1CppaQiqAqpMB2JQBdgAiORP+9VBPSnpt9qLAIAAP7o5zE9tU/6ekZKzobaeR5S+I+uOfYcRBUczdhqPmUsGvy/acKRu0FX/5KErB3VX6P0sbga+QezhPeDhHc6m8kHo/IHU6ufKyFvc9hzOZ/8gPo2isEQNiAAAA==",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/the-shawshank-redemption/spine.webp": {
+    "web": "/cases/web/film/the-shawshank-redemption/spine.webp",
+    "width": 77,
+    "height": 1024
+  },
+  "/cases/film/your-name/back.webp": {
+    "web": "/cases/web/film/your-name/back.webp",
+    "width": 454,
+    "height": 528
+  },
+  "/cases/film/your-name/front-clean.webp": {
+    "web": "/cases/web/film/your-name/front-clean.webp",
+    "width": 806,
+    "height": 1024,
+    "thumb": "/cases/thumb/film/your-name/front-clean.webp",
+    "lqip": "data:image/webp;base64,UklGRuAAAABXRUJQVlA4INQAAACwBQCdASoTABgAPu1qr1CppaQiqAqpMB2JbACdMzQ5irZkABpgAovGPUbyZqrO/0O5wtS9W9AA+/wCr7Yn1/9Z+kp+JZpyvpH5cLY9FzhskwQpWY1DZ7J8AlzosqIQ1UTJ/bsnIkvH+6AkTNjmEQEskM8tO6Niw1p/Lu1YAACKgBW6K5BBH8lwtPoUGnhacEARIfoXBmwP4EMmrQLYz4npUZY03AVYnhWGIUjpHW1Hzsw4sf5deYXJbixTntoUf32I588HFRXdr74MQnwAWHeVkj30AA==",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/your-name/front.webp": {
+    "web": "/cases/web/film/your-name/front.webp",
+    "width": 787,
+    "height": 1000,
+    "thumb": "/cases/thumb/film/your-name/front.webp",
+    "lqip": "data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAADwBACdASoTABgAPu1qr1AppaSiqAqpMB2JagCdMtDBRa1xo9vCat77vboKwAtcGEgA/iJHq4DXVOu0gTUOpSyQ8qVUoygm8J3yGM2v12c9VsmsI9+uLf0PPDaErNKFmK8cAjMJRXIPDFFPdziOtPKFPdoP8n/EduPsfmH35295OgPVr9Qqi1/DnTWiKuZ5+qmR2e3he78PKEN6FAZZXQTTnc5NVCkA/O/k2U/6Fo7Wkl4GAAA=",
+    "thumbWidth": 378,
+    "thumbHeight": 480
+  },
+  "/cases/film/your-name/spine.webp": {
+    "web": "/cases/web/film/your-name/spine.webp",
+    "width": 41,
+    "height": 528
+  },
+  "/cases/games/death-stranding/back.webp": {
+    "web": "/cases/web/games/death-stranding/back.webp",
+    "width": 813,
+    "height": 1024
+  },
+  "/cases/games/death-stranding/disc.webp": {
+    "web": "/cases/web/games/death-stranding/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/death-stranding/front.webp": {
+    "web": "/cases/web/games/death-stranding/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/death-stranding/front.webp",
+    "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAQBACdASoTABgAPu1ur1IppiQiqAgBMB2JZwDO7BGtnIjcxd8fL+H4AAD+0d4GgAF67bxv4sSAt9FP5lzemFDCwc36exG48EV1c4r7DtD/UJr85vj+5F7zOyj6o0Xf8uyN4Paz2/CdbYEymAA=",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/death-stranding/inside.webp": {
+    "web": "/cases/web/games/death-stranding/inside.webp",
+    "width": 1024,
+    "height": 644
+  },
+  "/cases/games/death-stranding/spine.webp": {
+    "web": "/cases/web/games/death-stranding/spine.webp",
+    "width": 72,
+    "height": 1024
+  },
+  "/cases/games/ghost-of-tsushima/back.webp": {
+    "web": "/cases/web/games/ghost-of-tsushima/back.webp",
+    "width": 813,
+    "height": 1024
+  },
+  "/cases/games/ghost-of-tsushima/disc.webp": {
+    "web": "/cases/web/games/ghost-of-tsushima/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/ghost-of-tsushima/front.webp": {
+    "web": "/cases/web/games/ghost-of-tsushima/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/ghost-of-tsushima/front.webp",
+    "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACQAwCdASoTABgAPu1gqE2ppaOiMAgBMB2JZwDM0C5TXXh9+mgAAP7jUc/+9KAtQNBmbmc24mHFZfdi4TKnC6HpCVmH/0ZOMKpj9DXeLy8hYAAA",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/ghost-of-tsushima/inside.webp": {
+    "web": "/cases/web/games/ghost-of-tsushima/inside.webp",
+    "width": 1024,
+    "height": 644
+  },
+  "/cases/games/ghost-of-tsushima/spine.webp": {
+    "web": "/cases/web/games/ghost-of-tsushima/spine.webp",
+    "width": 72,
+    "height": 1024
+  },
+  "/cases/games/infamous-second-son/disc.webp": {
+    "web": "/cases/web/games/infamous-second-son/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/infamous-second-son/front.webp": {
+    "web": "/cases/web/games/infamous-second-son/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/infamous-second-son/front.webp",
+    "lqip": "data:image/webp;base64,UklGRuIAAABXRUJQVlA4INYAAACwBQCdASoTABgAPu1oqVAppiOiqA1RMB2JagC7MySyT+qa0AhWp+jcl3mqUzlgKeVNDJJED0AA/ZuyPrrInJ53uLM4hBXzXZODP7JT3nWN7fjisarHP46e4LlwcuA4I3nVzWzz6MUuKwyZ1R9MySr7B286LrRDIoE/Nppxuc1g9MEddgFmcc8d4YTHur/t7IquZLUVuhaVwUpygSTttJyhXuTWQw33/Ei2z2t8Zasc/R7hWB8n3kTn94zkqHrLyfvLkimeXRqEFezenlBqFVMMBg1erAAA",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/majora-s-mask/front.webp": {
+    "web": "/cases/web/games/majora-s-mask/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/majora-s-mask/front.webp",
+    "lqip": "data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAAAQBQCdASoTABgAPu1qr1AppaSiqAqpMB2JZgCdITYBOuKs08UnkAc/uym+B2eBkTvAAP70VILavO4c/EuORvRrDqsqj2gGjngVyuaBOU3kkNLhrtY17TvmjCbGfX3AZR2pyeiZPV3LCFjW6XmK5pRP0LttrjfpIZZLM4QqXQt+Fg8VRBQWOlEsOaEDvEWOV89VXAmTI3Fn5/NQfbsCGIBUUWHp2d/0+t0MB85lvdRHftWOKOU3MpYAAAA=",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/minecraft/back.webp": {
+    "web": "/cases/web/games/minecraft/back.webp",
+    "width": 813,
+    "height": 1024
+  },
+  "/cases/games/minecraft/disc.webp": {
+    "web": "/cases/web/games/minecraft/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/minecraft/front.webp": {
+    "web": "/cases/web/games/minecraft/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/minecraft/front.webp",
+    "lqip": "data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAABwBQCdASoTABgAPu1urlIppiQiqAgBMB2JQBibAiQ+cUBLvaTTfF/iov+5dILeh94aVjAAAP5BGhRN+4U9c8iS+xORvzFgLAXsnVbC5u6zgx58n1jiO2dYeHesgEUlTp0lQNTicBjXPYfhVz7JUJlih341RYBTyzvhGB+Y7wsWfgQ398u0HLlgbqWeWb3j5fS+HSBP8cTslXn0bQ99VlzPjtpIEYr3a+Wpo5ypJ1HpYqxn+4be4AAA",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/pikmin-3/disc.webp": {
+    "web": "/cases/web/games/pikmin-3/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/pikmin-3/front.webp": {
+    "web": "/cases/web/games/pikmin-3/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/pikmin-3/front.webp",
+    "lqip": "data:image/webp;base64,UklGRhoBAABXRUJQVlA4IA4BAAAwBgCdASoTABgAPu1qqFCppaOiqA1RMB2JbACdMoSA/wQ8BtqxngmfAhVvTLPg8LE3Zoplk15ENxrwAOHvdSVnb2hiXqSLWh2d/EfD1nDkj7cpwTx6OJPZjZ90JQPBSVKyYJ/fgn/r/+9GHKc88iNyNo1Pfs9x9WMs6Rk7hGlWSwuJTwsFvYEVws/Vr9g1k7p6BryictNLi/3LXXpuL5J7xP3D8fJqdrpcG6am2+os1usfeFsmB3AmDtDyEljZGIuKfh7vutN6bp4MNUcK9+NezUcpT3JHEB7cfbDyIRoNwZbz7EuHP7fPdInYNp9QKViB067XQ0Hc/d7hJLkZ+WmZUEduu4QK7XH8qk+3AAA=",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/super-mario-galaxy-2/disc.webp": {
+    "web": "/cases/web/games/super-mario-galaxy-2/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/super-mario-galaxy-2/front.webp": {
+    "web": "/cases/web/games/super-mario-galaxy-2/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/super-mario-galaxy-2/front.webp",
+    "lqip": "data:image/webp;base64,UklGRioBAABXRUJQVlA4IB4BAADwBgCdASoTABgAPu1eq1AppKOisBgIATAdiWwAnTKEfJ6B4SXoA3hreUSJJBI7h3khzSb0MbhU+BMHtaUGpRhgAP1HSKBDVxr+nXotOUu4H328l5RjvRfTGxnF60Fqgw8qMd2aA+0RVXOmQQdlbXsNpT0iT2TTJVwNDTQA82vu/a2keHuJBfxm35Z/Nr6QN4iitE8xXlG1afBVqdiA4OvkGSTTa8U7GovBhe4eI30vbAtGVVlR4BZfdMT8AG2XFuRWbx5Jn8cAWls1oDAcb3oukXn7csfMvwXC/y1dmZmaJfJ03TUgbquqBSpWVZSS7nH19khSRwLskd9mWc05S6AHvlw4La51F3et1uLLfs6OroiELMGqaUpvwhFF6AAA",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/the-last-of-us-part-ii/back.webp": {
+    "web": "/cases/web/games/the-last-of-us-part-ii/back.webp",
+    "width": 813,
+    "height": 1024
+  },
+  "/cases/games/the-last-of-us-part-ii/disc.webp": {
+    "web": "/cases/web/games/the-last-of-us-part-ii/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/the-last-of-us-part-ii/front.webp": {
+    "web": "/cases/web/games/the-last-of-us-part-ii/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/the-last-of-us-part-ii/front.webp",
+    "lqip": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAADwBACdASoTABgAPt1UpU2opKOiN/qoARAbiWUAsOwgb38vRlWrD6sNrbcAXEqSXXAA/c1gkV6aBXIs/02Y7Fjil5zPKUHZhg57WIFcEjxs3GN1x/ZcPMW+jAYP4+rL9zW7guH4UgO+ecnpDGHiildC9ES9vQELQNHgAA==",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/the-last-of-us-part-ii/inside.webp": {
+    "web": "/cases/web/games/the-last-of-us-part-ii/inside.webp",
+    "width": 1024,
+    "height": 644
+  },
+  "/cases/games/the-last-of-us-part-ii/spine.webp": {
+    "web": "/cases/web/games/the-last-of-us-part-ii/spine.webp",
+    "width": 72,
+    "height": 1024
+  },
+  "/cases/games/the-last-of-us/back.webp": {
+    "web": "/cases/web/games/the-last-of-us/back.webp",
+    "width": 813,
+    "height": 1024
+  },
+  "/cases/games/the-last-of-us/disc.webp": {
+    "web": "/cases/web/games/the-last-of-us/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/the-last-of-us/front.webp": {
+    "web": "/cases/web/games/the-last-of-us/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/the-last-of-us/front.webp",
+    "lqip": "data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAACQBQCdASoTABgAPu1qr1CppaQiqAqpMB2JZwDKAYyyc3Oj3UUOUBDy41kUxqsISmlc1gPWYAD+4uz/6cVaF8jMCQLQxNu+jtabjXMLWZE1XkJ3DK2spt2UN8RIY/QhYm0G7YA0A22yR/JeBF656VvPjIv+VBT4PaOLmMcUyMDa3DAMqY7Tb8sgiZvMQLxKOCOxX7sun58QzGVQxwpCpa+P6IqkbUAAAAA=",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/the-last-of-us/spine.webp": {
+    "web": "/cases/web/games/the-last-of-us/spine.webp",
+    "width": 72,
+    "height": 1024
+  },
+  "/cases/games/uncharted-3/back.webp": {
+    "web": "/cases/web/games/uncharted-3/back.webp",
+    "width": 813,
+    "height": 1024
+  },
+  "/cases/games/uncharted-3/disc.webp": {
+    "web": "/cases/web/games/uncharted-3/disc.webp",
+    "width": 1024,
+    "height": 1024
+  },
+  "/cases/games/uncharted-3/front.webp": {
+    "web": "/cases/web/games/uncharted-3/front.webp",
+    "width": 813,
+    "height": 1024,
+    "thumb": "/cases/thumb/games/uncharted-3/front.webp",
+    "lqip": "data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAABQBQCdASoTABgAPu1eq02ppKQiMBgMATAdiUAYbHHQHRyk8foWi52eldiN+M8JwXLFdAAA/uo8vIDgnnnfKmfhAc+l8McOPqwpGYaroO3IFQ6Sbc0Q6SLNtTsvBEvFIoN2KWheKei83tWCuKDgUmP4ZxyY53/gJV2lpmJoV6Ew7Af89pQEdU4Vfh0TRCw2qqvJko0r15Vf6sKz34W8wOZW1SpOFNfqpRyeEjBIx5l1fHLaxQAAAA==",
+    "thumbWidth": 381,
+    "thumbHeight": 480
+  },
+  "/cases/games/uncharted-3/inside.webp": {
+    "web": "/cases/web/games/uncharted-3/inside.webp",
+    "width": 1024,
+    "height": 644
+  },
+  "/cases/games/uncharted-3/spine.webp": {
+    "web": "/cases/web/games/uncharted-3/spine.webp",
+    "width": 72,
+    "height": 1024
+  }
+}
